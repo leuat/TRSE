@@ -35,6 +35,7 @@ public:
     QString String(QStringList lst, bool term) override;
 
 
+    bool isGB() {return Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY; }
 
 
     void StartMemoryBlock(QString pos) override;

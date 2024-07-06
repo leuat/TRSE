@@ -123,6 +123,9 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 // array  resb  251*256  ;251 ROWS X 256 COLUMNS.
 
      if (data.count()==0 && pos!="") {
+        if (Syntax::s.m_currentSystem->isGB())
+            name = "def " + name;
+
          Write(name + " equ " + pos);
          return;
      }
@@ -196,6 +199,8 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
         initval = "0";
 
     if (type.toLower()=="const") {
+        if (Syntax::s.m_currentSystem->isGB())
+            name = "def " + name;
         Write(name + " equ " + initval,0);
         return;
     }
@@ -244,6 +249,9 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
     }
     else
     {
+        if (Syntax::s.m_currentSystem->isGB())
+            name = "def " + name;
+
         Write(name +"\t equ \t"+position,0);
 /*        Appendix* app = new Appendix(position);
         app->Append(GetOrg(Util::NumberFromStringHex(position)),1);

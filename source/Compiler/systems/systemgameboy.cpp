@@ -51,7 +51,8 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
 //    Util::CopyFile(":resources/bin/gbt-player/gbt_player_bank1.o",currentDir+"/gbt_player_bank1.o");
     //qDebug() << m_settingsIni->getString("assembler");
         QProcess process;
-        QStringList params = QStringList() <<"-H"<<"-l";
+//        QStringList params = QStringList() <<"-H"<<"-l";
+        QStringList params;// = QStringList() <<"-l";
        // -kick1hunks  -o example$1 -nosym source$1.asm
   //      params << "-kick1hunks";
     //    params << "-Fhunkexe";
