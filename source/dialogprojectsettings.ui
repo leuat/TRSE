@@ -43,7 +43,7 @@
      <item>
       <widget class="QTabWidget" name="tabZP">
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="tab_3">
         <attribute name="title">
@@ -351,7 +351,7 @@
                 <item row="0" column="0">
                  <widget class="QTabWidget" name="tabConfigs">
                   <property name="currentIndex">
-                   <number>9</number>
+                   <number>10</number>
                   </property>
                   <widget class="QWidget" name="tabC64">
                    <attribute name="title">
@@ -995,6 +995,43 @@
                     </item>
                    </layout>
                   </widget>
+                  <widget class="QWidget" name="tab_14">
+                   <attribute name="title">
+                    <string>Gameboy</string>
+                   </attribute>
+                   <layout class="QGridLayout" name="gridLayout_35">
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_49">
+                      <property name="text">
+                       <string>rgblink parameters:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QLineEdit" name="leRgbasmParams"/>
+                    </item>
+                    <item row="2" column="0">
+                     <widget class="QLabel" name="label_50">
+                      <property name="text">
+                       <string>rgbfix parameters:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="label_48">
+                      <property name="text">
+                       <string>rgbasm parameters:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="2" column="1">
+                     <widget class="QLineEdit" name="leRgbFixParams"/>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="leRgbLinkParams"/>
+                    </item>
+                   </layout>
+                  </widget>
                   <widget class="QWidget" name="tab_13">
                    <attribute name="title">
                     <string>Custom</string>
@@ -1216,6 +1253,19 @@
                    </widget>
                   </widget>
                  </widget>
+                </item>
+                <item row="1" column="0">
+                 <spacer name="verticalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </widget>

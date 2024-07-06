@@ -53,11 +53,14 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         QProcess process;
 //        QStringList params = QStringList() <<"-H"<<"-l";
         QStringList params;// = QStringList() <<"-l";
+
+        params <<m_projectIni->getString("rgbasm_params").trimmed().simplified().split(" ");
+        params.removeAll("");
        // -kick1hunks  -o example$1 -nosym source$1.asm
   //      params << "-kick1hunks";
     //    params << "-Fhunkexe";
         QFile::remove(filename+".o");
-        StartProcess(assembler, QStringList() <<"-o" << filename + ".o"<<filename+".asm" << params, output);
+        StartProcess(assembler, QStringList() <<"-o" << filename  + ".o"<<filename+".asm" << params, output);
 
         // Assemble the player:
         Util::CopyFile(":resources/code/gameboy/gbt_player.asm",currentDir+"/gbt_player.asm");
@@ -79,7 +82,9 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         QFile::remove(filename+".gb");
 
 //        gbt_player.o gbt_player_bank1.o
-        StartProcess(link, QStringList() <<"-d"<< "-o" << filename + ".gb" << filename+".o" <<currentDir+"/gbt_player.o" <<currentDir+"/gbt_player_bank1.o" << "-n" << filename+".sym", output);
+        QStringList linkParams  = QStringList() << m_projectIni->getString("rgblink_params").trimmed().simplified().split(" ");
+        linkParams.removeAll("");
+        StartProcess(link, QStringList() <<"-d"<< "-o" << linkParams << filename + ".gb" << filename+".o" <<currentDir+"/gbt_player.o" <<currentDir+"/gbt_player_bank1.o" << "-n" << filename+".sym", output);
         if (!QFile::exists(filename+".gb")) {
             text  += "<br><font color=\"#FFFF00\">Error during assembly : please check source assembly for errors.</font>";
             text+=output;
@@ -88,7 +93,9 @@ void SystemGameboy::Assemble(QString &text, QString filename, QString currentDir
         }
 
 //        StartProcess(fix, QStringList() <<"-p" <<"0" <<"-r" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
-        StartProcess(fix, QStringList() << "-m"<< "3"<<  "-p" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
+        QStringList fixParams  = QStringList() << m_projectIni->getString("rgbfix_params").trimmed().simplified().split(" ");
+        fixParams.removeAll("");
+        StartProcess(fix, QStringList() << fixParams << "-m"<< "3"<<  "-p" <<"0" <<"-t" <<"TRSE GB" << "-v" << filename + ".gb", output);
         /* Cleanup */
         QStringList dels = QStringList() << "gbt_player.asm" <<"gbt_player.o" <<"gbt_player_bank1.asm" <<"gbt_player_bank1.o" <<"hardware.inc" << "gbt_player.inc";
         for (QString s : dels)

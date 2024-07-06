@@ -114,6 +114,11 @@ void DialogProjectSettings::FillFromIni()
     }
 
 
+    ui->leRgbasmParams->setText(m_ini->getString("rgbasm_params"));
+    ui->leRgbLinkParams->setText(m_ini->getString("rgblink_params"));
+    ui->leRgbFixParams->setText(m_ini->getString("rgbfix_params"));
+
+
     //    if (m_ini->getString("system")=="VIC20") {
     ui->tabConfigs->setCurrentWidget(ui->tabVic20);
     ui->leViaZP->setText(  fromStringList(m_ini->getStringList("via_zeropages")));
@@ -262,6 +267,14 @@ void DialogProjectSettings::FillToIni()
 
 
     m_ini->setString("disk_system",ui->cmbDiskSystem->currentText());
+
+
+
+    m_ini->setString("rgbasm_params", ui->leRgbasmParams->text());
+    m_ini->setString("rgblink_params", ui->leRgbLinkParams->text());
+    m_ini->setString("rgbfix_params", ui->leRgbFixParams->text());
+
+
 
 
     m_ini->setString("petmodel", ui->cbmPetSystem->currentText());
@@ -467,9 +480,11 @@ void DialogProjectSettings::on_cmbSystem_currentIndexChanged(int index)
     if (index==9)
         ui->tabConfigs->setCurrentIndex(8);
     if (index==25)
-        ui->tabConfigs->setCurrentIndex(10);
+        ui->tabConfigs->setCurrentIndex(11);
     if (index==36) // thomson
         ui->tabConfigs->setCurrentIndex(9);
+    if (index==12) // gb
+        ui->tabConfigs->setCurrentIndex(10);
 
     UpdateSystem();
     /*    if (index==7)
