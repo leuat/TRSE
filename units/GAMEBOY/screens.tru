@@ -6,6 +6,7 @@ var
 	
 	const storage: address= $C900;
 
+	spriteData, spriteIndices : ^byte;
 
 /**
  This method turns the lcd ON and sets the screen data pointer to $9800. Windows are off, objects are on.
@@ -323,8 +324,36 @@ begin
 	CopyBankHB(^$D000, $9000, 8);
 end;
 
+/**
+	InitSpriteFromData will set up NxM sprite pointers (in sprite memory) pointing to data in the current
+	sprite bank. <br>
+	<br>
+	spriteData: pointer to the sprite data location in sprite ram. 4 bytes per 8x8 sprite. 	<br>
 
-procedure InitDataSprite(spriteData, spriteIndices : ^byte, start, len, w, attr : global byte );
+	spriteIndices : table of lookup indices for each sprite	<br>
+
+	start : the start index of the sprite	<br>
+
+	len : number of 8x8 sprites 	<br>
+
+	w : width of the 8x8 sprite blocks	<br>
+
+	attr : the attribute of the sprite (flipx, flipy etc)	<br>
+	<br>
+	If you need speed, please use the internal InitSpriteFromData method, which is faster<br>
+
+
+	example:<br>
+<code>
+	// 2x3 8x8-blocked sprite with width 2 
+	Screens::InitSpriteFromData(#sprGirl, #sprites_index,pos,6 ,2, doFlip);
+
+</code>
+
+
+**/
+
+procedure InitSpriteFromData(spriteData, spriteIndices : global ^byte, start, len, w, attr : global byte );
 begin
 	flipx := (attr & %00100000) = %00100000;	
 	flipy := (attr & %01000000) = %01000000;	
@@ -351,5 +380,25 @@ begin
 	end;
 end;	
 
+
+procedure SetSprite(spriteData: global ^byte; x,y,w,h : global byte);
+begin
+	for j:=0 to h do
+	begin
+		// Reset x position
+		dx:=x;
+		for i:=0 to w do
+		begin
+			// Set x/y vals
+			spriteData[0] := y;
+			spriteData[1] := dx;
+			// Increase to next sprite 
+			spriteData+=4;
+			dx+=8;
+		end;
+		y+=8;
+		
+	end;
+end;
 
 end.

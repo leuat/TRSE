@@ -87,10 +87,6 @@ begin
 		if (colldiry=1) then blockup:=1;
 		if (colldiry=255) then blockdown:=1;
 	end;	
-/*	p1:=screen0;
-	p1:=p1+y*32;
-	p1[x] := i;	
-	*/
 end;
 
 
@@ -100,7 +96,7 @@ begin
 	// Initialize sprite: address of internal table at $C000 (sprGirl), indices, position in sprite data, width, flipping
 	current_bank:=spriteBank;
 
-	initspritefromdata(#sprGirl,#sprites_index, pos, 6 ,2, 0);
+	Screens::InitSpriteFromData(#sprGirl,#sprites_index, pos, 6 ,2, 0);
 
 	// Set sprite position			
 	spritex:=px;
@@ -130,7 +126,7 @@ begin
 			spritex:=px-(128-32);
 		end;
 	end;	
-	setsprite(#sprGirl,spritex,spritey, 2,30);
+	Screens::SetSprite(#sprGirl,spritex,spritey, 2,30);
 	// Advance to next sprite		
 	colldirx := 0;	
 	colldiry := 0;	
