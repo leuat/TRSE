@@ -84,3 +84,9 @@ void NodeBlock::ResetInlineAssembler()
     if (m_compoundStatement!=nullptr)
         m_compoundStatement->ResetInlineAssembler();
 }
+
+bool NodeBlock::Optimize() {
+    if (m_compoundStatement!=nullptr)
+        m_compoundStatement->Optimize();
+    return false;
+}

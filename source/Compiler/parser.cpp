@@ -3081,6 +3081,7 @@ void Parser::PreprocessSingle() {
     }
 
 
+
     if (m_currentToken.m_value.toLower() == "splitfile") {
         Eat(TokenType::PREPROCESSOR);
         QString in = m_currentDir+QDir::separator()+ m_currentToken.m_value;

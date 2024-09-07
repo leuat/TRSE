@@ -68,6 +68,13 @@ public:
 
     void Accept(AbstractCodeGen* dispatcher) override;
 
+    virtual bool Optimize() override {
+        if (m_NodeBlock!=nullptr)
+            m_NodeBlock->Optimize();
+        return false;
+    }
+
+
 };
 
 #endif // NODEPROGRAM_H

@@ -26,7 +26,7 @@ jobs:
           sed -i '' "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
           version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
           echo "::set-output name=TRSE_VERSION::${version}"
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v4
       - uses: jurplel/install-qt-action@v2
       - run: brew install libomp
 

@@ -55,6 +55,10 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeAssign>(sharedFromThis()));
     }
 
+    bool isDead();
+
+    virtual bool Optimize();
+
 };
 
 #endif // NODEASSIGN_H

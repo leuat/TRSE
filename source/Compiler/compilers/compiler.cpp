@@ -76,6 +76,9 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     }
     if (m_parser.m_symTab!=nullptr)
         m_parser.m_symTab->SetCurrentProcedure("");
+
+//    if (m_tree!=nullptr)
+  //      m_tree->Optimize();
 }
 
 

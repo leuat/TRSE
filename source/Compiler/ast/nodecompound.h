@@ -73,5 +73,8 @@ public:
     void ResetInlineAssembler() override;
 
 
+    virtual bool Optimize() override;
+
+
 };
 #endif // NODECOMPOUND_H

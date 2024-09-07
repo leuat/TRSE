@@ -255,7 +255,6 @@ Token Lexer::Number(bool& isOk)
     }
     val = res.toLong(&isOk, base);
 
-//    qDebug() << val;
     if (isConstant)
         return Token(TokenType::INTEGER_CONST, val);
     else {

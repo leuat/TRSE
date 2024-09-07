@@ -38,3 +38,30 @@ void NodeAssign::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
     m_right->ExecuteSym(symTab);
 
 }
+
+bool NodeAssign::isDead() {
+    if ((!m_left) || (!m_right))
+        return false;
+
+    if (m_left->rawValue() == m_right->rawValue() && m_right->rawValue()!="") {
+        qDebug() << m_left->rawValue() << m_right->rawValue();
+        if (m_left->getIndex()!=nullptr) {
+            if (m_right->getIndex()!=nullptr)
+                if (m_left->getIndex()->rawValue() == m_right->getIndex()->rawValue() && m_right->getIndex()->rawValue()!="")
+                    // i[j] := i[j];
+                    return true;
+        }
+        else
+            // i := i
+            if (m_right->getIndex()==nullptr) {
+                return true;
+            }
+
+    }
+    return false;
+}
+
+bool NodeAssign::Optimize() {
+    if (isDead()) return true;
+    return false;
+}

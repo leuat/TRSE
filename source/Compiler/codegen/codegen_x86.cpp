@@ -160,7 +160,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeBinOP>node)
             PopX();
             node->m_left->Accept(this); // Should always be a PURE pointer
             QString ax = "ax";//getAx(node->m_left);
-            if (node->isPointer(as) || node->isReference())
+            if ((node->m_right->isPointer(as) && !node->m_right->hasArrayIndex()) || node->isReference())
                 ax = "di";
 
 
@@ -291,7 +291,7 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
         }
 
         if (node->isPointer(as)) {
-            as->Asm("les di,["+node->getValue(as)+ "]");
+            as->Asm("les di,["+node->getValue(as)+ "] ; load pointer");
             if (node->m_expr->isPureNumeric()) {
                 //                as->Comment("Data size:"+QString::number(node->getArrayDataSize(as)));
                 QString scale = "*"+QString::number(node->getArrayDataSize(as));
@@ -327,7 +327,15 @@ void CodeGenX86::dispatch(QSharedPointer<NodeVar> node)
 
             }
             node->m_expr->setLoadType(TokenType::INTEGER);
+
+            if (!node->m_expr->isPure())
+                as->Asm("push di");
+
             node->m_expr->Accept(this);
+
+            if (!node->m_expr->isPure())
+                as->Asm("pop di")
+                    ;
             as->Asm("add di,ax");
             if (node->getArrayType(as)==TokenType::INTEGER)
                 //                as->Asm("shl di,1 ; Accomodate for word");

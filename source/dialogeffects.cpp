@@ -1530,6 +1530,30 @@ static int DrawLine(lua_State* L) {
     return 0;
 }
 
+
+static int DrawText(lua_State* L) {
+
+    QFont f = QFont(lua_tostring(L,4), lua_tonumber(L,5));
+    QPainter painter;
+    painter.begin(&m_effect->m_img);
+//    painter.setRenderHint(QPainter::Antialiasin);
+    painter.translate(m_effect->m_img.width()/2, m_effect->m_img.height()/2);
+    painter.rotate(lua_tonumber(L,10));
+    painter.setPen(QPen(QColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8)), lua_tonumber(L,9), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+    painter.setFont(f);
+    painter.drawText(lua_tonumber(L,1),lua_tonumber(L,2),lua_tostring(L,3));
+    painter.end();
+    painter.begin(&m_effect->m_post);
+    painter.translate(m_effect->m_img.width()/2, m_effect->m_img.height()/2);
+    painter.rotate(lua_tonumber(L,10));
+    painter.setPen(QPen(QColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8)), lua_tonumber(L,9), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
+    painter.drawText(lua_tonumber(L,1),lua_tonumber(L,2),lua_tostring(L,3));
+    painter.end();
+    //    m_effect->m_img.fill((Qt::red));
+    return 0;
+}
+
+
 static int DrawRect(lua_State* L) {
 
     QPainter painter;
@@ -2075,6 +2099,7 @@ void DialogEffects::LoadScript(QString file)
     lua_register(m_script->L, "DrawLine", DrawLine);
     lua_register(m_script->L, "DrawRect", DrawRect);
     lua_register(m_script->L, "DrawCircle", DrawCircle);
+    lua_register(m_script->L, "DrawText", DrawText);
     lua_register(m_script->L, "DrawIsometricFont", DrawIsometricFont);
     lua_register(m_script->L, "DrawTriangle", DrawTriangle);
     lua_register(m_script->L, "DrawQuad", DrawQuad);

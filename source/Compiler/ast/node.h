@@ -59,6 +59,7 @@ protected:
     bool m_isNegative = false;
     QStringList m_isUsedBy;
 
+
 //    int m_lineNumber;
     uint level = 0;
     // Comments associated with current node.
@@ -97,6 +98,7 @@ public:
     virtual NodeType getNodeType() {
         return NONE;
     }
+    virtual QString rawValue() { return "";}
 
 
     // Token contains node type data and values from the parser
@@ -144,6 +146,7 @@ public:
     QString getStoreTypesDebug();
 
 
+    virtual QSharedPointer<Node> getIndex() { return nullptr; }
     virtual void ForceAddress();
     // Returns a list of potential symols in asm code. Recursive. Used for preventing removal of unused symbols that are actually used within asm blocks
     virtual void FindPotentialSymbolsInAsmCode(QStringList& lst);
@@ -286,7 +289,10 @@ public:
     inline static uint getNodeCount(){return s_nodeCount;}
     inline bool isClassApplied(){return m_classApplied;}
     inline MemoryBlockInfo getBlockInfo(){return m_blockInfo;}
-    
+
+    virtual bool Optimize() { return false; }
+    virtual bool isDead() { return false ;}
+
 };
 
 inline TokenType::Type Node::getType(Assembler *as) {

@@ -136,7 +136,7 @@ public:
     bool isAddress() override;
 
     bool isSigned(Assembler* as) override;
-
+    QSharedPointer<Node> getIndex() override { return m_expr; }
     bool hasFlag(Assembler* as, QString flag) override
     {
         QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(as), m_op.m_lineNumber);
@@ -150,5 +150,6 @@ public:
     }
 
     void VerifyReferences(Assembler* as) override;
+    virtual QString rawValue() override { return value;}
 
 };

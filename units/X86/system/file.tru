@@ -19,14 +19,21 @@ var
 		
 	procedure Open(File::fp:global pointer; File::attr: global byte);
 		begin
+			File::val := 255; 
 			asm("
 			mov ah, $3D
 			mov al, [File_attr] ; open attribute: 0 - read-only, 1 - write-only, 2 -read&write
 			mov dx, word [File_fp] ; ASCIIZ filename to open
 			int 21h
+			jc ferr1
 			mov [File_val],ax
+				
+ferr1:
 			");
 			this.handle := val;
+			if (val=255) then 
+				Screen::Print("COULD NOT OPEN FILE");
+			
 		end;	
 
 	procedure Create(File::fp:global pointer);

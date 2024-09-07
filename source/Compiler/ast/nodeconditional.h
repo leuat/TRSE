@@ -96,6 +96,8 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeConditional>(sharedFromThis()));
     }
 
+    virtual bool Optimize() override;
+
 };
 
 #endif // NODECONDITIONAL_H

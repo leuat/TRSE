@@ -31,6 +31,7 @@ begin
 		end	;
 		y+=21;
 	end;
+	
 	memcpy(^$D000,0,#sprPosUpper,$11);
 	memcpy(^$07F8,0,#sprLocUpper,8);
 	

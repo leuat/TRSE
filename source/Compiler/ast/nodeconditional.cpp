@@ -43,6 +43,14 @@ void NodeConditional::ReplaceVariable(Assembler *as, QString name, QSharedPointe
         m_binaryClause->ReplaceVariable(as,name,node);
 }
 
+bool NodeConditional::Optimize() {
+    if (m_block!=nullptr)
+        m_block->Optimize();
+    if (m_elseBlock!=nullptr)
+        m_elseBlock->Optimize();
+    return false;
+}
+
 
 
 

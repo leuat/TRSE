@@ -63,3 +63,17 @@ void NodeCompound::ResetInlineAssembler()
 
 }
 
+bool NodeCompound::Optimize() {
+    QVector<QSharedPointer<Node>> removal;
+    for (auto n: children) {
+        if (n->Optimize())
+            removal.append(n);
+    }
+//    children.remove(removal);
+    for (auto n: removal) {
+        qDebug() << "Optimizing...";
+        children.removeAll(n);
+    }
+    return false;
+}
+

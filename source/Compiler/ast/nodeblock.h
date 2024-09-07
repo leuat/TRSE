@@ -105,6 +105,8 @@ public:
         Node::ReplaceVariable(as,name,node);
         m_compoundStatement->ReplaceVariable(as,name,node);
     }
+    virtual bool Optimize() override;
+
 
 };
 
