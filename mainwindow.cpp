@@ -289,6 +289,7 @@ void MainWindow::mousePressEvent(QMouseEvent *e)
 
     qDebug() << "WTOF" << m_updateThread->m_currentButton;*/
 
+
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *e)

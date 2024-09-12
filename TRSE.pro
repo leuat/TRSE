@@ -14,7 +14,7 @@ equals(VER, 6) {
 CONFIG += c++14
 
 CONFIG(debug, debug|release) {
-    CONFIG += sanitizer sanitize_address sanitize_undefined sanitize_threads
+    #CONFIG += sanitizer sanitize_address sanitize_undefined sanitize_threads
 }
 
 TARGET = trse
