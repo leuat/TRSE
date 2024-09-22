@@ -73,8 +73,10 @@ macx{
     }
     contains(ARCH, x86_64) |contains(ARCH, amd64):  {
         LIBS += -L$$PWD/libs/lua/ -lluamac -L/usr/local/opt/libomp/lib
-        QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include
-        LIBS += -L/usr/local/opt/libomp/lib
+        QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include -I/opt/homebrew/opt/libomp/include
+        LIBS += -L/usr/local/opt/libomp/lib -L/opt/homebrew/opt/libomp/lib
+        #github CI x86: export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
+        #export CPPFLAGS="-I/opt/homebrew/opt/libomp/include"
 
    }
    LIBS+= -lomp
