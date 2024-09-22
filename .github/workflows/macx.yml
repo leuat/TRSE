@@ -27,7 +27,7 @@ jobs:
           version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
           echo "::set-output name=TRSE_VERSION::${version}"
       - uses: actions/setup-node@v4
-      - uses: jurplel/install-qt-action@v2
+      - uses: jurplel/install-qt-action@v4
       - run: brew install libomp
 
       - run: qmake TRSE.pro

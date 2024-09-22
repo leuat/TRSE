@@ -18,6 +18,9 @@ var
 	mask: array[200] of byte;
 	//	xi, yi: byte;
 
+	pi : byte;
+	bsta : integer;
+
 	d,x1, y1, x2, y2,dx,dy,ai,bi,xi,yi,color,dx2,dy2 : byte at $F0;
 	currbank:byte;
 	low, high, k, i, val : byte;
@@ -196,7 +199,7 @@ Initializes bitmap graphics mode, putpixel type,
 pixel tables and clears the screen at bank 1 and 2. 
 
 **/
-procedure InitBitmapGraphics(pi:byte; bsta:integer);
+procedure InitBitmapGraphics(pi:global byte; bsta:global integer);
 begin
 	//p_putpixel := proceduretopointer(putpixel2());
 	p_putpixel := #putpixel2;

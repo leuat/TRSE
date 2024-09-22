@@ -126,6 +126,7 @@ void Tool::PathTool(QString svgFile, QString outBinary, int dataCount, float deg
     sp.set_ctrl_points(lst);
 
     QByteArray X,Y,T;
+
     for (int i=0;i<dataCount;i++) {
         float c = 1.0-i/(float)dataCount;
         QVector3D p = sp.eval_f(c);

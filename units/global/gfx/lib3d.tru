@@ -21,6 +21,7 @@ var
 	ip:pointer of integer;
 	zdiv : integer = 127;
 	zdiv2 : integer = 4;
+	
 @ifndef "linemethod"
 @raiseerror "You need to define your line method in 'linemethod' before including the lib3d library"
 @endif
