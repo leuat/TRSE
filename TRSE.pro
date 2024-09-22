@@ -62,7 +62,7 @@ macx{
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
     QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
     LIBS+= -L/opt/homebrew/opt/libomp/lib
-    #ARCH = arm64
+#    #ARCH = arm64
 
     QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
 
