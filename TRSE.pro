@@ -47,7 +47,7 @@ macx{
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
 #    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 
-
+    QMAKE_APPLE_DEVICE_ARCHS = arm64
     LIBS += -L$$PWD/libs
     LIBS += -ldl
 #    QMAKE_LFLAGS += -F /Library/Frameworks
