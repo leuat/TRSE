@@ -22,7 +22,7 @@ then
   macdeployqt .
 else
   rm *.ini
-  ~/Qt/6.0.1/clang_64/bin/macdeployqt .
+  ~/Qt/6.6.1/macos/bin/macdeployqt .
 fi
 cd ../../
 
