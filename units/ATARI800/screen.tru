@@ -2,7 +2,7 @@ unit Screen;
 var
 	sp,tp : pointer;
 	x,y,i,j : byte;
-	tab40 : array[screen_height] of byte = BuildTable("i*40");
+	tab40 : array[screen_height] of integer = BuildTable("i*40");
 /**
 	Returns the screen pointer 
 **/
