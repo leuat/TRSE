@@ -25,6 +25,7 @@
 #include <QFileDialog>
 #include "source/Compiler/syntax.h"
 
+
 DialogImport::DialogImport(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogImport)
