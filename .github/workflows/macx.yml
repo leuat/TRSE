@@ -38,7 +38,7 @@ jobs:
 
       - run: qmake TRSE.pro
       - run: make -j 4 arch=arm64
-      - run: cd Publish/publish_mac && ./publish_mac.sh nightly
+
       - name: Codesign executable
         env: 
           DEVELOPER_ID: ${{ secrets.DEVELOPER_ID }}
@@ -53,8 +53,9 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
           security default-keychain -s build.keychain
           security find-identity -v
-          /usr/bin/codesign --force -s "$DEVELOPER_ID" Publish/publish_mac/trse/trse.app -v
+          #/usr/bin/codesign --force -s "$DEVELOPER_ID" Publish/publish_mac/trse/trse.app -v
 
+      - run: cd Publish/publish_mac && ./publish_mac.sh nightly
       - uses: ColinPitrat/update-release@master
         with:
           release: nightly

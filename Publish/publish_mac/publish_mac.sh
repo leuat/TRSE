@@ -5,7 +5,7 @@ if [ "$1" = "nightly" ]
 then
   cp -r ../../trse.app trse/
 else
-  cp -r ../../Release/trse.app trse/
+    cp -r ../../Release/trse.app trse/
 fi
 
 cp -r Contents trse/trse.app
@@ -19,10 +19,10 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
-  macdeployqt .
+  macdeployqt . -codesign="Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)"
 else
   rm *.ini
-  ~/Qt/6.6.1/macos/bin/macdeployqt .
+  ~/Qt/6.7.2/macos/bin/macdeployqt . -codesign="Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)"
 fi
 cd ../../
 
