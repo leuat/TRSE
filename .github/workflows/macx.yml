@@ -53,8 +53,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
           security find-identity -v
           #/usr/bin/codesign --force -s "$DEVELOPER_ID" Publish/publish_mac/trse/trse.app -v
-
-      - run: cd Publish/publish_mac && ./publish_mac.sh nightly
+          cd Publish/publish_mac && ./publish_mac.sh nightly
       - uses: ColinPitrat/update-release@master
         with:
           release: nightly
