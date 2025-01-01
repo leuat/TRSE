@@ -32,7 +32,7 @@
 #define NIGHTLY 0
 =======
 #define FEATURE 17
-#define NIGHTLY 459
+#define NIGHTLY 0
 >>>>>>> eee6aedddb96bda50c81eacb61656644a38ff3c2
 
 #define VERSION STR(MAJOR) "." STR(FEATURE) "." STR(NIGHTLY)
