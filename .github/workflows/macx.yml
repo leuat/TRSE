@@ -51,6 +51,7 @@ jobs:
           security unlock-keychain -p hurra build.keychain
           security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
+          security default-keychain -s build.keychain
           security find-identity -v
           /usr/bin/codesign --force -s "$DEVELOPER_ID" Publish/publish_mac/trse/trse.app -v
 
