@@ -795,6 +795,13 @@ int Parser::GetParsedInt(TokenType::Type forceType) {
     //    qDebug() << "PARSER "<<r;
     if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->m_system == AbstractSystem::OK64)
         return r;
+    if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->addressBusBits()==32) {
+/*        if (r<0) {
+            r = r + 0x100000000;
+            qDebug() << "HEERE";
+        }*/
+        return r;
+    }
     if (forceType==TokenType::ADDRESS && Syntax::s.m_currentSystem->addressBusBits()>16)
         return r;
     if (forceType==TokenType::BYTE)
@@ -4333,8 +4340,12 @@ QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
     }
     Eat();
     Eat(TokenType::EQUALS);
-    int value = GetParsedInt(dType);
-    //    qDebug() << "DECLARING CONSTANT " <<name.toUpper();
+    long value = GetParsedInt(dType);
+    if (type=="address") {
+        // Force address to be unsigned int
+        value = (unsigned int)value;
+//        qDebug() << "PARSER const : "<<value << Util::numToHex(value);
+    }
     if (m_symTab->exists(name))
         ErrorHandler::e.Error("Symbol '"+name+"' is already defined.", m_currentToken.m_lineNumber);
     m_symTab->m_constants[name.toUpper()] = QSharedPointer<Symbol>(new Symbol(name.toUpper(),type.toUpper(),value));

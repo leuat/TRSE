@@ -4,9 +4,7 @@ program Keys;
 var
 	key, prev : integer aligned;
 	txt : array[255] of byte = (0);
-	
 	// Small program that displays input key code on the screen
-	
 	
 begin
 	key:=10;

@@ -18,6 +18,10 @@ public:
     }
     virtual TokenType::Type getPointerType() override { return TokenType::Type::LONG;}
 
+    virtual int addressBusBits() override {
+        return 32;
+    }
+
     QString CompressFile(QString fileName) override {
         QString old = fileName;
         FC8 fc;
