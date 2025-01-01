@@ -7,6 +7,9 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
     m_codeGen = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
     m_codeGen->dontOutputLineNumbers();
 
+    m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+
+
     if (m_projectIni->getdouble("override_target_settings")==1) {
         Syntax::s.m_currentSystem->m_programStartAddress = Util::NumberFromStringHex(m_projectIni->getString("override_target_settings_org"));
     }

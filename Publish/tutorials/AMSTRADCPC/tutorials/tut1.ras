@@ -26,8 +26,6 @@ var
 	image : incbin("resources/images/trse.bin");
 	palette : incbin("resources/images/trse_palette.bin");
 	
-	
-	
 begin
 	
 	// Set 160x200 16-color mode
