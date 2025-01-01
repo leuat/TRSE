@@ -46,8 +46,8 @@ jobs:
         run: |
           ls
           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-          security create-keychain -p hurra build.keychain security default-keychain -s build.keychain
-          security unlock-keychain -p hurra build.keychain
+          #security create-keychain -p hurra build.keychain security default-keychain -s build.keychain
+          #security unlock-keychain -p hurra build.keychain
           security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
           /usr/bin/codesign --force -s "Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)" Publish/publish_mac/trse/trse.app -v
