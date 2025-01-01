@@ -56,6 +56,7 @@ jobs:
           echo "4"
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
           echo "Code signing:"
+          security find-identity -v
           /usr/bin/codesign --force -s "Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)" Publish/publish_mac/trse/trse.app -v
 
       - uses: ColinPitrat/update-release@master
