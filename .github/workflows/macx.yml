@@ -44,13 +44,8 @@ jobs:
           MACOS_CERTIFICATE: ${{ secrets.MACOS_CERTIFICATE }}
           MACOS_CERTIFICATE_PWD: ${{ secrets.MACOS_CERTIFICATE_PWD }}
         run: |
-          echo $MACOS_CERTIFICATE
-          echo $MACOS_CERTIFICATE_PWD
           echo $MACOS_CERTIFICATE | base64 --decode > certificate.p12
-          ls -l certificate*
-          echo "catting"
           cat certificate.p12 
-          echo "catting done"
           security create-keychain -p hurra build.keychain 
           echo "2"
           security default-keychain -s build.keychain
