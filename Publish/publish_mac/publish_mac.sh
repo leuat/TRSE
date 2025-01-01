@@ -3,7 +3,8 @@ rm -rf trse
 mkdir trse
 if [ "$1" = "nightly" ]
 then
-  cp -r ../../trse.app trse/
+    cp -r ../../trse.app trse/
+    macdeployqt . -codesign="Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)"
 else
     cp -r ../../Release/trse.app trse/
 fi
@@ -19,7 +20,7 @@ cp -r ../project_templates trse/trse.app/
 cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
-  macdeployqt . -codesign="Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)"
+  #macdeployqt . -codesign="Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)"
 else
   rm *.ini
   ~/Qt/6.7.2/macos/bin/macdeployqt . -codesign="Developer ID Application: Nicolaas Groeneboom (F3JQNS6U34)"
