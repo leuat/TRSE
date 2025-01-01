@@ -28,7 +28,7 @@
 
 #define MAJOR 0
 #define FEATURE 17
-#define NIGHTLY 451
+#define NIGHTLY 452
 
 #define VERSION STR(MAJOR) "." STR(FEATURE) "." STR(NIGHTLY)
 
