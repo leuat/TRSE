@@ -20,10 +20,10 @@ cd trse/trse.app
 if [ "$1" = "nightly" ]
 then
     echo "nada"
-    macdeployqt . -codesign="$1"
+    macdeployqt . -codesign="$2"
 else
   rm *.ini
-  ~/Qt/6.7.2/macos/bin/macdeployqt . -codesign="$2"
+  ~/Qt/6.7.2/macos/bin/macdeployqt . -codesign="$1"
 fi
 cd ../../
 
