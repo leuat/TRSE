@@ -86,21 +86,20 @@ void RandomList() {
 
 int main(int argc, char *argv[])
 {
-    // Execute CLI
 
-//    Perlin();
-
+#ifdef _WIN32
+    // Make sure that stdout attaches itself to the console window on win32 for cli stuff
+    if (AttachConsole(ATTACH_PARENT_PROCESS)) {
+        freopen("CONOUT$", "w", stdout);
+        freopen("CONOUT$", "w", stderr);
+    }
+#endif
     if (argc>=2) {
         if (QString(argv[1])=="-cli") {
             ClascExec ras(argc, argv);
             return ras.Perform();
         }
     }
-//    CreateVICCharset();
-//    CreateMergedTorus();
-    // Start main application
-  //  RandomList();
-
     QApplication a(argc, argv);
     a.setOrganizationDomain("lemonspawn.com");
     a.setApplicationName("TRSE");
