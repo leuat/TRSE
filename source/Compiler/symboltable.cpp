@@ -494,11 +494,15 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
         if (pass==1)
             for (auto r:m_units)
-            if (m_symbols.contains(r+"_"+name) )
-                ErrorHandler::e.Error("Could not find global variable '<font color=\"#FF8080\">" + name + "'</font>. If you declared '<font color=\"#FF8080\">"+name+"</font>' as a global procedure variable within a class, then please declare it as '<font color=\"#FF8080\">"+r+"::"+name+"'</font>.", lineNumber);
+                if (m_symbols.contains(r+"_"+name) ) {
+                    ErrorHandler::e.Error("Could not find global variable '<font color=\"#FF8080\">" + name + "'</font>. If you declared '<font color=\"#FF8080\">"+name+"</font>' as a global procedure variable within a class, then please declare it as '<font color=\"#FF8080\">"+r+"::"+name+"'</font>.", lineNumber);
+                }
 
 
-        similarSymbol = similarSymbol.remove(m_gPrefix);
+        similarSymbol = similarSymbol.remove(m_gPrefix).remove(Syntax::s.m_currentSystem->m_renamedVariablePrefix);
+        if (m_constants.contains(similarSymbol))
+            similarSymbol = similarSymbol.remove(Syntax::s.m_currentSystem->m_renamedVariablePrefix.toUpper());
+        name = name.remove(Syntax::s.m_currentSystem->m_renamedVariablePrefix);
         QString em = "";
         if (similarSymbol!="") {
             em+="Did you mean '<font color=\"#A080FF\">"+similarSymbol+"</font>'?<br>";

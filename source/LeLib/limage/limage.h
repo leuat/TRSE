@@ -73,6 +73,7 @@ public:
     bool editPalette = true;
     bool displayColors = true;
     bool displayCmbColors = true;
+    bool spritepadImport = false;
 
     bool exportc = false;
     bool importc = false;
@@ -399,6 +400,8 @@ public:
         return QStringList() <<"Tiles 1"<<"Tiles 2"<<"Tiles 3"<<"Tiles 4"<<"Sprites 1"<<"Sprites 2"<<"Sprites 3"<<"Sprites 4";;
     }
 
+
+    virtual void ImportSpritepad(QString filename) {}
 
     virtual void ExportRGB8Palette(QString filename);
 

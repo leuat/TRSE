@@ -897,6 +897,7 @@ void FormImageEditor::UpdatePalette()
     ui->btnImportBin->setVisible(m_work.m_currentImage->m_image->m_supports.binaryLoad);
 
 
+    ui->btnSpritepad->setVisible(m_work.m_currentImage->m_image->m_supports.spritepadImport);
 
     ui->btnExportC->setVisible(m_work.m_currentImage->m_image->m_supports.exportc);
     ui->btnImportC->setVisible(m_work.m_currentImage->m_image->m_supports.importc);
@@ -2793,4 +2794,20 @@ void FormImageEditor::on_pushButton_2_clicked()
 }
 */
 
+
+
+void FormImageEditor::on_btnSpritepad_clicked()
+{
+    QString ttr  = "Import spritepad file";
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    ttr.toStdString().c_str(), m_projectPath, "*.spm");
+    if (filename=="")
+        return;
+
+    if (!QFile::exists(filename))
+        return;
+
+    m_work.m_currentImage->m_image->ImportSpritepad(filename);
+
+}
 

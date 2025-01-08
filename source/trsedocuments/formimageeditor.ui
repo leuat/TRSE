@@ -374,7 +374,7 @@
                   </size>
                  </property>
                  <property name="currentIndex">
-                  <number>0</number>
+                  <number>1</number>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -1010,45 +1010,21 @@
                   </attribute>
                   <layout class="QGridLayout" name="gridLayout_3">
                    <item row="0" column="0">
-                    <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0">
-                     <item row="10" column="0">
-                      <widget class="QPushButton" name="btnImportC">
-                       <property name="text">
-                        <string>Import .c</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="5" column="0">
+                    <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0" columnstretch="0">
+                     <item row="6" column="0">
                       <widget class="QPushButton" name="btnExportKoala">
                        <property name="text">
                         <string>Export koala</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="8" column="0">
-                      <widget class="QPushButton" name="btnNew">
+                     <item row="4" column="0">
+                      <widget class="QPushButton" name="btnExportBin">
                        <property name="toolTip">
-                        <string>Clear this image</string>
+                        <string>Export to C64 binary format (or CBM PRG Studio)</string>
                        </property>
                        <property name="text">
-                        <string>Clear</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="9" column="0">
-                      <widget class="QPushButton" name="btnPalette">
-                       <property name="toolTip">
-                        <string>Clear this image</string>
-                       </property>
-                       <property name="text">
-                        <string>Palette</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="11" column="0">
-                      <widget class="QPushButton" name="btnExportC">
-                       <property name="text">
-                        <string>Export .c</string>
+                        <string>Export bin</string>
                        </property>
                       </widget>
                      </item>
@@ -1062,14 +1038,21 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="0">
-                      <widget class="QPushButton" name="btnImportKoala">
+                     <item row="11" column="0">
+                      <widget class="QPushButton" name="btnImportC">
                        <property name="text">
-                        <string>Import koala</string>
+                        <string>Import .c</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="0">
+                     <item row="7" column="0">
+                      <widget class="QPushButton" name="btnExportMovie">
+                       <property name="text">
+                        <string>Export movie</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="3" column="0">
                       <widget class="QPushButton" name="btnImportBin">
                        <property name="toolTip">
                         <string>Import binary data (from CBM PRG studio etc). Plain C64 binary format.</string>
@@ -1079,41 +1062,14 @@
                        </property>
                       </widget>
                      </item>
-                     <item row="7" column="0">
+                     <item row="8" column="0">
                       <widget class="QPushButton" name="btnExportCompressed">
                        <property name="text">
                         <string>Export compressed</string>
                        </property>
                       </widget>
                      </item>
-                     <item row="6" column="0">
-                      <widget class="QPushButton" name="btnExportMovie">
-                       <property name="text">
-                        <string>Export movie</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="3" column="0">
-                      <widget class="QPushButton" name="btnExportBin">
-                       <property name="toolTip">
-                        <string>Export to C64 binary format (or CBM PRG Studio)</string>
-                       </property>
-                       <property name="text">
-                        <string>Export bin</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="0">
-                      <widget class="QPushButton" name="btnImport">
-                       <property name="toolTip">
-                        <string>Imports a png/jpg into a c64 image of any type</string>
-                       </property>
-                       <property name="text">
-                        <string>Import image</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="12" column="0">
+                     <item row="13" column="0">
                       <spacer name="verticalSpacer_2">
                        <property name="orientation">
                         <enum>Qt::Vertical</enum>
@@ -1125,6 +1081,57 @@
                         </size>
                        </property>
                       </spacer>
+                     </item>
+                     <item row="0" column="0">
+                      <widget class="QPushButton" name="btnImport">
+                       <property name="toolTip">
+                        <string>Imports a png/jpg into a c64 image of any type</string>
+                       </property>
+                       <property name="text">
+                        <string>Import image</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="5" column="0">
+                      <widget class="QPushButton" name="btnImportKoala">
+                       <property name="text">
+                        <string>Import koala</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="12" column="0">
+                      <widget class="QPushButton" name="btnExportC">
+                       <property name="text">
+                        <string>Export .c</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="9" column="0">
+                      <widget class="QPushButton" name="btnNew">
+                       <property name="toolTip">
+                        <string>Clear this image</string>
+                       </property>
+                       <property name="text">
+                        <string>Clear</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="10" column="0">
+                      <widget class="QPushButton" name="btnPalette">
+                       <property name="toolTip">
+                        <string>Clear this image</string>
+                       </property>
+                       <property name="text">
+                        <string>Palette</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="2" column="0">
+                      <widget class="QPushButton" name="btnSpritepad">
+                       <property name="text">
+                        <string>Import spritepad</string>
+                       </property>
+                      </widget>
                      </item>
                     </layout>
                    </item>

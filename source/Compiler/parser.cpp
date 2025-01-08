@@ -4321,7 +4321,7 @@ QVector<QSharedPointer<Node>> Parser::Declarations(bool isMain, QString blockNam
 QVector<QSharedPointer<Node>> Parser::ConstDeclaration()
 {
     Eat(TokenType::CONSTANT);
-    QString name = m_currentToken.m_value;
+    QString name = VerifyVariableName(m_currentToken.m_value);
     Eat();
     Eat(TokenType::COLON);
     QString type = "";
@@ -5402,6 +5402,7 @@ void Parser::HandleMacro()
 
 }
 
+
 void Parser::HandlePerlinNoise()
 {
     QString name = m_currentToken.m_value;
@@ -5429,7 +5430,6 @@ void Parser::HandlePerlinNoise()
     SimplexNoise sn;
     //    qDebug() << "PARSER:::" <<pow;
     sn.CreateNoiseData(file,w,h,oct,pers,scalex,scaley,amp,pow);
-
 }
 
 void Parser::HandleCallMacro(QString name, bool ignore)

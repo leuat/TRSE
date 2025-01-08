@@ -1,5 +1,5 @@
 #include "limagesprites2.h"
-
+#include <QJsonDocument>
 
 LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_type = LImage::Type::Sprites2;
@@ -20,6 +20,7 @@ LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
   //  m_GUIParams[col4] = "Multicolor 1";
 
     m_exportParams.clear();
+    m_supports.spritepadImport = true;
     m_supports.displayCharOperations = false;
     m_footer.set(LImageFooter::POS_DISPLAY_MULTICOLOR,0);
 
@@ -295,6 +296,13 @@ uchar LSprite::getPixel(double x, double y, uchar bitMask)
 
 }
 
+void LImageSprites2::ImportSpritepad(QString filename)
+{
+    auto val = Util::loadTextFile(filename);
+    QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+
+}
+
 
 
 void LImageSprites2::SaveBin(QFile& file)
@@ -488,6 +496,7 @@ void LImageSprites2::ToggleSpriteMulticolor()
     InitPens();
 
 }
+
 // Transforms x/y, flips
 void LImageSprites2::MegaTransform(int flip, int ix, int iy)
 {
@@ -516,7 +525,7 @@ void LImageSprites2::MegaTransform(int flip, int ix, int iy)
     int step=1;
     if (m_bitMask==0b11) step=2;
 
-    for (float y=0;y<wy;y++) {
+    for (float y = 0; y < wy;y++) {
         for (float x=0;x<wx;x+=step) {
 
             double i = ((x+ddx)/(wx));

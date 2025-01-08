@@ -3001,7 +3001,7 @@ void Methods6502::LoHi(Assembler *as, int type)
             as->Asm("lda " + m_node->m_params[0]->getAddress()+"+2");
         return;
     }
-    if (m_node->m_params[0]->getType(as)==TokenType::ADDRESS) {
+    if (m_node->m_params[0]->getType(as)==TokenType::ADDRESS || m_node->m_params[0]->getType(as)==TokenType::INCBIN) {
         if (type==0)
             as->Asm("lda #<" + m_node->m_params[0]->getAddress());
         if (type==1)
