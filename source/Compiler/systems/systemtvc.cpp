@@ -62,11 +62,11 @@ void SystemTVC::Assemble(QString &text, QString filename, QString currentDir, QS
 
 //    bas[19] = 0xf5;
 
-    int len = d.size()-20;//+bas.size();
 
     QByteArray h;
     h.resize(128);
     h.fill(0);
+    int len = d.size()+bas.size()+h.size();
     uint bsize = (len)>>7;
 
     h[0] = 0x11;
