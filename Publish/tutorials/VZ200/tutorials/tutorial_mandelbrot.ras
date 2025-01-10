@@ -1,6 +1,6 @@
 program Tutorial_Mandelbrot;
 
-@use "screen"
+@use "Screen"
 @use "memory"
 @use "smallfloat"
 

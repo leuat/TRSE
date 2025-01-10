@@ -150,3 +150,17 @@ void SystemVZ200::PostProcess(QString &text, QString file, QString currentDir)
 
 
 }
+
+void SystemVZ200::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+    bool isMame = m_settingsIni->getString("vz200_emulator").toLower().endsWith("mame");
+    if (isMame) {
+        params << "vz200" << "-dump"<<(filename+".vz");
+        params << ApplyDefaultMameParams();
+        qDebug() << params;
+     //   params  /*<<"-autoboot_delay"<< "1"*/ <<"-autoboot_command"<< "run\\n";
+        return;
+    }
+
+    params<< "-f"<<filename+".vz";
+
+}

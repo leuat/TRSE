@@ -87,6 +87,14 @@ void SystemTVC::Assemble(QString &text, QString filename, QString currentDir, QS
 
 void SystemTVC::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
     //    $MAME tim011 -window -v -r 720x512 -switchres -flop1 $FLOPPY.img 1>/dev/null &
+    if (m_settingsIni->getString("TVC_emulator").toLower().contains("xemu-xtvc")) {
+        params <<filename+".cas";
+
+        m_requireEmulatorWorkingDirectory = true;
+
+        return;
+    }
+
 #ifndef __APPLE__
 
     params <<filename+".cas";
@@ -100,7 +108,6 @@ void SystemTVC::applyEmulatorParameters(QStringList &params, QString debugFile, 
 //    qDebug() << params;
 
 #endif
-  //  params <<"tim011" <<"-window" <<"-v"<<"-r"<<"720x512"<<"-switchres" <<"-flop1"  <<filename+".img";
 
     m_requireEmulatorWorkingDirectory = true;
 }

@@ -1,5 +1,5 @@
 program Twister;
-@use "screen"
+@use "Screen"
 @use "memory"
 
 var  

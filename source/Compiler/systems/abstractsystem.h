@@ -60,6 +60,9 @@ public:
     bool m_useOctals = false;
 
 
+    QStringList ApplyDefaultMameParams();
+
+
     virtual TokenType::Type getSystemPointerArrayType() {
         return TokenType::POINTER;
     }

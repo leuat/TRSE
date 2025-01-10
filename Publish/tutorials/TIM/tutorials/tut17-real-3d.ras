@@ -5,7 +5,7 @@ program Image;
 @use "system/screen"
 @use "system/graphics"
 @use "benchmark"
-@use "misc"
+@use "misc"//-----------------------------------------
 
 //-----------------------------------------
 // uncomment JUST ONE of these three !
@@ -69,7 +69,7 @@ begin
 	Lib3d::FlipPointPointers(0);
 	// Rotate x,y and z with some random time value
 	Matrix::RotateX(#matX, time*4);
-	Matrix::RotateZ(#matY, time*3);
+	Matrix::RotateY(#matY, time*3);
 	Matrix::RotateZ(#matZ, time*2);
 
 	// Mul X and Y to a temp mat T	

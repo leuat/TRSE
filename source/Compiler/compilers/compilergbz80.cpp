@@ -40,7 +40,7 @@ void CompilerGBZ80::Connect()
 
     m_assembler->m_source <<m_assembler->m_sprram->m_source;
 
-    m_assembler->m_source <<"nada_wram_padding : ds "+Util::numToHex(0x100-m_assembler->m_sprram->m_dataSize);
+    m_assembler->m_source <<"nada_wram_padding: ds "+Util::numToHex(0x100-m_assembler->m_sprram->m_dataSize);
 
 
     //    m_assembler->m_wram->m_source.insert(0,"		SECTION	\"WRAM\",WRAM0[$C100]"		);

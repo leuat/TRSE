@@ -16,10 +16,7 @@ public:
     virtual QString getEmulatorName() override {
         return m_settingsIni->getString("vz200_emulator");
     }
-    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
-        params<< "-f"<<filename+".vz";
-
-    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 
 };
 

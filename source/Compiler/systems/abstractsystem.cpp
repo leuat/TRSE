@@ -17,6 +17,15 @@ QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
 }
 
+QStringList AbstractSystem::ApplyDefaultMameParams()
+{
+    QStringList params;
+    params <<  "-resolution0" << "640x480@60" <<"-window";
+    //    params <<"-nothrottle";
+    params << "-skip_gameinfo";
+    return params;
+}
+
 QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
     QString old = fileName;
     QByteArray in = Util::loadBinaryFile(fileName);

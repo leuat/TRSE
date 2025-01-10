@@ -34,10 +34,11 @@
 
 class C64Key {
 public:
-    QString m_name;
-    QString m_key;
-    unsigned char m_value;
-    unsigned char m_row, m_column;
+    QString m_name = "";
+    QString m_key = "";
+    unsigned char m_value = 0;
+    unsigned char m_row = 0;
+    unsigned char m_column = 0;
 
     C64Key() {}
     C64Key(QString name, QString key, int value, int row, int column) {
