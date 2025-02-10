@@ -75,7 +75,7 @@
 	const KRIGHT:		integer = $0806;	// Cursor right key
 	const KESCASPE:		integer = $1006;	// Escape key
 	const KEQUALS:		integer = $2006;	// = key
-	const KASTERISK:	integer = $4006;	// Asterisk key
+	const KPLUS:	integer = $4006;	// + key
 	const KFORWARDSLASH:integer = $8006;	// / key
 
 //	ROW7 =	Sto	Q	Cdr	Spc	2	Ctr	Lar	1
