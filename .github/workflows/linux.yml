@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Ideally we would like to do it once for all builds,
       # but this is complicated as we want to allow to trigger a nightly by
       # pushing the tag, so this can't be in nightly.yml. One option would be to
@@ -23,7 +23,7 @@ jobs:
           let version=${version}+1
           sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
           version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
-          echo "::set-output name=TRSE_VERSION::${version}"
+          echo "TRSE_VERSION=${version}" >> $GITHUB_OUTPUT
       - name: Commit & Push new version
         uses: actions-js/push@master
         with:
@@ -36,9 +36,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install qtbase5-dev qt5-qmake qtdeclarative5-dev
           # For 'Verify all' tests
-          # dbus-x11, at-spi2-core, libavformat58, libswscale5 and libswresample3 seem to be required by vice yet not pulled by its package
+          # dbus-x11, at-spi2-core, libavformat-dev, libswscale-dev and libswresample-dev seem to be required by vice yet not pulled by its package
           # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
-          sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat58 libswscale5 libswresample3 libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
+          sudo apt-get install lz4 python3 xvfb vice dosbox nasm dbus-x11 at-spi2-core libavformat-dev libswscale-dev libswresample-dev libsdl2-dev libfreetype6-dev zlib1g-dev libpng-dev
 
       - name: Build and configure assemblers and emulators (vasm, rgbasm, VICE, cap32)
         run: |
@@ -134,13 +134,13 @@ jobs:
       - name: Build tar.gz
         run: cd Publish/publish_linux && ./publish nightly
       - name: Publish tar.gz
-        uses: ColinPitrat/update-release@master
+        uses: softprops/action-gh-release@v2
         with:
-          release: nightly
-          message: Nightly build
+          name: nightly
           body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_linux/trse_linux64.tar.gz
           prerelease: false
+          make_latest: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Verify tutorials

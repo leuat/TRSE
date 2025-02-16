@@ -11,7 +11,7 @@ jobs:
     runs-on: windows-2019
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Increment version. Ideally we would like to do it once for all builds,
       # but this is complicated as we want to allow to trigger a nightly by
       # pushing the tag, so this can't be in nightly.yml. One option would be to
@@ -25,13 +25,13 @@ jobs:
           let version=${version}+1
           sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
           version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
-          echo "::set-output name=TRSE_VERSION::${version}"
-      - uses: microsoft/setup-msbuild@v1
+          echo "TRSE_VERSION=${version}" >> $GITHUB_OUTPUT
+      - uses: microsoft/setup-msbuild@v2
 
-      - uses: jurplel/install-qt-action@v2
+      - uses: jurplel/install-qt-action@v4
         with:
           version: '6.0.1'
-          tools: 'tools_ifw,4.0.0,qt.tools.ifw.40 tools_qtcreator,9.0.0,qt.tools.qtcreator'
+          tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
 
 
       - name: Build TRSE
@@ -104,13 +104,13 @@ jobs:
           7z a trse_win.zip trse
 
       - name: Publish zip
-        uses: ColinPitrat/update-release@master
+        uses: softprops/action-gh-release@v2
         with:
-          release: nightly
-          message: Nightly build
+          name: nightly
           body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_win/trse_win.zip
           prerelease: false
+          make_latest: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build notification
