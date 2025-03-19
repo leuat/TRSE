@@ -10,7 +10,7 @@ jobs:
     runs-on: macos-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Increment version. Ideally we would like to do it once for all builds,
       # but this is complicated as we want to allow to trigger a nightly by
       # pushing the tag, so this can't be in nightly.yml. One option would be to
@@ -25,9 +25,9 @@ jobs:
           # backup file, empty string disables backup)
           sed -i '' "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
           version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
-          echo "::set-output name=TRSE_VERSION::${version}"
+          echo "TRSE_VERSION=${version}" >> $GITHUB_OUTPUT
       - uses: actions/setup-node@v4
-      - uses: jurplel/install-qt-action@v3
+      - uses: jurplel/install-qt-action@v4
         with:
           aqtversion: '==3.1.*'
           version: '6.6.0'
@@ -53,13 +53,13 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
           security find-identity -v
           cd Publish/publish_mac && ./publish_mac.sh nightly $DEVELOPER_ID
-      - uses: ColinPitrat/update-release@master
+      - uses: softprops/action-gh-release@v2
         with:
-          release: nightly
-          message: Nightly build
+          name: nightly
           body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
           files: Publish/publish_mac/trse_osx.tar.gz
           prerelease: false
+          make_latest: true
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build notification
