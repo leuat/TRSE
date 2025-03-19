@@ -13,9 +13,11 @@ extern "C" {
     #include "source/LeLib/util/zx0/zx0.h"
 }
 QMap<SystemLabel::Type, QColor> AbstractSystem::m_labelColors;
+QMap<QString, QString> AbstractSystem::m_systemParams;
 
 AbstractSystem::AbstractSystem(AbstractSystem *a) {
 }
+
 
 QStringList AbstractSystem::ApplyDefaultMameParams()
 {

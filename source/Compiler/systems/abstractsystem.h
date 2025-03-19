@@ -45,7 +45,7 @@ public:
     }
     QStringList m_registers;
     AbstractSystem(AbstractSystem* a);
-    QMap<QString, QString> m_systemParams;
+    static QMap<QString, QString> m_systemParams;
     // Base types allowed for the current system
     QStringList m_allowedBaseTypes = QStringList() <<"BYTE"<<"ADDRESS"<<"INTEGER"<<"POINTER"<<"ARRAY"<<"BOOLEAN"<<"STRING";
     QStringList m_renameVariables; // Disallowed variables for a given system - will be replaced with a prefix

@@ -10,10 +10,12 @@ void CompilerGBZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> sy
     m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
     m_codeGen = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
     //    m_assembler->Asm("CPU "+m_projectIni->getString("cpu_GBZ80_system"));
-
-    m_assembler->IncludeFile(":resources/code/gameboy/defs.s");
-    m_assembler->IncludeFile(":resources/code/gameboy/gbt_player.inc");
-    m_assembler->IncludeFile(":resources/code/gameboy/init.s");
+    if (Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"] != "1")
+    {
+        m_assembler->IncludeFile(":resources/code/gameboy/defs.s");
+        m_assembler->IncludeFile(":resources/code/gameboy/gbt_player.inc");
+        m_assembler->IncludeFile(":resources/code/gameboy/init.s");
+    }
 
 
 

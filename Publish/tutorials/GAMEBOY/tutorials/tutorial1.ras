@@ -1,5 +1,4 @@
 program Tutorial1_Hello_World;
-
 @use screens
 var  
 	const charBank : byte = 2;

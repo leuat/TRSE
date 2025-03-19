@@ -55,6 +55,8 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
     if (m_projectIni->getString("qemu").startsWith("qemu")) {
         m_parser.m_preprocessorDefines["QEMU"] = "1";
     }
+
+    Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"] = "0";
     m_parser.m_isTRU = m_isTRU;
     Parser::s_usedTRUs.clear(); // None TRU's are marked
     Parser::s_usedTRUNames.clear(); // None TRU's are marked

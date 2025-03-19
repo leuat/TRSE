@@ -3153,6 +3153,7 @@ void Parser::PreprocessSingle() {
             Eat(TokenType::PREPROCESSOR);
             Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"]="1";
             Data::data.demomode = true;
+            qDebug() << Syntax::s.m_currentSystem->m_systemParams["ignoresystemheaders"];
         }
 
         else if (m_currentToken.m_value.toLower() =="userdata") {
