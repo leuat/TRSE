@@ -892,7 +892,7 @@ void Asm6502::OptimisePassStaLdx(QString x)
     int j;
     for (int i=0;i<m_source.count()-1;i++) {
         QString l0 = getLine(i);
-        if (l0.contains("sta")) {
+        if (l0.contains("sta ")) {
             QString l1 = getNextLine(i,j);
             /*            if (l0==l1) {
                 //qDebug() << "Removing " <<l0;
