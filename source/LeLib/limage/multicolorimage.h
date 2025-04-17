@@ -151,7 +151,7 @@ public:
     void ToQImage(LColorList& lst, QImage& img, double zoom, QPointF center) override;
 
     void Release() override {}
-    virtual void RenderEffect(QMap<QString, float> params) override;
+    virtual void RenderEffect(QHash<QString, float> params) override;
 
     void ApplyToLabel(QLabel* l) override {}
 

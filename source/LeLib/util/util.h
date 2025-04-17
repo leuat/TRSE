@@ -66,7 +66,7 @@ class Util {
 public:
 
     static QElapsedTimer globalTimer;
-    static QMap<QString, long> sm_fileSizes;
+    static QHash<QString, long> sm_fileSizes;
 
 
     static char** StringListToChar(QStringList lst);

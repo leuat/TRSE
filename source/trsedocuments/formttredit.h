@@ -25,7 +25,7 @@ public:
     int m_currentInstrument = -1;
     QVector<WidgetPattern*> m_curPatterns;
     QVector<int> m_curPatternValues;
-    QMap<QString,QString> m_instruments;
+    QHash<QString,QString> m_instruments;
     TTRPlayer m_player;
 
     void Destroy() override {}

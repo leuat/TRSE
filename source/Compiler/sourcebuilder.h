@@ -35,7 +35,7 @@ public:
 
     QSharedPointer<CIniFile> m_iniFile, m_projectIniFile;
 
-    QMap<QString,QStringList> m_options;
+    QHash<QString,QStringList> m_options;
 
     bool m_buildSuccess = false;
     bool m_assembleSuccess = false;

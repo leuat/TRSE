@@ -87,7 +87,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502(QString file, QString ba
         alreadySet.clear();
     }
 
-    QMap<uchar,QVector<int>> lst;
+    QHash<uchar,QVector<int>> lst;
     QVector<int> lst2;
     for (int y=yp;y<h;y++) {
         for (int x=xp;x<w;x++) {
@@ -230,7 +230,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorOut(QString file, QS
 
 
 
-    QMap<uchar,QVector<int>> lst;
+    QHash<uchar,QVector<int>> lst;
     QVector<int> lst2;
     for (int y=yp;y<h;y++) {
         for (int x=xp;x<w;x++) {
@@ -324,7 +324,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorIn(QString file, QSt
 
 
 
-    QMap<uchar,QVector<int>> lst;
+    QHash<uchar,QVector<int>> lst;
     QVector<int> lst2;
     for (int y=yp;y<h;y++) {
         for (int x=xp;x<w;x++) {
@@ -429,7 +429,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502ColorInAddress(QString fi
 
 
 
-    QMap<uchar,QVector<int>> lst;
+    QHash<uchar,QVector<int>> lst;
     QVector<int> lst2;
     for (int y=yp;y<h;y++) {
         for (int x=xp;x<w;x++) {
@@ -523,7 +523,7 @@ void AbstractDemoEffect::ExportDiffAsUnrolledBitmap6502In(QString file, QString 
         alreadySet.clear();
     }
 
-    QMap<uchar,QVector<int>> lst;
+    QHash<uchar,QVector<int>> lst;
     QVector<int> lst2;
     for (int y=yp;y<h;y++) {
         for (int x=xp;x<w;x++) {

@@ -115,8 +115,8 @@ public:
     QString m_endAssembler = "";
     QString m_override = "_override_";
     bool m_containsMacros = false;
-    QMap<QString, QSharedPointer<Node>> m_procedures;
-    QMap<QString, QString> m_preprocessorDefines;
+    QHash<QString, QSharedPointer<Node>> m_procedures;
+    QHash<QString, QString> m_preprocessorDefines;
     static QStringList s_usedTRUs, s_usedTRUNames;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
     QString m_currentDir, m_currentFileShort;
@@ -146,7 +146,7 @@ private:
     int m_tick = 0;
     QVector<int> div2s = QVector<int>() <<2 <<4<<8<<16<<32<<64<<128<<256<<512<<1024;
     QVector<ParserBlock> m_parserBlocks;
-    QMap<QString, LMacro> m_macros;
+    QHash<QString, LMacro> m_macros;
     QString m_procPrefix = "";
     int m_prevPercent = -1;
     int m_pass = 0, m_acc=0;
@@ -158,7 +158,7 @@ private:
     //bool m_breakSubvar = false;
     QSharedPointer<Node> m_currentProcedureCall;
     QString m_addInitialReferenceToProcedureCall = "";
-    QMap<QString, int> m_fileSizes;
+    QHash<QString, int> m_fileSizes;
 
 
     QStringList m_removedProcedures;
@@ -195,10 +195,10 @@ private:
     bool m_isRecord = false;
     bool m_removeUnusedDecls = false;
     bool m_abort = false;
-    QMap<TokenType::Type, QString> m_typeFlags;
+    QHash<TokenType::Type, QString> m_typeFlags;
     QSharedPointer<Node> m_tree = nullptr;
     QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
-    QMap<QString, QSharedPointer<Node>> m_types;
+    QHash<QString, QSharedPointer<Node>> m_types;
 
     bool m_doNotPrefix = false;
     QStringList m_doNotPrefixSymbols;

@@ -109,7 +109,7 @@ bool NodeProcedure::isBool(Assembler *as)
 
 }
 
-void NodeProcedure::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+void NodeProcedure::ReplaceInline(Assembler* as,QHash<QString, QSharedPointer<Node> > &inp)
 {
     m_procedure->ReplaceInline(as,inp);
 }

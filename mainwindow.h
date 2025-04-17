@@ -186,12 +186,12 @@ private:
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QMap<QString, QSharedPointer<SymbolPointer>> m_symPointers, m_orgSymPointers;
-    QMap<QString, QTreeWidgetItem*> m_treeItems;
+    QHash<QString, QSharedPointer<SymbolPointer>> m_symPointers, m_orgSymPointers;
+    QHash<QString, QTreeWidgetItem*> m_treeItems;
     bool m_isClosingWindows = false;
 
     QSharedPointer<CIniFile> m_iniFile;
-    QMap<QString, QTreeWidgetItem*> m_symbolItems;
+    QHash<QString, QTreeWidgetItem*> m_symbolItems;
     //   CodeEditor m_codeEditor;
     CustomFileSystemModel *fileSystemModel = nullptr;
     QStringList m_commandParams;
@@ -215,8 +215,8 @@ public:
     Tutorials m_tutorials;
     QSharedPointer<QFileSystemWatcher> m_watcher;
 
-    QMap<QString, QIcon> m_icons;
-    QMap<QString, QColor> m_fileColors;
+    QHash<QString, QIcon> m_icons;
+    QHash<QString, QColor> m_fileColors;
 
     TRSEProject m_currentProject;
 

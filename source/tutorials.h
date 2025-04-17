@@ -35,7 +35,7 @@ class Tutorials
 public:
     Tutorials();
     QVector<Tutorial> m_tutorials;
-    QMap<QString, QTreeWidgetItem*> m_roots;
+    QHash<QString, QTreeWidgetItem*> m_roots;
     QVector<FormTutorialItem*> m_widgets;
     void Read(QString );
     void PopulateTreeList(QTreeWidget* tree);

@@ -512,7 +512,7 @@ unsigned int CharsetImage::getCharPixel(int pos,  int pal,int x, int y)
     return 0;
 }
 
-void CharsetImage::RenderEffect(QMap<QString, float> params)
+void CharsetImage::RenderEffect(QHash<QString, float> params)
 {
 
 

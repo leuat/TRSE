@@ -8,7 +8,7 @@ class SystemPET : public SystemMOS6502
 public:
     SystemPET(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj);
     void DefaultValues() override;
-    void InitSystemPreprocessors(QMap<QString, QString>& defines) override;;
+    void InitSystemPreprocessors(QHash<QString, QString>& defines) override;;
 
     int getDefaultBasicAddress() override {
         return 0x401;

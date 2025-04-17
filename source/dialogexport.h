@@ -24,7 +24,7 @@
 
 #include <QDialog>
 #include "source/LeLib/limage/limage.h"
-#include <QMap>
+#include <QHash>
 namespace Ui {
 class DialogExport;
 }
@@ -40,7 +40,7 @@ public:
     ~DialogExport();
 
     LImage* m_image;
-    QMap<QString, QLineEdit*> m_les;
+    QHash<QString, QLineEdit*> m_les;
     bool isOk=true;
     void FillParams();
     void Apply();

@@ -23,7 +23,7 @@
 #define SYMBOLTABLE_H
 
 #include <QString>
-#include <QMap>
+#include <QHash>
 #include <QDebug>
 #include <QStack>
 #include "errorhandler.h"
@@ -113,15 +113,15 @@ private:
 public:
     QString m_currentProcedureClean = "";
     QStringList m_forwardedVariables;
-    QMap<QString, QSharedPointer<Symbol>> m_forwardedSymbols;
-    QMap<QString, QSharedPointer<Symbol>> m_symbols;
-    QMap<QString, QSharedPointer<SymbolTable> > m_records;
-    QMap<QString, QSharedPointer<Symbol>> m_constants;
+    QHash<QString, QSharedPointer<Symbol>> m_forwardedSymbols;
+    QHash<QString, QSharedPointer<Symbol>> m_symbols;
+    QHash<QString, QSharedPointer<SymbolTable> > m_records;
+    QHash<QString, QSharedPointer<Symbol>> m_constants;
     QStringList m_userConstants;
-    QMap<QString, QString> m_extraAtSymbols;
+    QHash<QString, QString> m_extraAtSymbols;
 //    QStack<QString> m_tempPointers;
     Stack m_tempPointers;
-    static QMap<QString,int> s_classSizes;
+    static QHash<QString,int> s_classSizes;
 
     static int pass;
     QStringList m_orderedByDefinition;
@@ -159,7 +159,7 @@ public:
 
     void ExitProcedureScope(bool removeSymbols);
 
-//    QMap<QString,QSharedPointer<SymbolTable> > m_locals;
+//    QHash<QString,QSharedPointer<SymbolTable> > m_locals;
 
     SymbolTable();
     static SymbolTable s;

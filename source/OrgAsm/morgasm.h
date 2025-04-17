@@ -42,10 +42,10 @@ public:
         return m_regs.contains(str.toLower());
     }
 
-    QMap<QString,int> m_codeReg;
-    QMap<QString,int> m_pushPullReg;
-    QMap<QString,int> m_lea;
-    QMap<QString,int> m_lda;
+    QHash<QString,int> m_codeReg;
+    QHash<QString,int> m_pushPullReg;
+    QHash<QString,int> m_lea;
+    QHash<QString,int> m_lda;
     uchar getRegisterCodeFromParams(QString s);
     uchar getPushPullParams(OrgasmLine& ol);
     int getLeaParams(OrgasmLine& ol, int&size);
@@ -54,7 +54,7 @@ public:
     int getParsedValue(OrgasmLine& ol, int& size, int type);
     int getParsedInt(QString p1);
     void LoadCodes(int CPUflavor) override;
-    QMap<QString,QSharedPointer<Op6809>> m_instructions;
+    QHash<QString,QSharedPointer<Op6809>> m_instructions;
     QString m_opCode;
     Op6809* getOpcode(OrgasmLine&ol);
     void Write(QByteArray& d, OrgasmLine&l, int type);

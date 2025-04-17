@@ -25,7 +25,7 @@
 bool SymbolTable::isInitialized = false;
 int SymbolTable::m_currentSid = 0;
 QString Symbol::s_currentProcedure = "";
-QMap<QString,int> SymbolTable::s_classSizes;
+QHash<QString,int> SymbolTable::s_classSizes;
 int SymbolTable::pass = 0;
 QStringList SymbolTable::s_ignoreUnusedSymbolWarning;
 

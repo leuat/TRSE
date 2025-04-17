@@ -162,9 +162,9 @@ public:
     QString m_currentChar;
     QVector<OrgasmLine> m_ol;
     QVector<QString> m_symbolsList, m_constList;
-    QMap<QString, QString> m_extraSymbols; // Variables declared AT
-    QMap<QString, int> m_symbols;
-    QMap<QString, QString> m_constants;
+    QHash<QString, QString> m_extraSymbols; // Variables declared AT
+    QHash<QString, int> m_symbols;
+    QHash<QString, QString> m_constants;
     Opcodes6502 m_opCodes;
     QVector<OrgasmLine> m_olines;
     bool m_success = false;
@@ -174,8 +174,8 @@ public:
 
     OrgasmData::PassType m_passType;
     QByteArray m_data;
-    QMap<QString, QRegularExpression*> m_regs;
-    QMap<int,int> m_lineAddress;
+    QHash<QString, QRegularExpression*> m_regs;
+    QHash<int,int> m_lineAddress;
     QString m_output;
     QString m_prevLabel = "";
 

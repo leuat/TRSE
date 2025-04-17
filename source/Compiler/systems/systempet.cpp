@@ -40,6 +40,6 @@ void SystemPET::DefaultValues()
     m_stripPrg = false;
 }
 
-void SystemPET::InitSystemPreprocessors(QMap<QString, QString> &defines)  {
+void SystemPET::InitSystemPreprocessors(QHash<QString, QString> &defines)  {
     defines["PET_MODEL"] = m_projectIni->getString("petmodel");
 }

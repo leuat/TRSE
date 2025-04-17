@@ -1943,7 +1943,7 @@ void MultiColorImage::ToQImage(LColorList& lst, QImage& img, double zoom, QPoint
     //return img;
 }
 
-void MultiColorImage::RenderEffect(QMap<QString, float> params)
+void MultiColorImage::RenderEffect(QHash<QString, float> params)
 {
     float density = params["density"];
 

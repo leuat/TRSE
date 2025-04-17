@@ -2524,7 +2524,7 @@ QString Parser::CompareAndWashOverloadedProcedure(QString procName, QVector<QSha
         }
     }
 
-    //    QMap<QString, QSharedPointer<Node>> m_procedures;
+    //    QHash<QString, QSharedPointer<Node>> m_procedures;
     return procName+m_override + QString::number(cnt);
 }
 

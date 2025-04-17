@@ -56,7 +56,7 @@ private:
     bool m_isFarAway = false;
 protected:
     Assembler* as = nullptr;
-    QMap< QString,QSharedPointer<Node>> m_inlineParameters;
+    QHash< QString,QSharedPointer<Node>> m_inlineParameters;
     bool m_flag1 = false;
     bool m_isCurrentlyWithinInline = false;
     QString m_useNext="";

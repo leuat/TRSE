@@ -87,7 +87,7 @@ public:
     void Invert() override;
 
 
-    void RenderEffect(QMap<QString, float> params) override;
+    void RenderEffect(QHash<QString, float> params) override;
 
 //    void CopyFrom(LImage* mc) override;
     bool KeyPress(QKeyEvent *e) override;

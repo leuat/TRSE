@@ -54,7 +54,7 @@ public:
 //    QString  BinopTemp(Assembler*as, QSharedPointer<Node> node);
 
     QStack<QString> m_curTemp;
-//    QMap<QString,QString> m_temporaryVariables;
+//    QHash<QString,QString> m_temporaryVariables;
     QVector<QString> m_temporaryVariables;
 
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;

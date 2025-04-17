@@ -21,7 +21,7 @@
 
 #include "nodevardecl.h"
 
-QMap<QString, int> NodeVarDecl::s_mProcStackPos;
+QHash<QString, int> NodeVarDecl::s_mProcStackPos;
 
 
 NodeVarDecl::NodeVarDecl(QSharedPointer<Node> varNode, QSharedPointer<Node> typeNode):Node() {

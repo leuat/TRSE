@@ -58,7 +58,7 @@ public:
     }
 
     bool m_isGlobal = false;
-    void ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp) override;
+    void ReplaceInline(Assembler* as,QHash<QString, QSharedPointer<Node> >& inp) override;
 
     void ReplaceVariable(Assembler* as, QString name, QSharedPointer<Node> node) override;
 

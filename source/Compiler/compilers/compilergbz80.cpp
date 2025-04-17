@@ -70,7 +70,7 @@ bool CompilerGBZ80::SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm)
     int i=0;
     int maxB1  = codeStart;
     int maxV1  = varStart;
-    QMap<int,QSharedPointer<MemoryBlock>> banks;
+    QHash<int,QSharedPointer<MemoryBlock>> banks;
     while (!done) {
         if (lst[i].length()==0) {
             done=++i>=lst.length();

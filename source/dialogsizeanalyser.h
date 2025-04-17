@@ -50,7 +50,7 @@ public:
     void Initialize(SourceBuilder* sb, CIniFile* ini, int fontSize);
     void Build();
     void ReInitialise();
-    QMap<QString, QColor> m_colors;
+    QHash<QString, QColor> m_colors;
     void InitColors();
     void resizeEvent(QResizeEvent *) override;
 

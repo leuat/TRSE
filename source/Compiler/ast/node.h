@@ -77,7 +77,7 @@ protected:
     // Current block information
     static MemoryBlockInfo m_staticBlockInfo;
     // Used to set various states, such as if binary operations are used etc
-    static QMap<QString, bool> flags;
+    static QHash<QString, bool> flags;
 
     bool m_ignoreSuccess = false; // Used for binary expressions
     bool m_classApplied = false;
@@ -174,7 +174,7 @@ public:
 
 
     // Replaces inline variables with the macro parameter
-    virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp);
+    virtual void ReplaceInline(Assembler* as,QHash< QString,QSharedPointer<Node>>& inp);
     virtual void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val);
     virtual void ResetInlineAssembler();
     // Apply type flags to node

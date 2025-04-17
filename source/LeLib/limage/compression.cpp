@@ -1050,7 +1050,7 @@ void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int st
     s<<" asm(\"\n";
     for (int y=0;y<24;y++) {
         QVector<QVector<int>> col;
-        QMap<int,bool> done;
+        QHash<int,bool> done;
         col.resize(256);
         for (int c=0;c<128;c++) {
             for (int x=0;x<40;x++) {

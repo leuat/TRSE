@@ -8,7 +8,7 @@ class PostOptimiser6809 : public PostOptimiser
 public:
     PostOptimiser6809();
     QStringList m_axModifiers;
-    QMap<QString, QString> m_lastMemoryStoredValue;
+    QHash<QString, QString> m_lastMemoryStoredValue;
     void InitRegisters();
 
     QString prevCmd="";

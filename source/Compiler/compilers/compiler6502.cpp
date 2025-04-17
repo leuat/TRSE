@@ -54,10 +54,10 @@ void Compiler6502::Connect()
     */
 }
 
-void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles)
+void Compiler6502::CleanupCycleLinenumbers(QString currentFile, QHash<int, int> &ocycles, QHash<int, int> &retcycles, bool isCycles)
 {
 
-    QMap<int, int> cycles;
+    QHash<int, int> cycles;
 //    int acc = 0;
     if (currentFile=="")
         for (int i: ocycles.keys()) {

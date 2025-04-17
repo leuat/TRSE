@@ -30,10 +30,10 @@ QSharedPointer<MemoryBlock> Node::m_curMemoryBlock = nullptr;
 QString Node::sForceFlag = "";
 Assembler* Node::s_as;
 
-QMap<QString, bool> Node::flags;
+QHash<QString, bool> Node::flags;
 QSharedPointer<SymbolTable>  Node::parserSymTab;
 uint Node::s_nodeCount = 0;
-//QMap<QSharedPointer<Node>, QSharedPointer<Node>> Node::s_uniqueSymbols;
+//QHash<QSharedPointer<Node>, QSharedPointer<Node>> Node::s_uniqueSymbols;
 
 void Node::SwapNodes() {
     if (m_hasSwapped)
@@ -44,7 +44,7 @@ void Node::SwapNodes() {
     m_hasSwapped = true;
 }
 
-void Node::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> >& inp)
+void Node::ReplaceInline(Assembler* as,QHash<QString, QSharedPointer<Node> >& inp)
 {
     if (m_left != nullptr)
         m_left->ReplaceInline(as,inp);

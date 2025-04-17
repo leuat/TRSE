@@ -26,7 +26,7 @@
 #include "nodeprocedure.h"
 #include "nodefactory.h"
 
-QMap<QString, bool> NodeBuiltinMethod::m_isInitialized;
+QHash<QString, bool> NodeBuiltinMethod::m_isInitialized;
 
 
 
@@ -134,7 +134,7 @@ bool NodeBuiltinMethod::isPureVariable() {
     return false;
 }
 
-void NodeBuiltinMethod::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+void NodeBuiltinMethod::ReplaceInline(Assembler* as,QHash<QString, QSharedPointer<Node> > &inp)
 {
     for (int i=0;i<m_params.count();i++) {
         auto n = m_params[i];

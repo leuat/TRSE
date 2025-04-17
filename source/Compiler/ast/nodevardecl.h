@@ -58,7 +58,7 @@ public:
     int m_dataSize=0;
     bool m_chipMem = false;
 
-    static QMap<QString, int> s_mProcStackPos;
+    static QHash<QString, int> s_mProcStackPos;
 
     SidFile sid;
 

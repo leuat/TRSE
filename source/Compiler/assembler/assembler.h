@@ -76,7 +76,7 @@ public:
     QString m_current;
     static int m_labelCount;
 
-    QMap<QString, bool> sNumbersUsed;
+    QHash<QString, bool> sNumbersUsed;
     void push();
     void pop();
 };
@@ -128,8 +128,8 @@ public:
     QSharedPointer<Appendix> m_chipMem;
     QSharedPointer<Appendix> m_hram;
     QSharedPointer<Appendix> m_wram, m_sprram, m_ram;
-    QMap<QString,QSharedPointer<Appendix>> m_banks;
-    QMap<QString, QString> m_lastRegister; // Last registers set
+    QHash<QString,QSharedPointer<Appendix>> m_banks;
+    QHash<QString, QString> m_lastRegister; // Last registers set
     QString m_insertEndBlock = "";
 
 
@@ -156,7 +156,7 @@ public:
     QStringList m_endInsertAssembler;
     QString m_zeropageScreenMemory="$fe";
     QString m_zeropageColorMemory="$fc";
-    QMap<QString, QString> m_replaceValues;
+    QHash<QString, QString> m_replaceValues;
 
     RegisterStack m_regAcc;
     RegisterStack m_regMem;
@@ -172,7 +172,7 @@ public:
     QVector<QString> m_tempZeroPointers; // org temp zp input
     QVector<QString> m_zpStack; // temp zp stack
 
-    QMap<QString, QString> m_defines;
+    QHash<QString, QString> m_defines;
     // Labels for hi/lo integers
     QString ilo = "_i_lo";
     QString ihi = "_i_hi";
@@ -189,8 +189,8 @@ public:
     virtual void EndMemoryBlock();
 
     QString m_term;
-    QMap<QString, Stack> m_stack;
-    QMap<QString, LabelStack> m_labelStack;
+    QHash<QString, Stack> m_stack;
+    QHash<QString, LabelStack> m_labelStack;
     QSharedPointer<SymbolTable> m_symTab;
     QString m_projectDir;
     QVector<QSharedPointer<MemoryBlock>> blocks, userBlocks;
@@ -206,13 +206,13 @@ public:
     // Override call (label) etc
     virtual QString jumpLabel(QString lbl) {return lbl; }
 
-    QMap<int, int> m_cycles, m_blockCycles;
-    QMap<int, int> m_cyclesOut, m_blockCyclesOut;
-    QMap<int,int> m_addressesOut, m_addresses;
+    QHash<int, int> m_cycles, m_blockCycles;
+    QHash<int, int> m_cyclesOut, m_blockCyclesOut;
+    QHash<int,int> m_addressesOut, m_addresses;
 
     int m_currentRamAddress = 0;
 
-    QMap<int, int> m_blockIndent;
+    QHash<int, int> m_blockIndent;
 
     QVector<int> m_cycleCounter;
     QVector<int> m_blockCounter;

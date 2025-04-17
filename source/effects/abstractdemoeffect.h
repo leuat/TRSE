@@ -3,7 +3,7 @@
 
 #include <QImage>
 #include <QThread>
-#include <QMap>
+#include <QHash>
 #include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -38,7 +38,7 @@ public:
     QGridLayout* m_gl = nullptr;
     AbstractDemoEffect(QGridLayout* gl);
     bool m_abort = false;
-    QMap<QString,DemoEffectParam> m_params;
+    QHash<QString,DemoEffectParam> m_params;
     //CharsetImage* m_mc;
     LImage* m_mc = nullptr;
     QVector<int> m_cols;

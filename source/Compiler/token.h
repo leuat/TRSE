@@ -23,7 +23,7 @@
 #define TOKEN_H
 
 #include <QString>
-#include <QMap>
+#include <QHash>
 #include "data_pmm.h"
 #include <QDebug>
 
@@ -62,7 +62,7 @@ public:
 
     static Type getType(QString s);
 
-//    QMap<QString, TokenType::Type> m_stringType;
+//    QHash<QString, TokenType::Type> m_stringType;
 
     QString m_value;
     Type m_type;

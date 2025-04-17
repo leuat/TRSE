@@ -55,7 +55,7 @@ public:
 
     QStringList m_varZeroPointers;
 
-    QMap<QString, CStringItem> m_cstr;
+    QHash<QString, CStringItem> m_cstr;
 
     Opcodes6502 m_opCycles;
 
@@ -70,7 +70,7 @@ public:
     QString m_currentVar="";
 //    QString m_currentLoopVar="";
     //int m_lblIdx = 0;
-    QMap<QString, int> m_lblIdx;
+    QHash<QString, int> m_lblIdx;
 
 
 

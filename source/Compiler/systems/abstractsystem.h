@@ -4,7 +4,7 @@
 #include <QString>
 #include <QFile>
 #include "source/LeLib/util/cinifile.h"
-#include <QMap>
+#include <QHash>
 //#include "source/OrgAsm/orgasm.h"
 #include <QElapsedTimer>
 #include "source/Compiler/token.h"
@@ -45,7 +45,7 @@ public:
     }
     QStringList m_registers;
     AbstractSystem(AbstractSystem* a);
-    static QMap<QString, QString> m_systemParams;
+    static QHash<QString, QString> m_systemParams;
     // Base types allowed for the current system
     QStringList m_allowedBaseTypes = QStringList() <<"BYTE"<<"ADDRESS"<<"INTEGER"<<"POINTER"<<"ARRAY"<<"BOOLEAN"<<"STRING";
     QStringList m_renameVariables; // Disallowed variables for a given system - will be replaced with a prefix
@@ -66,7 +66,7 @@ public:
     virtual TokenType::Type getSystemPointerArrayType() {
         return TokenType::POINTER;
     }
-    QMap<int,int> m_addresses;
+    QHash<int,int> m_addresses;
     bool m_hasVariableColorPalette = false;
     bool m_supportsExomizer = false;
     bool m_allowClasses = false;
@@ -91,7 +91,7 @@ public:
 
 
     virtual QString getArkosTrackerSystemString() {return "";}
-    virtual void InitSystemPreprocessors(QMap<QString, QString>& defines)  {};
+    virtual void InitSystemPreprocessors(QHash<QString, QString>& defines)  {};
     virtual QString CompressFile(QString fileName) {
         return fileName;
     }
@@ -106,7 +106,7 @@ public:
     int m_memoryType = 0;
     QVector<SystemLabel> m_labels;
     int m_memorySize = 65536;
-    static QMap<SystemLabel::Type, QColor> m_labelColors;
+    static QHash<SystemLabel::Type, QColor> m_labelColors;
     QColor m_systemColor = QColor(64,64,128);
 
     QStringList m_allowedGlobalTypeFlags;

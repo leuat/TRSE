@@ -128,11 +128,11 @@ public:
                    tabLevels, tabCharset, tabData, tabSprites, tabEffects, col1,col2,col3,col4};
 
 
-    QMap<QString, float> m_exportParams;
-    QMap<QString, QString> m_exportParamsComments;
+    QHash<QString, float> m_exportParams;
+    QHash<QString, QString> m_exportParamsComments;
     QVector<int> m_ignoreValues;
 
-    QMap<GUIType, QString> m_GUIParams;
+    QHash<GUIType, QString> m_GUIParams;
 
 
     virtual bool isNes() {return false;}
@@ -326,7 +326,7 @@ public:
 
 //    virtual void AddNew(int x, int y) {};
 
-    virtual void RenderEffect(QMap<QString, float> params) {}
+    virtual void RenderEffect(QHash<QString, float> params) {}
 
     virtual void CopyChar();
 

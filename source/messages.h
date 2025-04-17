@@ -24,7 +24,7 @@
 
 #include <QString>
 #include <QStringList>
-#include <QMap>
+#include <QHash>
 #include "source/LeLib/util/cinifile.h"
 #include "source/dialogmessage.h"
 #include <QPixmap>
@@ -74,7 +74,7 @@ public:
     int PROJECT_BUILDER_HELP = 14;
     int ADDRESS_UPDATE = 15;
 
-    QMap<int, Message> m_messages;
+    QHash<int, Message> m_messages;
     QSharedPointer<CIniFile> m_iniFile;
     void LoadFromCIni(QSharedPointer<CIniFile> file);
     void InitMessages();

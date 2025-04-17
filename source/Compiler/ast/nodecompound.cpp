@@ -43,7 +43,7 @@ void NodeCompound::ReplaceVariable(Assembler *as, QString name, QSharedPointer<N
         n->ReplaceVariable(as,name,node);
 }
 
-void NodeCompound::ReplaceInline(Assembler* as,QMap<QString, QSharedPointer<Node> > &inp)
+void NodeCompound::ReplaceInline(Assembler* as,QHash<QString, QSharedPointer<Node> > &inp)
 {
     for (auto n: children)
         n->ReplaceInline(as, inp);

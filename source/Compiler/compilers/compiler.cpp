@@ -188,7 +188,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
 
 void Compiler::CleanupBlockLinenumbers()
 {
-    QMap<int, int> blocks;
+    QHash<int, int> blocks;
 
     for (int i: m_assembler->m_blockIndent.keys()) {
 
@@ -365,7 +365,7 @@ void Compiler::WarningUnusedVariables()
 
 }
 
-void Compiler::ApplyOptions(QMap<QString, QStringList> &opt) {
+void Compiler::ApplyOptions(QHash<QString, QStringList> &opt) {
     for (auto& s: opt.keys()) {
         if (s.toLower()=="define") {
             QStringList lst = opt[s];

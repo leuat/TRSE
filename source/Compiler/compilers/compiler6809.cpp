@@ -44,7 +44,7 @@ void Compiler6809::Connect()
     */
 }
 
-void Compiler6809::CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles)
+void Compiler6809::CleanupCycleLinenumbers(QString currentFile, QHash<int, int> &ocycles, QHash<int, int> &retcycles, bool isCycles)
 {
 }
 

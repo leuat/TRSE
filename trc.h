@@ -3,7 +3,7 @@
 
 #include <QCoreApplication>
 
-#include <QMap>
+#include <QHash>
 #include <QString>
 #include "source/LeLib/util/cinifile.h"
 #include "source/Compiler/sourcebuilder.h"
@@ -13,8 +13,8 @@ class ClascExec {
 public:
     QStringList m_args;
     QSharedPointer<CIniFile> m_project, m_settings;
-    QMap<QString,QString> m_vals;
-    QMap<QString,QStringList> m_options;
+    QHash<QString,QString> m_vals;
+    QHash<QString,QStringList> m_options;
     SourceBuilder* m_builder = nullptr;
     QString m_outputFile = "";
     QApplication* app = nullptr;

@@ -117,7 +117,7 @@ void Syntax::SetupIllegalVariables()
 
 }
 
-void Syntax::SetupBuiltinFunctions(QMap<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem)
+void Syntax::SetupBuiltinFunctions(QHash<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem)
 {
     lst.clear();
 

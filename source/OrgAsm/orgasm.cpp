@@ -810,7 +810,7 @@ void Orgasm::ProcessLong24Data(OrgasmLine &ol)
     }
 
 
-    QMap <QString, int> g;
+    QHash <QString, int> g;
 
 
     QStringList lst = ol.m_expr.split(",");
@@ -1116,7 +1116,7 @@ void Orgasm::SaveSymbolsList(QString filename)
         QFile::remove(filename);
 
     QFile file( filename );
-    QMap<int, bool> isSet;
+    QHash<int, bool> isSet;
     if ( file.open(QIODevice::ReadWrite) )
     {
         QTextStream stream( &file );

@@ -21,7 +21,7 @@
 
 #include "assembler.h"
 #include "source/Compiler/ast/node.h"
-//QMap<QString, bool> LabelStack::sNumbersUsed;
+//QHash<QString, bool> LabelStack::sNumbersUsed;
 
 int Appendix::s_id = 0;
 
@@ -616,8 +616,8 @@ void Assembler::RemoveLinesDebug()
 void Assembler::RemoveUnusedLabels()
 {
     m_removeLines.clear();
-    QMap<QString, bool> labelsUsed;
-    QMap<QString, int> labelLine;
+    QHash<QString, bool> labelsUsed;
+    QHash<QString, int> labelLine;
     int j,k;
     for (int i=0;i<m_source.count()-1;i++) {
         if (nextLineIsLabel(i)) {

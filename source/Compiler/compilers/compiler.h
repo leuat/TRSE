@@ -91,11 +91,11 @@ public:
     void Parse(QString text, QStringList lst, QString fname);
     bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
     void CleanupBlockLinenumbers();
-    virtual void CleanupCycleLinenumbers(QString currentFile, QMap<int, int> &ocycles, QMap<int, int> &retcycles, bool isCycles=true) {}
+    virtual void CleanupCycleLinenumbers(QString currentFile, QHash<int, int> &ocycles, QHash<int, int> &retcycles, bool isCycles=true) {}
     virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr);
 
     void SaveBuild(QString filename);
-    void ApplyOptions(QMap<QString,QStringList>& opt);
+    void ApplyOptions(QHash<QString,QStringList>& opt);
 
 private:
 

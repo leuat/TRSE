@@ -447,7 +447,7 @@ void RayTracer::Compile2DList(QString fileOutput, int base, int maxx, QVector<QP
     QString unrollData = "procedure "+name+"_unroll();\n";
     unrollData+="begin asm(\" \n";
 
-    QMap<int, int> types;
+    QHash<int, int> types;
     MultiColorImage* mc = dynamic_cast<MultiColorImage*>(mask);
 
     for (AbstractRayObject* aro : m_objects) {

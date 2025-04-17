@@ -47,7 +47,7 @@ class NodeBuiltinMethod : public Node {
 public:
     QString m_procName;
     QVector<QSharedPointer<Node>> m_params;
-    static QMap<QString, bool> m_isInitialized;
+    static QHash<QString, bool> m_isInitialized;
     BuiltInFunction* m_function = nullptr;
 
     void VerifyParams(Assembler* as);
@@ -71,7 +71,7 @@ public:
     bool isPureVariable() override;
 
 
-    virtual void ReplaceInline(Assembler* as,QMap< QString,QSharedPointer<Node>>& inp) override;
+    virtual void ReplaceInline(Assembler* as,QHash< QString,QSharedPointer<Node>>& inp) override;
 
 
     void ExecuteSym(QSharedPointer<SymbolTable>  symTab) override {

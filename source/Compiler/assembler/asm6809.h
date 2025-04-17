@@ -41,7 +41,7 @@ public:
 
     QStringList m_varZeroPointers;
 
-//    QMap<QString, CStringItem> m_cstr;
+//    QHash<QString, CStringItem> m_cstr;
 
 
     int m_curZeroPointer=0;
@@ -55,7 +55,7 @@ public:
     QString m_currentVar="";
 //    QString m_currentLoopVar="";
     //int m_lblIdx = 0;
-    QMap<QString, int> m_lblIdx;
+    QHash<QString, int> m_lblIdx;
 
 
 

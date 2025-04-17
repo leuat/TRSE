@@ -30,7 +30,7 @@
 class LImageEffect {
   public:
     QString m_name;
-    QMap<QString, float> m_params;
+    QHash<QString, float> m_params;
 
     LImageEffect(QString name) {
         m_name=name;

@@ -36,7 +36,7 @@ private:
     int m_avg=0;
     void LoadScript(QString file);
     void UpdateGlobals();
-//    QMap<QString, Material> m_materials;
+//    QHash<QString, Material> m_materials;
 
 
 public slots:

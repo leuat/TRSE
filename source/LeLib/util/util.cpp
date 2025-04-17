@@ -1107,7 +1107,7 @@ QPixmap Util::CreateColorIcon(QColor col, int s, int index) {
 
 }
 
-QMap<QString, long> Util::sm_fileSizes;
+QHash<QString, long> Util::sm_fileSizes;
 
 
 bool Util::fileChanged(QString filename)

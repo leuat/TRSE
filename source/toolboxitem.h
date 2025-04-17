@@ -76,7 +76,7 @@ public:
     float m_size = 4;
     float m_type = 0;
 
-    QMap<QString, ToolBoxItemOption*> m_options;
+    QHash<QString, ToolBoxItemOption*> m_options;
 
     virtual void IsPreview(int button, bool& isPreview) { }
 

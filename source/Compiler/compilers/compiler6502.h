@@ -13,7 +13,7 @@ public:
 
     void Connect() override;
 
-    void CleanupCycleLinenumbers(QString currentFile, QMap<int,int>& ocycles, QMap<int,int>& retcycles, bool isCycles=true ) override;
+    void CleanupCycleLinenumbers(QString currentFile, QHash<int,int>& ocycles, QHash<int,int>& retcycles, bool isCycles=true ) override;
 
     virtual void Init6502Assembler();
 

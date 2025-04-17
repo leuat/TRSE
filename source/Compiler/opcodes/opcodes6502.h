@@ -3,7 +3,7 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
-#include <QMap>
+#include <QHash>
 
 
 
@@ -60,7 +60,7 @@ class Opcodes6502
 public:
     Opcodes6502();
     void InitMosOpCycles();
-    QMap<QString, MOSOperandCycle> m_opCycles;
+    QHash<QString, MOSOperandCycle> m_opCycles;
     bool contains(QString s) {
         return m_opCycles.contains(s);
     }

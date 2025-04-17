@@ -31,7 +31,7 @@ public:
             num = 0x4000; /// Always start at 0x4000
         params << "-o" << "0x"+QString::number(num,16);
         QString amstradcpc_model = pini->getString("amstradcpc_model");
-        QMap<QString, QString> caprice32_models = {
+        QHash<QString, QString> caprice32_models = {
             { "464", "0" },
             { "664", "1" },
             { "6128", "2" },

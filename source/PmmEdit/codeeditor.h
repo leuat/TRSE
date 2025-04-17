@@ -27,7 +27,7 @@
 #include <QPlainTextEdit>
 #include <QTextEdit>
 #include <QObject>
-#include <QMap>
+#include <QHash>
 #include <QCompleter>
 #include <QStringListModel>
 #include "source/Compiler/symboltable.h"
@@ -93,8 +93,8 @@ public:
     void ToggleComments();
     void InitCompleter(QSharedPointer<SymbolTable>  m_symTab, Parser* parser);
 
-    QMap<int,int> m_cycles, m_blockCycles;
-    QMap<int,int> m_addresses;
+    QHash<int,int> m_cycles, m_blockCycles;
+    QHash<int,int> m_addresses;
 
 
     void mousePressEvent(QMouseEvent *e) override;
