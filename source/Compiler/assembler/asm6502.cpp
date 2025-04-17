@@ -886,7 +886,7 @@ void Asm6502::OptimisePassStaLda()
     RemoveLines();
 }
 
-void Asm6502::OptimisePassStaLdx(QString x)
+void Asm6502::OptimisePassStaLdx(const QString& x)
 {
     m_removeLines.clear();
     int j;
@@ -916,7 +916,7 @@ void Asm6502::OptimisePassStaLdx(QString x)
 
 
 
-void Asm6502::OptimisePassLdx(QString x)
+void Asm6502::OptimisePassLdx(const QString& x)
 {
 
     bool allDone = false;
@@ -1017,7 +1017,7 @@ void Asm6502::OptimisePassLdx(QString x)
     }
 }
 
-void Asm6502::OptimisePassLdaTax(QString x)
+void Asm6502::OptimisePassLdaTax(const QString& x)
 {
     m_removeLines.clear();
     int j;
@@ -1076,7 +1076,7 @@ void Asm6502::OptimiseJumps()
 
 }
 
-void Asm6502::OptimiseCmp(QString op)
+void Asm6502::OptimiseCmp(const QString& op)
 {
     m_removeLines.clear();
     for (int i=0;i<m_source.count()-1;i++) {
@@ -1221,8 +1221,8 @@ void Asm6502::OptimiseLdLd()
 }
 
 
-bool Asm6502::ContainsAChangingOpcodes(QString l1) {
-    l1 = l1.trimmed().toLower();
+bool Asm6502::ContainsAChangingOpcodes(const QString& lt) {
+    const auto l1 = lt.trimmed().toLower();
     return    l1.startsWith("txa") || l1.startsWith("tya")
             || l1.startsWith("lda") || l1.startsWith("pla")
             || l1.startsWith("ina") || l1.startsWith("dea")
@@ -1234,23 +1234,23 @@ bool Asm6502::ContainsAChangingOpcodes(QString l1) {
 
 }
 
-bool Asm6502::ContainsYUsingOpcodes(QString l1,QString y)
+bool Asm6502::ContainsYUsingOpcodes(const QString& l1,const QString& y)
 {
-    l1 = l1.trimmed().toLower();
-    return  l1.startsWith("t"+y+"a") || l1.startsWith("st"+y) || l1.contains(","+y) || l1.contains(", "+y)  || ContainsBranches(l1);;
+    const auto lt = l1.trimmed().toLower();
+    return  lt.startsWith("t"+y+"a") || lt.startsWith("st"+y) || lt.contains(","+y) || lt.contains(", "+y)  || ContainsBranches(l1);;
 
 }
 
-bool Asm6502::ContainsYChangingOpcodes(QString l1,QString y)
+bool Asm6502::ContainsYChangingOpcodes(const QString& lt,const QString& y)
 {
-    l1 = l1.trimmed().toLower();
+    const auto l1 = lt.trimmed().toLower();
     return  l1.startsWith("ta"+y) || l1.startsWith("ld"+y) || ContainsBranches(l1);
 
 }
 
-bool Asm6502::ContainsBranches(QString l1)
+bool Asm6502::ContainsBranches(const QString& lt)
 {
-    l1 = l1.trimmed().toLower();
+    const auto l1 = lt.trimmed().toLower();
     return
             l1.startsWith("jsr") || l1.startsWith("rts")
             || l1.startsWith("bcc") || l1.startsWith("bcs")
@@ -1432,7 +1432,7 @@ void Asm6502::OptimisePassStaLda2()
 }
 
 // Optimises: "sta p1   lda p1"
-void Asm6502::OptimisePassLdyLdy(QString y)
+void Asm6502::OptimisePassLdyLdy(const QString& y)
 {
     m_removeLines.clear();
     int j;

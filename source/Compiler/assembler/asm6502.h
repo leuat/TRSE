@@ -134,22 +134,22 @@ public:
     void OptimisePassStaLda();
     void OptimisePassStaLda2();
 
-    void OptimisePassLdx(QString x);
-    void OptimisePassLdaTax(QString x);
+    void OptimisePassLdx(const QString& x);
+    void OptimisePassLdaTax(const QString& x);
     void OptimiseJumps();
-    void OptimiseCmp(QString op);
+    void OptimiseCmp(const QString& op);
     void OptimisePhaPla1();
     void OptimisePhaPla2();
     void OptimisePhaLdxPla();
     void OptimiseLdLd();
-    void OptimisePassStaLdx(QString x);
-    void OptimisePassLdyLdy(QString y);
+    void OptimisePassStaLdx(const QString& x);
+    void OptimisePassLdyLdy(const QString& y);
 
 
-    bool ContainsAChangingOpcodes(QString l1);
-    bool ContainsYUsingOpcodes(QString l1,QString y);
-    bool ContainsYChangingOpcodes(QString l1,QString y);
-    bool ContainsBranches(QString l1);
+    bool ContainsAChangingOpcodes(const QString& l1);
+    bool ContainsYUsingOpcodes(const QString& l1,const QString& y);
+    bool ContainsYChangingOpcodes(const QString& l1,const QString& y);
+    bool ContainsBranches(const QString& l1);
 
 
 
