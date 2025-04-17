@@ -23,6 +23,7 @@ var
 
 procedure InitLevelData();
 begin
+	
 	current_bank := tileBank;
 	// Set up tile data
 	Screens::CopyFullCharset(#tiles);	
