@@ -16,8 +16,9 @@ begin
 		; query keyboard matrix
 		;jsr $db70
 		sta $fd30;keep
+		lda #$FF
 		sta $ff08;keep
-		lda $ff08
+		lda $ff08;keep
 
 		eor #$ff ; invert so the below works
 
