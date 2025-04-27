@@ -24,11 +24,11 @@ program Level;
 
 var
 	
-	filename1 : string="IMAGES/TILES1_C.BIN";
+	filename1 : string="images/tiles1_c.BIN";
 	// Palette file is automatically exported as well
-	palette1 : string="IMAGES/TILES1.PAL";
+	palette1 : string="IMAGES/tiles1.pal";
 	
-	levels : incbin("IMAGES/LEVEL1.BIN");
+	levels : incbin("images/level1.bin");
 	
 	l: GenericLevels::Level;
 	

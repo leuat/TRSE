@@ -55,7 +55,7 @@ public:
 
     QStringList m_varZeroPointers;
 
-    QHash<QString, CStringItem> m_cstr;
+    QMap<QString, CStringItem> m_cstr;
 
     Opcodes6502 m_opCycles;
 

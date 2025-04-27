@@ -1,13 +1,13 @@
 program Levels;
 @use "Screen"
 @use "Memory"
-@use "gfx/GenericLevels"
+@use "gfx/genericlevels"
 @use "Font"
 @use "Sprite"
 @use "gfx/tiles"
 @use "Input"
 @use "compression"
-@use "sound"
+@use "Sound"
 @use "trtplayer"
 
 // Automatically export level

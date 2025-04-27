@@ -1535,19 +1535,26 @@ static int DrawText(lua_State* L) {
 
     QFont f = QFont(lua_tostring(L,4), lua_tonumber(L,5));
     QPainter painter;
+    int fs = lua_tonumber(L,5)/2.0;
+
+    float sx = 3;
+    float sy = m_effect->m_img.height()/(float)m_effect->m_img.width() ;
+
     painter.begin(&m_effect->m_img);
 //    painter.setRenderHint(QPainter::Antialiasin);
     painter.translate(m_effect->m_img.width()/2, m_effect->m_img.height()/2);
     painter.rotate(lua_tonumber(L,10));
+    painter.scale(sx,sy);
     painter.setPen(QPen(QColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8)), lua_tonumber(L,9), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.setFont(f);
-    painter.drawText(lua_tonumber(L,1),lua_tonumber(L,2),lua_tostring(L,3));
+    painter.drawText(lua_tonumber(L,1)-fs,lua_tonumber(L,2)+fs,lua_tostring(L,3));
     painter.end();
     painter.begin(&m_effect->m_post);
     painter.translate(m_effect->m_img.width()/2, m_effect->m_img.height()/2);
     painter.rotate(lua_tonumber(L,10));
+    painter.scale(sx,sy);
     painter.setPen(QPen(QColor(lua_tonumber(L,6),lua_tonumber(L,7),lua_tonumber(L,8)), lua_tonumber(L,9), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
-    painter.drawText(lua_tonumber(L,1),lua_tonumber(L,2),lua_tostring(L,3));
+    painter.drawText(lua_tonumber(L,1)-fs,lua_tonumber(L,2)+fs,lua_tostring(L,3));
     painter.end();
     //    m_effect->m_img.fill((Qt::red));
     return 0;
@@ -1556,16 +1563,28 @@ static int DrawText(lua_State* L) {
 
 static int DrawRect(lua_State* L) {
 
+    qreal xc = m_effect->m_img.width() * 0.5;
+    qreal yc = m_effect->m_img.height() * 0.5;
+//    qDebug() << "HERE " << xc << yc;
+    float rot = lua_tonumber(L,8);
     QPainter painter;
     painter.begin(&m_effect->m_img);
+    qreal rx = lua_tonumber(L,1);
+    qreal ry = lua_tonumber(L,2);;
+    if (rot!=0) {
+        painter.translate(xc,yc);
+        painter.rotate(rot);
+        rx -= 2*(lua_tonumber(L,3) * 0.5);
+        ry -= (lua_tonumber(L,4) * 0.5);
+    }
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
-    painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.drawRect(rx,ry,lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
     painter.begin(&m_effect->m_post);
     painter.setPen(QPen(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)), lua_tonumber(L,8), Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin));
     painter.setBrush(QColor(lua_tonumber(L,5),lua_tonumber(L,6),lua_tonumber(L,7)));
-    painter.drawRect(lua_tonumber(L,1),lua_tonumber(L,2),lua_tonumber(L,3),lua_tonumber(L,4));
+    painter.drawRect(rx,ry,lua_tonumber(L,3),lua_tonumber(L,4));
     painter.end();
     //    m_effect->m_img.fill((Qt::red));
     return 0;

@@ -10,6 +10,7 @@
 #include <QDebug>
 #include "source/LeLib/limage/charsetimage.h"
 #include <QElapsedTimer>
+#include <QMap>
 
 class DemoEffectParam {
 public:
@@ -38,7 +39,7 @@ public:
     QGridLayout* m_gl = nullptr;
     AbstractDemoEffect(QGridLayout* gl);
     bool m_abort = false;
-    QHash<QString,DemoEffectParam> m_params;
+    QMap<QString,DemoEffectParam> m_params;
     //CharsetImage* m_mc;
     LImage* m_mc = nullptr;
     QVector<int> m_cols;
