@@ -25,6 +25,7 @@
 #include <QJSEngine>
 #include <QProcess>
 #include <QDate>
+#include <QMap>
 #include "source/Compiler/ast/ast.h"
 #include "source/Compiler/lexer.h"
 #include <QRegularExpression>
@@ -146,7 +147,7 @@ private:
     int m_tick = 0;
     QVector<int> div2s = QVector<int>() <<2 <<4<<8<<16<<32<<64<<128<<256<<512<<1024;
     QVector<ParserBlock> m_parserBlocks;
-    QHash<QString, LMacro> m_macros;
+    QMap<QString, LMacro> m_macros;
     QString m_procPrefix = "";
     int m_prevPercent = -1;
     int m_pass = 0, m_acc=0;
