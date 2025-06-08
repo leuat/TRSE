@@ -36,7 +36,7 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-###############################ARCH = arm64
+################################ARCH = arm64
 
 macx{
 #    CONFIG += warn_off
@@ -63,7 +63,7 @@ macx{
 #    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
     QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
     LIBS+= -L/opt/homebrew/opt/libomp/lib
-#    ###ARCH = arm64
+#    ####ARCH = arm64
 
     QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
 

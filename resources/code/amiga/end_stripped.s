@@ -57,9 +57,9 @@ gfxname: dc.b 'graphics.library',0
 
 
 
-    if Absolute=0
-    section datachip,data_c
-    endc
+;    if Absolute=0
+;    section datachip,data_c
+;    endc
 
 Chip:
 

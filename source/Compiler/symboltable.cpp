@@ -28,6 +28,8 @@ QString Symbol::s_currentProcedure = "";
 QHash<QString,int> SymbolTable::s_classSizes;
 int SymbolTable::pass = 0;
 QStringList SymbolTable::s_ignoreUnusedSymbolWarning;
+//QStringList SymbolTable::m_forwardedVariables;
+//QHash<QString, QSharedPointer<Symbol>> SymbolTable::m_forwardedSymbols;
 
 
 

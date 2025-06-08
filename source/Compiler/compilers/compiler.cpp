@@ -48,6 +48,8 @@ void Compiler::Parse(QString text, QStringList lst, QString fname)
 
     connect(&m_parser, SIGNAL(emitRequestSystemChange(QString)), this, SLOT( AcceptRequestSystemChange(QString)));
     Data::data.genLabel = 0;
+//   SymbolTable::m_forwardedSymbols.clear();
+//    SymbolTable::m_forwardedVariables.clear();
 
     m_tree = nullptr;
     m_parser.m_preprocessorDefines[m_projectIni->getString("system").toUpper()]="1";
@@ -118,8 +120,9 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system, QString project_dir)
     // COPY SYMBOL TABLE
     m_assembler->m_symTab->m_forwardedVariables = m_parser.m_symTab->m_forwardedVariables;
 
-    for (QString s: m_parser.m_symTab->m_forwardedVariables)
+    for (QString s: m_parser.m_symTab->m_forwardedVariables) {
         m_assembler->m_symTab->m_forwardedSymbols[s] = m_parser.m_symTab->m_symbols[s];
+    }
 //    qDebug() << "COMPILER.CPP "<<m_parser.m_symTab->m_forwardedVariables;
 
 //    m_assembler->m_symTab->m_forwardedSymbols = m_parser.m_symTab->m_forwardedSymbols;

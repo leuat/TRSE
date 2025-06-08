@@ -6667,6 +6667,10 @@ void Parser::HandleUseTPU(QString fileName)
     if (!m_tpus.contains(p)) {
         m_tpus.append(p);
     }
+    for (auto& s : p->m_symTab->m_forwardedSymbols)
+        m_symTab->m_forwardedSymbols[s->m_name] = s;
+//    m_symTab->m_forwardedSymbols.append(p->m_symTab->m_forwardedSymbols);
+    m_symTab->m_forwardedVariables.append(p->m_symTab->m_forwardedVariables);
 
     //    qDebug() << m_currentToken.m_value;
     //    Eat();

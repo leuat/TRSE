@@ -121,7 +121,6 @@ begin
 	Memory::Copy(#charsetLocation +8*baseCharacter, #charsetLocation,8*16);
 	ax:=1;
 	ay:=5;
-
 	// Clear screen and color memory
 	Screen::Clear(#Screen::screen0, key_space);
 	// Main loop

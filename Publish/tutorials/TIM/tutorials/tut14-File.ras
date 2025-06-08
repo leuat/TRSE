@@ -24,7 +24,7 @@ begin
 	TextFile.Open("message.txt", File::ModeRead);
 
 	// loop that reads from file byte by byte
-	while TextFile.ReadPos <> File::EOF do begin
+	while TextFile.FilePos <> File::EOF do begin
 		// read one byte/char
 		ch := TextFile.ReadByte();
 		// print char to screen
