@@ -116,7 +116,7 @@ public:
     QString m_endAssembler = "";
     QString m_override = "_override_";
     bool m_containsMacros = false;
-    QHash<QString, QSharedPointer<Node>> m_procedures;
+    QMap<QString, QSharedPointer<Node>> m_procedures;
     QHash<QString, QString> m_preprocessorDefines;
     static QStringList s_usedTRUs, s_usedTRUNames;
     QSharedPointer<CIniFile> m_projectIni, m_settingsIni;
