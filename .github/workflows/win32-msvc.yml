@@ -111,7 +111,7 @@ jobs:
           files: Publish/publish_win/trse_win.zip
           prerelease: false
           make_latest: true
-	  draft: false
+          draft: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build notification
