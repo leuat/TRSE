@@ -700,8 +700,9 @@ void Orgasm::ProcessByteData(OrgasmLine &ol,OrgasmData::PassType pt)
 
             }
 
-
+            s = s.trimmed();
             m_data.append(Util::NumberFromStringHex(s,ok));
+
             if (!ok && !(s.startsWith("<") || s.startsWith('>') || s.startsWith('^'))) {
                 throw OrgasmError("Incorrect number format: "+s, ol);
 
