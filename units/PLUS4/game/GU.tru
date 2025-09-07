@@ -1,0 +1,644 @@
+//Game UNIT for TRSE - Commodore16/Plus4 
+//Made by AnyStone 2025
+//Digi play works only with DASM assembler!
+
+Unit GU;
+
+@use "input/key"
+var	
+	const JOY_UP : byte = 1;
+	const JOY_DOWN : byte = 2;
+	const JOY_LEFT : byte = 4;
+	const JOY_RIGHT : byte = 8;
+	const JOY_FIRE : byte = 64;
+	const JOY2_FIRE : byte = 128;
+	
+	joys 	: byte;
+	joyv 	: byte;
+	music	: integer;
+	i,j		: byte;
+	charsetAddress : integer;
+	iint:integer;
+	
+	m0,m1,m2 : pointer of integer;
+	g0,g1,g2 : integer;
+	loc: integer;
+	cloc: byte;
+	
+	fromP, toP, fromCP, toCP, fromCP2, toCP2	: pointer;
+	tile_data, tile_color : integer;
+	screen_loc, color_loc : integer;
+	
+	fp : pointer;
+	len : byte;
+	addr : integer;	
+	
+	toprint: array[6] of byte;
+
+//{---------------------------------------------------- PlayDigi ----------------------------------------------------
+procedure PlayDigi(sample : integer);
+begin
+	_a:=lo(sample);
+	_x:=hi(sample);
+
+	asm("
+ 			php
+			sei
+			sta playptr			; update sample play pointer
+			stx playptr+1
+			plp					; restore irq flag
+			rts
+	");
+	
+end;
+
+//{---------------------------------------------------- WaitForDigi ---------------------------------------------------- 
+procedure WaitForDigi();
+begin
+	//TODO
+end;
+
+
+//{---------------------------------------------------- InitDigi ---------------------------------------------------- 
+procedure InitDigi();
+begin
+	asm("
+			jmp play_init	
+			
+; Sample replay IRQ routine for raw/linear 3 bit samples.
+playirq 		pha					; push accumulator
+buf			EQU *+1				; write buf, self modifying code
+			lda #0
+			sta $ff11			; write to D/A
+			lda #$08
+			sta $ff09			; ack timer irq
+playptr 		EQU *+1				; sample play pointer, self mod.
+			lda $1200
+			cmp #$F1				; if magic number,
+			beq pend				; exit
+			clc
+			adc #$b1				; map sample to $B1..$B8
+			sta buf				; store in write buf
+			inc playptr			; increment play pointer
+			bne pend
+			inc playptr+1
+pend			pla					; pull accu
+			rti					; return
+
+dummy		DC.B $F1 
+	
+; Init sample replay
+play_init
+			sei
+			sta $ff3f			; switch to full ram config
+			lda #<playirq		; set irq vector
+			sta $fffe
+			lda #>playirq
+			sta $ffff
+			lda #$DE				; set timer
+			sta $ff00
+			lda #$00
+			sta $ff01
+			lda #$08				; set irq masks
+			sta $ff0a
+			lda #0				; init write buffer
+			sta buf
+			lda #<dummy			; init sample play pointer
+			sta playptr			; to point to dummy
+			lda #>dummy			; (which contains the end-sample magic number)
+			sta playptr+1		
+			inc $ff09			; delete pending irq's
+			cli					; enable irq's
+			rts
+	");
+end;
+
+//{---------------------------------------------------- GetJoy ---------------------------------------------------- 
+function GetJoy(joy: byte) : byte;
+begin
+	joys:=$fb;
+	if joy=2 then joys:=$fd;
+
+    asm("
+	  lda #$ff
+	  sta $fd30
+	  lda GU_joys
+	  sta $ff08
+	  lda $ff08;keep
+	  STA GU_joyv 
+      ");
+      
+      GetJoy:=joyv;
+end;
+
+
+//{---------------------------------------------------- MusicIrq ---------------------------------------------------- 
+interrupt MusicIrq();
+begin
+	StartIrq(0);
+	Call(m1);
+	Call(m2);
+	CloseIRQ();
+end;
+
+//{---------------------------------------------------- StartMusic ---------------------------------------------------- 
+procedure StartMusic(gameMusic : integer);
+begin
+	g0:=gameMusic+2;
+	
+	asm("
+		lda #$45			; set timer
+		sta $ff00
+		lda #$46
+		sta $ff01
+	
+		lda GU_g0
+		ldx GU_g0+1
+		sta GU_m0
+		stx GU_m0+1
+	");
+
+	Call(m0);
+
+	g1:=gameMusic+5;
+	
+	asm("
+		lda GU_g1
+		ldx GU_g1+1
+		sta GU_m1
+		stx GU_m1+1
+	");
+
+	g2:=gameMusic+8;
+	
+	asm("
+		lda GU_g2
+		ldx GU_g2+1
+		sta GU_m2
+		stx GU_m2+1
+	");
+
+	StartRasterChain(MusicIrq(),0,0);
+end;
+
+//{---------------------------------------------------- StopMusic ---------------------------------------------------- 
+procedure StopMusic();
+begin
+	PreventIRQ();
+	poke(^$FF11,0,48);
+end;
+
+//{---------------------------------------------------- ContinueMusic ---------------------------------------------------- 
+procedure ContinueMusic();
+begin
+	
+	asm("
+		lda #$45			; set timer
+		sta $ff00
+		lda #$46
+		sta $ff01
+	");
+
+	StartRasterChain(MusicIrq(),0,0);
+end;
+
+
+//{---------------------------------------------------- PageFullRam ---------------------------------------------------- 
+procedure PageFullRam();
+begin
+	poke(^$FF3F,0,1);
+end;
+
+//{---------------------------------------------------- SetBitmapMode ---------------------------------------------------- 
+procedure SetBitmapMode();
+begin
+asm("
+	lda $ff06
+	ora #$20
+	sta $ff06
+");
+end;
+
+//{---------------------------------------------------- SetMulticolorMode ---------------------------------------------------- 
+procedure SetMulticolorMode();
+begin
+asm("
+	lda $ff07	
+	ora #$10
+	sta $ff07
+	");
+end;
+
+//{---------------------------------------------------- SetSharedColor ---------------------------------------------------- 
+procedure SetSharedColor(color : integer);
+begin
+	poke(^$FF16,0,color);
+end;
+
+//{---------------------------------------------------- SetScreenLoc ---------------------------------------------------- 
+procedure SetScreenLoc(loc : global integer);
+begin
+	//TODO poke(^$FF12,0,loc);
+	loc:=(loc)<<3;
+	asm("
+		lda $FF12 
+		and #%00000111
+		ora GU_loc
+		sta $FF12 
+	");
+end;
+
+//{---------------------------------------------------- SetColorLoc ---------------------------------------------------- 
+procedure SetColorLoc(cloc: global  byte);
+begin
+	cloc:=(cloc)<<3;
+	asm("
+		lda $FF14 
+		and #%00000111
+		ora GU_cloc
+		sta $FF14 
+	");
+end;
+
+//{---------------------------------------------------- RandomNumber ---------------------------------------------------- 
+function RandomNumber(maxNumber:byte) : byte;
+var 
+	ran:integer;
+begin 
+	ran:=Random()*maxNumber;
+	ran:=ran/256;
+	RandomNumber := ran;
+end; 
+
+//{---------------------------------------------------- DrawChar ---------------------------------------------------- 
+procedure DrawChar(xch:byte, ych:byte, ascii: byte, colorch: byte);
+begin
+	fromP:=charsetAddress+ascii*8;
+	toP:=screen_loc+xch*8;
+
+	if ych>0 then for i:=0 to ych do toP+=320;
+
+	MemCpy(fromP, 0, toP,8);
+	
+	toP:=color_loc+xch+ych*40;
+	fromP:=toP+1024;
+	
+	Poke(toP,0,colorch);
+	Poke(fromP,0,colorch);
+	
+end;
+
+//{---------------------------------------------------- DrawString ---------------------------------------------------- 
+procedure DrawString(xs:integer, ys:byte, text:^byte, colors: byte);
+var char: byte;
+begin
+	iint:=0;
+	
+	while(text[iint]>0) do
+	begin
+		char:=text[iint];
+		if(char>64) then char:=char-64;
+		DrawChar(iint+xs, ys, char, colors);
+		iint:=iint+1;
+	end;
+end;
+
+//{-------------------------- DrawNumber -------------------------- 
+procedure DrawNumber(xn:integer, yn:byte, number:Integer, colorn:byte);
+var
+	threed:byte;
+begin
+	threed:=0;
+
+	if(number>9999) then 
+	begin
+		DrawChar(xn,yn,number/100/100+48,colorn);
+		number:=number-(number/100/100)*100*100;
+		threed:=1;
+		xn+=1;
+	end;
+
+	if(number>999) then 
+	begin
+		DrawChar(xn,yn,number/100/10+48,colorn);
+		number:=number-(number/100/10)*100*10;
+		threed:=1;
+		xn+=1;
+	end;
+
+	if(number>99 or threed) then 
+	begin
+		DrawChar(xn,yn,number/100+48,colorn);
+		number:=number-(number/100)*100;
+		threed:=1;
+		xn+=1;
+	end;
+
+	if(number>9) then 
+		DrawChar(xn,yn,number/10+48,colorn)
+	else if threed then DrawChar(xn,yn,48,colorn) else DrawChar(xn,yn,32,colorn);
+	
+	DrawChar(xn+1,yn,number- (number/10)*10 +48,colorn);
+		
+end;
+
+//{---------------------------------------------------- InitGameUnit ---------------------------------------------------- 
+procedure InitGameUnit(screenL, colorL, tiledata, tilecolor, charset : integer);
+begin
+	screen_loc := screenL;
+	color_loc := colorL;
+	tile_data := tiledata;
+	tile_color := tilecolor;
+	charsetAddress := charset;
+end;
+
+//{---------------------------------------------------- ClearScreen ---------------------------------------------------- 
+procedure CLS();
+begin
+	toP:=screen_loc;
+
+	for i:=0 to 32 do
+	begin
+		Fill(toP, 0, 255);
+		toP+=255;
+	end;
+	
+end;
+
+//{---------------------------------------------------- FillRect ---------------------------------------------------- 
+procedure FillRect(x1,y1,x2,y2,color : byte);
+begin
+	toP:=screen_loc;
+	toP+=x1*8;
+	toP+=y1*320;
+
+	for i:=0 to y2 do
+	begin
+		Fill(toP, color, x2*8);
+		toP+=320;
+	end;
+end;
+
+//{---------------------------------------------------- Poke2 ---------------------------------------------------- 
+procedure Poke2(po: pointer, va:byte);
+begin
+	poke(po,0,va);
+end;
+
+//{---------------------------------------------------- Poke3 ---------------------------------------------------- 
+procedure Poke3(po: pointer, l, va:byte);
+begin
+	poke(po,l,va);
+end;
+
+//{---------------------------------------------------- DrawFrame ---------------------------------------------------- 
+procedure DrawFrame(toX, toY, lenX, lenY, color : byte);
+begin
+	toP:=screen_loc;
+	toP+=toX*8;
+	toP+=toY*320;
+	
+	for i:=0 to lenX do
+	begin
+		Poke2(toP, color);
+		toP+=1;
+		Poke2(toP, color);
+		toP+=7;
+	end;
+	
+	toP:=screen_loc;
+	toP+=toX*8;
+	toP+=toY*320;
+	lenY-=1;
+	toP+=lenY*320;
+	lenY+=1;
+	toP+=6;
+
+	for i:=0 to lenX do
+	begin
+		Poke2(toP, color);
+		toP+=1;
+		Poke2(toP, color);
+		toP+=7;
+	end;
+	
+	toP:=screen_loc;
+	toP+=toX*8;
+	toP+=toY*320;
+	
+	for i:=0 to lenY do
+	begin
+		for j:=0 to 8 do
+		begin
+			if (i<>0 or j<>0) then
+			if color>0 then 
+				Poke2(toP, (192 | Peek(toP,0)))
+			else
+				Poke2(toP, (63 & Peek(toP,0)));
+			toP+=1;
+		end;
+		toP+=312;
+	end;
+	
+	toP:=screen_loc;
+	toP+=toX*8;
+	toP+=toY*320;
+	toP+=(lenX-1)*8;
+	
+	for i:=0 to lenY do
+	begin
+		for j:=0 to 8 do
+		begin
+			if (i<>0 or j<>0) then
+			if color>0 then 
+				Poke2(toP, (3 | Peek(toP,0)))
+			else
+				Poke2(toP, (252 & Peek(toP,0)));
+			toP+=1;
+		end;
+		toP+=312;
+	end;
+
+end;
+
+
+//{---------------------------------------------------- DrawPic ---------------------------------------------------- 
+procedure DrawPic(fromX, fromY, toX, toY, lenX, lenY : byte);
+begin
+	fromP:=tile_data;
+	toP:=screen_loc;
+	
+	fromP+=fromX*8;
+	fromP+=fromY*320;
+	toP+=toX*8;
+	toP+=toY*320;
+
+	fromCP:=tile_color;
+	toCP:=color_loc;
+	
+	fromCP+=fromX;
+	fromCP+=fromY*40;
+	
+	toCP+=toX;
+	toCP+=toY*40;
+
+	fromCP2:=fromCP+1024;
+	toCP2:=toCP+1024;
+	
+	
+	for i:=0 to lenY do
+	begin
+		if lenX>32 then
+		begin
+			MemCpy(fromP, 0, toP, 255);
+			fromP+=255;
+			toP+=255;
+			MemCpy(fromP, 0, toP, (lenX-32)*8);
+			fromP+=65;
+			toP+=65;
+		end
+		else
+		begin
+			MemCpy(fromP, 0, toP, 8*lenX);
+			fromP+=320;
+			toP+=320;
+		end;
+		
+		MemCpy(fromCP, 0, toCP, lenX);
+		MemCpy(fromCP2, 0, toCP2, lenX);	
+		
+		fromCP+=40;
+		toCP+=40;
+		fromCP2+=40;
+		toCP2+=40;
+		
+	end;
+end;
+
+//{---------------------------------------------------- DrawLine ---------------------------------------------------- 
+procedure DrawLine(toX, toY, tx, ty, lenX : byte);
+begin
+
+	toP:=screen_loc;
+	toP+=toX*8;
+	toP+=toY*320;
+	//toP+=tx;
+	toP+=ty;
+
+	if lenX>0 then
+	for i:=0 to lenX do
+	begin
+		
+		if (tx=1 and i=0) then
+			Poke2(toP, 240)
+		else
+			Poke2(toP, 0);
+		toP+=8;
+	end;
+	
+	if  (tx=1) then Poke2(toP, 15);
+	
+end;
+
+//{---------------------------------------------------- DrawCol ---------------------------------------------------- 
+procedure DrawCol(toX, toY, lenX, lenY, col : byte);
+begin
+	toCP:=color_loc;
+	toCP+=toX;
+	toCP+=toY*40;
+	toCP2:=toCP+1024;
+	
+	
+	for i:=0 to lenY do
+	begin
+		for j:=0 to lenX do
+		begin
+			Poke3(toCP, j,col);
+			Poke3(toCP, j, col);
+		end;
+		
+		fromCP+=40;
+		toCP+=40;
+		fromCP2+=40;
+		toCP2+=40;
+		
+	end;
+end;
+
+//{------------------------- WaitSec --------------------------------
+procedure WaitSec(sec: byte);
+var w,w2:byte;
+begin
+	for w:=0 to sec do
+		for w2:=0 to 20 do
+		begin
+			wait(255);			
+		end;
+end;
+
+
+//{------------------------- LoadFile --------------------------------
+procedure LoadFile(fp : global pointer; len : global byte; addr : global integer);
+begin
+asm("
+	 lda GU_len
+     ldx GU_fp
+     ldy GU_fp+1
+     jsr $ffbd    // call setnam
+     ldx $ba       // last used device number
+     bne loadfile_loop
+     ldx #$08      // default to device 8
+loadfile_loop				ldy #$00      // $00 means: load to new address
+     jsr $ffba    // call setlfs
+     ldx GU_addr
+     ldy GU_addr+1
+     lda #$00      // $00 means: load to memory (not verify)
+     jsr $ffd5      // call load
+");	
+end;
+
+
+//{-------------------------- DrawSprite -------------------------- 
+procedure DrawSprite(fromX, fromY, toX, toY, lenX, lenY, mode : byte, spriteSave: ^byte);
+var
+	tempzt : byte;
+	sindex : byte = 0;
+begin
+	sindex:=0;
+	fromP:=tile_data;
+	toP:=screen_loc;
+	
+	fromP+=fromX*8;
+	fromP+=fromY*320;
+	toP+=toX*8;
+	toP+=toY*320;
+	
+	for i:=0 to lenY do
+	begin
+		for j:=0 to lenX do
+		begin
+			if(mode=1) then
+			begin
+				tempzt:=peek(toP,0);
+				
+				Poke2(toP, (peek(fromP,0) & tempzt));
+
+				spriteSave[sindex]:=tempzt;
+				sindex+=1;
+			end
+			else
+			begin
+				Poke2(toP, spriteSave[sindex]);
+				sindex+=1;
+			end;
+			
+			toP+=1;
+			fromP+=1;	
+		end;
+		fromP+=320-lenX;
+		toP+=320-lenY;
+	end;	
+end;
+
+
+end.
