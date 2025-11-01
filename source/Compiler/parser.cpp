@@ -6688,6 +6688,9 @@ QSharedPointer<Node> Parser::Expr()
 
 
                ) {
+            if (m_currentToken.m_type == TokenType::Type::AND || m_currentToken.m_type == TokenType::Type::OR) {
+                ErrorHandler::e.Error("Did you mean to use bit and/or (&, |) instead of logical and/or?",m_currentToken.m_line);
+            }
             Token t = m_currentToken;
             Eat(m_currentToken.m_type);
             node = NodeFactory::CreateBinaryClause(t,t.m_type,node,Term());
