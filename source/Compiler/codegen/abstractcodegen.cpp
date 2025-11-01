@@ -406,11 +406,12 @@ void AbstractCodeGen::GenericAssign(QSharedPointer<NodeAssign> node) {
     //  as->Comment("RHS is byte: "+Util::numToHex(node->m_right->isByte(as)) + " "+node->m_right->getTypeText(as) + " " +TokenType::getType(node->m_right->getType(as)));
     //as->Comment("LHS is byte: "+Util::numToHex(node->m_left->isByte(as)) + " "+node->m_left->getTypeText(as) + " " +TokenType::getType(node->m_left->getType(as)));
     //    as->Comment("StoreType: "+TokenType::getType(n));
-
-    if (node->m_right->getTypeText(as)=="BYTE")
-        Cast(TokenType::BYTE,node->m_right->getStoreType());
-    if (node->m_right->getTypeText(as)=="INTEGER")
-        Cast(TokenType::INTEGER,node->m_right->getStoreType());
+    if (!node->m_right->isReference()) {
+        if (node->m_right->getTypeText(as)=="BYTE")
+            Cast(TokenType::BYTE,node->m_right->getStoreType());
+        if (node->m_right->getTypeText(as)=="INTEGER")
+            Cast(TokenType::INTEGER,node->m_right->getStoreType());
+    }
     StoreVariable(VarOrNum(node->m_left));
 }
 
@@ -800,7 +801,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeConditional> node)
  * */
 
 
-
+#include <iostream>
 void AbstractCodeGen::HandleCompoundBinaryClause(QSharedPointer<Node> node, QString lblFailed, QString lblSuccess, bool offpage)
 {
     //    QSharedPointer<NodeBinaryClause> bc = qSharedPointerDynamicCast<NodeBinaryClause>(node);

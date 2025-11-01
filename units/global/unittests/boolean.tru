@@ -42,7 +42,7 @@ begin
 	
 	for Vars::v1:=0 to 10 do 
 	begin
-		Vars::v2+=((Vars::v1>3) and (Vars::v1<6));
+		Vars::v2+=((Vars::v1>3) & (Vars::v1<6));
 		
 	end;
 	Common::DebugValue(Vars::v2);
