@@ -43,7 +43,7 @@ macx{
 
     #LIBS += -openmp
 #    ICON = trse.icns
-    QMAKE_CXXFLAGS += -Ofast
+    QMAKE_CXXFLAGS += -O3
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
 #    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 
