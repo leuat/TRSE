@@ -37,7 +37,7 @@ jobs:
       - name: Build TRSE
         shell: cmd
         run: |
-          call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+          call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
           qmake TRSE.pro
           D:\a\TRSE\Qt\Tools\QtCreator\bin\jom\jom.exe -j 4 -f Makefile.Release
 
@@ -47,7 +47,7 @@ jobs:
       #  run: |
       #    git clone https://github.com/leuat/OK64.git
       #    cd OK64/OK64
-      #    call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
+      #    call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" x86_amd64
       #    qmake INCLUDEPATH=$OK64dir/resid/include QMAKE_LFLAGS=-Wl,-L$OK64dir/resid/lib/ OK64.pro
       #    D:\a\TRSE\Qt\Tools\QtCreator\bin\jom.exe -j 2 -f Makefile.Release
 
