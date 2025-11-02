@@ -21,7 +21,7 @@
 
 #include "token.h"
 
-QString TokenType::types[no_types] = {
+QStringList TokenType::types = {
             "NONE", "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
             "RPAREN", "TEOF", "ID", "ASSIGN", "BEGIN",
             "END", "SEMI", "DOT", "VAR", "REAL",
@@ -51,7 +51,6 @@ Token::Token()
 {
     m_lineNumber = Pmm::Data::d.lineNumber;
     m_currentLineText = Pmm::Data::d.currentLineText;
-
 }
 
 QString Token::getNumAsHexString()

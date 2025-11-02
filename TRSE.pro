@@ -3,6 +3,7 @@
 # Project created by QtCreator 2018-02-03T17:17:06
 #
 #-------------------------------------------------
+CONFIG += c++17
 
 QT += core gui opengl qml
 QT += widgets
@@ -11,7 +12,6 @@ equals(VER, 6) {
     QT += openglwidgets
 }
 
-CONFIG += c++14
 
 CONFIG(debug, debug|release) {
     #CONFIG += sanitizer sanitize_address sanitize_undefined sanitize_threads
@@ -36,65 +36,25 @@ ICON = trse.icns
 #QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
-#################################ARCH = arm64
 
 macx{
-#    CONFIG += warn_off
-
-    #LIBS += -openmp
-#    ICON = trse.icns
     QMAKE_CXXFLAGS += -O3
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
-#    QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter
 
     QMAKE_APPLE_DEVICE_ARCHS = arm64
 
     LIBS += -L$$PWD/libs
     LIBS += -ldl
-#    QMAKE_LFLAGS += -F /Library/Frameworks
-#    LIBS += -framework SDL2
-
-#    LIBS += -L/usr/local/lib
-    #DEFINES -=USE_OMP
-#    contains(DEFINES, USE_OMP) {
- #     QMAKE_CXXFLAxGS += -Xpreprocessor -fopenmp  -I/usr/local/include
- #   }
-
-#    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include -I/opt/homebrew/Cellar/libomp/15.0.3/include
     QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -I/usr/local/include
     LIBS+= -L/opt/homebrew/opt/libomp/lib
-#    #####ARCH = arm64
 
     QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
 
-  #  contains(ARCH, arm64): {
-      message("Arme meg!")
-#      QMAKE_APPLE_DEVICE_ARCHS=arm64
-      LIBS += -L$$PWD/libs/lua/ -lluamac_arm
-      CONFIG += arm64
+    message("Arme meg!")
+    LIBS += -L$$PWD/libs/lua/ -lluamac_arm
+    CONFIG += arm64
 
-   # }
-
-#    contains(ARCH, x86_64) | contains(ARCH, amd64):  {
-#        LIBS += -L$$PWD/libs/lua/ -lluamac -L/usr/local/opt/libomp/lib
-#        QMAKE_CXXFLAGS+= -I/usr/local/opt/libomp/include
-#        LIBS += -L/usr/local/opt/libomp/lib
-        #github CI x86: export LDFLAGS="-L/opt/homebrew/opt/libomp/lib"
-        #export CPPFLAGS="-I/opt/homebrew/opt/libomp/include"
-
-#   }
-   LIBS+= -lomp
-#   LIBS += -L$$PWD/libs/lua/ -lluamac
-
-#   INCLUDEPATH += /usr/local/include/
-#   INCLUDEPATH += /opt/homebrew/include/
-
-#   LIBS +=  -L/Users/leuat/code/sdl-x86/Versions/A -lSDL2
-
-
-#    QMAKE_CXXFLAGS += -Xpreprocessor -fopenmp -lomp -I/opt/homebrew/include/
-#   QMAKE_LFLAGS += -lomp
-#     LIBS += -L /opt/homebrew/lib
+    LIBS+= -lomp
 
     DEPLOY = $$(DEPLOY)
     contains(DEPLOY, yes) {

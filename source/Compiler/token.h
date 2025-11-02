@@ -53,7 +53,7 @@ public:
 
     };
 
-    static QString types[];
+    static QStringList types;
     static QString getType(Type t) {
         if (t>=no_types || t<=0)
             return types[NADA];
