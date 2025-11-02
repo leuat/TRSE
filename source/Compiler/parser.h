@@ -200,7 +200,7 @@ private:
     QSharedPointer<Node> m_tree = nullptr;
     QVector<QSharedPointer<Node>>* m_currentStatementList = nullptr;
     QHash<QString, QSharedPointer<Node>> m_types;
-
+    QVector<QSharedPointer<Symbol>> m_localSyms;
     bool m_doNotPrefix = false;
     QStringList m_doNotPrefixSymbols;
 

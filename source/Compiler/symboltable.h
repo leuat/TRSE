@@ -56,6 +56,7 @@ public:
     bool m_isClassVariable = false;
     bool m_doNotOptimize = false;
     bool m_constIsPrefixed = false;
+    bool m_isInline = false;
     QString m_pointsTo = "";
     int m_org = 0;
     int m_size = 0;

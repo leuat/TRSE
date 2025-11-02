@@ -4006,12 +4006,18 @@ void Parser::ProcDeclarations(QVector<QSharedPointer<Node>>& decl, QString block
     // Check that inline functions don't have global parameters
     if (isInline) {
         for (auto& v: paramDecl ) {
+                auto var = qSharedPointerDynamicCast<NodeVar>(v);
                 auto nv = qSharedPointerDynamicCast<NodeVarDecl>(v);
                 if (qSharedPointerDynamicCast<NodeVarType>(nv->m_typeNode)->m_flags.contains("global")) {
                     ErrorHandler::e.Error("Inline functions cannot use global parameters", tok.m_lineNumber);
                 }
-
+                // make sure nodevardecl is toggled as inline
+               nv->m_isInline = isInline;
             }
+        for (auto&s : m_localSyms) {
+            // Make sure symbols are defined as inline
+            s->m_isInline = true;
+        }
     }
 
     bool alreadyForwaredDeclared = false;
@@ -4622,6 +4628,7 @@ QVector<QSharedPointer<Node> > Parser::VariableDeclarations(QString blockName, b
     //    return vars;
     var_decleratons.append(m_extraDecls); // Extra variables such as string lists
     m_extraDecls.clear();
+    m_localSyms = syms;
     //    m_extraDeclsNames.clear();
     return var_decleratons;
 }

@@ -61,10 +61,6 @@ QString AbstractSystem::CompressLZ4(QString fileName, QString outFileName) {
     //      if (Util::fileChanged(filename) || !QFile(old).exists())
     //        fc.Encode(old,fileName);
     return fileName;
-
-
-
-
 }
 
 QString AbstractSystem::CompressZX0(QString fileName, QString outFileName)
