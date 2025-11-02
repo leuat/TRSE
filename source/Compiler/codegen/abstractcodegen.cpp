@@ -1202,7 +1202,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
 {
     node->DispatchConstructor(as,this);
 
-
     LineNumber(node->m_op.m_lineNumber);
     if (UseBlocks()) {
         int ret = node->MaintainBlocks(as);
@@ -1230,9 +1229,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
     QSharedPointer<NodeVarType> t = qSharedPointerDynamicCast<NodeVarType>(node->m_typeNode);
 
-    // Don't declare va
+    // Don't declare global variables
     if (v->m_isGlobal)
         return;
+
 
 
     QString keep = v->value;
@@ -1242,6 +1242,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node)
     node->ExecuteSym(as->m_symTab);
 
 
+    if (node->m_isInline)
+        return;
 
 
     if (t->m_op.m_type==TokenType::ARRAY) {

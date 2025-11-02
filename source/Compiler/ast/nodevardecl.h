@@ -57,6 +57,7 @@ public:
     int m_fileSize=0;
     int m_dataSize=0;
     bool m_chipMem = false;
+    bool m_isInline = false;
 
     static QHash<QString, int> s_mProcStackPos;
 
