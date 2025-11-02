@@ -33,6 +33,7 @@ public:
     void AddMemoryBlock(Assembler* as, int param);
     void Poke(Assembler* as);
     void Peek(Assembler* as);
+    void SetLoHi(Assembler* as, int type);
     void Modulo(Assembler* as);
     void Modulo16(Assembler* as);
     void MemCpy(Assembler* as, bool isFast);
@@ -178,7 +179,7 @@ public:
     void LoadAddress(Assembler* as, int paramNo);
     void LoadVar(Assembler* as, int paramNo, QString registe, QString load="");
     void LoadVar(Assembler* as, int paramNo);
-    void SaveVar(Assembler* as, int paramNo, QString registe, QString load="");
+    void SaveVar(Assembler* as, int paramNo, QString registe, QString shift="");
     void SaveVar(Assembler* as, int paramNo);
 
     void VerifyInitialized(QString method, QString initmethod);

@@ -772,5 +772,7 @@
         <file>resources/images/AGON.png</file>
         <file>resources/images/PRIMO.png</file>
         <file>resources/images/tutorials/timtris.png</file>
+        <file>resources/text/help/m/setlo.rtf</file>
+        <file>resources/text/help/m/sethi.rtf</file>
     </qresource>
 </RCC>

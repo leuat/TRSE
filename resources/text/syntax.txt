@@ -295,6 +295,9 @@ m; Peek; MOS6502, Z80, Z180, M6809  ; a,b
 m; ToggleBit; MOS6502, M6809 ; a,b,b
 m; GetBit; MOS6502, M6809 ; a,b
 
+m; setHi; MOS6502; a, a
+m; setLo; MOS6502; a, a
+
 m; EnableAllRam; C64, MEGA65, PLUS4  ;
 m; MemCpy; MOS6502 ; a,b,a,b
 m; MemCpyFast; MOS6502, Z80, Z180, PX86 ; a,b,a,b
