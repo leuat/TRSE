@@ -24,7 +24,7 @@ LImageAmstradCPC::LImageAmstradCPC(LColorList::Type t)  : LImageQImage(t)
 
 }
 
-uchar LImageAmstradCPC::AmstradCrazySwap(uchar c) {
+uchar LImageAmstradCPC::AmstradMode0BitPattern(uchar c) {
 //    return ((c&0b11000000) | ((c&0b00000011)<<2) | ((c&0b00001100)<<2) | ((c&0b00110000)>>4));
     return (((c&0b00000011)<<6) | ((c&0b00001100)<<0) | ((c&0b00110000)<<0) | ((c&0b11000000)>>6));
 }
@@ -133,6 +133,60 @@ void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D
 
 }
 */
+
+// exports a portion of a screen in CPC Mode 0 format,
+void LImageAmstradCPC::CPCExport0(QFile &file, int xpos, int ypos, int width, int height)
+{
+    QByteArray data;
+    QVector<PixelChar*> pcList;
+
+    //qDebug() <<"Param2" << xpos << ypos << width << height;
+
+    // loop through all pixels
+    for (int yy=ypos; yy<ypos+height; yy++) {
+
+        char c = 0;
+        int curBit = 0;
+
+        for (int xx=xpos; xx<=xpos+width; xx++) {
+
+            int pixel = getPixel(xx,yy);
+            //qDebug() << pixel << xx << yy;
+
+            c|=table160[pixel]<<(1-curBit);
+
+            curBit+=1;
+
+            if (curBit>=2) {
+                curBit=0;
+                data.append((AmstradMode0BitPattern(c)));
+                //qDebug() << pixel << AmstradMode0BitPattern(c);
+                c=0;
+            }
+
+            //int pos = xx+(yy*m_charWidthDisplay);
+            //PixelChar& pc = m_data[pos];
+            //data.append( pc.p[ pos ] );
+        }
+    }
+    file.write(data);
+
+}
+
+void LImageAmstradCPC::CPCExportPal(QFile &ofile)
+{
+
+    QByteArray palette;
+
+    QVector<int> lst = m_colorList.getPenList();
+    for (auto i : lst)
+        palette.append(((unsigned char)i));
+    //    qDebug() << lst;
+
+    ofile.write(palette);
+
+}
+
 void LImageAmstradCPC::ExportBin(QFile &ofile)
 {
 
@@ -176,7 +230,7 @@ void LImageAmstradCPC::ExportBin(QFile &ofile)
 
             if (curBit>=2) {
                 curBit=0;
-                data.append((AmstradCrazySwap(c)));
+                data.append((AmstradMode0BitPattern(c)));
 //                data.append(c);
                 c=0;
             }

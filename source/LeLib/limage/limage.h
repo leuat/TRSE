@@ -206,10 +206,11 @@ public:
 
     virtual void ExportBlackWhite(QFile& file, int p1, int p2, int p3, int p4, int type) {}
 
+    virtual void CPCExport0(QFile& file, int xpos, int ypos, int width, int height) {}
 
-    virtual void SetForceD800Color(int val) {
+    virtual void CPCExportPal(QFile &ofile) {}
 
-    }
+    virtual void SetForceD800Color(int val) {}
 
     virtual QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h, QString pparam) {return QStringList();}
 

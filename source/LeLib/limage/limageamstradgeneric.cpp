@@ -74,6 +74,8 @@ void LImageAmstradGeneric::SaveBin(QFile &file)
 
 }
 
+
+
 void LImageAmstradGeneric::ExportBin(QFile &ofile)
 {
 
@@ -116,7 +118,7 @@ void LImageAmstradGeneric::ExportBin(QFile &ofile)
 
             if (curBit>=2) {
                 curBit=0;
-                data.append((AmstradCrazySwap(c)));
+                data.append((AmstradMode0BitPattern(c)));
                 //                data.append(c);
                 c=0;
             }

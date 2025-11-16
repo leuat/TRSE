@@ -1054,6 +1054,8 @@ DISTFILES += \
     resources/text/help/r/begin.rtf \
     resources/text/help/r/byte.rtf \
     resources/text/help/r/chipmem.rtf \
+    resources/text/help/r/cpcexport0.rtf \
+    resources/text/help/r/cpcexportpal.rtf \
     resources/text/help/r/cstring.rtf \
     resources/text/help/r/define.rtf \
     resources/text/help/r/do.rtf \
