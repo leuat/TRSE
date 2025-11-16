@@ -334,7 +334,7 @@ void Compression::AddAmstradCPCToData(QByteArray &data, LImage *img, int xx, int
 
             if (curBit==1)
             {
-                data.append(LImageAmstradCPC::AmstradCrazySwap(c));
+                data.append(LImageAmstradCPC::AmstradMode0BitPattern(c));
                 d++;
                 c = 0;
             }

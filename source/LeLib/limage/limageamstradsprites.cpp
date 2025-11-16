@@ -85,7 +85,7 @@ QByteArray LImageAmstradSprites::ExportFrame(int frame)
 
             if (curBit>=2) {
                 curBit=0;
-                d.append((LImageAmstradCPC::AmstradCrazySwap(c)));
+                d.append((LImageAmstradCPC::AmstradMode0BitPattern(c)));
                 //                data.append(c);
                 c=0;
             }
