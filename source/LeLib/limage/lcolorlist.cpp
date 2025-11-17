@@ -1237,33 +1237,33 @@ void LColorList::InitCGA2_HIGH()
 void LColorList::InitAmstradCPC()
 {
     m_list.clear();
-    m_list.append(LColor(QColor(0,0,0),"Black"));
-    m_list.append(LColor(QColor(0x0,0x0,0x80),"Blue"));
-    m_list.append(LColor(QColor(0x0,0x0,0xFF),"Bright Blue"));
-    m_list.append(LColor(QColor(0x80,0x0,0x0),"Red"));
-    m_list.append(LColor(QColor(0x80,0x0,0x80),"Magenta"));
-    m_list.append(LColor(QColor(0x80,0x0,0xFF),"Mauve"));
-    m_list.append(LColor(QColor(0xFF,0x0,0x0),"Bright Red"));
-    m_list.append(LColor(QColor(0xFF,0x0,0x80),"Purple"));
-    m_list.append(LColor(QColor(0xFF,0x0,0x80),"Bright Magenta"));
-    m_list.append(LColor(QColor(0x0,0x80,0x0),"Green"));
+    m_list.append(LColor(QColor(0x00,0x00,0x00),"Black"));
+    m_list.append(LColor(QColor(0x00,0x00,0x80),"Blue"));
+    m_list.append(LColor(QColor(0x00,0x00,0xFF),"Bright Blue"));
+    m_list.append(LColor(QColor(0x80,0x00,0x0),"Red"));
+    m_list.append(LColor(QColor(0x80,0x00,0x80),"Magenta"));
+    m_list.append(LColor(QColor(0x80,0x00,0xFF),"Mauve"));
+    m_list.append(LColor(QColor(0xFF,0x00,0x00),"Bright Red"));
+    m_list.append(LColor(QColor(0xFF,0x00,0x80),"Purple"));
+    m_list.append(LColor(QColor(0xFF,0x00,0xFF),"Bright Magenta"));
+    m_list.append(LColor(QColor(0x00,0x80,0x00),"Green"));
 
-    m_list.append(LColor(QColor(0x0,0x80,0x80),"Cyan"));
-    m_list.append(LColor(QColor(0x0,0x80,0xFF),"Sky Blue"));
-    m_list.append(LColor(QColor(0x80,0x80,0x0),"Yellow"));
+    m_list.append(LColor(QColor(0x00,0x80,0x80),"Cyan"));
+    m_list.append(LColor(QColor(0x00,0x80,0xFF),"Sky Blue"));
+    m_list.append(LColor(QColor(0x80,0x80,0x00),"Yellow"));
     m_list.append(LColor(QColor(0x80,0x80,0x80),"White"));
-    m_list.append(LColor(QColor(0x80,0x80,0xFF),"Pastel blue"));
-    m_list.append(LColor(QColor(0xFF,0x80,0x0),"Orange"));
+    m_list.append(LColor(QColor(0x80,0x80,0xFF),"Pastel Blue"));
+    m_list.append(LColor(QColor(0xFF,0x80,0x00),"Orange"));
     m_list.append(LColor(QColor(0xFF,0x80,0x80),"Pink"));
     m_list.append(LColor(QColor(0xff,0x80,0xFF),"Pastel Magenta"));
-    m_list.append(LColor(QColor(0x0,0xFF,0x0),"Bright Green"));
-    m_list.append(LColor(QColor(0x0,0xFF,0x80),"Sea green"));
+    m_list.append(LColor(QColor(0x00,0xFF,0x00),"Bright Green"));
+    m_list.append(LColor(QColor(0x00,0xFF,0x80),"Sea green"));
 
-    m_list.append(LColor(QColor(0x0,0xFF,0xFF),"Bright Cyan"));
-    m_list.append(LColor(QColor(0x80,0xFF,0x0),"Lime"));
+    m_list.append(LColor(QColor(0x00,0xFF,0xFF),"Bright Cyan"));
+    m_list.append(LColor(QColor(0x80,0xFF,0x00),"Lime"));
     m_list.append(LColor(QColor(0x80,0xFF,0x80),"Pastel Green"));
     m_list.append(LColor(QColor(0x80,0xFF,0xFF),"Pastel Cyan"));
-    m_list.append(LColor(QColor(0xFF,0xFF,0x0),"Bright Yellow"));
+    m_list.append(LColor(QColor(0xFF,0xFF,0x00),"Bright Yellow"));
     m_list.append(LColor(QColor(0xFF,0xFF,0x80),"Pastel Yellow"));
     m_list.append(LColor(QColor(0xFF,0xFF,0xFF),"Bright White"));
     //qDebug() << "Constructor called";
