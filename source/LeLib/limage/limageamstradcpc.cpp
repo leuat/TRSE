@@ -186,7 +186,7 @@ void LImageAmstradCPC::CPCExportTile0(QFile &file, int start, int end, int width
         int x = col * width;
         int y = row * height;
 
-        qDebug() << "Start tile" << i << x << y;
+        //qDebug() << "Start tile" << i << x << y;
 
         for (int yy=y;yy<y+height;yy++) { // walk line height
 

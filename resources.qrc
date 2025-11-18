@@ -776,5 +776,6 @@
         <file>resources/text/help/m/sethi.rtf</file>
         <file>resources/text/help/r/cpcexport0.rtf</file>
         <file>resources/text/help/r/cpcexportpal.rtf</file>
+        <file>resources/text/help/r/cpcexporttile0.rtf</file>
     </qresource>
 </RCC>

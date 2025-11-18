@@ -1,16 +1,9 @@
+
 <h3>Description</h3>
 
-<p>Preprocessor that exports a TRSE character image file (.flf) to binary on build in a format suitable to be
-used in mode 0 on the Amstrad CPC</p>
+<p>Preprocessor that exports a bitmap image of a given size suitable for the
+Amstrad CPC Mode 0.</p>
 
-<p>Note in mode 0 each byte contains the data for two pixels as follows:</p>
-<pre>
-memory bit  76543210
-            --------
-pixel       01010101
-pixel bit   00221133
-</pre>
-<p>Pixels bits 2 and 1 are reversed!</p>
 
 <p>
     CPC export0 takes six parameters.
@@ -29,3 +22,11 @@ for the height. Note the Amstrad screen layout is different, in that each line s
 When you draw this image data you should ensure you write each sequential line to the correct screen address,
 a lookup table for each screen line is suggested.
 </p>
+<p>Note in mode 0 each byte contains the data for two pixels as follows:</p>
+<pre>
+memory bit  76543210
+            --------
+pixel       01010101
+pixel bit   00221133
+</pre>
+<p>Pixels bits 2 and 1 are reversed!</p>
