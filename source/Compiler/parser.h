@@ -336,6 +336,7 @@ private:
     void HandleBuildPaw();
     void HandleExportPrg2Bin();
     void HandleCPCExport0();
+    void HandleCPCExportTile0();
     void HandleCPCExportPal();
     void HandlePBMExport();
     void HandleVBMExport();

@@ -33,6 +33,7 @@ public:
 
 //    void OrdererdDither(QImage &img, LColorList &colors, QVector3D strength, QPoint size, float gamma=1.0) override;
     void CPCExport0(QFile &file, int xpos, int ypos, int width, int height) override;
+    void CPCExportTile0(QFile &file, int start, int end, int width, int height) override;
 
     void CPCExportPal(QFile &ofile) override;
 

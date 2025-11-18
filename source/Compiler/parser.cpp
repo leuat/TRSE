@@ -1406,6 +1406,16 @@ void Parser::HandlePreprocessorInParsing() {
             Eat(TokenType::INTEGER_CONST);
             return;
         }
+        if (m_currentToken.m_value == "cpcexporttile0") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            Eat(TokenType::INTEGER_CONST);
+            return;
+        }
 
         if (m_currentToken.m_value == "cpcexportpal") {
             Eat();
@@ -3344,6 +3354,9 @@ void Parser::PreprocessSingle() {
     } else if (m_currentToken.m_value.toLower() == "cpcexport0") {
         Eat(TokenType::PREPROCESSOR);
         HandleCPCExport0();
+    } else if (m_currentToken.m_value.toLower() == "cpcexporttile0") {
+        Eat(TokenType::PREPROCESSOR);
+        HandleCPCExportTile0();
     } else if (m_currentToken.m_value.toLower() == "cpcexportpal") {
         Eat(TokenType::PREPROCESSOR);
         HandleCPCExportPal();
@@ -6145,13 +6158,13 @@ void Parser::HandleCPCExport0() {
     Eat(TokenType::STRING);
     QString outFile = m_currentDir + "/" + m_currentToken.m_value;
     Eat(TokenType::STRING);
-    int param1 = m_currentToken.m_intVal;
+    int xpos = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
-    int param2 = m_currentToken.m_intVal;
+    int ypos = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
-    int param3 = m_currentToken.m_intVal;
+    int width = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
-    int param4 = m_currentToken.m_intVal;
+    int height = m_currentToken.m_intVal;
 
     if (!QFile::exists(inFile)) {
         ErrorHandler::e.Error("File not found : " + inFile, ln);
@@ -6165,7 +6178,39 @@ void Parser::HandleCPCExport0() {
     file.open(QFile::WriteOnly);
     img->m_silentExport = true;
 
-    img->CPCExport0(file, param1, param2, param3, param4);
+    img->CPCExport0(file, xpos, ypos, width, height);
+
+    file.close();
+}
+
+// Export tiles Mode 0 bin stream
+void Parser::HandleCPCExportTile0() {
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int start = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int end = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int width = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int height = m_currentToken.m_intVal;
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : " + inFile, ln);
+    }
+    LImage *img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+
+    file.open(QFile::WriteOnly);
+    img->m_silentExport = true;
+
+    img->CPCExportTile0(file, start, end, width, height);
 
     file.close();
 }

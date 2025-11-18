@@ -1,0 +1,32 @@
+<h3>Description</h3>
+
+<p>Preprocessor that exports a series of tiles (think characters) of a given size suitable for the
+Amstrad CPC Mode 0.</p>
+
+<p>
+    CPC export tile0 takes six parameters.
+</p>
+<ul>
+    <li>The source flf file</li>
+    <li>The destination bin file to create</li>
+    <li>The start tile</li>
+    <li>The end tile to stop at (not including)</li>
+    <li>Width in pixels of a tile(must be even number)</li>
+    <li>Height in pixels of a tile</li>
+</ul>
+<p>Exports a series of tiles, size defined by width and height. The start and end tile is calculated from
+the width and height.
+</p>
+<p>Think of a tile as a character. Eg; A to Z characters on an Amstrad FLF image are 26 characters or tiles.
+If A is in the first character cell on the image, and Z the last, and the characters were 8 by 8,
+you would set the start to be 0, the end to be 27, and the width and height to both be 8.</p>
+<p>The binary generated contains one tile at a time, each pair of pixels for the width of the tile, repeated for each
+ row up to the height of the tile, and then repeated for each tile.</p>
+<p>Note in mode 0 each byte contains the data for two pixels as follows:</p>
+<pre>
+memory bit  76543210
+            --------
+pixel       01010101
+pixel bit   00221133
+</pre>
+<p>Pixels bits 2 and 1 are reversed!</p>

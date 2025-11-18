@@ -138,7 +138,7 @@ void LImageAmstradCPC::OrdererdDither(QImage &img, LColorList &colors, QVector3D
 void LImageAmstradCPC::CPCExport0(QFile &file, int xpos, int ypos, int width, int height)
 {
     QByteArray data;
-    QVector<PixelChar*> pcList;
+    //QVector<PixelChar*> pcList;
 
     //qDebug() <<"Param2" << xpos << ypos << width << height;
 
@@ -164,15 +164,59 @@ void LImageAmstradCPC::CPCExport0(QFile &file, int xpos, int ypos, int width, in
                 c=0;
             }
 
-            //int pos = xx+(yy*m_charWidthDisplay);
-            //PixelChar& pc = m_data[pos];
-            //data.append( pc.p[ pos ] );
         }
     }
     file.write(data);
 
 }
 
+// exports a tiles from a screen in CPC Mode 0 format,
+void LImageAmstradCPC::CPCExportTile0(QFile &file, int start, int end, int width, int height)
+{
+    QByteArray data;
+    //QVector<PixelChar*> pcList;
+
+    for (int i=start;i<end;i++) { // walk characters
+
+        int tiles_per_row = m_width / width;
+
+        int col = i % tiles_per_row;
+        int row = i / tiles_per_row;
+
+        int x = col * width;
+        int y = row * height;
+
+        //qDebug() << "Start tile" << i << x << y;
+
+        for (int yy=y;yy<y+height;yy++) { // walk line height
+
+            char c = 0;
+            int curBit = 0;
+
+            for (int xx=x; xx<=x+width; xx++) {
+
+                int pixel = getPixel(xx,yy);
+                //qDebug() <<"Get data from " << xx << yy;
+
+                c|=table160[pixel]<<(1-curBit);
+
+                curBit+=1;
+
+                if (curBit>=2) {
+                    curBit=0;
+                    data.append((AmstradMode0BitPattern(c)));
+                    //qDebug() << pixel << AmstradMode0BitPattern(c);
+                    c=0;
+                }
+
+            }
+
+        }
+        //        qDebug() << x << y;
+    }
+    file.write(data);
+
+}
 void LImageAmstradCPC::CPCExportPal(QFile &ofile)
 {
 

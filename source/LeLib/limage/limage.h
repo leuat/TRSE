@@ -207,6 +207,7 @@ public:
     virtual void ExportBlackWhite(QFile& file, int p1, int p2, int p3, int p4, int type) {}
 
     virtual void CPCExport0(QFile& file, int xpos, int ypos, int width, int height) {}
+    virtual void CPCExportTile0(QFile& file, int start, int end, int width, int height) {}
 
     virtual void CPCExportPal(QFile &ofile) {}
 
