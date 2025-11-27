@@ -1268,11 +1268,16 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node) {
   if (node->m_isInline)
     return;
 
+  QString s = "";
+  if ((t->m_flags.contains("compressed")) && (t->m_op.m_type == TokenType::STRING || t->m_op.m_type== TokenType::CSTRING)) {
+      // convert to list of bytes
+      t->m_data = Util::QStringToDataList(t->m_data);
+      t->m_op.m_type = TokenType::ARRAY; // switch to regular array
+  }
+
   if (t->m_op.m_type == TokenType::ARRAY) {
-    if (t->m_flags.contains("compressed")) {
-      QString s = "";
-      t->m_data = Syntax::s.m_currentSystem->CompressData(t->m_data, s);
-    }
+    if (t->m_flags.contains("compressed"))
+        t->m_data = Syntax::s.m_currentSystem->CompressData(t->m_data, s);
 
     as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal,
                      t->m_data, t->m_position);

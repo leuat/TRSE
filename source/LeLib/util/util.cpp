@@ -747,6 +747,24 @@ float Util::floatRandom(const float &min, const float &max) {
     return distribution(generator);
 }
 
+QStringList Util::QStringToDataList(QStringList& t) {
+    QStringList lst;
+    for (QString& c : t) {
+        if (c.startsWith("*&NUM")) {
+            QString d = c.remove("*&NUM");
+            lst.append(c);
+        }
+        else {
+            for (QChar& ch : c) {
+                bool ok =true;
+                lst.append("$"+QString::number(ch.toLatin1(),16));
+            }
+        }
+    }
+    return lst;
+}
+
+
 wchar_t *Util::QStringToWchar(QString t) {
     wchar_t* arr = new wchar_t[t.size()+1];
     t.toWCharArray(arr);
