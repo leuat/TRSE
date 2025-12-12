@@ -451,8 +451,6 @@ void ZOrgasm::LoadCodes(int CPUflavor)
 
 //        qDebug() << c << m_opCodes[c];
     }
-
-
 }
 /*
  *
@@ -518,4 +516,39 @@ QString ZOrgasm::WashForOpcode(QString test, QString &value,OrgasmLine& ol)
     return "**";
 }
 
+
+void ZOrgasm::ProcessSource() {
+
+    Orgasm::ProcessSource();
+
+    // replace ld h,a : ld b,c : out blah blah etc with new line
+    auto lines = m_source.split("\n");
+    QString n = "";
+    for (auto s: lines) {
+        auto nl = s + "\n";
+        bool split = false;
+        // ingnore comments
+        auto s2 = s.split(";")[0];
+        if ((s2.startsWith(" ") || s2.startsWith("\t")) && s2.contains(":") && !s2.simplified().startsWith(";")) {
+            // make sure labels are excluded
+            if (!s2.simplified().endsWith(":")) {
+
+                auto lst = s2.split(":");
+                split = true;
+                nl = "";
+                for (auto l: lst) {
+                    nl+="\t"+l + "\n";
+                }
+            }
+        }
+        if (!split)
+            n += s + "\n";
+        else
+            n += nl;
+    }
+    m_source = n;
+
+
+
+}
 

@@ -28,6 +28,8 @@ public:
     }
 
 
+    void ProcessSource() override;
+
     void ApplyCPUType() override;
 
     void LoadCodes(int CPUflavor) override;
