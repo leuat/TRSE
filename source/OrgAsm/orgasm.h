@@ -211,7 +211,7 @@ public:
     int m_cpuFlavor = CPUFLAVOR_6502_STOCK;
 
     virtual void LoadCodes(int CPUflavor);
-    void ProcessSource();
+    virtual void ProcessSource();
     void ProcessUnrolling();
     virtual void ApplyCPUType() {}
     static const int HEADER_RAW = 0;
