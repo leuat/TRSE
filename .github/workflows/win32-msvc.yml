@@ -105,6 +105,8 @@ jobs:
 
       - name: Publish zip
         uses: softprops/action-gh-release@v2
+        permissions:
+          contents: write        
         with:
           name: nightly
           body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
