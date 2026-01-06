@@ -6,10 +6,12 @@ on:
     tags:
       - 'nightly'
 
+
+permissions:
+  contents: write        
+  packages: write        
+
 jobs:
-  permissions:
-    contents: write        
-    packages: write        
   build:
     runs-on: windows-latest
     timeout-minutes: 30
