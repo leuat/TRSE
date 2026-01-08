@@ -88,11 +88,12 @@ int main(int argc, char *argv[])
 {
 
 #ifdef _WIN32
-    // Make sure that stdout attaches itself to the console window on win32 for cli stuff
+/*    // Make sure that stdout attaches itself to the console window on win32 for cli stuff
     if (AttachConsole(ATTACH_PARENT_PROCESS)) {
         freopen("CONOUT$", "w", stdout);
         freopen("CONOUT$", "w", stderr);
     }
+*/
 #endif
     if (argc>=2) {
         if (QString(argv[1])=="-cli") {
