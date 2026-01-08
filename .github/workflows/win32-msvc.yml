@@ -35,7 +35,7 @@ jobs:
 
       - uses: jurplel/install-qt-action@v4
         with:
-          version: '6.7.2'
+          version: '6.9.1'
           tools: 'tools_ifw tools_qtcreator,qt.tools.qtcreator'
 
 
