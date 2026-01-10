@@ -41,7 +41,12 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     Util::CopyFile(":resources/bin/rasm_osx",rasm);
     QFile::setPermissions(rasm,QFile::ExeUser);
 #endif
+#ifdef defined(Q_OS_FREEBSD)
+    QString rasm = path+"rasm";
+    Util::CopyFile(":resources/bin/rasm",rasm);
+    QFile::setPermissions(rasm,QFile::ExeUser);
 
+#endif
 
     Util::CopyFile(":resources/code/amstrad/playerakg.asm",player);
     Util::CopyFile(":resources/code/amstrad/playerakg_soundeffects.asm",snd);
