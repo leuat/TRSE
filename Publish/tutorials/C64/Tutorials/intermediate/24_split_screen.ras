@@ -1,0 +1,50 @@
+program Display_multicolor_image;
+@use "screen/screen"
+var
+	zp:pointer;
+/*
+	Open your ".flf" 320x200 image and click "export", then type in the "base name" of the files to output.
+	The first file (.. _data.bin) contains pixel data, while the second file (..._color.bin) contains color data. 
+	
+	Image by The Diad / Proxima ^ Hokuto Force
+*/
+
+// Exports flf image directly to binary with each build. Select between image 1 or 2
+
+@export "resources/images/neo_rider_by_the_diad.flf" "resources/images/neo_rider.bin" 0
+
+	image_color: IncBin("resources/images/neo_rider_color.bin", $5000);
+	image_data: IncBin("resources/images/neo_rider_data.bin", $6000);
+
+
+// basically the same as the built-in method copyimagecolordatamanually
+procedure CopyImageColordataManually();
+begin
+	zp:=#image_color;
+	Screen::border:=zp^;
+	zp+=1;
+	Screen::background:=zp^; // 2nd byte is foreground color 
+	zp+=1;
+	Screen::CopyFull(zp, #Screen::screen1);
+	Screen::CopyFull(zp+1000, #Screen::color);
+end;
+
+begin
+	// Turn off multicolor if you want hires! 
+		
+	Screen::SetMulticolorMode();
+	Screen::SetBitmapMode();
+	// Set data pointer to $6000
+	Screen::SetScreenLocation($4400); // color data
+	Screen::SetCharsetLocation($6000); // bitmap data
+	// Set bank 1 ($4000-$7FFF)
+	Screen::SetBank(vic_bank1);
+	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
+	Screen::CopyImageColorData(#image_color,1);
+	Screen::background:=black;
+	// Example of how to copy the color data manually
+	CopyImageColordataManually();
+	
+	Loop();
+
+end.
