@@ -5484,10 +5484,10 @@ void Methods6502::DisableInterrupts(Assembler *as)
 
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 || Syntax::s.m_currentSystem->m_system == AbstractSystem::MEGA65) {
         as->Asm("ldy #$7f    ; $7f = %01111111");
-        as->Asm("sty $dc0d   ; Turn off CIAs Timer interrupts");
-        as->Asm("sty $dd0d   ; Turn off CIAs Timer interrupts");
-        as->Asm("lda $dc0d   ; cancel all CIA-IRQs in queue/unprocessed");
-        as->Asm("lda $dd0d   ; cancel all CIA-IRQs in queue/unprocessed");
+        as->Asm("sty $dc0d   ; Turn off CIAs Timer interrupts ;keep");
+        as->Asm("sty $dd0d   ; Turn off CIAs Timer interrupts ;keep");
+        as->Asm("lda $dc0d   ; cancel all CIA-IRQs in queue/unprocessed ;keep");
+        as->Asm("lda $dd0d   ; cancel all CIA-IRQs in queue/unprocessed ;keep");
     }
     else if (Syntax::s.m_currentSystem->m_system == AbstractSystem::PLUS4) {
         as->Asm("lda #$00");

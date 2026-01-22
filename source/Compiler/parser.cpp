@@ -5988,7 +5988,17 @@ void Parser::HandleExportShiftedCharset() {
     int y0 = m_currentToken.m_intVal;
     Eat(TokenType::INTEGER_CONST);
 
-    Compression::GenerateShiftedCharset(inFile, outFile, x0, y0);
+    int x1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int y1 = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+    int nw = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+
+
+    Compression::GenerateShiftedCharset(inFile, outFile, x0, y0,x1,y1,nw);
 }
 
 void Parser::HandleExportRotatedCharset() {

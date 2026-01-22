@@ -84,7 +84,7 @@ public:
 
     void SaveCompressedTRM(QByteArray& data, QString file, int compression);
 
-    static void GenerateShiftedCharset(QString inFile, QString outFile, int start, int end);
+    static void GenerateShiftedCharset(QString inFile, QString outFile, int x0, int y0, int x1, int y1, int nw);
     static void GenerateRotatedCharset(QString inFile, QString outFile, int start, int end, int dir);
 
     static void GenerateUnrolledAsm1(QString name, QString outFile, QString inFile, int src, int dst,int width,int height,int shift, int shift2, int shift3);
