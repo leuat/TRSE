@@ -6,12 +6,11 @@ procedure LoadBundle(val:global byte);
 begin
 	asm("
 		lda Sparkle_val
-		jsr $019d
+		jsr $019c
 	
 	");
 end;
 
-	
 	
 procedure SetBank(val:global byte);
 begin
@@ -31,7 +30,7 @@ asm("
 	sendbyte = $18
 	buslock = $f8
 	
-	lda #DirIndex
+	lda #Sparkle_DirIndex
 	sta Bits
 	lda #$35
 	sta $01

@@ -1048,7 +1048,7 @@ void Compression::SaveSinusScrollerData2(MultiColorImage* mc, int height, int st
     s<<"procedure "+fname.split("//").last()+"_unroll();\n";
     s<<"begin\n";
     s<<" asm(\"\n";
-    for (int y=0;y<24;y++) {
+    for (int y=1;y<24;y++) {
         QVector<QVector<int>> col;
         QHash<int,bool> done;
         col.resize(256);
@@ -1524,7 +1524,7 @@ void Compression::SaveCompressedTRM(QByteArray& inData, QString fileName, int c)
 
 }
 
-void Compression::GenerateShiftedCharset(QString inFile, QString outFile, int start, int end)
+void Compression::GenerateShiftedCharset(QString inFile, QString outFile, int x0, int y0, int x1, int y1, int nw)
 {
     LImage* imgIn = (LImage*)LImageIO::Load(inFile);
     MultiColorImage* mc = dynamic_cast<MultiColorImage*>(imgIn);
@@ -1537,9 +1537,10 @@ void Compression::GenerateShiftedCharset(QString inFile, QString outFile, int st
     QSharedPointer<CharsetImage> t = QSharedPointer<CharsetImage>(new CharsetImage(imgIn->m_colorList.m_type));
     t->Initialize(320,200);
     t->setMultiColor(false);
-    for (int i=start;i<end;i++) {
+    for (int i=0;i<1000;i++) {
         for (int j=0;j<8;j++)
-            t->m_data[i*2+1].p[j] = mc->m_data[i].p[j];
+//            t->m_data[i*2+1].p[j] = mc->m_data[i].p[j];
+        t->m_data[i].p[j] = mc->m_data[i].p[j];
 
     }
     for (int scroll=0;scroll<8;scroll+=2) {
@@ -1560,12 +1561,24 @@ void Compression::GenerateShiftedCharset(QString inFile, QString outFile, int st
             for (int x=0;x<mc->m_width;x++) {
                 int i = t->getPixel(x,y);
                 if (i!=0)
-                    c1->setPixel((x-scroll)%(c1->m_width),y, 1);
+                    c1->setPixel((x-scroll)%(c1->m_width),y, i);
+            }
+        int nws = (nw-40)/2;
+        for (int y=y0;y<y1;y++) {
+            int pos = 40*y;
+            for (int l=0;l<nws;l++) {
+                for (int j=0;j<8;j++)
+                charData.append(PixelChar::reverse(c1->m_data[pos].p[j]));
+            }
+           for (int x=x0;x<x1-1;x++)
+                for (int j=0;j<8;j++) {
+                   charData.append(PixelChar::reverse(c1->m_data[pos+x].p[j]));
+                }
+            for (int l=0;l<nws+1;l++) {
+                for (int j=0;j<8;j++)
+               charData.append(PixelChar::reverse(c1->m_data[pos+(x1-x0)-2].p[j]));
             }
 
-        for (int i=0;i<(end-start)*2;i++) {
-            for (int j=0;j<8;j++)
-                charData.append(PixelChar::reverse(c1->m_data[i].p[j]));
         }
 
     }

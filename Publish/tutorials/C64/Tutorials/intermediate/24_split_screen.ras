@@ -1,49 +1,65 @@
-program Display_multicolor_image;
+program Splitscreen;
 @use "screen/screen"
-var
-	zp:pointer;
 /*
-	Open your ".flf" 320x200 image and click "export", then type in the "base name" of the files to output.
-	The first file (.. _data.bin) contains pixel data, while the second file (..._color.bin) contains color data. 
-	
-	Image by The Diad / Proxima ^ Hokuto Force
+	Set up a system with a split screen: upper part is an multicolor bitmap image, while
+	lower part displays text
 */
+var
+@export "resources/images/optic1.flf" "resources/images/optic.bin" 0
 
-// Exports flf image directly to binary with each build. Select between image 1 or 2
+	image_color: IncBin("resources/images/optic_color.bin", $5000);
+	image_data: IncBin("resources/images/optic_data.bin", $6000);
 
-@export "resources/images/neo_rider_by_the_diad.flf" "resources/images/neo_rider.bin" 0
+	const splitLineY : byte = 193;
 
-	image_color: IncBin("resources/images/neo_rider_color.bin", $5000);
-	image_data: IncBin("resources/images/neo_rider_data.bin", $6000);
+interrupt RasterBottom(); forward;
 
-
-// basically the same as the built-in method copyimagecolordatamanually
-procedure CopyImageColordataManually();
+interrupt RasterTop();
 begin
-	zp:=#image_color;
-	Screen::border:=zp^;
-	zp+=1;
-	Screen::background:=zp^; // 2nd byte is foreground color 
-	zp+=1;
-	Screen::CopyFull(zp, #Screen::screen1);
-	Screen::CopyFull(zp+1000, #Screen::color);
-end;
-
-begin
-	// Turn off multicolor if you want hires! 
-		
+	startirq(0);
+	
 	Screen::SetMulticolorMode();
 	Screen::SetBitmapMode();
 	// Set data pointer to $6000
-	Screen::SetScreenLocation($4400); // color data
-	Screen::SetCharsetLocation($6000); // bitmap data
-	// Set bank 1 ($4000-$7FFF)
+	setcharsetandscreenlocation($6000,$4400);
 	Screen::SetBank(vic_bank1);
-	// Copy image color data from $5000 to $4400 (on bank 1) and $D800 
+	
+	
+	RasterIRQ(RasterBottom(),splitLineY,0);
+	closeirq();
+end;
+
+interrupt RasterBottom();
+begin
+	startirq(0);
+	wait(13);	
+	settextmode();
+	setregularcolormode();
+	// Set data pointer to $6000
+	setcharsetandscreenlocation($1000,$400);
+	// Set bank 0 ($0000-$3FFF)
+	Screen::SetBank(vic_bank0);
+	
+	
+	RasterIRQ(RasterTop(),0,0);
+	closeirq();
+end;
+
+
+begin
+	// allow all memory usage
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);		
+	// Start the raster chain
+	startrasterchain(RasterTop(),0,0);
+	// Copy color data
 	Screen::CopyImageColorData(#image_color,1);
 	Screen::background:=black;
+	
+	// Set up text screenon();
+	clearscreen(key_space,#Screen::Screen0);
+	Screen::PrintStringColor("I FEEL SPLIT",2,20,1);
 	// Example of how to copy the color data manually
-	CopyImageColordataManually();
 	
 	Loop();
 

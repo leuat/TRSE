@@ -560,52 +560,9 @@ QStringList AbstractSystem::Wash(QString s)
 
 void AbstractSystem::Sparkle(QString &text, QString filename, QString currentDir)
 {
-    // First, create sparkle text file
-//    QString s;
-//    s+="DirIndex:\t00\n";
- /*   s+="Tracks:\t35\n";
 
-    s+="File:\t" + filename+".prg\n";
-
-
-
-    CIniFile paw;
-    paw.Load(currentDir + "/"+m_projectIni->getString("disk1_paw"));
-    QStringList data = paw.getStringList("data");
-    //QStringList data_tc = paw.getStringList("data_tinycrunch");
-
-    int count = data.count()/3;
-//    qDebug() << data;
-    for (int i=0;i<count;i++) {
-        QString orgFileName = data[3*i+1];
-        QString name = data[3*i];
-
-        int address = Util::NumberFromStringHex( data[3*i+2]);
-        QString fn = currentDir+orgFileName;
-        if (!QFile::exists(fn)) {
-            text=text + "<br><font color=\"#FF6040\">Error: Could not append disk file '"+fn+"' because it does not exist</font><br>";
-            m_buildSuccess = false;
-            return;
-        }
-        QString oname = name;
-
-        s+="\nDirIndex:\t" +QString::number((i+1),16)+"\n";
-        s+="Align\n";
-        s+="File:\t" + currentDir+"/"+orgFileName +"\t" +QString::number(address,16)+"\n";
-
-//        QString of = outFolder+"/"+orgFileName.split("/").last();
-        //Util::ConvertFileWithLoadAddress(fn,of,address);
-//        d64Params << "-f" <<oname << "-w" <<of;
-
-    }
-
-    Util::SaveTextFile(filename+".sls",s);
-
-
-
-*/
-
-    Util::SaveTextFile(filename+".sls",Data::data.sparkle);
+    if (Data::data.sparkle!="")
+        Util::SaveTextFile(filename+".sls",Data::data.sparkle);
 
     auto disk = filename+".d64";
     if (QFile::exists(disk))

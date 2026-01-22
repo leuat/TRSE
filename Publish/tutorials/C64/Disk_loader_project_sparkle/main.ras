@@ -1,10 +1,11 @@
 program Sparkle3_disk_example;
 
 @use "system/sparkle"
-	
 // Force exomizing OFF
 @projectsettings "exomize" "0"
 
+//@projectsettings "startaddress" "$1000"
+@projectsettings "ignorebasicsysstart" "1"
 
 @export "images/image1.flf" "images/image1.bin" 256 // will create image1_data and image1_color
 @export "images/image2.flf" "images/image2.bin" 256 // will create image2_data and image2_color
@@ -15,8 +16,14 @@ program Sparkle3_disk_example;
 
 "
 << main file
-File:	main.prg
 
+<<ZP: 80
+<<Header: sparkleme
+<<name: hurrah
+<<Start:		1000
+Tracks:		40
+
+File:	main.prg
 
 << the 3 images:
 
@@ -40,39 +47,29 @@ File:	images/image3_color.bin	2000
 File:	images/image3_data.bin	6000
 
 "
-
-
-	
 	
 var  
-   i: byte; 
-	
-	
+   i,j : byte; 
 	
 begin
-	// set screen position
-	setcharsetandscreenlocation($2000,$400);
-	screen_fg_col:=black;
 	screen_bg_col:=black;
-	setmulticolormode();
-	setbitmapmode();
-
-	// Remember that setvicbank doesn't work when using sparkle
-	Sparkle::SetBank(1);
+	screen_fg_col:=black;
 	
+	Sparkle::SetBank(1);
+	setbitmapmode();
+	setmulticolormode();
+	setcharsetandscreenlocation($2000,$400);
 	while (true) do begin
 		// Load next bundle	
-		Sparkle::LoadBundle(i+2);
+		Sparkle::LoadBundle(i+1);
 		// Copy color data to the screen
 	  	copyimagecolordata(^$2000,1);
 		
 		while (keypressed(key_space)=false) do 
-			waitforraster(0);
+			for j:=0 to 5 do 
+				waitforraster(0);
 
 		i:=mod(i+1,3);
-		
-
-
 	end;
 
 end.

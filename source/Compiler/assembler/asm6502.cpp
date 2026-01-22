@@ -1208,7 +1208,7 @@ void Asm6502::OptimiseLdLd()
     int j,k;
     for (int i=0;i<m_source.count()-1;i++) {
         QString l0 = getLine(i).toLower().trimmed();
-        if (l0.startsWith("ld")) {
+        if (l0.startsWith("ld") && !l0.contains(";keep")) {
             QString a = QString(l0[2]);
             QString l1 = getNextLine(i,j);
             if (l1.toLower().trimmed().startsWith("ld"+a)) {

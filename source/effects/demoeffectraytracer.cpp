@@ -128,7 +128,6 @@ void DemoEffectRaytracer::Render(QImage &img)
     m_ready = false;
 
 
-
     m_prev = m_img.copy();
 
 
@@ -147,6 +146,7 @@ void DemoEffectRaytracer::Render(QImage &img)
     //return;
     int w = m_rt->m_globals.m_orgWidth;
     int h = m_rt->m_globals.m_orgHeight;
+
 
     m_rt->Raymarch(m_img, w,h);
     m_rt->Render(m_img);
@@ -181,8 +181,6 @@ void DemoEffectRaytracer::Render(QImage &img)
         m_img.save("testAfter.png");*/
 //        qDebug() << "Scaling..";
     }
-
-
     if (m_outputType==RayTracerGlobals::output_type_c64)
         ConvertToC64(m_rt->m_globals.m_dither,m_rt->m_globals.m_multicolor==1,m_rt->m_globals.m_ditherStrength);
 
