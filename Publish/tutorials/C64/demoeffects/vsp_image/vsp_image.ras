@@ -299,13 +299,13 @@ begin
 	startrasterchain(Raster(),RasterPos,0);
 	screenon();
 	
-	FadeInOut::InitCols(#Luminosities::fromBlue);
-	FadeInOut::DefaultFadeIn(#image2_color,$4400,#per,4);
+	FadeInOut::InitCols(#Luminosities::fromBlue,24);
+	FadeInOut::DefaultFadeIn(#image2_color,$4400,#per,4,0);
 	start:=1;	
 	
 	while (done=false) do
 	begin
-		waitforraster(8);
+		waitforraster(0);
 		CopyData();
 		CopyColor();
 		scrollx((7-(ix&7)));

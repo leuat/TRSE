@@ -8,14 +8,14 @@ var
 	curColFade : byte = 0;
 	src1,src2,dst,dst_col,dst_color2,sp : pointer;
 	isrc1,idst,isp : integer;
-	ii,jj,speed,k:byte;
+	ii,jj,speed,k,k2:byte;
 	cols : array[64] of byte;
 
 	
-procedure InitCols(src:pointer);
+procedure InitCols(src:pointer, k2: global byte);
 begin
 	for ii:=0 to 64 do begin
-		jj:=ii+8;
+		jj:=ii+k2;
 		k:=(src[((jj+1)&31)] &$0F);
 		jj:=(src[jj&31] &$0F);
 		cols[ii]:=jj | (k<<4);
