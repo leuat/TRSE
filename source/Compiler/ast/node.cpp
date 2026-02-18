@@ -197,13 +197,8 @@ void Node::RequireNumber(QSharedPointer<Node> n, QString name, int ln) {
 
 bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,QSharedPointer<Node> testBlockB, AbstractCodeGen* dispatcher)
 {
-    //QSharedPointer<Assembler> as =
-    //    Asm6502 tmpAsm;
-  //  tmpAsm.m_symTab = as->m_symTab;
-//    CodeGen6502 dispatcher;
-//    dispatcher.as = &tmpAsm;
-//    s_isInOffpageTest = true;
-
+    if (m_evaluatedLines!=-1)
+        return m_evaluatedLines<120;
     auto app = QSharedPointer<Appendix>(new Appendix);
     auto newtemp = QSharedPointer<Appendix>(new Appendix);
     auto keep2 = as->m_tempVarsBlock;
@@ -214,10 +209,12 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
 
     as->m_currentBlock = app;
     QStringList keepTemps = as->m_tempVars;
+
     if (testBlockA!=nullptr)
         testBlockA->Accept(dispatcher);
     if (testBlockB!=nullptr)
         testBlockB->Accept(dispatcher);
+
     as->m_tempVars = keepTemps;
 
     int count = as->CodeSizeEstimator(app->m_source);
@@ -225,8 +222,8 @@ bool Node::verifyBlockBranchSize(Assembler *as, QSharedPointer<Node> testBlockA,
     as->offPageStack--;
 
 //    if (as->offPageStack==0)
-        as->m_tempVarsBlock = keep2;
-
+    as->m_tempVarsBlock = keep2;
+    m_evaluatedLines = count;
 
     return count<120;
 

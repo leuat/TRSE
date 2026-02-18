@@ -62,6 +62,7 @@ protected:
 
 //    int m_lineNumber;
     uint level = 0;
+    uint m_evaluatedLines = -1;
     // Comments associated with current node.
     QString m_comment = "";
 
