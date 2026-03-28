@@ -1,0 +1,831 @@
+//Game UNIT for TRSE - Commodore16/Plus4 
+//Made by AnyStone 2026
+//Version: 2026.03.11
+Unit GU;
+
+@use "system/str"
+
+var	
+	const JOY_UP : byte = 1;
+	const JOY_DOWN : byte = 2;
+	const JOY_LEFT : byte = 4;
+	const JOY_RIGHT : byte = 8;
+	const JOY_FIRE : byte = 64;
+	const JOY2_FIRE : byte = 128;
+	
+	const MODE_HIRES : byte = 0;
+	const MODE_MULTICOLOR : byte = 1;
+	
+	const MUSIC_NORMAL : byte = 0;
+	const MUSIC_DOUBLE : byte = 1;
+
+	fromX, fromY, toX, toY, lenX, lenY : byte;
+	
+	joys 	: byte;
+	joyv 	: byte;
+	musicon	: byte=0;
+	musicpause	: byte=1;
+	digion	: byte=0;
+	i,j		: byte;
+	charsetAddress : integer;
+	iint:integer;
+	
+	
+	m0,m1,m2,m3 : pointer of integer;
+	g0,g1,g2 : integer;
+	loc: integer;
+	
+	fromP, toP, fromCP, toCP, fromCP2, toCP2	: pointer;
+	tile_data, tile_color : integer;
+	screen_loc, color_loc : integer;
+	color_data : integer;
+	
+	fp : pointer;
+	len : byte;
+	addr, addr2 : integer;	jc0, jc1, jc2 : byte;
+	qs0, qs1, qs2 : byte;
+	jrem : byte;	maskb, coltmp, vstep : byte;
+	
+	toprint: array[6] of byte;
+	fileName : ^byte;
+	
+	lenX8: byte;
+	
+	
+	tmp_lo, tmp_hi, off_lo, off_hi : byte;
+	line : byte;
+	
+
+//{---------------------------------------------------- Sync ---------------------------------------------------- 
+procedure Sync(line : global byte);
+begin
+asm("
+	LDA GU_line
+	CMP $FF1D
+	BNE *-3
+	");
+end;
+
+//{------------------------- WaitSync --------------------------------
+procedure WaitSync(sec: byte);
+var w:byte;
+begin
+
+	if sec >0 then
+	for w:=0 to sec do
+		Sync($BE);
+end;
+
+//{---------------------------------------------------- InitDigi ---------------------------------------------------- 
+procedure InitDigiAndMusic();
+begin
+	asm("
+		jmp play_init	
+		
+playirq 
+		pha
+		txa
+		pha
+		tya
+		pha					; push accumulator
+
+	    lda $ff09          
+		and #$08
+		beq music_timer
+		
+		lda GU_digion
+		beq pend	
+buf		EQU *+1				; write buf, self modifying code
+		lda #0
+		sta $ff11			; write to D/A
+playptr EQU *+1				; sample play pointer, self mod.
+		lda $1200
+		cmp #$F1				; if magic number,
+		beq penda			; exit
+		clc
+		adc #$b1				; map sample to $B1..$B8
+		sta buf				; store in write buf
+		inc playptr			; increment play pointer
+		bne pend
+		inc playptr+1
+pend		
+		lda #$08
+		sta $ff09			; ack timer irq
+		jmp endirq
+penda
+		lda #$0
+		sta GU_digion
+		lda #$1
+		sta GU_musicpause
+		sta $FD
+		jmp endirq
+
+dummy	DC.B $F1 
+
+music_timer
+		lda $ff09          
+		and #$10
+		beq endirq
+		lda #$10
+		sta $ff09			; ack timer 2
+
+		lda GU_musicpause
+		beq nextirq
+		lda GU_musicon
+		beq nextirq
+		jsr GU_PlayMusic
+nextirq
+		jsr mustimnorm
+endirq
+		pla
+		tay
+		pla
+		tax
+		pla
+
+		rti
+
+GU_PlayMusic
+	jmp (GU_m1)
+	
+
+play_init
+		sei
+		sta $ff3f		; switch to full ram config
+		lda #<playirq
+		sta $fffe
+		lda #>playirq
+		sta $ffff
+		lda #$DE			; set timer 4khz ($94 6khz $6F 8khz)
+		sta $ff00
+		lda #$00
+		sta $ff01
+minit	jsr mustimnorm
+		lda #$18			; set irq masks
+		sta $ff0a
+		lda #0			; init write buffer
+		sta buf
+		lda #<dummy		; init sample play pointer
+		sta playptr		; to point to dummy
+		lda #>dummy		; (which contains the end-sample magic number)
+		sta playptr+1		
+		inc $ff09		; delete pending irq's
+		cli				; enable irq's
+		rts
+		
+mustimnorm	
+		lda #$c8			; set timer normal
+		sta $ff02
+		lda #$38
+		sta $ff03
+		rts
+		
+mustimdub	 
+		lda #$a3			; set timer double
+		sta $ff02
+		lda #$22
+		sta $ff03
+		rts	
+	");
+	
+end;
+
+//{---------------------------------------------------- PlayDigi ----------------------------------------------------
+procedure PlayDigi(sample : integer);
+begin
+	poke(^$FD,0,1);
+	digion:=1;
+	musicpause:=0;
+	
+	_a:=lo(sample);
+	_x:=hi(sample);
+
+	asm("
+ 		php
+		sei
+		sta playptr			; update sample play pointer
+		stx playptr+1
+		plp					; restore irq flag
+		rts
+	");
+	
+end;
+
+//{---------------------------------------------------- GetJoy ---------------------------------------------------- 
+function GetJoy(joy: byte) : byte;
+begin
+	joys:=$fb;
+	if joy=2 then joys:=$fd;
+
+    asm("
+	  lda #$ff
+	  sta $fd30
+	  lda GU_joys
+	  sta $ff08
+	  lda $ff08;keep
+	  STA GU_joyv 
+      ");
+      
+      GetJoy:=joyv;
+end;
+
+//{---------------------------------------------------- StartMusic ---------------------------------------------------- 
+procedure StartMusic(gameMusic : integer, mnumber : byte, mode : byte);
+begin
+	
+	if mode=MUSIC_DOUBLE then
+	asm("
+		lda #<mustimdub
+		sta nextirq+1
+		sta minit+1
+		lda #>mustimdub
+		sta nextirq+2
+		sta minit+2
+	");	
+	
+	g0:=gameMusic+2;
+	g1:=mnumber;
+	musicon:=1;
+	
+	asm("
+		lda GU_g0
+		ldx GU_g0+1
+		sta GU_m0
+		stx GU_m0+1
+
+		LDA GU_g1
+	");
+
+	Call(m0);
+
+	g1:=gameMusic+5;
+	
+	asm("
+		lda GU_g1
+		ldx GU_g1+1
+		sta GU_m1
+		stx GU_m1+1
+	");
+end;
+
+//{---------------------------------------------------- StopMusic ---------------------------------------------------- 
+procedure StopMusic();
+begin
+	poke(^$ff11,0,0);
+	musicon:=0;
+end;
+
+//{---------------------------------------------------- PageFullRam ---------------------------------------------------- 
+procedure PageFullRam();
+begin
+	poke(^$FF3F,0,1);
+end;
+
+//{---------------------------------------------------- PageSysRam ---------------------------------------------------- 
+procedure PageSysRam ();
+begin
+	poke(^$FF3E,0,1);
+end;
+
+//{---------------------------------------------------- SetBitmapMode ---------------------------------------------------- 
+procedure SetBitmapMode();
+begin
+asm("
+	lda $ff06
+	ora #$20
+	sta $ff06
+");
+end;
+
+//{---------------------------------------------------- TurnOnScreen ---------------------------------------------------- 
+procedure TurnOnScreen();
+begin
+asm("
+	lda #$3b
+	sta $ff06
+");
+end;
+
+//{---------------------------------------------------- TurnOnScreen ---------------------------------------------------- 
+procedure TurnOffScreen();
+begin
+asm("
+	lda $ff06
+	and #$ef
+	sta $ff06
+");
+end;
+
+//{---------------------------------------------------- SetMulticolorMode ---------------------------------------------------- 
+procedure SetMulticolorMode();
+begin
+asm("
+	lda $ff07	
+	ora #$10
+	sta $ff07
+	");
+end;
+
+//{---------------------------------------------------- SetHiresMode ---------------------------------------------------- 
+procedure SetHiresMode();
+begin
+asm("
+	lda $ff07	
+	and #$ef
+	sta $ff07
+	");
+end;
+
+//{---------------------------------------------------- SetSharedColor ---------------------------------------------------- 
+procedure SetSharedColorsByData(color_data : global integer);
+begin
+	asm("
+		lda GU_color_data
+		clc
+		adc #$fe
+		sta GU_fromP
+		lda GU_color_data+1
+		adc #$03
+		sta GU_fromP+1
+
+		ldy #$00
+		lda (GU_fromP),y
+		tax
+		and #$0f
+		asl
+		asl
+		asl
+		asl
+		sta GU_coltmp
+		txa
+		and #$f0
+		lsr
+		lsr
+		lsr
+		lsr
+		ora GU_coltmp
+		sta $ff16
+
+		iny
+		lda (GU_fromP),y
+		tax
+		and #$0f
+		asl
+		asl
+		asl
+		asl
+		sta GU_coltmp
+		txa
+		and #$f0
+		lsr
+		lsr
+		lsr
+		lsr
+		ora GU_coltmp
+		sta $ff15
+	");
+end;
+
+//{---------------------------------------------------- SetSharedColor ---------------------------------------------------- 
+procedure SetSharedColor(color : byte);
+begin
+	poke(^$FF16,0,color);
+end;
+
+//{---------------------------------------------------- SetScreenLoc ---------------------------------------------------- 
+procedure SetScreenLoc(loc : global integer);
+begin
+	poke(^$FF12,0,loc/1024);
+end;
+
+//{---------------------------------------------------- SetColorLoc ---------------------------------------------------- 
+procedure SetColorLoc(loc: global  integer);
+begin
+	loc:=loc/2048;
+	loc:=(loc)<<3;
+	asm("
+		lda $FF14 
+		and #%00000111
+		ora GU_loc
+		sta $FF14 
+	");
+	
+end;
+
+//{---------------------------------------------------- RandomNumber ---------------------------------------------------- 
+function RandomNumber(maxNumber:byte) : byte;
+var 
+	ran:integer;
+begin 
+	ran:=Random()*maxNumber;
+	ran:=ran/256;
+	RandomNumber := ran;
+end; 
+
+//{---------------------------------------------------- DrawChar ---------------------------------------------------- 
+procedure DrawChar(xch:byte, ych:byte, ascii: byte, colorch: byte);
+begin
+	fromP:=charsetAddress+ascii*8;
+	toP:=screen_loc+xch*8;
+
+	if ych>0 then for i:=0 to ych do toP+=320;
+
+	MemCpyUnroll(fromP, 0, toP,8);
+	
+	toP:=color_loc+xch+ych*40;
+	fromP:=toP+1024;
+	
+	Poke(toP,0,colorch);
+	Poke(fromP,0,colorch);
+	
+end;
+
+//{---------------------------------------------------- DrawString ---------------------------------------------------- 
+procedure DrawString(xs:integer, ys:byte, text:^byte, colors: byte);
+var char: byte;
+begin
+	iint:=0;
+	
+	while(text[iint]>0) do
+	begin
+		char:=text[iint];
+		if(char>64) then char:=char-64;
+		DrawChar(iint+xs, ys, char, colors);
+		iint:=iint+1;
+	end;
+end;
+
+//{---------------------------------------------------- DrawNumber ---------------------------------------------------- 
+procedure DrawNumber(xn:integer, yn:byte, number:Integer, colorn:byte);
+begin
+	str::itoa(number, #toprint, 10);
+	
+	DrawString(xn, yn, #toprint, colorn);
+end;
+
+//{---------------------------------------------------- InitGameUnit ---------------------------------------------------- 
+procedure InitGameUnit(screenL, colorL, tiledata, tilecolor, charset : integer, mode : byte);
+begin
+	screen_loc := screenL;
+	color_loc := colorL;
+	tile_data := tiledata;
+	tile_color := tilecolor;
+	charsetAddress := charset;
+	SetScreenLoc(screen_loc);
+	SetColorLoc(color_loc);
+	
+	GU::TurnOnScreen();
+	GU::SetBitmapMode();	
+	if mode = MODE_MULTICOLOR then GU::SetMulticolorMode();	
+	GU::PageFullRam();
+	PreventIRQ();
+	DisableCIAInterrupts();
+end;
+
+//{---------------------------------------------------- ClearScreen ---------------------------------------------------- 
+procedure CLS();
+begin
+	toP:=screen_loc;
+	toCP:=color_loc;
+
+	for i:=0 to 32 do
+	begin
+		Fill(toP, 0, 255);
+		toP+=255;
+		Fill(toCP, 0, 64);
+		toCP+=64;
+	end;
+	
+end;
+
+//{---------------------------------------------------- DrawPic ---------------------------------------------------- 
+procedure DrawPic(fromX, fromY, toX, toY, lenX, lenY : global byte);
+begin
+asm("	
+	lda GU_tile_data            
+	ldx GU_tile_data+1
+	sta GU_fromP               
+	stx GU_fromP+1
+	lda GU_screen_loc           
+	ldx GU_screen_loc+1
+	sta GU_toP                  
+	stx GU_toP+1
+
+tmpvar1 = $54                                     
+    lda #$00                                 
+    sta tmpvar1                            
+    lda GU_fromX  
+    asl                                   
+    asl                                   
+    asl                                   
+    rol tmpvar1                             
+    adc GU_fromP                            
+    sta GU_fromP                          
+    lda tmpvar1                            
+    adc GU_fromP+1                         
+    sta GU_fromP+1                          
+
+	ldx GU_fromY           
+    lda x320_lo,x                           
+    clc                                     
+    adc GU_fromP                
+    sta GU_fromP                            
+    lda x320_hi,x                          
+    adc GU_fromP+1                         
+    sta GU_fromP+1                         
+
+tmpvar2 = $54                                       
+    lda #00                                 
+    sta tmpvar2                             
+    lda GU_toX     
+    asl                                   
+    asl                                   
+    asl                                   
+    rol tmpvar2                             
+    adc GU_toP                              
+    sta GU_toP                              
+    lda tmpvar2                            
+    adc GU_toP+1                            
+    sta GU_toP+1                           
+
+    ldx GU_toY                  
+    lda x320_lo,x                          
+    clc                                    
+    adc GU_toP               
+    sta GU_toP                             
+    lda x320_hi,x                          
+    adc GU_toP+1                            
+    sta GU_toP+1                           
+
+	lda GU_tile_color           
+	ldx GU_tile_color+1
+	sta GU_fromCP
+	stx GU_fromCP+1
+	lda GU_color_loc            
+	ldx GU_color_loc+1
+	sta GU_toCP
+	stx GU_toCP+1
+	lda GU_fromCP              
+	clc
+	adc GU_fromX
+	sta GU_fromCP+0
+	bcc GU_DrawPic_WordAdd268
+	inc GU_fromCP+1
+GU_DrawPic_WordAdd268
+
+	ldx GU_fromY   ;	ldy #0                      
+    lda x40_lo,x                         
+    clc                                    
+    adc GU_fromCP                          
+    sta GU_fromCP                          
+    lda x40_hi,x                           
+    adc GU_fromCP+1                        
+    sta GU_fromCP+1                      
+
+	lda GU_toCP                 
+	clc
+	adc GU_toX
+	sta GU_toCP+0
+	bcc GU_DrawPic_WordAdd272
+	inc GU_toCP+1
+GU_DrawPic_WordAdd272
+
+    ldx GU_toY     ;	ldy #0                      
+    lda x40_lo,x                         
+    clc                                    
+    adc GU_toCP                             
+    sta GU_toCP                            
+    lda x40_hi,x                           
+    adc GU_toCP+1                           
+    sta GU_toCP+1                           
+
+	lda GU_fromCP                          
+    sta GU_fromCP2+0                        
+    clc                                    
+    lda GU_fromCP+1                         
+    adc #$04                               
+    sta GU_fromCP2+1                       
+                                            
+    lda GU_toCP                                         
+    sta GU_toCP2+0                         
+    clc                                     
+    lda GU_toCP+1                          
+    adc #$04                               
+    sta GU_toCP2+1                          
+                                            
+	lda GU_lenX    
+	asl
+	asl
+	asl
+	sta GU_lenX8
+	lda #$0                     
+
+	sta GU_i
+GU_DrawPic_forloop278
+	ldy GU_lenX
+	dey
+GU_DrawPic_memcpy292
+	lda (GU_fromCP),y           
+	sta (GU_toCP),y
+	dey
+	bpl GU_DrawPic_memcpy292
+	ldy GU_lenX
+	dey
+GU_DrawPic_memcpy293
+	lda (GU_fromCP2),y          
+	sta (GU_toCP2),y
+	dey
+	bpl GU_DrawPic_memcpy293
+	ldy GU_lenX8
+	dey
+GU_DrawPic_memcpy294           
+	lda (GU_fromP),y            
+	sta (GU_toP),y              
+	dey
+	bpl GU_DrawPic_memcpy294
+	lda GU_fromP                
+	clc
+	adc #$40
+	sta GU_fromP+0             
+	lda GU_fromP+1
+	adc #$01
+	sta GU_fromP+1              
+	lda GU_toP                 
+	clc
+	adc #$40
+	sta GU_toP+0               
+	lda GU_toP+1
+	adc #$01
+	sta GU_toP+1                
+	lda GU_fromCP               
+	clc
+	adc #$28
+	sta GU_fromCP+0
+	bcc GU_DrawPic_WordAdd297
+	inc GU_fromCP+1
+GU_DrawPic_WordAdd297
+	lda GU_toCP                 
+	clc
+	adc #$28
+	sta GU_toCP+0
+	bcc GU_DrawPic_WordAdd298
+	inc GU_toCP+1
+GU_DrawPic_WordAdd298
+	lda GU_fromCP2              
+	clc
+	adc #$28
+	sta GU_fromCP2+0
+	bcc GU_DrawPic_WordAdd299
+	inc GU_fromCP2+1
+GU_DrawPic_WordAdd299
+	lda GU_toCP2                
+	clc
+	adc #$28
+	sta GU_toCP2+0
+	bcc GU_DrawPic_WordAdd300
+	inc GU_toCP2+1
+GU_DrawPic_WordAdd300
+GU_DrawPic_loopstart279
+	inc GU_i
+	lda GU_lenY
+	cmp GU_i ;keep
+	beq GU_DrawPic_loopdone301
+GU_DrawPic_loopnotdone302
+	jmp GU_DrawPic_forloop278
+GU_DrawPic_loopdone301
+GU_DrawPic_loopend280
+	rts
+
+x40_hi  dc.b    $00
+        dc.b    $00
+        dc.b    $00
+        dc.b    $00
+        dc.b    $00
+        dc.b    $00
+        dc.b    $00
+        dc.b    $01
+        dc.b    $01
+        dc.b    $01
+        dc.b    $01
+        dc.b    $01
+        dc.b    $01
+        dc.b    $02
+        dc.b    $02
+        dc.b    $02
+        dc.b    $02
+        dc.b    $02
+        dc.b    $02
+        dc.b    $02
+        dc.b    $03
+        dc.b    $03
+        dc.b    $03
+        dc.b    $03
+        dc.b    $03
+
+x40_lo  dc.b    $00
+        dc.b    $28
+        dc.b    $50
+        dc.b    $78
+        dc.b    $A0
+        dc.b    $C8
+        dc.b    $F0
+        dc.b    $18
+        dc.b    $40
+        dc.b    $68
+        dc.b    $90
+        dc.b    $B8
+        dc.b    $E0
+        dc.b    $08
+        dc.b    $30
+        dc.b    $58
+        dc.b    $80
+        dc.b    $A8
+        dc.b    $D0
+        dc.b    $F8
+        dc.b    $20
+        dc.b    $48
+        dc.b    $70
+        dc.b    $98
+        dc.b    $C0
+
+x320_hi dc.b    $00
+        dc.b    $01
+        dc.b    $02
+        dc.b    $03
+        dc.b    $05
+        dc.b    $06
+        dc.b    $07
+        dc.b    $08
+        dc.b    $0A
+        dc.b    $0B
+        dc.b    $0C
+        dc.b    $0D
+        dc.b    $0F
+        dc.b    $10
+        dc.b    $11
+        dc.b    $12
+        dc.b    $14
+        dc.b    $15
+        dc.b    $16
+        dc.b    $17
+        dc.b    $19
+        dc.b    $1A
+        dc.b    $1B
+        dc.b    $1C
+        dc.b    $1E
+
+x320_lo dc.b    $00
+        dc.b    $40
+        dc.b    $80
+        dc.b    $C0
+        dc.b    $00
+        dc.b    $40
+        dc.b    $80
+        dc.b    $C0
+        dc.b    $00
+        dc.b    $40
+        dc.b    $80
+        dc.b    $C0
+        dc.b    $00
+        dc.b    $40
+        dc.b    $80
+        dc.b    $C0
+        dc.b    $00
+        dc.b    $40
+        dc.b    $80
+        dc.b    $C0
+        dc.b    $00
+        dc.b    $40
+        dc.b    $80
+        dc.b    $C0
+        dc.b    $00
+
+	");
+end;
+
+//{---------------------------------------------------- LoadFile ---------------------------------------------------- 
+procedure LoadFile(fileName : global ^byte, addr : global integer);
+begin
+	fp := #fileName;
+	len := str::strlen(#fileName);
+
+	PageSysRam();
+
+	asm("
+				 lda GU_len
+			     ldx GU_fp
+			     ldy GU_fp+1
+			     jsr $ffbd    		;//call setnam
+			     ldx #$08      		;// default to device 8
+				 ldy #$00      		;// $00 means: load to new address
+			     jsr $ffba    		;// call setlfs
+			     ldx GU_addr
+			     ldy GU_addr+1
+			     lda #$00      		;// $00 means: load to memory (not verify)
+			     jsr $ffd5      	;// call load
+	");
+
+	PageFullRam();
+end;
+
+end. 
