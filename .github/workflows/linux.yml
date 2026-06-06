@@ -19,25 +19,18 @@ jobs:
       - name: Increment version
         id: version
         run: |
-          git config user.name "Nightly Build"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          for i in 1 2 3; do
-            git fetch origin master
-            git checkout -B master origin/master
-            version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
-            let version=${version}+1
-            sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
-            version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
-            echo "TRSE_VERSION=${version}" >> $GITHUB_OUTPUT
-            git add source/LeLib/data.cpp
-            git commit -m "Increment nightly version"
-            if git push origin HEAD:master; then
-              break
-            fi
-            if [ $i -eq 3 ]; then
-              exit 1
-            fi
-          done
+          version=$(grep "define NIGHTLY" source/LeLib/data.cpp | awk '{ print $3 }')
+          let version=${version}+1
+          sed -i "s/define NIGHTLY .*/define NIGHTLY $version/" source/LeLib/data.cpp
+          version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
+          echo "TRSE_VERSION=${version}" >> $GITHUB_OUTPUT
+      - name: Commit & Push new version
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          author_name: "Nightly Build"
+          message: "Increment nightly version"
+          branch: master
 
       - run: |
           sudo apt-get update
