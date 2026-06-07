@@ -1,0 +1,37 @@
+<h3>Description</h3>
+<p>Preprocessor that exports a TRSE image file (.flf) to binary on build in a format suitable for the
+    Vic Bitmap Mode (VBM). This version of the command takes a starting character from an FLF character
+    editor file and allows you to extract the data in a height in pixels and width chunk in characters.
+    <br><br>
+    Because this exports height in pixels, it is not suitable for character mapped images. Primarily,
+    this exporter is for libraries like Vixel that supports sprite images of any pixel height sizes,
+    not necessarily in multiples of 8.
+</p>
+<p>
+    VBM export pixel takes six parameters.
+</p>
+<ul>
+    <li>The source flf file</li>
+    <li>The destination bin file to create</li>
+    <li>The start character number</li>
+    <li>The width in characters</li>
+    <li>The height in pixels</li>
+    <li>Hires (0) or multicolour (1)</li>
+</ul>
+<p>Characters are exported rows first, then columns.
+</p>
+
+<h3>Example</h3>
+The following example will export starting at character 40, 2 characters wide in total, each row being 10 pixels tall
+and in hires mode from the .flf charset file to a binary file.
+<code>
+program VBMExportPixel;
+
+@vbmexportpixel "sprite/mySprite.flf" "sprite/mySprite.bin" 40 2 10 0
+var
+    mySprite : incbin("sprite/mySprite.bin",$2000);
+
+begin
+    Loop();
+end.
+</code>

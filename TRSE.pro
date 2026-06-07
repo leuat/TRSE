@@ -1097,7 +1097,9 @@ DISTFILES += \
     resources/text/help/r/use.rtf \
     resources/text/help/r/userdata.rtf \
     resources/text/help/r/var.rtf \
+    resources/text/help/r/vbmexportchunk.rtf \
     resources/text/help/r/vbmexportcolor.rtf \
+    resources/text/help/r/vbmexportpixel.rtf \
     resources/text/help/r/vicmemoryconfig.rtf \
     resources/text/help/r/wedge.rtf \
     resources/text/help/r/while.rtf \

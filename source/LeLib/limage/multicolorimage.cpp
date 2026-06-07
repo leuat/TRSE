@@ -1049,6 +1049,56 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
     file.write(data);
 }
 
+// exports a screen in VBM format using pixel height - can export odd sizes,
+void MultiColorImage::VBMExportPixel(QFile &file, int start, int width, int height, int isMulticolor)
+{
+    QByteArray data;
+    QVector<PixelChar*> pcList;
+
+    for (int x=0;x<width;x++) { // x
+
+        int heightRemaining = height;
+
+        for (int y=0; y<height; y++) { // y
+
+            // Convert to POS in charset:
+            int pos = x+(y*m_charWidthDisplay) + start;
+
+            //qDebug() <<i <<j <<"-" << x << y << pos;
+
+            int hlines = 8;
+            if (heightRemaining > 8) {
+                heightRemaining -= 8;
+            } else {
+                hlines = heightRemaining; // only collect smaller number of lines
+                heightRemaining = 0;
+            }
+
+            // debugging info
+
+            //data.append(width);
+            //data.append(x);
+
+            //data.append(hlines);
+            //data.append(heightRemaining);
+
+            // check in bounds
+            if (pos>=0 && pos< m_charWidth*m_charHeight) {
+                PixelChar& pc = m_data[pos];
+                for (int i=0;i<hlines;i++) {
+                    // VIC20 and Multicolor mode - swap bit
+                    if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
+                        data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
+                    else
+                        data.append( PixelChar::reverse(pc.p[i]));
+                }
+                pos +=m_charWidthDisplay;
+            }
+
+        }
+    }
+    file.write(data);
+}
 
 /*
    Exports sprite data as code in procedures to draw it

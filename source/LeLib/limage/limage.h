@@ -200,6 +200,7 @@ public:
     virtual void VBMExport(QFile& file, int p1, int p2, int p3, int p4) {}
     virtual void VBMExportColor(QFile& file, int p1, int p2, int p3, int p4) {}
     virtual void VBMExportChunk(QFile& file, int p1, int p2, int p3, int p4) {}
+    virtual void VBMExportPixel(QFile& file, int start, int width, int height, int isMultiColor) {}
     virtual void VBMCompileChunk(QTextStream& f, QString procName, QString pointerName, QString asmOperation, int p1, int p2, int p3, int p4) {}
 
     virtual void CopySingleChar(LImage* src, int srcChar, int dstChar) {qDebug() << "CopySingleChar not implemented";}

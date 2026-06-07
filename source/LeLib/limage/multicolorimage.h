@@ -175,6 +175,7 @@ public:
     void VBMExportColor(QFile& file, int p1, int p2, int p3, int p4) override;
 
     void VBMExportChunk(QFile& file, int p1, int p2, int p3, int p4) override;
+    void VBMExportPixel(QFile& file, int start, int width, int height, int isMultiColor) override;
     void VBMCompileChunk(QTextStream &f, QString procName, QString pointerName, QString asmOperation, int start, int width, int height, int isMulticolor) override;
 
     void FromLImageQImage(LImage* other) override;
