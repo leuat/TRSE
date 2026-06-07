@@ -44,7 +44,7 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
 /*#ifdef defined(Q_OS_FREEBSD)
     QString rasm = path+"rasm";
     Util::CopyFile(":resources/bin/rasm",rasm);
-    QFile::setPermissions(rasm,QFile::ExeUser);
+    QFile::setPermissions(rasm, QFile::ExeUser);
 
 #endif
 */
