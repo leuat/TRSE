@@ -232,7 +232,7 @@ static int get_base(const char * a){
     else
         return 0;
 }
-static int parse_int(const char ** expression,const int linenum){
+static int parse_int(/*const*/ char ** expression,const int linenum){
     int base = get_base(*expression);
     if(base <= 0)
         exit_error("error%d: Invalid Immediate\n", linenum);
@@ -301,7 +301,7 @@ static  int apply_binary_op(const  int l_op, const char op, const  int r_op, con
     return -1;
 
 }
-static int evaluate_arithmetic_expression(const char * expression, const int linenum){
+static int evaluate_arithmetic_expression(/*const*/ char * expression, const int linenum){
 
     struct {unsigned char stack[STACK_HEIGHT]; unsigned char * top;} operators; operators.top=operators.stack-1;
     struct {int stack[STACK_HEIGHT]; int *top;} figures;

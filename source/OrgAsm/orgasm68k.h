@@ -1,5 +1,5 @@
 #ifndef ORGASM68k_H
-#define ORGAsm68k_H
+#define ORGASM68k_H
 
 
 #include "orgasm.h"
