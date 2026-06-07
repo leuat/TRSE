@@ -1467,6 +1467,16 @@ void Parser::HandlePreprocessorInParsing() {
             return;
         }
 
+        if (m_currentToken.m_value == "vbmexportpixel") {
+            Eat();
+            Eat(TokenType::STRING);
+            Eat(TokenType::STRING);
+            Eat(TokenType::INTEGER_CONST); //start
+            Eat(TokenType::INTEGER_CONST); //w chars
+            Eat(TokenType::INTEGER_CONST); //h pixels
+            Eat(TokenType::INTEGER_CONST); //multi-color
+            return;
+        }
         if (m_currentToken.m_value == "vbmcompilechunk") {
             Eat();
             Eat(TokenType::STRING);
@@ -3372,6 +3382,9 @@ void Parser::PreprocessSingle() {
     } else if (m_currentToken.m_value.toLower() == "vbmexportchunk") {
         Eat(TokenType::PREPROCESSOR);
         HandleVBMExportChunk();
+    } else if (m_currentToken.m_value.toLower() == "vbmexportpixel") {
+        Eat(TokenType::PREPROCESSOR);
+        HandleVBMExportPixel();
     } else if (m_currentToken.m_value.toLower() == "vbmcompilechunk") {
         Eat(TokenType::PREPROCESSOR);
         HandleVBMCompileChunk();
@@ -6371,6 +6384,37 @@ void Parser::HandleVBMExportChunk() {
     img->m_silentExport = true;
 
     img->VBMExportChunk(file, param1, param2, param3, param4);
+
+    file.close();
+}
+
+void Parser::HandleVBMExportPixel() {
+    int ln = m_currentToken.m_lineNumber;
+    QString inFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString outFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    int start = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int width = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int height = m_currentToken.m_intVal;
+    Eat(TokenType::INTEGER_CONST);
+    int isMultiColor = m_currentToken.m_intVal;
+
+    if (!QFile::exists(inFile)) {
+        ErrorHandler::e.Error("File not found : " + inFile, ln);
+    }
+    LImage *img = LImageIO::Load(inFile);
+    if (QFile::exists(outFile))
+        QFile::remove(outFile);
+
+    QFile file(outFile);
+
+    file.open(QFile::WriteOnly);
+    img->m_silentExport = true;
+
+    img->VBMExportPixel(file, start, width, height, isMultiColor);
 
     file.close();
 }

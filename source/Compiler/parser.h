@@ -342,6 +342,7 @@ private:
     void HandleVBMExport();
     void HandleVBMExportColor();
     void HandleVBMExportChunk();
+    void HandleVBMExportPixel();
     void HandleVBMCompileChunk();
     void HandleExportFrame();
     void HandleSpriteCompiler();
