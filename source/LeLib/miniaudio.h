@@ -41336,7 +41336,7 @@ static void ma_get_standard_channel_map_microsoft(ma_uint32 channels, ma_channel
     }
 
     /* Remainder. */
-    if (channels > 8) {
+    if (channels > 8 and channels < 32) {
         ma_uint32 iChannel;
         for (iChannel = 8; iChannel < channels; ++iChannel) {
             if (iChannel < MA_MAX_CHANNELS) {
