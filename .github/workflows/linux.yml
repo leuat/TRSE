@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       # Ideally we would like to do it once for all builds,
       # but this is complicated as we want to allow to trigger a nightly by
       # pushing the tag, so this can't be in nightly.yml. One option would be to
