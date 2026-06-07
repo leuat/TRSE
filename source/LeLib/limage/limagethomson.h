@@ -1,5 +1,5 @@
 #ifndef LIMAGETHOMSON_H
-#define LIMAGETHOMSOM_H
+#define LIMAGETHOMSON_H
 
 #include "limageqimage.h"
 #include <QMatrix4x4>
