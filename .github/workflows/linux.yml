@@ -5,6 +5,9 @@ on:
     tags:
       - 'nightly'
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,12 +28,14 @@ jobs:
           version=$(grep "define \(MAJOR\|FEATURE\|NIGHTLY\)" source/LeLib/data.cpp | awk '{ print $3 }' | xargs | sed 's/ /\./g')
           echo "TRSE_VERSION=${version}" >> $GITHUB_OUTPUT
       - name: Commit & Push new version
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          author_name: "Nightly Build"
-          message: "Increment nightly version"
-          branch: master
+        run: |
+          git config user.name "Nightly Build"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add source/LeLib/data.cpp
+          # No-op if version is unchanged for any reason.
+          git diff --cached --quiet && exit 0
+          git commit -m "Increment nightly version"
+          git push origin HEAD:master
 
       - run: |
           sudo apt-get update
@@ -158,9 +163,9 @@ jobs:
 
       - name: Build notification
         if: failure()
-        uses: adamkdean/simple-slack-notify@master
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          channel: #bugs
-          text: "[GitHub Actions Notification] Linux build failed: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
+        run: |
+          payload=$(printf '{"channel":"#bugs","text":"[GitHub Actions Notification] Linux build failed: %s/%s/actions/runs/%s"}' \
+            "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
