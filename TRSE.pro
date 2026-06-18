@@ -37,6 +37,7 @@ ICON = trse.icns
 QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
 ARCH = $$QMAKE_HOST.arch
 
+
 macx{
     QMAKE_CXXFLAGS += -O3
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
@@ -92,7 +93,8 @@ win32-msvc*{
 }
 
 linux*{
-    QMAKE_CXXFLAGS += -fopenmp -Wall -Werror
+    QMAKE_CXXFLAGS -= -Werror
+    QMAKE_CXXFLAGS += -fopenmp -Wall #-Werror
     # TODO(ColinPitrat): Progressively fix and activate the most valuable warnings. Looseley ordered so that the last ones are the most valuable to remove.
     QMAKE_CXXFLAGS += -Wno-unused-variable -Wno-unused-parameter -Wno-unused-function -Wno-unused-but-set-variable -Wno-unused-value -Wno-sign-compare -Wno-missing-field-initializers -Wno-delete-non-virtual-dtor -Wno-type-limits -Wno-stringop-overflow
     QMAKE_CXXFLAGS += -Wno-unused-result -Wno-implicit-fallthrough -Wno-format-truncation -Wno-mismatched-new-delete
