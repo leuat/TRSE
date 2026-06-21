@@ -323,7 +323,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
         }
 
         // toggle toolbar panels on and off
-        if (e->key()==Qt::Key_F6) {
+/*        if (e->key()==Qt::Key_F6) {
             ui->tabMain->setVisible(!ui->tabMain->isVisible());
             FixSplitting(ui->tabMain, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
@@ -332,8 +332,8 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             ui->Tools_2->setVisible(!ui->Tools_2->isVisible());
             FixSplitting(ui->Tools_2, ui->tabMain->isVisible() || ui->Tools_2->isVisible());
         }
-        // toggle
-        if (e->key()==Qt::Key_Backslash || e->key()==Qt::Key_F7) {
+*/        // toggle
+        if (e->key()==Qt::Key_Backslash || e->key()==Qt::Key_F5) {
 
             auto container = ui->Tools_2;//ui->groupBoxTools;
             if (ui->tabMain->isVisible() || ui->Tools_2->isVisible())
@@ -341,7 +341,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
 
 //            qDebug() << m_keepSplitterSizes;
 
-            if ( ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) )
+/*            if ( ( !(QApplication::keyboardModifiers() & Qt::ControlModifier) ) )
             {
                 // no Ctrl key, toggle from one to the other
                 if (container->isVisible() ) {
@@ -354,7 +354,7 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
                 }
 
             }
-            else
+            else */
             {
 
                 // Ctrl key, toggle both on and both off
@@ -577,8 +577,8 @@ void FormImageEditor::UpdateButtonIcons()
     else
         ui->btnRepeating->setIcon(QPixmap(":resources/images/charset_icons/btn-4-NoRepeatTile.png"));
 
-    ui->btnCharsetFull->setIconSize(QSize(32,32));
-    ui->btnRepeating->setIconSize(QSize(32,32));
+    ui->btnCharsetFull->setIconSize(QSize(24,24));
+    ui->btnRepeating->setIconSize(QSize(24,24));
 }
 
 void FormImageEditor::UpdateGrid()
@@ -1393,7 +1393,7 @@ void FormImageEditor::updateCharSet()
     int cnt=0;
     int j=0;
     int i=0;
-    int size=32;
+    int size=24;
     ui->lstCharMap->setIconSize(QSize(size,size));
     for (int i=0;i<width;i++) {
         ui->lstCharMap->setColumnWidth(i,size);

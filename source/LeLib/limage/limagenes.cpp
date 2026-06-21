@@ -61,7 +61,7 @@ LImageNES::LImageNES(LColorList::Type t) : CharsetImage(t)
     m_exportParams["EndY"] = m_charHeight;
     m_exportParams["Compression"] = 0;
 
-    m_GUIParams[col1] = "Background";
+    m_GUIParams[col1] = "BACK";
     m_GUIParams[col2] = "Color 1";
     m_GUIParams[col3] = "Color 2";
     m_GUIParams[col4] = "Color 3";

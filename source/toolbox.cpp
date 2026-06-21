@@ -94,7 +94,7 @@ void Toolbox::BuildToolOptions()
 void Toolbox::BuildGUI(QGridLayout *ly, int windowWidth)
 {
     int size = 64;
-    size = 80*(windowWidth/1920.0)*0.7;
+    size = 80*(windowWidth/1920.0)*0.6;
     int row=0;
     int col=0;
     m_windowWidth = windowWidth;
@@ -108,8 +108,8 @@ void Toolbox::BuildGUI(QGridLayout *ly, int windowWidth)
         if (m_current==m_items[i])
             b->setStyleSheet("background-color: #204080");
   //      b->setPalette(p);
-   //     b->setMaximumWidth(20);
-   //     b->setMinimumWidth(20);
+        b->setMaximumWidth(40);
+        b->setMinimumWidth(20);
         b->setAutoFillBackground( true );
         b->setText(m_items[i]->m_name);
  //       b->setFixedSize(QSize(size, size));
