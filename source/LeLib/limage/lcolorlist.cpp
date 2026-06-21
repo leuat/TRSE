@@ -553,10 +553,10 @@ void LColorList::SetC64Pens(bool m_isMulticolor, bool m_isCharset)
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Free colour",type)));
     }
     if (m_type==VIC20) {
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"BACK",LPen::Dropdown)));
         m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"AUX",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Border",LPen::Dropdown)));
-        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"BORDER",LPen::Dropdown)));
+        m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"CHAR",type)));
     }
 
     if (!m_isMulticolor && !m_isHybridMode) {
@@ -613,11 +613,11 @@ void LColorList::SetVIC20Pens(bool m_isMulticolor)
         return;
 
 //    qDebug() << "prev aux: " << oldList[2];
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"Background",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[0],"BACK",LPen::Dropdown)));
     m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[1],"AUX",LPen::Dropdown)));
 //    qDebug() << "BORDER:  "<<oldList[1];
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"Border",LPen::Dropdown)));
-    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"Char colour",type)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[2],"BORDER",LPen::Dropdown)));
+    m_pens.append(QSharedPointer<LPen>(new LPen(&m_pens,&m_list,oldList[3],"CHAR",type)));
 
 
 
@@ -1650,7 +1650,7 @@ void LColorList::CreateUI(QLayout* ly, int type, QSize windowSize) {
     m_layout = ly;
     Util::clearLayout(ly, true);
     int m = m_pens.count();
-    int width=60/(std::max(m/16,1))*(windowSize.height()/(float)1600);
+    int width=45/(std::max(m/16,1))*(windowSize.height()/(float)1600);
 //    qDebug() << width;
     if (m>200) {
         width = 24*(windowSize.height()/(float)1600);;

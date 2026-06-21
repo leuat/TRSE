@@ -23,7 +23,7 @@ LImageVZ200::LImageVZ200(LColorList::Type t)  : LImageQImage(t)
     m_GUIParams[btnEditFullCharset] = "Char";
 
 
-    m_GUIParams[col1] = "Background";
+    m_GUIParams[col1] = "BACK";
     m_GUIParams[col2] = "Color 1";
     m_GUIParams[col3] = "Color 2";
     m_GUIParams[col4] = "Color 3";

@@ -78,8 +78,8 @@ MultiColorImage::MultiColorImage(LColorList::Type t) : LImage(t)
     m_supports.displayMC2 = false;
 
 
-    m_GUIParams[col1] ="Background";
-    m_GUIParams[col2] = "Border";
+    m_GUIParams[col1] ="BACK";
+    m_GUIParams[col2] = "BORDER";
     m_GUIParams[col3] = "";
     m_GUIParams[col4] = "";
 

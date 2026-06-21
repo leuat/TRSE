@@ -873,9 +873,9 @@ void LImage::EnsureSystemColours()
         m_colorList.m_type = LColorList::VIC20;
 
 
-        m_GUIParams[col1] ="Background";
-        m_GUIParams[col4] = "Border & MC";
-        m_GUIParams[col2] = "Aux Colour";
+        m_GUIParams[col1] ="BACK";
+        m_GUIParams[col4] = "CORDER";
+        m_GUIParams[col2] = "Aux";
         m_GUIParams[col3] = "";
         m_supports.displayForeground = false; // Set to false
 //        m_GUIParams[col4] = "";
