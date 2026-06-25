@@ -145,8 +145,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>1828</width>
-               <height>961</height>
+               <width>1831</width>
+               <height>965</height>
               </rect>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
@@ -718,7 +718,7 @@
                      <item row="3" column="0">
                       <widget class="CustomQTableWidget" name="lstCharMap">
                        <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
                          <horstretch>0</horstretch>
                          <verstretch>0</verstretch>
                         </sizepolicy>
@@ -726,7 +726,7 @@
                        <property name="minimumSize">
                         <size>
                          <width>0</width>
-                         <height>300</height>
+                         <height>0</height>
                         </size>
                        </property>
                        <property name="maximumSize">

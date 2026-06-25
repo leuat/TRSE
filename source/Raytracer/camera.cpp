@@ -3,6 +3,7 @@
 #include <math.h>
 #include <QMatrix2x2>
 #include <QVector2D>
+#include <QQuaternion>
 
 Camera::Camera()
 {
