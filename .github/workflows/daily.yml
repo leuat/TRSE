@@ -2,7 +2,7 @@ name: daily
 
 on:
   schedule:
-    - cron: '00 09 * * *'
+    - cron: '00 12 * * *'
 
 # Triggers the nightly builds by tagging master branch.
 # We have to use a dedicated access token because events raised by workflows
