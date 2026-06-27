@@ -144,8 +144,27 @@ jobs:
           VERSION="${{ steps.version.outputs.TRSE_VERSION }}"
           RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
 
-          payload=$(printf '{"content":"**Windows Nightly Build: %s**\nVersion: %s\nRun: %s"}' "$STATUS" "$VERSION" "$RUN_URL")
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL is empty; skipping Discord notification"
+            exit 0
+          fi
 
-          curl -X POST -H "Content-Type: application/json" \
+          # Build JSON safely to avoid invalid payloads when values contain special characters.
+          payload=$(jq -nc \
+            --arg status "$STATUS" \
+            --arg version "$VERSION" \
+            --arg run_url "$RUN_URL" \
+            '{content: "**Windows Nightly Build: " + $status + "**\nVersion: " + $version + "\nRun: " + $run_url}')
+
+          response_file=$(mktemp)
+          http_code=$(curl -sS -o "$response_file" -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
             -d "$payload" \
-            "$DISCORD_WEBHOOK_URL"
+            "$DISCORD_WEBHOOK_URL")
+
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "Discord webhook failed with HTTP $http_code"
+            cat "$response_file"
+            exit 1
+          fi
