@@ -53,7 +53,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k hurra build.keychain
           security find-identity -v
           cd Publish/publish_mac && ./publish_mac.sh nightly $DEVELOPER_ID
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           name: nightly
           body: TRSE ${{ steps.version.outputs.TRSE_VERSION }} <br/> The latest automated nightly build of TRSE which succeeded. This is the recommended version to use.
@@ -61,15 +61,6 @@ jobs:
           prerelease: false
           make_latest: true
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build notification
-        if: failure()
-        uses: adamkdean/simple-slack-notify@master
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        with:
-          channel: #bugs
-          text: "[GitHub Actions Notification] MacOS build failed: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
 
       - name: Discord notification
         if: always()
@@ -99,6 +90,8 @@ jobs:
           response_file=$(mktemp)
           http_code=$(curl -sS -o "$response_file" -w "%{http_code}" \
             -X POST \
+            --connect-timeout 10 \
+            --max-time 20 \
             -H "Content-Type: application/json" \
             -d "$payload" \
             "$DISCORD_WEBHOOK_URL")
@@ -108,3 +101,24 @@ jobs:
             cat "$response_file"
             exit 1
           fi
+
+      - name: Build notification
+        if: failure()
+        continue-on-error: true
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK_URL" ]; then
+            echo "SLACK_WEBHOOK_URL is empty; skipping Slack notification"
+            exit 0
+          fi
+
+          payload=$(printf '{"channel":"#bugs","text":"[GitHub Actions Notification] MacOS build failed: %s/%s/actions/runs/%s"}' \
+            "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID")
+          curl -sS \
+            --connect-timeout 10 \
+            --max-time 20 \
+            -X POST \
+            -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK_URL"
