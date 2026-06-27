@@ -70,3 +70,22 @@ jobs:
         with:
           channel: #bugs
           text: "[GitHub Actions Notification] MacOS build failed: ${env.GITHUB_SERVER_URL}/${env.GITHUB_REPOSITORY}/actions/runs/${env.GITHUB_RUN_ID}"
+
+      - name: Discord notification
+        if: always()
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          STATUS="SUCCESS"
+          if [ "${{ job.status }}" != "success" ]; then
+            STATUS="FAILURE"
+          fi
+
+          VERSION="${{ steps.version.outputs.TRSE_VERSION }}"
+          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          payload=$(printf '{"content":"**MacOS Nightly Build: %s**\nVersion: %s\nRun: %s"}' "$STATUS" "$VERSION" "$RUN_URL")
+
+          curl -X POST -H "Content-Type: application/json" \
+            -d "$payload" \
+            "$DISCORD_WEBHOOK_URL"
