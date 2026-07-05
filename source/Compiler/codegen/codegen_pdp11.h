@@ -93,7 +93,7 @@ public:
     //    void BuildConditional(QSharedPointer<Node> node, QString lblFailed);
     void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
-    void BuildToCmp(QSharedPointer<Node> node);
+    void BuildToCmp(QSharedPointer<Node> node) override;
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
 

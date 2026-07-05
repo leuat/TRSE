@@ -42,6 +42,9 @@ macx{
     QMAKE_CXXFLAGS += -O3
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
 
+    # AGL is removed from recent macOS SDKs; ensure qmake does not link it.
+    LIBS -= -framework AGL
+
     QMAKE_APPLE_DEVICE_ARCHS = arm64
 
     LIBS += -L$$PWD/libs
