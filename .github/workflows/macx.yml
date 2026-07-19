@@ -36,8 +36,20 @@ jobs:
           arch: 'clang_64'      
       - run: brew install libomp
 
+      - name: Remove obsolete AGL references from Qt
+        run: |
+          QT_ROOT="$RUNNER_WORKSPACE/Qt/6.6.0/macos"
+          if [ -d "$QT_ROOT/lib" ]; then
+            grep -RIl --include="*.prl" -- "-framework AGL" "$QT_ROOT/lib" | while read -r prl; do
+              sed -i '' 's/-framework AGL//g' "$prl"
+            done
+          fi
+
       - run: qmake TRSE.pro
-      - run: make -j 4 arch=arm64
+      - name: Build
+        run: |
+          sed -i '' 's/-framework AGL//g' Makefile
+          make -j 4 arch=arm64
 
       - name: Codesign executable
         env: 
