@@ -1,7 +1,7 @@
 program Tutorial5_image;
 @use "Screen"
 @use "Memory"
-@use "Compression"
+@use "compression"
 
 @export "images/trse.flf" "trse.bin" 256
 
