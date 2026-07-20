@@ -6,7 +6,8 @@ program UnrolledSprites;
 
  var
 	const N : byte = 4;
-	xp: array[N] of byte = buildtable("i*4");
+	// x position of each sprite
+	xp: array[N] of integer = buildtable("0");
 	i,j : byte;
 	
 @spritecompiler "images/sprites1.flf" "tank" 3 0 16 8 
@@ -32,12 +33,12 @@ begin
 		for i:=0 to N do
 		begin
 			if (i<N/2) then
-				tank(0, #screen, xp[i],20+i<<3)
+				tank(0, #screen, xp[i]>>2,20+i<<3)
 			else
-				stuff(0, #screen, xp[i],20+i<<3);
+				stuff(0, #screen, xp[i]>>2,20+i<<3);
 			
-			xp[i] +=1;
-			if (xp[i]>=128) then xp[i]:=0;
+			xp[i] +=1+i;
+			if (xp[i]>=127*4) then xp[i]:=0;
 			if (i=N-1) then xp[i]+=1;
 		end;
 		Screen::WaitForVerticalBlank();
