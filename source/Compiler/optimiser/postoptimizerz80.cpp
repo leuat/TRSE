@@ -113,8 +113,10 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
                  * ld de,$10
                 */
             if (par[0]=="de" && par[1]=="hl") {
-                prevLine->m_changeRegs["de"] = line.m_changeRegs["hl"];
-                prevLine->m_changeRegs["hl"] = line.m_changeRegs["de"];
+                if (prevLine!=nullptr && line.m_changeRegs.contains("hl")) {
+                    prevLine->m_changeRegs["de"] = line.m_changeRegs["hl"];
+                    prevLine->m_changeRegs["hl"] = line.m_changeRegs["de"];
+                }
 
             }
 
