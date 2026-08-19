@@ -5662,7 +5662,7 @@ void Parser::HandleCallMacro(QString name, bool ignore) {
             p += ",";
         }
     }
-    uint pos = m_lexer->m_pos + 1;
+    uint pos = m_lexer->m_pos;
     Eat(TokenType::RPAREN);
     if (m_currentToken.m_type == TokenType::SEMI)
         Eat(TokenType::SEMI);
