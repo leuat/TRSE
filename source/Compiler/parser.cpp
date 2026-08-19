@@ -570,7 +570,19 @@ void Parser::PreprocessIfDefs(bool ifdef) {
             if (m_currentToken.m_value.startsWith("if")) {
                 ignorePop++;
             }
-            Eat();
+            if (m_currentToken.m_value.toLower() == "macro") {
+                // A macro body is javascript, not TRSE code, so it cannot be
+                // tokenized here. Swallow it in one go like HandleMacro
+                // does, but without registering the macro
+                m_pass = PASS_OTHER; // don't trigger the preprocessor while eating
+                Eat();               // @macro
+                Eat();               // name
+                Eat();               // number of parameters
+                m_currentToken = m_lexer->Macro();
+                Eat(); // the macro body
+                Eat(); // @endmacro
+            } else
+                Eat();
             m_pass = org;
         } else {
             int org = m_pass;
