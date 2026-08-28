@@ -929,6 +929,7 @@ bool CodeGen68k::HandleSimpleAeqAopConst(QSharedPointer<NodeAssign> node)
         as->Asm(op +getEndType(v2) + " "+num +","+var + " ; Optimization: simple A := A op Const ADD SUB OR AND");
     else {
         QString d0 = as->m_regAcc.Get();
+        as->Asm("moveq #0,"+d0);
         as->Asm("move"+getEndType(v2) + " "+var+","+d0);
         as->Asm(op +getEndType(v2) + " "+num +","+d0 + " ; Optimization: simple A := A op Const MUL DIV SHR etc");
         as->Asm("move"+getEndType(v2) + " "+d0+","+var);
