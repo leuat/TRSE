@@ -2883,6 +2883,10 @@ QSharedPointer<Node> Parser::Program(QString param) {
 
 QSharedPointer<Node> Parser::Factor() {
 
+    if (m_isInConditional && m_currentToken.m_type == TokenType::NOT)
+        ErrorHandler::e.Warning("Be careful, NOT used within conditionals will apply to the individual expressions, not the comparator &lt;&gt;", m_currentToken.m_lineNumber);
+
+
     if (m_currentToken.m_type == TokenType::NOT ||
         m_currentToken.m_type == TokenType::BITNOT) {
         Eat();
@@ -3092,6 +3096,7 @@ QSharedPointer<Node> Parser::RepeatUntil() {
 
 QSharedPointer<Node> Parser::Term() {
     QSharedPointer<Node> node = Factor();
+
 
     while (m_currentToken.m_type == TokenType::Type::MUL ||
            m_currentToken.m_type == TokenType::Type::DIV ||
@@ -6965,6 +6970,7 @@ void Parser::HandleUseTPU(QString fileName) {
 }
 QSharedPointer<Node> Parser::Expr() {
     QSharedPointer<Node> node = Term();
+
 
     if (!m_isInConditional)
         while (m_currentToken.m_type == TokenType::Type::GREATER ||

@@ -46,7 +46,7 @@ void ErrorHandler::Warning(QString str, int lineNumber) {
         if (lineNumber!=0) ln = " at line " + QString::number(lineNumber);
 
     QString v = "<font color=\"#F0E030\">Warning"+ln+": " +str + "</font>";
-    if (m_displayWarnings)
+    if (m_displayWarnings && !(m_teOut.contains(v)))
         m_teOut = m_teOut + v + "<br>";
 
 
