@@ -187,6 +187,9 @@ copper_bitplane3:
 copper_bitplane4:
     dc.w    $f0,0
     dc.w    $f2,0
+copper_bitplane5:
+    dc.w    $f4,0
+    dc.w    $f6,0
 
 
 copbplcon1:

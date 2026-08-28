@@ -330,6 +330,7 @@ void SymbolTable::InitBuiltins()
         Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane2", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane3", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane4", "integer")));
+        Define(QSharedPointer<Symbol>(new Symbol("copper_bitplane5", "integer")));
         //  Define(new Symbol("copper_bitplane0", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("copper_mod_even", "integer")));
         Define(QSharedPointer<Symbol>(new Symbol("copper_mod_odd", "integer")));
