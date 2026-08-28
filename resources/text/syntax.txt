@@ -891,11 +891,7 @@ c; NADA; X16,NES, C64, MEGA65, PLUS4,VIC20,C128,PET, Amiga, ATARI520ST, OK64,X86
 
 # NES-specific
 
---Main PPU control register: selects the name table, the address increment, the sprite and background pattern tables and enables the vblank interrupt.<br>
---<code>PPUCTRL:=%10010000; // nmi on, background uses pattern table 1</code>
 c; PPUCTRL; NES; a; $2000
---PPU mask register: switches the background and sprites on or off, and controls the leftmost column and colour emphasis.<br>
---<code>PPUMASK:=%00011110; // show background and sprites</code>
 c; PPUMASK; NES; a; $2001
 --PPU status register. Reading it returns the vblank and sprite zero hit flags, and resets the address latch used by PPUADDR and PPUSCROLL.
 c; PPUSTATUS; NES; a; $2002
@@ -936,16 +932,9 @@ c;CLS;MSX;a;$00C3
 
 
 # Commodore-specific
---Byte holding the state of the joystick in port 1 after a call to ReadJoy1. Test it against the JOY_ masks.<br>
---<code>ReadJoy1(); if (Joy1 & JOY_LEFT<>0) then x:=x-1;</code>
 c; Joy1; VIC20, C64, MEGA65; ;
---Byte holding the state of the joystick in port 2 after a call to ReadJoy2. Test it against the JOY_ masks.<br>
---<code>ReadJoy2(); if (Joy2 & JOY_UP<>0) then y:=y-1;</code>
 c; Joy2; C64, MEGA65; ;
---Set after ReadJoy1 when the fire button on port 1 is held down.<br>
---<code>ReadJoy1(); if (Joy1Pressed) then Shoot();</code>
 c; Joy1Pressed; VIC20, C64, MEGA65; ;
---Set after ReadJoy2 when the fire button on port 2 is held down.
 c; Joy2Pressed; C64, MEGA65; ;
 
 
@@ -1029,7 +1018,6 @@ c; SHEILA_REG ; BBCM, ACORN; a; $FE00
 --Data register of the 6845 video controller. Select a register through SHEILA_REG, then write its value here.<br>
 --<code>poke(SHEILA_REG,0,12); poke(SHEILA_WRITE,0,val); // set the screen start address</code>
 c; SHEILA_WRITE ; BBCM, ACORN; a; $FE01
---Start of screen memory in the text modes.
 c; SCREEN_CHAR_LOC ; BBCM, ACORN; a; $7C00
 
 # X86, M1ARM REGISTERS
@@ -1085,92 +1073,47 @@ c; _XY; MOS6502; a; 0
 
 # VIC 20-specific constants
 
---Kernal byte that tells PAL and NTSC machines apart. It reads 12 on a PAL VIC 20, and 5 on an NTSC one.<br>
---<code>if (PAL_OR_NTSC[0]=12) then delay:=8 else delay:=10;</code>
 c; PAL_OR_NTSC;VIC20; a; $ede4
---Start of colour memory, one byte per character cell. TRSE picks $9600 for an unexpanded VIC 20 and $9400 when the machine has memory expansion.<br>
---<code>ClearScreen(WHITE, SCREEN_COL_LOC);</code>
 c; SCREEN_COL_LOC; VIC20; a; $9600, $9400
---Start of screen memory, one character code per cell. TRSE picks $1E00 for an unexpanded VIC 20 and $1000 when the machine has memory expansion.<br>
---<code>ClearScreen(32, SCREEN_CHAR_LOC); // blank the screen</code>
 c; SCREEN_CHAR_LOC; VIC20; a; $1E00, $1000
 --Number of character columns on the VIC 20 screen.<br>
 --<code>poke(SCREEN_CHAR_LOC, y*SCREEN_WIDTH+x, char);</code>
 c; SCREEN_WIDTH; VIC20; b; 22
 --Number of character rows on the VIC 20 screen.
 c; SCREEN_HEIGHT; VIC20; b; 23
---VIC register 0: the horizontal position of the top left corner of the display. Change it to shift the whole screen sideways, or to shake it.<br>
---<code>HSCROLL_REGISTER:=5;</code>
 c; HSCROLL_REGISTER; VIC20; a; $9000
---VIC register 1: the vertical position of the top of the display. Change it to shift the whole screen up or down.<br>
---<code>VSCROLL_REGISTER:=38;</code>
 c; VSCROLL_REGISTER; VIC20; a; $9001
---VIC register 2: the number of columns the chip draws, in the lower 7 bits. The top bit is part of the screen memory address, so keep it when writing a new width.
 c; SCREEN_TEXT_WIDTH; VIC20; a; $9002
---VIC register 3: the number of rows the chip draws, in bits 1 to 6. Bit 0 selects 8x16 characters instead of 8x8.
 c; SCREEN_TEXT_HEIGHT; VIC20; a; $9003
---VIC register 4: the raster line currently being drawn, divided by two. Poll it to time effects to the screen.<br>
---<code>WaitForRaster(100);</code>
 c; VIC_RASTERLINE; VIC20; a; $9004
---VIC register 5: selects where the chip fetches screen memory and character data from. Same register as SCREEN_CHAR_REGISTER.<br>
---<code>VIC_DATA_LOC:=%11111100; // characters at $1C00</code>
 c; VIC_DATA_LOC; VIC20; a; $9005
 --VIC register 5: the upper nibble selects the screen memory location and the lower nibble the character set location.
 c; SCREEN_CHAR_REGISTER; VIC20; a; $9005
---VIC register 6: the horizontal position reported by the light pen.
 c; HPEN_REGISTER; VIC20; a; $9006
---VIC register 7: the vertical position reported by the light pen.
 c; VPEN_REGISTER; VIC20; a; $9007
---VIC register 8: the value of paddle X, 0 to 255.
 c; XPADDLE_REGISTER; VIC20; a; $9008
---VIC register 9: the value of paddle Y, 0 to 255.
 c; YPADDLE_REGISTER; VIC20; a; $9009
---VIC register A: the bass voice. Bit 7 turns it on and the lower bits set the pitch, as in the NOTE_ constants.<br>
---<code>SOUND1_REGISTER:=NOTE_C2;</code>
 c; SOUND1_REGISTER; VIC20; a; $900A
---VIC register B: the alto voice, one octave above SOUND1_REGISTER.
 c; SOUND2_REGISTER; VIC20; a; $900B
---VIC register C: the soprano voice, two octaves above SOUND1_REGISTER.
 c; SOUND3_REGISTER; VIC20; a; $900C
---VIC register D: the noise voice, used for explosions and percussion.
 c; SOUNDFX_REGISTER; VIC20; a; $900D
---VIC register E: the sound volume in the lower nibble and the auxiliary colour for multicolour characters in the upper one.<br>
---<code>AUX_COLOR_AND_VOLUME:=15; // full volume</code>
 c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
---VIC register F: the background colour in the upper nibble, the border colour in the lower three bits, and the reverse video flag in bit 3. Use the SCREEN_BG_ constants to set it.<br>
---<code>SCREEN_BG_COLOR:=SCREEN_BG_BLACK+CYAN; // black screen, cyan border</code>
 c; SCREEN_BG_COLOR; VIC20; a; $900F
---Raw name for VIC chip register 0 at $9000: the horizontal position of the display, same as HSCROLL_REGISTER.
 c; VICCR0; VIC20; a; $9000
---Raw name for VIC chip register 1 at $9001: the vertical position of the display, same as VSCROLL_REGISTER.
 c; VICCR1; VIC20; a; $9001
---Raw name for VIC chip register 2 at $9002: the number of columns and one bit of the screen address, same as SCREEN_TEXT_WIDTH.
 c; VICCR2; VIC20; a; $9002
---Raw name for VIC chip register 3 at $9003: the number of rows and the character height, same as SCREEN_TEXT_HEIGHT.
 c; VICCR3; VIC20; a; $9003
---Raw name for VIC chip register 4 at $9004: the current raster line divided by two, same as VIC_RASTERLINE.
 c; VICCR4; VIC20; a; $9004
---Raw name for VIC chip register 5 at $9005: the screen and character memory location, same as SCREEN_CHAR_REGISTER.
 c; VICCR5; VIC20; a; $9005
---Raw name for VIC chip register 6 at $9006: the light pen horizontal position, same as HPEN_REGISTER.
 c; VICCR6; VIC20; a; $9006
---Raw name for VIC chip register 7 at $9007: the light pen vertical position, same as VPEN_REGISTER.
 c; VICCR7; VIC20; a; $9007
---Raw name for VIC chip register 8 at $9008: the paddle X value, same as XPADDLE_REGISTER.
 c; VICCR8; VIC20; a; $9008
---Raw name for VIC chip register 9 at $9009: the paddle Y value, same as YPADDLE_REGISTER.
 c; VICCR9; VIC20; a; $9009
---Raw name for VIC chip register A at $900A: the bass voice, same as SOUND1_REGISTER.
 c; VICCRA; VIC20; a; $900A
---Raw name for VIC chip register B at $900B: the alto voice, same as SOUND2_REGISTER.
 c; VICCRB; VIC20; a; $900B
---Raw name for VIC chip register C at $900C: the soprano voice, same as SOUND3_REGISTER.
 c; VICCRC; VIC20; a; $900C
---Raw name for VIC chip register D at $900D: the noise voice, same as SOUNDFX_REGISTER.
 c; VICCRD; VIC20; a; $900D
---Raw name for VIC chip register E at $900E: the volume and auxiliary colour, same as AUX_COLOR_AND_VOLUME.
 c; VICCRE; VIC20; a; $900E
---Raw name for VIC chip register F at $900F: the screen and border colours, same as SCREEN_BG_COLOR.
 c; VICCRF; VIC20; a; $900F
 
 --Value for SCREEN_BG_COLOR that gives a black screen in normal video. Add a border colour of 0 to 7 to it.<br>
@@ -1223,16 +1166,10 @@ c; SCREEN_BG_LTBLUE; VIC20; b; 232
 c; SCREEN_BG_LTYELLOW; VIC20; b; 248
 
 
---Bit mask for up in the value returned by ReadJoy1.<br>
---<code>ReadJoy1(); if (Joy1 & JOY_UP<>0) then y:=y-1;</code>
 c; JOY_UP; VIC20; b; %00000010
---Bit mask for down in the value returned by ReadJoy1.
 c; JOY_DOWN; VIC20; b; %00000100
---Bit mask for left in the value returned by ReadJoy1.
 c; JOY_LEFT; VIC20; b; %00001000
---Bit mask for right in the value returned by ReadJoy1.
 c; JOY_RIGHT; VIC20; b; %00000001
---Bit mask for the fire button in the value returned by ReadJoy1.
 c; JOY_FIRE; VIC20; b; %00010000
 
 
@@ -1334,11 +1271,7 @@ c; SCREEN_BG_COL; PLUS4; a; $ff19
 --Background colour of the Plus 4 display.<br>
 --<code>SCREEN_FG_COL:=BLACK;</code>
 c; SCREEN_FG_COL; PLUS4; a; $ff15
---Start of screen memory, one character code per cell.<br>
---<code>ClearScreen(32, SCREEN_CHAR_LOC);</code>
 c; SCREEN_CHAR_LOC; PLUS4; a; $0c00
---Start of colour memory, one byte per character cell.<br>
---<code>ClearScreen(WHITE, SCREEN_COL_LOC);</code>
 c; SCREEN_COL_LOC; PLUS4; a; $0800
 --Number of character columns on the Plus 4 screen.
 c; SCREEN_WIDTH; PLUS4; b; 40
@@ -1374,11 +1307,8 @@ c; SCREEN_BG_COL; C64, MEGA65, C128; a; $D020
 --screen_fg_col defines the background color on the c64<br>
 --<code>screen_fg_col:=white; // will set the background to white</code>
 c; SCREEN_FG_COL; C64, MEGA65, C128; a; $D021
---Start of screen memory on the MEGA65, one character code per cell.
 c; SCREEN_CHAR_LOC; MEGA65; a; $0800
 
---Start of screen memory, one character code per cell. Row y column x sits at offset y*SCREEN_WIDTH+x.<br>
---<code>ClearScreen(32, SCREEN_CHAR_LOC); // blank the screen</code>
 c; SCREEN_CHAR_LOC; C64, C128, APPLEII, SNES, ORIC; a; $0400
 
 --Screen memory at the same offset inside VIC bank 1. Useful for double buffering, or after switching banks with VIC_BANK1.
@@ -1389,8 +1319,6 @@ c; SCREEN_CHAR_LOC3; C64, C128; a; $8400
 c; SCREEN_CHAR_LOC4; C64, C128; a; $C400
 --Size of one VIC bank. The chip can only see 16K at a time, so all graphics data must sit inside the same bank.
 c; BANK_SIZE; C64, MEGA65, C128; a; $4000
---Start of colour memory, one byte per character cell. It is fixed in place and cannot be moved with the VIC bank.<br>
---<code>ClearScreen(LIGHT_BLUE, SCREEN_COL_LOC);</code>
 c; SCREEN_COL_LOC; C64, MEGA65, C128; a; $D800
 --Start of colour memory when the MEGA65 is in 80 column mode.
 c; SCREEN_COL_LOC80; MEGA65; a; $F800
@@ -1449,16 +1377,10 @@ c; SPRITE_BG_COLLISION; C64, MEGA65, C128;a;$D01F
 c; SPRITE_STRETCH_X; C64, MEGA65, C128;a;$D01D
 --One bit per sprite, doubling the height of that sprite.
 c; SPRITE_STRETCH_Y; C64, MEGA65, C128;a;$D017
---Bit mask for up in the value returned by ReadJoy1 or ReadJoy2.<br>
---<code>ReadJoy2(); if (Joy2 & JOY_UP<>0) then y:=y-1;</code>
 c; JOY_UP; C64, MEGA65; b; %00000001
---Bit mask for down in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_DOWN; C64, MEGA65; b; %00000010
---Bit mask for left in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_LEFT; C64, MEGA65; b; %00000100
---Bit mask for right in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_RIGHT; C64, MEGA65; b; %00001000
---Bit mask for the fire button in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_FIRE; C64, MEGA65; b; %00010000
 
 c; KEY_A; C64, MEGA65, PLUS4, C128; b;$01
@@ -1619,8 +1541,6 @@ c; VIC_BANK1; C64, MEGA65, C128;b;2
 c; VIC_BANK2; C64, MEGA65, C128;b;1
 --Value that points the VIC chip at the last 16K bank, $C000 to $FFFF.
 c; VIC_BANK3; C64, MEGA65, C128;b;0
---Selects where inside the current VIC bank the screen memory and the character set are read from.<br>
---<code>poke(VIC_DATA_LOC, 0, $18); // characters at $2000</code>
 c; VIC_DATA_LOC; C64, MEGA65;a;$d018
 
 --CIA register holding the raw code of the last key event.
@@ -1658,7 +1578,6 @@ c; EXTERN_IRQ; Amiga; i; %10000000000000
 
 # C128 schtøff
 
---Kernal shadow of the VIC data location register. On the C128 the screen editor rewrites $D018 every frame, so change this copy instead.
 c; VIC_DATA_LOC; C128;a;$0A2C
 --Memory configuration register. It decides whether ROM or RAM is visible in each part of the address space.
 c; MMU ; C128 ; a ; $FF00
@@ -1739,8 +1658,6 @@ m; copydatatovera; X16; a,b,b,b,b
 
 # PET STUFF
 
---Start of PET screen memory, one character code per cell.<br>
---<code>ClearScreen(32, SCREEN_CHAR_LOC);</code>
 c; SCREEN_CHAR_LOC; PET; a; $8000
 --Number of character columns on the PET screen.
 c; SCREEN_WIDTH ;PET; b; 80
