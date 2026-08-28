@@ -1,10 +1,26 @@
-<p>Address of character screen</p>
-<p>Set a pointer (eg: screenmemory) to this address to write PETSCII screen codes to the screen</p>
+<p>Start address of the character screen: one byte per cell holding the screen
+code of the character displayed there. The cell at column x, row y is at offset
+<strong>y * SCREEN_WIDTH + x</strong>.</p>
+<p>The address depends on the machine, and on the VIC 20 also on the memory
+expansion the project is built for, so always use the constant rather than a
+literal address.</p>
+<p>Assign it to a pointer such as the built in <strong>screenmemory</strong> to write
+screen codes. Write <strong>#SCREEN_CHAR_LOC</strong> when assigning it to a pointer: a
+named address constant assigned bare can be read as an address instead of a
+value.</p>
+
 <p>Example</p>
 <code>
 DefineScreen();
-screenmemory := SCREEN_CHAR_LOC;
+
+screenmemory := #SCREEN_CHAR_LOC;
 
 // write an A to the top left of the screen
 screenmemory[0] := 1;
+
+// and one in the middle of the second row
+screenmemory[SCREEN_WIDTH + 10] := 1;
 </code>
+<p>Note that these are screen codes, not PETSCII or ASCII: A is 1, not 65. See
+also SCREEN_COL_LOC for the matching colour cells, and SetColorMemoryAddress to
+point colormemory at the same place.</p>

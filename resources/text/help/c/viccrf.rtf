@@ -1,6 +1,9 @@
-<p>Background colour, Border colour and Inverse colour
-<p>Bits 7-4 = Background colour</ br>
-<p>Bit 3 = inverse colour switch</ br>
-<p>Bits 2-0 = Border colour</ br>
-
-
+<p>Decimal 36879. Raw name for this VIC chip register. Also known as <strong>SCREEN_BG_COLOR</strong>, where the full description lives.</p>
+<p>Background colour, border colour and the inverse colour switch.</p>
+<ul>
+<li>Bits 7-4 - background colour (0-15)</li>
+<li>Bit 3 - inverse colour switch, 1 is normal video</li>
+<li>Bits 2-0 - border colour (0-7)</li>
+</ul>
+<p>Set it with the SCREEN_BG_ constants plus a border colour, for example
+<strong>SCREEN_BG_BLACK + CYAN</strong>.</p>

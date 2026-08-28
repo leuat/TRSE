@@ -1,2 +1,15 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Decimal 36867. Default value: 174. Also known as <strong>VICCR3</strong>.</p>
+<p>This register has three functions:</p>
+<ul>
+<li><strong>Bit 7</strong> - bit 0 of the raster line counter, the low bit that does not fit
+in VIC_RASTERLINE ($9004).</li>
+<li><strong>Bits 6-1</strong> - the number of character rows the chip draws. Normally 23.</li>
+<li><strong>Bit 0</strong> - character height: 0 gives 8x8 characters, 1 gives 8x16 double
+height characters (used by Vic Bitmap Mode).</li>
+</ul>
+<p>The row count sits in bits 6-1, so a row count has to be doubled before it is
+written, and bit 7 must be preserved:</p>
+<code>
+// draw 20 rows of 8x8 characters
+SCREEN_TEXT_HEIGHT := (SCREEN_TEXT_HEIGHT &amp; 128) + (20 * 2);
+</code>

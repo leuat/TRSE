@@ -1,10 +1,19 @@
-<p>Decimal . Default value = 27</p>
-<p>Background color, border color and inverse color switch</p>
+<p>Decimal 36879. Default value: 27. Also known as <strong>VICCRF</strong>.</p>
+<p>Background colour, border colour and the inverse colour switch, packed into one
+byte. In TRSE the easiest way to set it is to add one of the SCREEN_BG_ constants
+(the background) to an ordinary colour constant (the border):</p>
+<code>
+// black screen with a cyan border
+SCREEN_BG_COLOR := SCREEN_BG_BLACK + CYAN;
+</code>
+<p>The SCREEN_BG_ constants are SCREEN_BG_BLACK, WHITE, RED, CYAN, PURPLE, GREEN,
+BLUE, YELLOW, ORANGE, LTORANGE, PINK, LTCYAN, LTPURPLE, LTGREEN, LTBLUE and
+LTYELLOW. Each already has the inverse switch set to normal video.</p>
 
-<p><strong>Bits 7-4:</strong> Default value: 1. These four bits determine the background
-color of the screen. Colors available on the VIC are:</p>
-</p>
+<p>The individual fields are:</p>
 
+<p><strong>Bits 7-4:</strong> Default value: 1. The background colour of the screen. All 16
+colours are available:</p>
 <ul>
 <li>Black - 0</li>
 <li>White - 1</li>
@@ -23,26 +32,16 @@ color of the screen. Colors available on the VIC are:</p>
 <li>Lt Blue - 14</li>
 <li>Lt Yellow - 15</li>
 </ul>
+<p>In multicolour mode this is the colour selected by the bit pair 00.</p>
 
-<p>In multicolor mode, this color is selected with bit values of binary 00.</p>
+<p><strong>Bit 3:</strong> Default value: 1. The inverse colour switch. When set to one the
+background and foreground colours are in their usual places. Setting it to zero
+inverts the scheme: the foreground colour is used for the background and the
+characters are drawn in the background colour.</p>
+<p>This bit has no effect on characters that are in multicolour mode.</p>
 
-
-<p>
-<strong>Bit 3:</strong> Default value: 1. This bit serves as the inverse color switch.
-When set to one, the background and foreground colors are in their
-respective places. Setting this to zero, however, inverts that scheme.
-The foreground color will be used for the background and all the
-characters are shaded in the background color.</p>
-<p>This bit has no effect when multicolor mode is in effect for
-individual characters.</p>
-<p>See locations 37888-38911 ($9400-$97FF), Screen Color Maps,
-and 646 ($286) for foreground color descriptions.
-</p>
-
-<p>
-<strong>Bits 2-0:</strong> Default value: 3. These three bits control the border color
-surrounding the screen.</p>
-<p>Available border colors are:</p>
+<p><strong>Bits 2-0:</strong> Default value: 3. The border colour. Only the first eight
+colours can be used here:</p>
 <ul>
 <li>Black - 0</li>
 <li>White - 1</li>
@@ -53,4 +52,6 @@ surrounding the screen.</p>
 <li>Blue - 6</li>
 <li>Yellow - 7</li>
 </ul>
-<p>See locations 36864 ($9000) through 36868 ($9004) for additional information.</p>
+
+<p>See also SCREEN_COL_LOC for the per character foreground colours, and
+AUX_COLOR_AND_VOLUME ($900E) for the fourth multicolour colour.</p>

@@ -1,3 +1,13 @@
-<p>Decimal 36868.</p>
-<p>This register, together with bit 7 of $9003 (SCREEN_TEXT_HEIGHT), forms the TV raster counter. On
-a 625 line TV (PAL) this register will count between 0 and 255, and the whole counter between 0 and 311.</p>
+<p>Decimal 36868. Read only. Also known as <strong>VICCR4</strong>.</p>
+<p>This register, together with bit 7 of $9003 (SCREEN_TEXT_HEIGHT), forms the TV
+raster counter. $9004 holds bits 8-1 of the line number, so each step of 1 is two
+raster lines, and bit 7 of $9003 supplies the missing low bit.</p>
+<p>On a 625 line TV (PAL) this register counts between 0 and 155 and the whole
+counter between 0 and 311; on NTSC the whole counter runs to 260.</p>
+<p>Reading it is the usual way to time an effect to the display, though
+WaitForRaster does the polling for you:</p>
+<code>
+// hold until the raster reaches line 0, once per frame
+WaitForRaster( 0 );
+SCREEN_BG_COLOR := SCREEN_BG_BLACK + WHITE;
+</code>

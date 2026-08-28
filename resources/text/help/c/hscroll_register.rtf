@@ -1,7 +1,16 @@
-<p>Decimal 36864. PAL = 12.  NTSC = </p>
-<p>This register has two functions</p>
-<ol>
-<li>Bit 7 = selects interlace scan mode for the display.</li>
-<li>Bits 0-6 = determine the distance from the left hand side of the
-TV picture to the first column of characters.</li>
-</ol>
+<p>Decimal 36864. Default value: 12 (PAL), 5 (NTSC). Also known as <strong>VICCR0</strong>.</p>
+<p>This register has two functions:</p>
+<ul>
+<li><strong>Bit 7</strong> - selects interlace scan mode for the display.</li>
+<li><strong>Bits 6-0</strong> - the distance from the left hand side of the TV picture to the first column of characters.</li>
+</ul>
+<p>Changing bits 6-0 moves the whole display sideways rather than scrolling the
+characters inside it, so it is an easy way to shake the screen or to centre the
+picture. Values far from the default push the display off the visible area.</p>
+
+<p>Example</p>
+<code>
+// nudge the whole screen one step to the right
+HSCROLL_REGISTER := 13;
+</code>
+<p>See also VSCROLL_REGISTER ($9001) for the vertical equivalent.</p>

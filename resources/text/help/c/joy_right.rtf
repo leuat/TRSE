@@ -1,9 +1,17 @@
-<p>Contains the bit mask for the right direction on the joystick.</p>
-<p>Test with:</p>
+<p>Bit mask for right in the joystick readings <strong>joy1</strong> /
+<strong>joy1pressed</strong> (and <strong>joy2</strong> / <strong>joy2pressed</strong> where a
+second port exists), which are filled in by readjoy1() and readjoy2().</p>
+<p>The bit value is not the same on every machine, so test with the constant
+rather than the number.</p>
 
+<p>Example</p>
 <code>
-    readjoy1();
-    
-    if (joy1 & JOY_RIGHT) then printstring("RIGHT",0,5);
-    if (joy1pressed & JOY_RIGHT) then printstring("RIGHT FIRST PRESS",0,17);
+readjoy1();
+
+// true every frame right is held
+if (joy1 &amp; JOY_RIGHT) then x := x + 1;
+
+// true only on the frame it was first pressed
+if (joy1pressed &amp; JOY_RIGHT) then x := x + 1;
 </code>
+<p>See also JOY_UP, JOY_DOWN, JOY_LEFT, JOY_RIGHT and JOY_FIRE.</p>

@@ -1,20 +1,37 @@
-<p>Screen map and Character map addresses</p>
+<p>Decimal 36869. Default value: 240. Also known as <strong>VICCR5</strong> and
+<strong>SCREEN_CHAR_REGISTER</strong>.</p>
+<p>Sets where the VIC chip reads the screen map and the character set from. The
+register default of 240 (%11110000) means screen at $1E00 and characters from the
+ROM character set at $8000.</p>
 
-<p><strong>Bits 7-4</strong> default = 240.  These serve as bits 13-10 of the screen map address,
-combined with bit 7 of $9002 to form the 14-bit VIC chip screen map address.</p>
+<p><strong>Bits 7-4</strong> serve as bits 13-10 of the screen map address, combined with
+bit 7 of $9002 (SCREEN_TEXT_WIDTH) which supplies bit 9, to form the 14 bit VIC
+chip address:</p>
 <code>
                  76 54
 14 bit address = 01 1110 0000 0000 = $1E00 (7680)
                       7
 </code>
+<p>Note the odd behaviour here: bit 7 must be written as 1, but the chip sees it as
+a 0 when forming the address.</p>
 
-<p>Note, there is an odd behaviour, that bit 7 must be 1, but it is seen as a 0 when used.</p>
-
-<p><strong>Bits 0-3</strong> default = 0.  Serve as bits 13-10 of the character map 14-bit address.</p>
+<p><strong>Bits 3-0</strong> serve as bits 13-10 of the character set address. The default of
+0 selects the ROM character set at $8000 (32768):</p>
 <code>
                  32 10
-14 bit address = 00 0000 0000 0000 = $0000 (32768)
+14 bit address = 00 0000 0000 0000 = $8000 (32768)
+</code>
+<p>Bit 3 is essentially a ROM/RAM switch: when it is 1 the character set is read
+from RAM ($0000-$1C00), when it is 0 it comes from ROM ($8000-$9C00). See VICCR5
+for the full table of values.</p>
 
+<p>Example</p>
+<code>
+// screen at $1E00, custom character set at $1C00 in RAM
+VIC_DATA_LOC := %11111111;
 </code>
 
-<p>Bit 3 is essentially ROM/RAM switch.  When 1 RAM is being used, 0 ROM is used.</p>
+<p><strong>On the C64, MEGA65 and C128</strong> the same constant name points at $D018
+instead, which does the same job for the VIC-II: bits 7-4 select the screen
+memory and bits 3-1 the character set, both relative to the current 16K VIC
+bank.</p>

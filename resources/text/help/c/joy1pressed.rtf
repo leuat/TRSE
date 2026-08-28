@@ -1,20 +1,23 @@
-<p>The value joy1pressed (all lowercase) is created after a readjoy1() call.  It 
-    contains five flags in bits 0 to 4 to represent the directions on the joystick
-	and the fire button in port 1.  The bits will be 1 if that direction/button has just been pressed.
-	It will be 0 next time and not return to a value of 1 until the direction/button has been released and pressed again.
-</p>
-<p>Use JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE constants to determine which direction
-    has just been pressed.
-</p>
-<p>Test with:</p>
+<p>The variable <strong>joy1pressed</strong> (all lowercase) is filled in by a call
+to <strong>readjoy1()</strong>. It holds the same five flags as joy1, for the
+joystick in port 1, but a bit is set only on the reading where that direction
+or button was <strong>first pressed</strong>. It goes back to 0 on the next reading and
+does not set again until the direction has been released and pressed anew.</p>
+<p>That makes it the right variable for one-shot actions - firing a single shot,
+stepping through a menu, dropping one block - while joy1 suits movement that
+should repeat while the stick is held.</p>
+<p>Test it with the JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE masks.
+Their bit values are not the same on every machine, so always use the constants
+rather than raw numbers.</p>
 
+<p>Example</p>
 <code>
-        readjoy1();
+readjoy1();
 
-                if (joy1pressed & JOY_UP) then printstring("UP FIRST PRESS",0,14);
-                if (joy1pressed & JOY_DOWN) then printstring("DOWN FIRST PRESS",0,16);
-                if (joy1pressed & JOY_LEFT) then printstring("LEFT FIRST PRESS",0,16);
-                if (joy1pressed & JOY_RIGHT) then printstring("RIGHT FIRST PRESS",0,17);
-                if (joy1pressed & JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
-		
+// moves every frame the stick is held
+if (joy1 &amp; JOY_LEFT) then x := x - 1;
+
+// fires once per press, however long the button is held
+if (joy1pressed &amp; JOY_FIRE) then Shoot();
 </code>
+<p>See also joy1 and readjoy1.</p>

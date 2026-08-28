@@ -1,2 +1,18 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Decimal 60900. Read only.</p>
+<p>A byte inside the kernal ROM that identifies which video standard the machine
+was built for: it reads <strong>12 on a PAL VIC 20</strong> and <strong>5 on an
+NTSC one</strong>.</p>
+<p>The two machines differ in ways that matter to a game: PAL runs at 50 frames a
+second with 312 raster lines, NTSC at 60 frames a second with 261, and the sound
+pitches differ slightly. Testing this byte lets one program adjust its timing for
+both.</p>
+<p>It is a ROM address, so read it through an index rather than assigning it
+directly.</p>
+
+<p>Example</p>
+<code>
+if (PAL_OR_NTSC[0] = 12) then
+	frameDelay := 8   // PAL, 50Hz
+else
+	frameDelay := 10; // NTSC, 60Hz
+</code>

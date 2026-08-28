@@ -1,2 +1,20 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Decimal 36877. Also known as <strong>VICCRD</strong>.</p>
+<p>The noise voice. Instead of a tone it produces white noise, which is what
+explosions, engines, drums and footsteps are usually built from.</p>
+<ul>
+<li><strong>Bit 7</strong> - switches the voice on (1) or off (0).</li>
+<li><strong>Bits 6-0</strong> - the pitch of the noise: low values give a deep rumble, high
+values a bright hiss.</li>
+</ul>
+<p>Nothing is heard while the volume in AUX_COLOR_AND_VOLUME ($900E) is 0, and
+writing 0 to the register switches the voice off again.</p>
+
+<p>Example</p>
+<code>
+AUX_COLOR_AND_VOLUME := 15;   // full volume
+SOUNDFX_REGISTER := NOTE_C2;   // play a note
+...
+SOUNDFX_REGISTER := 0;         // silence this voice
+</code>
+<p>See also SOUND1_REGISTER, SOUND2_REGISTER, SOUND3_REGISTER and
+SOUNDFX_REGISTER, and the NOTE_ constants.</p>

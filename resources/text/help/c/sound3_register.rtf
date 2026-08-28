@@ -1,2 +1,20 @@
-<p>Decimal . PAL = .  NTSC = </p>
-<p></p>
+<p>Decimal 36876. Also known as <strong>VICCRC</strong>.</p>
+<p>The soprano voice, two octaves above SOUND1_REGISTER.</p>
+<ul>
+<li><strong>Bit 7</strong> - switches the voice on (1) or off (0).</li>
+<li><strong>Bits 6-0</strong> - the pitch. Higher values give higher notes.</li>
+</ul>
+<p>The NOTE_ constants already have bit 7 set, so assigning one both turns the
+voice on and sets the note.</p>
+<p>Nothing is heard while the volume in AUX_COLOR_AND_VOLUME ($900E) is 0, and
+writing 0 to the register switches the voice off again.</p>
+
+<p>Example</p>
+<code>
+AUX_COLOR_AND_VOLUME := 15;   // full volume
+SOUND3_REGISTER := NOTE_C2;   // play a note
+...
+SOUND3_REGISTER := 0;         // silence this voice
+</code>
+<p>See also SOUND1_REGISTER, SOUND2_REGISTER, SOUND3_REGISTER and
+SOUNDFX_REGISTER, and the NOTE_ constants.</p>

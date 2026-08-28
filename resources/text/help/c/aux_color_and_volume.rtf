@@ -1,6 +1,10 @@
-<p>Sound volume and Auxilliary color.</p>
+<p>Decimal 36878. Default value: 0. Also known as <strong>VICCRE</strong>.</p>
+<p>Sound volume and auxiliary colour, packed into one byte.</p>
 
-<p><strong>Bits 7 - 4</strong> - Auxilliary color.</p>
+<p><strong>Bits 7-4</strong> - auxiliary colour. This is the fourth colour available to
+multicolour characters, selected by the bit pair 11 in the character data, and it
+is shared by every multicolour character on the screen. All 16 colours can be
+used:</p>
 <ul>
 <li>Black - 0</li>
 <li>White - 1</li>
@@ -20,4 +24,16 @@
 <li>Lt Yellow - 15</li>
 </ul>
 
-<p><strong>Bits 3 - 0</strong> - Sound volume 0=low and 15=high.
+<p><strong>Bits 3-0</strong> - master sound volume, 0 for silence and 15 for full volume.
+This is a single volume for all four voices; the VIC 20 has no per voice
+volume.</p>
+
+<p>Because the two live in the same register, write them together:</p>
+<code>
+// full volume, pink (10) as the multicolour auxiliary colour
+AUX_COLOR_AND_VOLUME := (10 * 16) + 15;
+
+// full volume, auxiliary colour left as black
+AUX_COLOR_AND_VOLUME := 15;
+</code>
+<p>See also SOUND1_REGISTER through SOUNDFX_REGISTER for the voices themselves.</p>

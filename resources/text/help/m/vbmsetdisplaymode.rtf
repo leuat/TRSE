@@ -34,17 +34,17 @@
 
 
 <h3>How it works</h3>
-<p>The default VBM mode 0 creates a full screen bitmap using 240 (20 x 12) double heigh characters.  This presents a 160 x 192
+<p>The default VBM mode 0 creates a full screen bitmap using 240 (20 x 12) double height characters.  This presents a 160 x 192
 pixel display on screen.  Other modes create a variety of screen sizes with free RAM to use between the screen and bitmap and also
 at the end of the bitmap.</p>
 
-<p>The way characters are laid out is a little differently to what you may be used to
+<p>The way characters are laid out is a little different to what you may be used to
     on the standard Vic 20 character screen. This is to make manipulating the bitmap
     simpler and easier to understand.
 </p>
 <p>The first double height character is 16 (a space and ! character) and this is placed
     at the top left of the screen.  Beneath that character 17 is placed (a " and # character),
-    then 18 (a $ and %) and so on unit character 27 (a 6 and a 7 character) which is in the 12th row on mode 0.
+    then 18 (a $ and %) and so on until character 27 (a 6 and a 7 character) which is in the 12th row on mode 0.
 </p>
 <p>Character 28 (an 8 and a 9) is printed in the next column back at the top. This pattern is
     repeated, filling each column in turn until all 20 columns have been populated.
@@ -70,7 +70,7 @@ at the end of the bitmap.</p>
 </p>
 
 <h3>$1100 to $1FFF</h3>
-<p>The character memory occupies $1000 through to $1FFF, however, as this overlaps
+<p>The character memory also starts at $1000 and runs to $1FFF, however, as this overlaps
     with the screen memory, the first 240 bytes cannot be used.  This is why the
     first character printed to the screen memory is number 16 (space and !) and not number 0.
     The usable character memory therefore starts at $1100 (character 16) and this
@@ -80,7 +80,7 @@ at the end of the bitmap.</p>
 </p>
     
 <h3>Working with the bitmap</h3>
-<p>You are free to write your own routines to modify the btimap memory ($1100 through
+<p>You are free to write your own routines to modify the bitmap memory ($1100 through
     to $1FFF) should you wish to.  However, in Turbo Rascal, there are a number of
     commands that make some common bitmap tasks easier to do, so you can concentrate
     on creating your game or demo.

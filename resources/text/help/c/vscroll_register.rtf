@@ -1,3 +1,13 @@
-<p>Decimal 36865. PAL = 38.  NTSC = </p>
-<p>Determines the distance the screen is displayed from the top of the TV picture.
-Can be used to scroll the screen vertically.</p>
+<p>Decimal 36865. Default value: 38 (PAL), 25 (NTSC). Also known as <strong>VICCR1</strong>.</p>
+<p>The distance from the top of the TV picture to the first row of characters.
+Changing it moves the whole display up or down, which can be used for a cheap
+vertical scroll or a screen shake.</p>
+<p>Note that the value counts in half raster lines, so each step of 1 moves the
+display two scan lines.</p>
+
+<p>Example</p>
+<code>
+// bounce the screen up and down
+VSCROLL_REGISTER := 38 + (frame &amp; 1);
+</code>
+<p>See also HSCROLL_REGISTER ($9000) for the horizontal equivalent.</p>

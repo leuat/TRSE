@@ -1,17 +1,21 @@
-<p>Decimal 36866. PAL = 150.  NTSC = </p>
-<p>This register has two functions</p>
-<ol>
-<li>Bit 7 = the value for line 9 of the address
-for the video RAM. On an unexpanded VIC 20 as the address of the Video
-RAM is $1E00 and therefore this bit 7 is set, however when the video RAM is
-moved to $1000 then bit 7 becomes reset.</li>
-<li>bits 0-6 = determine the number of columns in
-the TV display. Normally this will be the expected value of 22.</li>
-</ol>
-<p> Note: Bit 7 of this register also indicates where the Colour RAM starts. If
-this bit is 1, colour memory starts at location 38400. If this bit is 0,
-colour memory starts at location 37888. Use the following formula:
-</p>
+<p>Decimal 36866. Default value: 150. Also known as <strong>VICCR2</strong>.</p>
+<p>This register has two functions:</p>
+<ul>
+<li><strong>Bit 7</strong> - bit 9 of the video RAM address. On an unexpanded VIC 20 the
+screen sits at $1E00 so this bit is set; when the screen moves to $1000 (8K or
+more expansion) the bit is clear.</li>
+<li><strong>Bits 6-0</strong> - the number of character columns the chip draws. Normally 22.</li>
+</ul>
+<p>Because bit 7 is shared, always keep it when writing a new column count:</p>
+<code>
+// draw 16 columns instead of 22, leaving the screen address alone
+SCREEN_TEXT_WIDTH := (SCREEN_TEXT_WIDTH &amp; 128) + 16;
+</code>
+
+<p>Bit 7 also decides where colour RAM starts: set means colour memory begins at
+38400 ($9600), clear means 37888 ($9400). In BASIC that is:</p>
 <code>
 C = 37888 + 4 * ( PEEK ( 36866 ) AND 128 )
 </code>
+<p>In TRSE just use SCREEN_COL_LOC, which already holds the right address for the
+memory configuration the project is built for.</p>

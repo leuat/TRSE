@@ -17,8 +17,13 @@ bitmap must equal the width and height of the map.
 <p>X1 and X2 are columns which equate directly to the bytes in the map data.
     X2 = X1 + width of tilemap.
 </p>
-<p>Y1 and Y2 are pixel positions on the bitmap.
-    Y2 = Y1 + (height of tilemap * 8)
+<p>Y1 and Y2 are pixel positions on the bitmap. Y2 is the pixel row of the
+    <strong>last</strong> tile row, and that row is drawn, so
+    Y2 = Y1 + ((height of tilemap - 1) * 8).
+</p>
+<p><strong>Careful:</strong> the row loop stops only once it passes Y2, so passing
+    Y1 + (height * 8) draws one extra phantom tile row 8 pixels below the intended
+    area, overwriting whatever memory follows it.
 </p>
 
 <p>There are four ways to draw a tilemap:</p>

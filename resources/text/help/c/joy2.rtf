@@ -1,19 +1,22 @@
-<p>The value joy2 (all lowercase) is created after a readjoy2() call.  It 
-    contains five flags in bits 0 to 4 to represent the directions on the joystick
-    and the fire button in port 2.  The bits will be 1 if that direction/button is currently held.
-</p>
-<p>Use JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE constants to determine which direction
-    is being held.
-</p>
-<p>Test with:</p>
+<p>The variable <strong>joy2</strong> (all lowercase) is filled in by a call to
+<strong>readjoy2()</strong>. It holds five flags, one per direction plus the fire
+button, for the joystick in port 2. A bit is 1 while that direction or button
+is <strong>currently held</strong>.</p>
+<p>Test it with the JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE masks.
+Their bit values are not the same on every machine, so always use the constants
+rather than raw numbers.</p>
+<p>readjoy2() also fills in <strong>joy2pressed</strong>, which reports only the
+frame a direction was first pressed, and <strong>joy2last</strong>, the previous
+frame's reading.</p>
 
+<p>Example</p>
 <code>
-        readjoy2();
+readjoy2();
 
-                if (joy2 & JOY_UP) then printstring("UP",0,2);
-                if (joy2 & JOY_DOWN) then printstring("DOWN",0,4);
-                if (joy2 & JOY_LEFT) then printstring("LEFT",0,4);
-                if (joy2 & JOY_RIGHT) then printstring("RIGHT",0,5);
-                if (joy2 & JOY_FIRE) then printstring("FIRE",0,5);
-		
+if (joy2 &amp; JOY_UP)    then y := y - 1;
+if (joy2 &amp; JOY_DOWN)  then y := y + 1;
+if (joy2 &amp; JOY_LEFT)  then x := x - 1;
+if (joy2 &amp; JOY_RIGHT) then x := x + 1;
+if (joy2 &amp; JOY_FIRE)  then Shoot();
 </code>
+<p>See also joy2pressed and readjoy2.</p>

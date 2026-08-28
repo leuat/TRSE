@@ -3,8 +3,9 @@
 <h3>Description</h3>
 <p>Read joystick in port 1.</p>
 <p>
-Populates two special variables called joy1, joy1last and joy1pressed (lowercase).  Bits 0 - 4 contain a 1 if a
-direction on the joystick is held or the firebutton is held.</p>
+Populates three special variables called joy1, joy1last and joy1pressed (all lowercase). In joy1, bits 0 - 4
+contain a 1 while a direction on the joystick or the fire button is held. joy1pressed sets a bit only on the
+reading where that direction or button was first pressed, and joy1last holds the previous reading.</p>
 <p>Use JOY_UP, JOY_LEFT, JOY_DOWN, JOY_RIGHT and JOY_FIRE constants to determine which direction or button.</p>
 
 <h3>Example</h3>
@@ -38,10 +39,10 @@ begin
                 screenmemory := screenmemory + 40;
                 if (joy1 & JOY_RIGHT) then printstring("RIGHT",0,5);
                 screenmemory := screenmemory + 40;
-                if (joy1 & JOY_FIRE) then printstring("FIRE",0,5);
+                if (joy1 & JOY_FIRE) then printstring("FIRE",0,4);
                 screenmemory := screenmemory + 40;
                 
-                // the following will briefly appear becasue they are only true when a joystick direction or fire button is first pressed
+                // the following will briefly appear because they are only true when a joystick direction or fire button is first pressed
                 if (joy1pressed & JOY_UP) then printstring("UP FIRST PRESS",0,14);
                 screenmemory := screenmemory + 40;
                 if (joy1pressed & JOY_DOWN) then printstring("DOWN FIRST PRESS",0,16);
@@ -50,7 +51,7 @@ begin
                 screenmemory := screenmemory + 40;
                 if (joy1pressed & JOY_RIGHT) then printstring("RIGHT FIRST PRESS",0,17);
                 screenmemory := screenmemory + 40;
-                if (joy1pressed & JOY_FIRE) then printstring("FIRE FIRST PRESS",0,17);
+                if (joy1pressed & JOY_FIRE) then printstring("FIRE FIRST PRESS",0,16);
 
                 waitforraster(180);
 
