@@ -1424,13 +1424,26 @@ void Methods6502::MemCpyUnroll(Assembler* as, bool isReverse)
 
 void Methods6502::Rand(Assembler* as)
 {
-    VerifyInitialized("rand","InitRandom");
-    LoadVar(as, 0);
-    as->Asm("sta lowerRandom");
-    LoadVar(as, 1);
-    as->Asm("sta upperRandom");
-    as->Asm("jsr callRandom");
-    SaveVar(as,2);
+
+    /* Programatically replace
+     *
+     * Rand(a, b, var) with
+     * var := mod(random(),b-a)+a;
+     *
+     *
+     * */
+    auto t = m_node->m_op;
+    QVector<QSharedPointer<Node>> params;
+    // Create the range: b-a, store in range
+    auto range = NodeFactory::CreateBinop(t,TokenType::MINUS,  m_node->m_params[1],m_node->m_params[0]);
+    // Create the params for mod(random(), range)
+    params << NodeFactory::CreateBuiltin(t,"random",QVector<QSharedPointer<Node>>()) << range;
+    // create the call to the mod function with the given parameters
+    auto n = NodeFactory::CreateBuiltin(t,"mod",params);
+    // create the assign statement : var := n + a
+    auto ass = NodeFactory::CreateAssign(t,m_node->m_params[2], NodeFactory::CreateBinop(t,TokenType::PLUS,n,m_node->m_params[0]));
+    // execute code generation
+    ass->Accept(m_codeGen);
 
 }
 
@@ -6741,7 +6754,7 @@ void Methods6502::SaveVar(Assembler *as, int paramNo)
 
 void Methods6502::VerifyInitialized(QString method, QString initmethod)
 {
-    if (!m_node->m_isInitialized[method])
+    if (!NodeBuiltinMethod::m_isInitialized[method])
         ErrorHandler::e.Error("Please declare "+ initmethod+"() before using " + method+"();");
 
 }

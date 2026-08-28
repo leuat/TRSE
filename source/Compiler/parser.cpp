@@ -262,10 +262,11 @@ void Parser::InitBuiltinFunctions() {
             Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
             InitBuiltinFunction(QStringList() << "getkey(", "initgetkey");
         }
-        InitBuiltinFunction(QStringList() << "rand(", "initrandom",
-                            "init_random_call");
+//        InitBuiltinFunction(QStringList() << "rand(", "initrandom",
+  //                          "init_random_call");
         InitBuiltinFunction(QStringList() << "mod16(", "init16x8div");
         InitBuiltinFunction(QStringList() << "random(", "initrandom256");
+        InitBuiltinFunction(QStringList() << "rand(", "initrandom256");
 
         InitBuiltinFunction(QStringList() << "rasterirqwedge(", "init_wedge");
         InitBuiltinFunction(QStringList() << "playvic20sid(", "init_vic20_sidplay");
