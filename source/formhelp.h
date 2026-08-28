@@ -32,7 +32,7 @@ public:
     explicit formHelp(QWidget *parent=nullptr);
     ~formHelp();
 
-
+    QHash<QString, QStringList> m_additionalText;
     QVector<HelpType> m_helpTypes;
     QVector<QString> m_currentItems;
 

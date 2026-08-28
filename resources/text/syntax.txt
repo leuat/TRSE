@@ -20,6 +20,7 @@ m; disassemble; ALL;
 
 
 # init functions
+
 m; initrandom; C64, MEGA65, X16,PLUS4, C128, APPLEII, SNES, ORIC ;
 m; initrandom256; C64, MEGA65, PLUS4, C128, VIC20, APPLEII, SNES, ORIC ;
 m; initsinetable; MOS6502;
@@ -1066,10 +1067,17 @@ c; MULTICOLOR_CHAR_COL; PLUS4; a; $ff15
 
 # C64, MEGA65, C128-specific constants
 
+--screen_bg_col defines the border color on the c64<br>
+--<code>screen_bg_col:=white; // will set the border to white</code>
 c; SCREEN_BG_COL; C64, MEGA65, C128; a; $D020
+
+--screen_fg_col defines the background color on the c64<br>
+--<code>screen_fg_col:=white; // will set the border to white</code>
 c; SCREEN_FG_COL; C64, MEGA65, C128; a; $D021
 c; SCREEN_CHAR_LOC; MEGA65; a; $0800
+
 c; SCREEN_CHAR_LOC; C64, C128, APPLEII, SNES, ORIC; a; $0400
+
 c; SCREEN_CHAR_LOC2; C64, C128; a; $4400
 c; SCREEN_CHAR_LOC3; C64, C128; a; $8400
 c; SCREEN_CHAR_LOC4; C64, C128; a; $C400

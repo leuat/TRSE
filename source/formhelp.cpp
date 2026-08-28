@@ -73,13 +73,20 @@ void formHelp::LoadItems(int idx)
 
     m_curIsTru = false;
 
+    QStringList currentAdditionalText;
     for (QString s: Syntax::s.m_syntaxData.split('\n')) {
         s= s.simplified();
         if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
+        if (s.startsWith("--")) {
+            auto clean = s.remove("--");
+            currentAdditionalText << clean;
+            continue;
+        }
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
+
         if (data[0].toLower()== ht.id) {
             QString word = data[1];
             QString system = data[2].toLower();
@@ -105,6 +112,9 @@ void formHelp::LoadItems(int idx)
                 val+=");"*/
                 AppendItem(ui->lstItems, word);
                 m_currentItems.append(word);
+                if (currentAdditionalText.count()!=0)
+                    m_additionalText[word] = currentAdditionalText;
+                currentAdditionalText.clear();
 
 //                ui->txtHelp->setText(txt);
  }
@@ -133,6 +143,7 @@ void formHelp::LoadItem(QString findword)
         s= s.simplified();
         if (s.length()==0) continue;
         if (s.startsWith("#")) continue;
+        if (s.startsWith("--")) continue;
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
@@ -147,6 +158,7 @@ void formHelp::LoadItem(QString findword)
         QString system = data[2].toLower();
         if (type!="f" && !Syntax::s.m_currentSystem->systemIsOfType(system.split(",")))
             continue;
+
 
 
         if (type=="f")
@@ -178,9 +190,6 @@ void formHelp::LoadItem(QString findword)
              //       m_highlighter->HighlightText(val);
            //         qDebug() << val;
                 }
-
-
-                ui->txtHelp->setText(val);
 
             }
 
@@ -297,6 +306,13 @@ void formHelp::LoadItem(QString findword)
             }
 
 
+            QString val;
+            if (m_additionalText.contains(findword)) {
+                for (auto& s: m_additionalText[findword])
+                    val+=s;// + "<br>";
+                ui->txtHelp->setText(ui->txtHelp->toHtml()  +ApplyColors(val));
+
+            }
 
          }
     }

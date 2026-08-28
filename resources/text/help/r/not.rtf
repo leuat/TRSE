@@ -1,16 +1,10 @@
 <h3>Description</h3>
-<p>A data type for storing an 8-bit number, values of 0 to 255.</p>
+<p>NOT in TRSE is functionally equal to XOR or ^</p>
+<p>Conditionals in TRSE does not support NOT, so be mindful of this. Ie
 
-
-<h3>Example</h3>
 
 <code>
-    var
-        time : byte;
-        lives ; byte = 3;
-        zeroVal : byte at $01; // declared at memory location 1.
-        p : ^byte; // Pointer to a byte. same as "pointer of byte".
-
-    begin
-        lives := lives - 1;
+   if a = b then  // correct way of checking whether 'a' is equal to 'b'
+   if a <> b then  // correct way of checking whether 'a' is not equal to 'b'
+   if not a = b then  // will XOR 'a' before checking if the result is equal with 'b'
 </code>
