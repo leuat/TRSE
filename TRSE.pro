@@ -3,39 +3,50 @@
 # Project created by QtCreator 2018-02-03T17:17:06
 #
 #-------------------------------------------------
+
+# Since ~2022, been using c++17
 CONFIG += c++17
 
 QT += core gui opengl qml
 QT += widgets
 VER = $$QT_MAJOR_VERSION
+
+# need qopenglwidgets for qt6
 equals(VER, 6) {
     QT += openglwidgets
 }
 
-
+# turn on for serious debugging
 CONFIG(debug, debug|release) {
     #CONFIG += sanitizer sanitize_address sanitize_undefined sanitize_threads
 }
 
+# main project
 TARGET = trse
 TEMPLATE = app
 
-DEFINES -= QT_DEPRECATED_WARNINGS
 
+# lua and omp are used for the internal ray tracer
 DEFINES += USE_LUA
-
 DEFINES +=USE_OMP
-
-#DEFINES += QT_ENABLE_DEPRECATED_BEFORE=0x050F00
-
+# lua include path
 INCLUDEPATH +=$$PWD/libs/lua/include
 
+# set temporary directory for qt generated files
+OBJECTS_DIR = ./tmp/obj
+MOC_DIR = ./tmp/moc
+RCC_DIR = ./tmp/rcc
+UI_DIR = ./tmp/ui
+
+# general settings
 DEPENDPATH += $$PWD/../Libs
 win32:RC_ICONS += trse.ico
 ICON = trse.icns
-#QMAKE_CXXFLAGS_WARN_OFF += -Wunused-parameter
-QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
+# set arch to current arch
 ARCH = $$QMAKE_HOST.arch
+# ignore some annoying warnings
+QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-unused-function -Wno-delete-non-abstract-non-virtual-dtor -Wno-overloaded-virtual -Wno-unused-variable -Wno-missing-field-initializers -Wno-sign-compare
+DEFINES -= QT_DEPRECATED_WARNINGS
 
 
 macx{
@@ -48,6 +59,8 @@ macx{
     QMAKE_LIBS_OPENGL = -framework OpenGL
     LIBS -= -framework AGL
 
+    # TRSE currently only supports apple arm devices
+
     QMAKE_APPLE_DEVICE_ARCHS = arm64
 
     LIBS += -L$$PWD/libs
@@ -58,8 +71,11 @@ macx{
     QMAKE_CXXFLAGS+= -I/opt/homebrew/opt/libomp/include
 
     message("Arme meg!")
+    # make sure to use the arm version of lua
     LIBS += -L$$PWD/libs/lua/ -lluamac_arm
     CONFIG += arm64
+
+    # libomp fails on arm. fix this in the future.
 
     LIBS+= -lomp
 
@@ -122,7 +138,7 @@ linux*{
 SOURCES += main.cpp\
     LeLib/Util/tcencode.cpp \
     formtutorialitem.cpp \
-        mainwindow.cpp \
+    mainwindow.cpp \
     imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
@@ -821,11 +837,6 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     resources.qrc
-
-
-
-
-#LELIB INCLUDES
 
 DISTFILES += \
     resources/bin/bk2010-0.7.jar \
