@@ -85,6 +85,12 @@ void formHelp::LoadItems(int idx)
         }
         s=s.replace(" ", "");
 
+        // The "--" lines belong to the entry directly below them, so grab them here :
+        // otherwise they would leak over to the next entry whenever this one is skipped
+        // (wrong type, or not compatible with the current system)
+        QStringList additionalText = currentAdditionalText;
+        currentAdditionalText.clear();
+
         QStringList data = s.split(";");
 
         if (data[0].toLower()== ht.id) {
@@ -112,9 +118,8 @@ void formHelp::LoadItems(int idx)
                 val+=");"*/
                 AppendItem(ui->lstItems, word);
                 m_currentItems.append(word);
-                if (currentAdditionalText.count()!=0)
-                    m_additionalText[word] = currentAdditionalText;
-                currentAdditionalText.clear();
+                if (additionalText.count()!=0)
+                    m_additionalText[word] = additionalText;
 
 //                ui->txtHelp->setText(txt);
  }

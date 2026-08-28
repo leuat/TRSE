@@ -169,35 +169,76 @@ m; joypad; GAMEBOY, SPECTRUM, MSX,  TIKI100; a,a
 m; RasterIRQ; AMSTRADCPC, VZ200 ; p
 
 
+--Start of the Game Boy video RAM, holding the sprite and background tile patterns. Copy data here with memcpyonhblank or while the LCD is turned off, never directly.
 c; VRAM ; GAMEBOY; a; $8000
+--Tile pattern area used by the background and window layers, and where a character set is normally placed.<br>
+--<code>Screens::CopyBankHB(#font, VRAM_CHARSET, 4); // 4x$100 bytes, safely on hblank</code>
 c; VRAM_CHARSET ; GAMEBOY ; a; $9000
+--First of the two 32x32 background tile maps. Each byte selects the tile drawn in that cell.<br>
+--<code>Screens::ClearScreen(SCREEN0, $80);</code>
 c; SCREEN0 ; GAMEBOY; a; $9800
+--Second 32x32 background tile map, typically used for the window layer or for double buffering.
 c; SCREEN1 ; GAMEBOY; a; $9C00
+--Background palette register. It packs the four shades used by background and window tiles, two bits per colour.<br>
+--<code>BACKGROUND_PALETTE:=%10010011; // 11 is black, 00 is white</code>
 c; BACKGROUND_PALETTE; GAMEBOY; a; $FF47
+--First sprite palette. Colour 0 is always transparent for sprites.<br>
+--<code>OBJECT0_PALETTE:=%10010011;</code>
 c; OBJECT0_PALETTE; GAMEBOY; a;$FF48
+--Second sprite palette, selected per sprite through the palette bit in the sprite attribute byte.
 c; OBJECT1_PALETTE; GAMEBOY ; a;$FF49
+--ROM bank select. Writing a bank number here swaps that bank into $4000 on cartridges with a memory bank controller.<br>
+--<code>CURRENT_BANK:=charBank; // point at the bank holding the graphics</code>
 c; CURRENT_BANK ; GAMEBOY; a; $2000
+--Bit mask for the sprite attribute byte that mirrors the sprite horizontally.<br>
+--<code>flags:=SPRITE_FLIP_X;</code>
 c; SPRITE_FLIP_X; GAMEBOY; b; %00100000
+--Bit mask for the sprite attribute byte that mirrors the sprite vertically. Combine with SPRITE_FLIP_X to rotate 180 degrees.<br>
+--<code>flags:=SPRITE_FLIP_X or SPRITE_FLIP_Y;</code>
 c; SPRITE_FLIP_Y; GAMEBOY; b; %01000000
+--Vertical hardware scroll of the background layer, 0 to 255. Wraps around the 256 pixel tile map.<br>
+--<code>SCROLLY:=SCROLLY+1; // scroll the background upwards</code>
 c; SCROLLY ; GAMEBOY; a ; $FF42
+--Horizontal hardware scroll of the background layer, 0 to 255.<br>
+--<code>SCROLLX:=SCROLLX+1;</code>
 c; SCROLLX ; GAMEBOY; a ; $FF43
+--Start of High RAM, the small block of fast RAM that stays readable while an OAM sprite transfer is running.
 c; DMA; GAMEBOY; a; $FF80
+--LCD status register. Holds the current drawing mode and the interrupt enable bits for hblank, vblank and the LYC compare line.
 c; LCDCSTAT; GAMEBOY; a; $FF41
+--Top line of the window layer. Set it to 144 or above to hide the window.<br>
+--<code>WINDOWY:=112; // window covers the bottom of the screen</code>
 c; WINDOWY; GAMEBOY; a; $FF4A
+--Left edge of the window layer, offset by 7. A value of 7 puts the window at the far left.<br>
+--<code>WINDOWX:=7;</code>
 c; WINDOWX; GAMEBOY; a; $FF4B
+--Bit mask for the right direction in the byte filled in by joypad.<br>
+--<code>if (pad1&PAD_RIGHT=PAD_RIGHT) then x:=x+1;</code>
 c; PAD_RIGHT; GAMEBOY; b; 16
+--Bit mask for the left direction in the byte filled in by joypad.
 c; PAD_LEFT; GAMEBOY; b; 32
+--Bit mask for the down direction in the byte filled in by joypad.
 c; PAD_DOWN; GAMEBOY; b; 64
+--Bit mask for the up direction in the byte filled in by joypad.
 c; PAD_UP; GAMEBOY; b; 128
+--Bit mask for the A button in the byte filled in by joypad.<br>
+--<code>if (pad1&PAD_BUTTON_A=PAD_BUTTON_A) then Jump();</code>
 c; PAD_BUTTON_A; GAMEBOY; b; 1
+--Bit mask for the B button in the byte filled in by joypad.
 c; PAD_BUTTON_B; GAMEBOY; b; 2
+--Bit mask for the START button in the byte filled in by joypad.
 c; PAD_BUTTON_START; GAMEBOY; b; 8
+--Bit mask for the SELECT button in the byte filled in by joypad.
 c; PAD_BUTTON_SELECT; GAMEBOY; b; 4
 
 
 # ************************** SPECTRUM, MSX,  TIKI100
 
+--Start of video memory. On the Spectrum this is the 6144 byte bitmap, stored in the usual thirds and interleaved line order.<br>
+--<code>poke(VRAM, 0, %10101010);</code>
 c; VRAM ; SPECTRUM, MSX,  TIKI100; a; $4000
+--Start of the colour attribute area, one byte per 8x8 character cell holding ink, paper, bright and flash.<br>
+--<code>fill(CRAM, %01000111, 768); // white ink on black paper</code>
 c; CRAM ; SPECTRUM, MSX,  TIKI100; a; $5800
 
 
@@ -223,10 +264,19 @@ m; UpdateMusic; ATARI520ST;
 m; SetIRQ;ATARI520ST; p, a
 m; SetTimerIRQ; ATARI520ST; p, b
 
+--First of the 16 ST palette registers. Each register is a word holding one 3 bit red, green and blue value.<br>
+--<code>poke(palette_start, 0, $0777); // colour 0 becomes white</code>
 c; palette_start; ATARI520ST; a; $ffff8240
+--Scan code of the space bar, for comparing against the value read from keyboard_input.<br>
+--<code>if (peek(keyboard_input,0)=sc_key_space_pressed) then Fire();</code>
 c; sc_key_space_pressed; ATARI520ST; b; #$39
+--Keyboard ACIA data register. Reading it returns the scan code of the last key event.
 c; keyboard_input; ATARI520ST; a; $fffc02
+--Autovector address for the vertical blank interrupt. Pass it to SetIRQ to run a routine once per frame.<br>
+--<code>SetIRQ(MyVblRoutine, irq_verticalblank);</code>
 c; irq_verticalblank; ATARI520ST; a; $70
+--Autovector address for the horizontal blank interrupt, used for raster effects that change colours mid screen.<br>
+--<code>SetIRQ(MyHblRoutine, irq_horizontalblank);</code>
 c; irq_horizontalblank; ATARI520ST; a; $68
 
 # ************** Amiga ROUTINES
@@ -366,11 +416,16 @@ m; SetBitmapLocation; C128; n
 # C O L E C O   S T U F F
 #
 
+--Sprite generator table in the video chip: the 8x8 or 16x16 pattern data used by sprites.
 c;VRAM_SPRGEN;COLECO; a;$3800
 
+--Pattern table in the video chip: the 8x8 character shapes used by the background.
 c;VRAM_PATTERN;COLECO;a;$0000
+--Name table in the video chip: one byte per screen cell selecting which pattern is displayed there.
 c;VRAM_NAME;COLECO;a;$1800
+--Sprite attribute table: four bytes per sprite holding y, x, pattern number and colour.
 c;VRAM_SPRATTR;COLECO;a;$1B00
+--Colour table in the video chip, giving the foreground and background colour for each group of patterns.
 c;VRAM_COLOR;COLECO;a;$2000
 
 
@@ -597,25 +652,49 @@ m; CloseIRQ; PX86, M1ARM;
 
 m; playnote; X86, M1ARM; b
 
+--Byte pattern that fills four CGA pixels with colour 0. In 320x200 CGA mode each byte holds four two bit pixels.<br>
+--<code>fill(SCREEN_CGA, CGA_COLOR0, 8000);</code>
 c; CGA_COLOR0; X86, M1ARM; b; 0
+--Byte pattern that fills four CGA pixels with colour 1.
 c; CGA_COLOR1; X86, M1ARM; b; $55
+--Byte pattern that fills four CGA pixels with colour 2.
 c; CGA_COLOR2; X86, M1ARM; b; $AA
+--Byte pattern that fills four CGA pixels with colour 3.
 c; CGA_COLOR3; X86, M1ARM; b; $FF
 
+--BIOS video mode 0: 40x25 text without colour.
 c; MODE_TEXT40_GREYSCALE; X86, M1ARM; b;$0
+--BIOS video mode 1: 40x25 colour text, the usual starting mode.<br>
+--<code>SetVideoMode(MODE_TEXT40);</code>
 c; MODE_TEXT40; X86, M1ARM; b; $1
+--BIOS video mode for 80x25 text without colour.
 c; MODE_TEXT80_GREYSCALE; X86, M1ARM; b; $1
+--BIOS video mode 3: 80x25 colour text.
 c; MODE_TEXT80; X86, M1ARM; b; $3
+--BIOS video mode 4: CGA 320x200 with four colours. Screen memory starts at SCREEN_CGA.<br>
+--<code>SetVideoMode(MODE_CGA_320x200);</code>
 c; MODE_CGA_320x200; X86, M1ARM; b; $4
+--BIOS video mode 6: CGA 640x200 in two colours.
 c; MODE_CGA_640x200; X86, M1ARM; b; $6
+--BIOS video mode $0D: EGA 320x200 with 16 colours in four bitplanes.
 c; MODE_EGA_320x200; X86, M1ARM; b; $0D
+--BIOS video mode $0E: EGA 640x200 with 16 colours.
 c; MODE_EGA_640x200; X86, M1ARM; b; $0E
+--BIOS video mode $12: VGA 640x480 with 16 colours.
 c; MODE_VGA_640x480; X86, M1ARM; b; $12
+--BIOS video mode $13: VGA 320x200 with 256 colours and one byte per pixel. The easiest mode to draw in.<br>
+--<code>SetVideoMode(MODE_VGA_320x200);</code>
 c; MODE_VGA_320x200; X86, M1ARM; b; $13
 
+--Start of CGA graphics memory. Note that the even and odd scan lines are stored in two separate halves.
 c; SCREEN_CGA; X86, M1ARM; a; $B800
+--Start of text mode screen memory. Each cell takes two bytes: the character followed by its colour attribute.<br>
+--<code>poke(SCREEN_TEXT, 0, 65); // an 'A' in the top left corner</code>
 c; SCREEN_TEXT; X86, M1ARM; a; $B800
+--Start of EGA graphics memory.
 c; SCREEN_EGA; X86, M1ARM; a; $B800
+--Start of VGA graphics memory. In mode $13 this is 320x200 bytes, one byte per pixel.<br>
+--<code>poke(SCREEN_VGA, y*320+x, color);</code>
 c; SCREEN_VGA; X86, M1ARM; a; $A000
 
 c; NOTE_C0 ; X86, M1ARM;b; 0
@@ -799,73 +878,133 @@ c; NOTE_Df3 ; VIC20; b; 243
 #
 #
 
+--TRUE is the boolean value 1. Comparisons return TRUE or FALSE, and any non-zero byte is treated as true.<br>
+--<code>if (gameOver=TRUE) then ResetGame();</code>
 c; TRUE; ALL;  b; 1
+--FALSE is the boolean value 0. Comparisons return TRUE or FALSE.<br>
+--<code>running:=FALSE;</code>
 c; FALSE; ALL; b; 0
+--NADA is the null pointer (address zero), used to mark a pointer that does not point anywhere yet. Same as NIL.<br>
+--<code>p:=NADA; if (p<>NADA) then p[0]:=42;</code>
 c; NADA; X16,NES, C64, MEGA65, PLUS4,VIC20,C128,PET, Amiga, ATARI520ST, OK64,X86, M1ARM, GAMEBOY, SPECTRUM, MSX,  TIKI100, ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800, AMSTRADCPC, VZ200 , COLECO, JDH8; i; 0
 
 
 # NES-specific
 
+--Main PPU control register: selects the name table, the address increment, the sprite and background pattern tables and enables the vblank interrupt.<br>
+--<code>PPUCTRL:=%10010000; // nmi on, background uses pattern table 1</code>
 c; PPUCTRL; NES; a; $2000
+--PPU mask register: switches the background and sprites on or off, and controls the leftmost column and colour emphasis.<br>
+--<code>PPUMASK:=%00011110; // show background and sprites</code>
 c; PPUMASK; NES; a; $2001
+--PPU status register. Reading it returns the vblank and sprite zero hit flags, and resets the address latch used by PPUADDR and PPUSCROLL.
 c; PPUSTATUS; NES; a; $2002
+--Selects which byte of the sprite attribute memory the next OAMDATA write goes to. Normally set to 0 before a transfer.
 c; OAMADDR; NES; a; $2003
+--Reads or writes one byte of sprite attribute memory at the current OAMADDR, stepping the address on afterwards.
 c; OAMDATA; NES; a; $2004
+--Hardware scroll register. Write the x offset and then the y offset, both after reading PPUSTATUS.<br>
+--<code>dummy:=PPUSTATUS; PPUSCROLL:=scrollx; PPUSCROLL:=scrolly;</code>
 c; PPUSCROLL; NES; a; $2005
+--Sets the PPU memory address for PPUDATA. Write the high byte first, then the low byte.<br>
+--<code>PPUADDR:=$20; PPUADDR:=$00; // point at the first name table</code>
 c; PPUADDR; NES; a; $2006
+--Reads or writes PPU memory at the address set through PPUADDR, stepping the address on afterwards. Only safe during vblank.
 c; PPUDATA; NES; a; $2007
+--Writing a page number here copies that whole 256 byte page into sprite memory in one go. The usual way to update sprites each frame.<br>
+--<code>OAMDMA:=2; // copy $0200-$02FF to the sprite table</code>
 c; OAMDMA; NES; a; $4014
 
 
 
 # MSX-specific
 
+--MSX BIOS routine that prints the character held in the A register at the cursor position. Load A in an asm block before calling it.
 c;CHPUT;MSX;a;$00A2
+--MSX BIOS routine that applies the colours held in FORCLR, BAKCLR and BDRCLR to the screen.<br>
+--<code>FORCLR:=15; BAKCLR:=1; BDRCLR:=1; call(CHGCLR);</code>
 c;CHGCLR;MSX;a;$0062
+--System variable holding the foreground colour. Call CHGCLR after changing it.
 c;FORCLR;MSX;a;$F3E9
+--System variable holding the background colour. Call CHGCLR after changing it.
 c;BAKCLR;MSX;a;$F3EA
+--System variable holding the border colour. Call CHGCLR after changing it.
 c;BDRCLR;MSX;a;$F3EB
+--MSX BIOS routine that clears the screen.<br>
+--<code>call(CLS);</code>
 c;CLS;MSX;a;$00C3
 
 
 # Commodore-specific
+--Byte holding the state of the joystick in port 1 after a call to ReadJoy1. Test it against the JOY_ masks.<br>
+--<code>ReadJoy1(); if (Joy1 & JOY_LEFT<>0) then x:=x-1;</code>
 c; Joy1; VIC20, C64, MEGA65; ;
+--Byte holding the state of the joystick in port 2 after a call to ReadJoy2. Test it against the JOY_ masks.<br>
+--<code>ReadJoy2(); if (Joy2 & JOY_UP<>0) then y:=y-1;</code>
 c; Joy2; C64, MEGA65; ;
+--Set after ReadJoy1 when the fire button on port 1 is held down.<br>
+--<code>ReadJoy1(); if (Joy1Pressed) then Shoot();</code>
 c; Joy1Pressed; VIC20, C64, MEGA65; ;
+--Set after ReadJoy2 when the fire button on port 2 is held down.
 c; Joy2Pressed; C64, MEGA65; ;
 
 
 # VZ200 constants
 
+--Number of character columns on the VZ200 text screen.
 c; SCREEN_WIDTH; VZ200; b; 32
+--Number of character rows on the VZ200 text screen.
 c; SCREEN_HEIGHT; VZ200; b; 16
+--Start of VZ200 screen memory. Write character codes here to draw on the screen.<br>
+--<code>poke(SCREEN, y*SCREEN_WIDTH+x, char);</code>
 c; SCREEN; VZ200 ; a; $7000
 
 
 # AMSTRADCPC, VZ200  constants
 
+--Start of screen memory.<br>
+--<code>fill(SCREEN, 0, 16384); // clear the display</code>
 c; SCREEN; AMSTRADCPC, SPECTRUM; a; $C000
+--Entry point of the music player that was linked into the program. Call it once to set up a tune before playing it.
 c; INIT_MUSIC; AMSTRADCPC, VZ200 , SPECTRUM; a; $0000
+--Entry point that plays one frame of music. Call it once per interrupt or once per frame.
 c; PLAY_MUSIC; AMSTRADCPC, VZ200 , SPECTRUM; a; $0000
+--Entry point that silences the sound chip and stops the tune.
 c; STOP_MUSIC; AMSTRADCPC, VZ200 , SPECTRUM; a; $0000
 
 # ATARI 2600 constants
 
+--TIA register COLUBK, the background colour behind the playfield.<br>
+--<code>BACKGROUND_COLOR:=$00; // black background</code>
 c; BACKGROUND_COLOR; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $09
+--TIA register COLUPF, the colour of the playfield and the ball.
 c; PLAYFIELD_COLOR; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $08
+--TIA register COLUP1, the colour of player 1 and its missile. Same register as PLAYER1_COLOR.
 c; PLAYFIELD_PLAYER1; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $07
+--TIA register COLUP0, the colour of player 0 and its missile. Same register as PLAYER0_COLOR.
 c; PLAYFIELD_PLAYER0; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $06
 
+--TIA register PF0, the first four playfield pixels of the scanline. Only the top four bits are used.<br>
+--<code>PLAYFIELD0:=%11110000;</code>
 c; PLAYFIELD0; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $0D
+--TIA register PF1, the middle eight playfield pixels of the scanline.
 c; PLAYFIELD1; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $0E
+--TIA register PF2, the last eight playfield pixels of the scanline.
 c; PLAYFIELD2; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $0F
+--TIA register CTRLPF: mirrors or repeats the playfield on the right half of the screen, and sets the ball size.<br>
+--<code>PLAYFIELD_CONTROL:=%00000001; // reflect the playfield</code>
 c; PLAYFIELD_CONTROL; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $A
 
 
+--TIA register COLUP0, the colour of player 0 and its missile.
 c; PLAYER0_COLOR; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $06
+--TIA register COLUP1, the colour of player 1 and its missile.
 c; PLAYER1_COLOR; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $07
 
+--TIA register GRP0, the eight pixel bitmap drawn for player 0 on this scanline.<br>
+--<code>PLAYER0_GFX:=shipShape[frame];</code>
 c; PLAYER0_GFX; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $1B
+--TIA register GRP1, the eight pixel bitmap drawn for player 1 on this scanline.
 c; PLAYER1_GFX; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $1C
 
 
@@ -873,134 +1012,278 @@ c; PLAYER1_GFX; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $1C
 
 
 
+--TIA register RESP0. Writing to it locks player 0 to the position the electron beam has reached, which is how the horizontal position is set.
 c; RESP0; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $10
+--TIA register RESP1, the same as RESP0 but for player 1.
 c; RESP1; ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; a; $11
 
 # BBC Specific constants
 
 
+--Start of screen memory in mode 5, the 160x256 four colour mode.
 c; MODE5_VRAM ; BBCM, ACORN; a; $5800
+--Start of screen memory in mode 2, the 160x256 sixteen colour mode.
 c; MODE2_VRAM ; BBCM, ACORN; a; $4000
+--Base of the SHEILA memory mapped IO page, where the video, sound and system chips are reached.
 c; SHEILA_REG ; BBCM, ACORN; a; $FE00
+--Data register of the 6845 video controller. Select a register through SHEILA_REG, then write its value here.<br>
+--<code>poke(SHEILA_REG,0,12); poke(SHEILA_WRITE,0,val); // set the screen start address</code>
 c; SHEILA_WRITE ; BBCM, ACORN; a; $FE01
+--Start of screen memory in the text modes.
 c; SCREEN_CHAR_LOC ; BBCM, ACORN; a; $7C00
 
 # X86, M1ARM REGISTERS
 
+--Direct access to the 16 bit AX register, for setting up a BIOS or DOS call or for talking to inline assembly.
 c; _AX; PX86, M1ARM; a; 0
+--Direct access to the 16 bit BX register.
 c; _BX; PX86, M1ARM; a; 0
+--Direct access to the 16 bit CX register, usually a loop or length counter.
 c; _CX; PX86, M1ARM; a; 0
+--Direct access to the 16 bit DX register.
 c; _DX; PX86, M1ARM; a; 0
+--The high byte of AX. Most BIOS and DOS calls take their function number here.
 c; _AH; PX86, M1ARM; a; 0
+--The high byte of BX.
 c; _BH; PX86, M1ARM; a; 0
+--The high byte of CX.
 c; _CH; PX86, M1ARM; a; 0
+--The high byte of DX.
 c; _DH; PX86, M1ARM; a; 0
+--The low byte of AX, the accumulator most instructions work with.
 c; _AL; PX86, M1ARM; a; 0
+--The low byte of BX.
 c; _BL; PX86, M1ARM; a; 0
+--The low byte of CX, used as the shift count for shift and rotate instructions.
 c; _CL; PX86, M1ARM; a; 0
+--The low byte of DX.
 c; _DL; PX86, M1ARM; a; 0
+--The extra segment register, which supplies the segment for string destinations.
 c; _ES; PX86, M1ARM; a; 0
+--The destination index register, used with ES for string and block copy instructions.
 c; _DI; PX86, M1ARM; a; 0
+--The data segment register.
 c; _DS; PX86, M1ARM; a; 0
+--The source index register, used with DS for string and block copy instructions.
 c; _SI; PX86, M1ARM; a; 0
 # 6502 REGISTERS
 
+--Direct access to the 6502 accumulator, for passing a value to or picking one up from an assembly routine.<br>
+--<code>key:=_A;</code>
 c; _A; MOS6502; a; 0
+--Direct access to the 6502 X index register.
 c; _X; MOS6502; a; 0
+--Direct access to the 6502 Y index register.
 c; _Y; MOS6502; a; 0
+--The A and X registers treated as one 16 bit value, for routines that return a result in a register pair.
 c; _AX; MOS6502; a; 0
+--The A and Y registers treated as one 16 bit value.
 c; _AY; MOS6502; a; 0
+--The X and Y registers treated as one 16 bit value.
 c; _XY; MOS6502; a; 0
 
 
 # VIC 20-specific constants
 
+--Kernal byte that tells PAL and NTSC machines apart. It reads 12 on a PAL VIC 20, and 5 on an NTSC one.<br>
+--<code>if (PAL_OR_NTSC[0]=12) then delay:=8 else delay:=10;</code>
 c; PAL_OR_NTSC;VIC20; a; $ede4
+--Start of colour memory, one byte per character cell. TRSE picks $9600 for an unexpanded VIC 20 and $9400 when the machine has memory expansion.<br>
+--<code>ClearScreen(WHITE, SCREEN_COL_LOC);</code>
 c; SCREEN_COL_LOC; VIC20; a; $9600, $9400
+--Start of screen memory, one character code per cell. TRSE picks $1E00 for an unexpanded VIC 20 and $1000 when the machine has memory expansion.<br>
+--<code>ClearScreen(32, SCREEN_CHAR_LOC); // blank the screen</code>
 c; SCREEN_CHAR_LOC; VIC20; a; $1E00, $1000
+--Number of character columns on the VIC 20 screen.<br>
+--<code>poke(SCREEN_CHAR_LOC, y*SCREEN_WIDTH+x, char);</code>
 c; SCREEN_WIDTH; VIC20; b; 22
+--Number of character rows on the VIC 20 screen.
 c; SCREEN_HEIGHT; VIC20; b; 23
+--VIC register 0: the horizontal position of the top left corner of the display. Change it to shift the whole screen sideways, or to shake it.<br>
+--<code>HSCROLL_REGISTER:=5;</code>
 c; HSCROLL_REGISTER; VIC20; a; $9000
+--VIC register 1: the vertical position of the top of the display. Change it to shift the whole screen up or down.<br>
+--<code>VSCROLL_REGISTER:=38;</code>
 c; VSCROLL_REGISTER; VIC20; a; $9001
+--VIC register 2: the number of columns the chip draws, in the lower 7 bits. The top bit is part of the screen memory address, so keep it when writing a new width.
 c; SCREEN_TEXT_WIDTH; VIC20; a; $9002
+--VIC register 3: the number of rows the chip draws, in bits 1 to 6. Bit 0 selects 8x16 characters instead of 8x8.
 c; SCREEN_TEXT_HEIGHT; VIC20; a; $9003
+--VIC register 4: the raster line currently being drawn, divided by two. Poll it to time effects to the screen.<br>
+--<code>WaitForRaster(100);</code>
 c; VIC_RASTERLINE; VIC20; a; $9004
+--VIC register 5: selects where the chip fetches screen memory and character data from. Same register as SCREEN_CHAR_REGISTER.<br>
+--<code>VIC_DATA_LOC:=%11111100; // characters at $1C00</code>
 c; VIC_DATA_LOC; VIC20; a; $9005
+--VIC register 5: the upper nibble selects the screen memory location and the lower nibble the character set location.
 c; SCREEN_CHAR_REGISTER; VIC20; a; $9005
+--VIC register 6: the horizontal position reported by the light pen.
 c; HPEN_REGISTER; VIC20; a; $9006
+--VIC register 7: the vertical position reported by the light pen.
 c; VPEN_REGISTER; VIC20; a; $9007
+--VIC register 8: the value of paddle X, 0 to 255.
 c; XPADDLE_REGISTER; VIC20; a; $9008
+--VIC register 9: the value of paddle Y, 0 to 255.
 c; YPADDLE_REGISTER; VIC20; a; $9009
+--VIC register A: the bass voice. Bit 7 turns it on and the lower bits set the pitch, as in the NOTE_ constants.<br>
+--<code>SOUND1_REGISTER:=NOTE_C2;</code>
 c; SOUND1_REGISTER; VIC20; a; $900A
+--VIC register B: the alto voice, one octave above SOUND1_REGISTER.
 c; SOUND2_REGISTER; VIC20; a; $900B
+--VIC register C: the soprano voice, two octaves above SOUND1_REGISTER.
 c; SOUND3_REGISTER; VIC20; a; $900C
+--VIC register D: the noise voice, used for explosions and percussion.
 c; SOUNDFX_REGISTER; VIC20; a; $900D
+--VIC register E: the sound volume in the lower nibble and the auxiliary colour for multicolour characters in the upper one.<br>
+--<code>AUX_COLOR_AND_VOLUME:=15; // full volume</code>
 c; AUX_COLOR_AND_VOLUME; VIC20; a; $900E
+--VIC register F: the background colour in the upper nibble, the border colour in the lower three bits, and the reverse video flag in bit 3. Use the SCREEN_BG_ constants to set it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_BLACK+CYAN; // black screen, cyan border</code>
 c; SCREEN_BG_COLOR; VIC20; a; $900F
+--Raw name for VIC chip register 0 at $9000: the horizontal position of the display, same as HSCROLL_REGISTER.
 c; VICCR0; VIC20; a; $9000
+--Raw name for VIC chip register 1 at $9001: the vertical position of the display, same as VSCROLL_REGISTER.
 c; VICCR1; VIC20; a; $9001
+--Raw name for VIC chip register 2 at $9002: the number of columns and one bit of the screen address, same as SCREEN_TEXT_WIDTH.
 c; VICCR2; VIC20; a; $9002
+--Raw name for VIC chip register 3 at $9003: the number of rows and the character height, same as SCREEN_TEXT_HEIGHT.
 c; VICCR3; VIC20; a; $9003
+--Raw name for VIC chip register 4 at $9004: the current raster line divided by two, same as VIC_RASTERLINE.
 c; VICCR4; VIC20; a; $9004
+--Raw name for VIC chip register 5 at $9005: the screen and character memory location, same as SCREEN_CHAR_REGISTER.
 c; VICCR5; VIC20; a; $9005
+--Raw name for VIC chip register 6 at $9006: the light pen horizontal position, same as HPEN_REGISTER.
 c; VICCR6; VIC20; a; $9006
+--Raw name for VIC chip register 7 at $9007: the light pen vertical position, same as VPEN_REGISTER.
 c; VICCR7; VIC20; a; $9007
+--Raw name for VIC chip register 8 at $9008: the paddle X value, same as XPADDLE_REGISTER.
 c; VICCR8; VIC20; a; $9008
+--Raw name for VIC chip register 9 at $9009: the paddle Y value, same as YPADDLE_REGISTER.
 c; VICCR9; VIC20; a; $9009
+--Raw name for VIC chip register A at $900A: the bass voice, same as SOUND1_REGISTER.
 c; VICCRA; VIC20; a; $900A
+--Raw name for VIC chip register B at $900B: the alto voice, same as SOUND2_REGISTER.
 c; VICCRB; VIC20; a; $900B
+--Raw name for VIC chip register C at $900C: the soprano voice, same as SOUND3_REGISTER.
 c; VICCRC; VIC20; a; $900C
+--Raw name for VIC chip register D at $900D: the noise voice, same as SOUNDFX_REGISTER.
 c; VICCRD; VIC20; a; $900D
+--Raw name for VIC chip register E at $900E: the volume and auxiliary colour, same as AUX_COLOR_AND_VOLUME.
 c; VICCRE; VIC20; a; $900E
+--Raw name for VIC chip register F at $900F: the screen and border colours, same as SCREEN_BG_COLOR.
 c; VICCRF; VIC20; a; $900F
 
+--Value for SCREEN_BG_COLOR that gives a black screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_BLACK+BLUE; // black screen, blue border</code>
 c; SCREEN_BG_BLACK; VIC20; b; 8
+--Value for SCREEN_BG_COLOR that gives a white screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_WHITE+BLUE; // white screen, blue border</code>
 c; SCREEN_BG_WHITE; VIC20; b; 24
+--Value for SCREEN_BG_COLOR that gives a red screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_RED+BLUE; // red screen, blue border</code>
 c; SCREEN_BG_RED; VIC20; b; 40
+--Value for SCREEN_BG_COLOR that gives a cyan screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_CYAN+BLUE; // cyan screen, blue border</code>
 c; SCREEN_BG_CYAN; VIC20; b; 56
+--Value for SCREEN_BG_COLOR that gives a purple screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_PURPLE+BLUE; // purple screen, blue border</code>
 c; SCREEN_BG_PURPLE; VIC20; b; 72
+--Value for SCREEN_BG_COLOR that gives a green screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_GREEN+BLUE; // green screen, blue border</code>
 c; SCREEN_BG_GREEN; VIC20; b; 88
+--Value for SCREEN_BG_COLOR that gives a blue screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_BLUE+BLUE; // blue screen, blue border</code>
 c; SCREEN_BG_BLUE; VIC20; b; 104
+--Value for SCREEN_BG_COLOR that gives a yellow screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_YELLOW+BLUE; // yellow screen, blue border</code>
 c; SCREEN_BG_YELLOW; VIC20; b; 120
+--Value for SCREEN_BG_COLOR that gives a orange screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_ORANGE+BLUE; // orange screen, blue border</code>
 c; SCREEN_BG_ORANGE; VIC20; b; 136
+--Value for SCREEN_BG_COLOR that gives a light orange screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_LTORANGE+BLUE; // light orange screen, blue border</code>
 c; SCREEN_BG_LTORANGE; VIC20; b; 152
+--Value for SCREEN_BG_COLOR that gives a pink screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_PINK+BLUE; // pink screen, blue border</code>
 c; SCREEN_BG_PINK; VIC20; b; 168
+--Value for SCREEN_BG_COLOR that gives a light cyan screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_LTCYAN+BLUE; // light cyan screen, blue border</code>
 c; SCREEN_BG_LTCYAN; VIC20; b; 184
+--Value for SCREEN_BG_COLOR that gives a light purple screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_LTPURPLE+BLUE; // light purple screen, blue border</code>
 c; SCREEN_BG_LTPURPLE; VIC20; b; 200
+--Value for SCREEN_BG_COLOR that gives a light green screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_LTGREEN+BLUE; // light green screen, blue border</code>
 c; SCREEN_BG_LTGREEN; VIC20; b; 216
+--Value for SCREEN_BG_COLOR that gives a light blue screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_LTBLUE+BLUE; // light blue screen, blue border</code>
 c; SCREEN_BG_LTBLUE; VIC20; b; 232
+--Value for SCREEN_BG_COLOR that gives a light yellow screen in normal video. Add a border colour of 0 to 7 to it.<br>
+--<code>SCREEN_BG_COLOR:=SCREEN_BG_LTYELLOW+BLUE; // light yellow screen, blue border</code>
 c; SCREEN_BG_LTYELLOW; VIC20; b; 248
 
 
+--Bit mask for up in the value returned by ReadJoy1.<br>
+--<code>ReadJoy1(); if (Joy1 & JOY_UP<>0) then y:=y-1;</code>
 c; JOY_UP; VIC20; b; %00000010
+--Bit mask for down in the value returned by ReadJoy1.
 c; JOY_DOWN; VIC20; b; %00000100
+--Bit mask for left in the value returned by ReadJoy1.
 c; JOY_LEFT; VIC20; b; %00001000
+--Bit mask for right in the value returned by ReadJoy1.
 c; JOY_RIGHT; VIC20; b; %00000001
+--Bit mask for the fire button in the value returned by ReadJoy1.
 c; JOY_FIRE; VIC20; b; %00010000
 
 
 # OK64 specific constants
+--Reading this address returns a new random byte.<br>
+--<code>x:=OKVC_RANDOM;</code>
 c; OKVC_RANDOM; OK64; a; $FFF0
+--Vertical sync register, polled by WaitForVsync to synchronise with the display.
 c; OKVC_VSYNC; OK64; a; $FFEF
+--Command area of the OK64 video chip. The built in drawing methods write their commands here.
 c; OKVC_EXEC; OK64; a; $FF10
+--Selects which memory bank the character set used by PrintChar is fetched from.
 c; OKVC_FONT_BANK; OK64; a; $FFEE
+--Width in pixels of one character in the current font.
 c; OKVC_FONT_WIDTH; OK64; a; $FFED
+--Height in pixels of one character in the current font.
 c; OKVC_FONT_HEIGHT; OK64; a; $FFEC
+--Width of the border area at each side of the display.
 c; OKVC_BORDER_WIDTH; OK64; a; $FFEB
+--Height of the border area above and below the display.
 c; OKVC_BORDER_HEIGHT; OK64; a; $FFEA
+--Colour of the border around the display.<br>
+--<code>OKVC_BORDER_COLOR:=0;</code>
 c; OKVC_BORDER_COLOR; OK64; a; $FFE9
+--Holds the code of the key currently being pressed, or zero when no key is down.<br>
+--<code>if (OKVC_INPUT_KEY=KEY_SPACE) then Fire();</code>
 c; OKVC_INPUT_KEY; OK64; a; $FFE8
+--Base of the file interface area, used together with ResetFileList, ReadNextFile and LoadFile.
 c; OKVC_FILE; OK64; a; $FF20
+--Source memory page for blit and copy operations.
 c; OKVC_SRC_PAGE; OK64; a; 0xFFE7
+--Destination memory page for blit and copy operations.
 c; OKVC_DST_PAGE; OK64; a; 0xFFE6
+--Index of the screen strip the video chip is currently working on.
 c; OKVC_CURRENT_STRIP; OK64; a; 0xFFE5
+--Start of the screen strip buffer.
 c; OKVC_STRIP; OK64; a; 0xFE00
+--Selects how blit combines pixels: 0 for a plain copy, or one of the OKVC_BLIT_ constants.<br>
+--<code>OKVC_BLIT_TYPE:=OKVC_BLIT_ALPHA;</code>
 c; OKVC_BLIT_TYPE; OK64; a; 0xFFE4
+--The colour treated as transparent when OKVC_BLIT_TYPE is set to OKVC_BLIT_ALPHA.
 c; OKVC_BLIT_ALPHAVAL; OK64; a; 0xFFE3
+--Blit mode that skips pixels matching OKVC_BLIT_ALPHAVAL, so the background shows through.
 c; OKVC_BLIT_ALPHA ; OK64; b; 1
+--Blit mode that adds the source pixel value to the destination instead of replacing it.
 c; OKVC_BLIT_ADD ; OK64; b; 2
+--Volume of sound channel 1.
 c; OKVC_CHANNEL1_VOL ; OK64; a; 0xFFE1
+--Volume of sound channel 2.
 c; OKVC_CHANNEL2_VOL ; OK64; a; 0xFFE2
+--General purpose output register of the OK64 sound and IO chip.
 c; OKVC_OUTVAL ; OK64; a; 0xFFE0
 
 
@@ -1027,9 +1310,14 @@ m; fmul;OK64;b,b
 
 # NULL pointer:
 
+--NIL is the null pointer (address zero), used to mark a pointer that does not point anywhere yet.<br>
+--<code>p:=NIL; if (p<>NIL) then p[0]:=42;</code>
 c; NIL;X16,C64, MEGA65, PLUS4, C128, VIC20, PET,  NES, BBCM, ACORN, ATARI800, OK64, PX86, M1ARM, GAMEBOY, AMSTRADCPC, VZ200 , COLECO, SPECTRUM, MSX,  TIKI100, ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; i; 0
+--NIL is the null pointer, here as a 32 bit long for the 68000 address space.
 c; NIL;Amiga, ATARI520ST, OK64 ; l; 0
+--NADA is another name for NIL, the null pointer (address zero).
 c; NADA;X16,C64, MEGA65, PLUS4, C128, VIC20, PET,  NES, BBCM, ACORN, ATARI800, OK64, PX86, M1ARM, GAMEBOY, AMSTRADCPC, VZ200 , COLECO, SPECTRUM, MSX,  TIKI100, ATARI2600, APPLEII, SNES, ORIC, BBCM, ACORN, ATARI800; i; 0
+--NADA is another name for NIL, here as a 32 bit long for the 68000 address space.
 c; NADA;Amiga, ATARI520ST, OK64 ; l; 0
 
 
@@ -1040,12 +1328,23 @@ m; Set256CharMode; PLUS4;
 
 # PLUS4 specific constants
 
+--Border colour of the Plus 4 display. Plus 4 colours combine a luminance in the upper nibble with a hue in the lower one, so use the colour constants rather than raw numbers.<br>
+--<code>SCREEN_BG_COL:=BLUE;</code>
 c; SCREEN_BG_COL; PLUS4; a; $ff19
+--Background colour of the Plus 4 display.<br>
+--<code>SCREEN_FG_COL:=BLACK;</code>
 c; SCREEN_FG_COL; PLUS4; a; $ff15
+--Start of screen memory, one character code per cell.<br>
+--<code>ClearScreen(32, SCREEN_CHAR_LOC);</code>
 c; SCREEN_CHAR_LOC; PLUS4; a; $0c00
+--Start of colour memory, one byte per character cell.<br>
+--<code>ClearScreen(WHITE, SCREEN_COL_LOC);</code>
 c; SCREEN_COL_LOC; PLUS4; a; $0800
+--Number of character columns on the Plus 4 screen.
 c; SCREEN_WIDTH; PLUS4; b; 40
+--Number of character rows on the Plus 4 screen.
 c; SCREEN_HEIGHT; PLUS4; b; 25
+--Low byte of the raster line currently being drawn. Poll it to time effects to the screen.
 c; RASTERLINE_POS; PLUS4; a; $ff1d
 c; BLACK; PLUS4; b; 0
 c; WHITE; PLUS4; b; $71
@@ -1063,6 +1362,7 @@ c; GREY; PLUS4; b; $51
 c; LIGHT_GREEN; PLUS4; b; $7f
 c; LIGHT_BLUE; PLUS4; b; $5e
 c; LIGHT_GREY; PLUS4; b; $61
+--Base of the extra colour registers used by multicolour character mode.
 c; MULTICOLOR_CHAR_COL; PLUS4; a; $ff15
 
 # C64, MEGA65, C128-specific constants
@@ -1072,23 +1372,42 @@ c; MULTICOLOR_CHAR_COL; PLUS4; a; $ff15
 c; SCREEN_BG_COL; C64, MEGA65, C128; a; $D020
 
 --screen_fg_col defines the background color on the c64<br>
---<code>screen_fg_col:=white; // will set the border to white</code>
+--<code>screen_fg_col:=white; // will set the background to white</code>
 c; SCREEN_FG_COL; C64, MEGA65, C128; a; $D021
+--Start of screen memory on the MEGA65, one character code per cell.
 c; SCREEN_CHAR_LOC; MEGA65; a; $0800
 
+--Start of screen memory, one character code per cell. Row y column x sits at offset y*SCREEN_WIDTH+x.<br>
+--<code>ClearScreen(32, SCREEN_CHAR_LOC); // blank the screen</code>
 c; SCREEN_CHAR_LOC; C64, C128, APPLEII, SNES, ORIC; a; $0400
 
+--Screen memory at the same offset inside VIC bank 1. Useful for double buffering, or after switching banks with VIC_BANK1.
 c; SCREEN_CHAR_LOC2; C64, C128; a; $4400
+--Screen memory at the same offset inside VIC bank 2.
 c; SCREEN_CHAR_LOC3; C64, C128; a; $8400
+--Screen memory at the same offset inside VIC bank 3.
 c; SCREEN_CHAR_LOC4; C64, C128; a; $C400
+--Size of one VIC bank. The chip can only see 16K at a time, so all graphics data must sit inside the same bank.
 c; BANK_SIZE; C64, MEGA65, C128; a; $4000
+--Start of colour memory, one byte per character cell. It is fixed in place and cannot be moved with the VIC bank.<br>
+--<code>ClearScreen(LIGHT_BLUE, SCREEN_COL_LOC);</code>
 c; SCREEN_COL_LOC; C64, MEGA65, C128; a; $D800
+--Start of colour memory when the MEGA65 is in 80 column mode.
 c; SCREEN_COL_LOC80; MEGA65; a; $F800
+--Number of character columns on the screen.<br>
+--<code>poke(SCREEN_CHAR_LOC, y*SCREEN_WIDTH+x, char);</code>
 c; SCREEN_WIDTH; C64, C128, ATARI800, APPLEII; b; 40
+--Number of character columns on the MEGA65 screen.
 c; SCREEN_WIDTH; MEGA65; b; 80
+--Number of character rows on the screen.
 c; SCREEN_HEIGHT; C64, MEGA65, ATARI800, C128; b; 25
+--Number of character rows on the Apple II screen.
 c; SCREEN_HEIGHT; APPLEII; b; 24
+--Low byte of the raster line currently being drawn. Poll it, or write to it to choose the line that triggers a raster interrupt.<br>
+--<code>WaitForRaster(100); // wait until line 100 is reached</code>
 c; RASTERLINE_POS; C64, MEGA65, C128; a; $D012
+--VIC control register 1: bit 5 turns on bitmap mode, bit 4 blanks the screen, bit 3 selects 25 or 24 rows, and the lower bits scroll the screen vertically.<br>
+--<code>SCREEN_CTRL:=SCREEN_CTRL or %00100000; // switch to bitmap mode</code>
 c; SCREEN_CTRL;C64; a; $D011
 c; BLACK; C64, MEGA65, C128, VIC20,X16; b; 0
 c; WHITE; C64, MEGA65, C128, VIC20,X16; b; 1
@@ -1106,19 +1425,40 @@ c; GREY; C64, MEGA65, C128,X16; b;12
 c; LIGHT_GREEN; C64, MEGA65, C128,X16;b;13
 c; LIGHT_BLUE; C64, MEGA65, C128,X16; b;14
 c; LIGHT_GREY; C64, MEGA65, C128,X16; b;15
+--Base of the sprite position registers, two bytes per sprite: x first, then y.<br>
+--<code>poke(SPRITE_POS, 0, x); poke(SPRITE_POS, 1, y); // move sprite 0</code>
 c; SPRITE_POS; C64, MEGA65, C128; a; $D000
+--The eight sprite pointers at the end of screen memory. Each one holds the sprite data block number, that is the address inside the VIC bank divided by 64.<br>
+--<code>poke(SPRITE_DATA_LOC, 0, 13); // sprite 0 reads its data from $0340</code>
 c; SPRITE_DATA_LOC; C64, MEGA65, C128; a;$07F8
+--One bit per sprite, turning each of the eight sprites on or off.<br>
+--<code>SPRITE_BITMASK:=%00000011; // show sprites 0 and 1</code>
 c; SPRITE_BITMASK; C64, MEGA65, C128; a; $D015
+--Base of the eight sprite colour registers, one byte per sprite.<br>
+--<code>poke(SPRITE_COLOR, 0, WHITE);</code>
 c; SPRITE_COLOR; C64, MEGA65, C128;a;$D027
+--The cassette buffer at $0340, a free block of memory that is often used to store sprite data blocks 13 to 16.
 c; SPRITE_DATA; C64, MEGA65, C128; a; $0340
+--One bit per sprite, set when that sprite touches another one. Reading the register clears it.<br>
+--<code>col:=SPRITE_COLLISION; if (col&1<>0) then PlayerHit();</code>
 c; SPRITE_COLLISION; C64, MEGA65, C128;a;$D01E
+--One bit per sprite, set when that sprite touches the background. Reading the register clears it.
 c; SPRITE_BG_COLLISION; C64, MEGA65, C128;a;$D01F
+--One bit per sprite, doubling the width of that sprite.<br>
+--<code>SPRITE_STRETCH_X:=%00000001; // sprite 0 is twice as wide</code>
 c; SPRITE_STRETCH_X; C64, MEGA65, C128;a;$D01D
+--One bit per sprite, doubling the height of that sprite.
 c; SPRITE_STRETCH_Y; C64, MEGA65, C128;a;$D017
+--Bit mask for up in the value returned by ReadJoy1 or ReadJoy2.<br>
+--<code>ReadJoy2(); if (Joy2 & JOY_UP<>0) then y:=y-1;</code>
 c; JOY_UP; C64, MEGA65; b; %00000001
+--Bit mask for down in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_DOWN; C64, MEGA65; b; %00000010
+--Bit mask for left in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_LEFT; C64, MEGA65; b; %00000100
+--Bit mask for right in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_RIGHT; C64, MEGA65; b; %00001000
+--Bit mask for the fire button in the value returned by ReadJoy1 or ReadJoy2.
 c; JOY_FIRE; C64, MEGA65; b; %00010000
 
 c; KEY_A; C64, MEGA65, PLUS4, C128; b;$01
@@ -1242,45 +1582,88 @@ c; KEY_MINUS; VIC20; b;61
 c; KEY_HOME; VIC20; b;62
 c; KEY_F7; VIC20; b;63
 
+--One bit per sprite, switching that sprite to multicolour mode: half the horizontal resolution, but four colours.<br>
+--<code>SPRITE_MULTICOLOR:=%00000001;</code>
 c; SPRITE_MULTICOLOR; C64, MEGA65, C128;a;$D01C
+--The first colour shared by all multicolour sprites.
 c; SPRITE_MULTICOLOR_REG1; C64, MEGA65, C128; a;$D025
+--The second colour shared by all multicolour sprites.
 c; SPRITE_MULTICOLOR_REG2; C64, MEGA65, C128; a;$D026
+--Base of the background colour registers. Index 0 is the screen colour, while 1 and 2 are the extra colours shared by all multicolour characters.<br>
+--<code>MULTICOLOR_CHAR_COL[1]:=RED; MULTICOLOR_CHAR_COL[2]:=BLACK;</code>
 c; MULTICOLOR_CHAR_COL; C64, MEGA65, C128;a;$D021
+--Triangle waveform, a soft flute like tone. Pass it to PlaySound.<br>
+--<code>PlaySound(SID_CHANNEL1, 15, freq, $09, $00, 1+SID_TRI, SID_TRI);</code>
 c; SID_TRI; C64, MEGA65, C128, OK64;b;16
+--Sawtooth waveform, a brighter buzzing tone. Pass it to PlaySound.
 c; SID_SAW; C64, MEGA65, C128, OK64;b;32
+--Pulse waveform, the classic hollow SID sound. Its width is set by the pulse registers.
 c; SID_PULSE; C64, MEGA65, C128, OK64;b;64
+--Noise waveform, used for drums, explosions and wind.
 c; SID_NOISE; C64, MEGA65, C128, OK64;b;128
+--Offset of the first SID voice. Pass it to PlaySound or SetFrequency.<br>
+--<code>SetFrequency(SID_CHANNEL1, freq);</code>
 c; SID_CHANNEL1; C64, MEGA65, C128, OK64;b;0
+--Offset of the second SID voice, seven registers on from the first.
 c; SID_CHANNEL2; C64, MEGA65, C128, OK64;b;7
+--Offset of the third SID voice.
 c; SID_CHANNEL3; C64, MEGA65, C128, OK64;b;14
+--Base address of the SID sound chip. Add a channel offset to reach the registers of one voice.<br>
+--<code>poke(SID, SID_CHANNEL1+24, 15); // volume</code>
 c; SID; C64, MEGA65, C128, OK64;a;$D400
+--Value that points the VIC chip at the first 16K bank, $0000 to $3FFF, where screen memory normally lives.
 c; VIC_BANK0; C64, MEGA65, C128; b;3
+--Value that points the VIC chip at the second 16K bank, $4000 to $7FFF.
 c; VIC_BANK1; C64, MEGA65, C128;b;2
+--Value that points the VIC chip at the third 16K bank, $8000 to $BFFF.
 c; VIC_BANK2; C64, MEGA65, C128;b;1
+--Value that points the VIC chip at the last 16K bank, $C000 to $FFFF.
 c; VIC_BANK3; C64, MEGA65, C128;b;0
+--Selects where inside the current VIC bank the screen memory and the character set are read from.<br>
+--<code>poke(VIC_DATA_LOC, 0, $18); // characters at $2000</code>
 c; VIC_DATA_LOC; C64, MEGA65;a;$d018
 
+--CIA register holding the raw code of the last key event.
 c; KEYBOARD_INPUT; Amiga; a; $bfec01
+--Copper register for the top left corner of the display window.
 c; COPPER_DIWSTRT; Amiga, ATARI520ST;i; $08E
+--Copper register for the bottom right corner of the display window.
 c; COPPER_DIWSTOP; Amiga, ATARI520ST;i; $090
+--Copper register that sets where on the line the chip starts fetching bitplane data.
 c; COPPER_DDFSTRT; Amiga, ATARI520ST;i; $092
+--Copper register that sets where on the line the chip stops fetching bitplane data.
 c; COPPER_DDFSTOP; Amiga, ATARI520ST;i; $094
+--Copper register BPLCON1, holding the fine horizontal scroll of the playfields.
 c; COPPER_SCROLL; Amiga, ATARI520ST;i; $0102
+--Mask word that completes a copper wait instruction, telling the copper to pause until the beam reaches the given line.
 c; COPPER_WAIT_FOR_RASTER; Amiga, ATARI520ST; i; $FFFE
+--Variant of the copper wait mask that only compares the vertical position.
 c; COPPER_WAIT_FOR_RASTER0; Amiga, ATARI520ST; i; $FF00
+--First of the 32 colour registers, as reached from a copper list.
 c; COPPER_PALETTE_START; Amiga, ATARI520ST;i; $0180
+--Number of bytes skipped at the end of each line for the even bitplanes, which is how wider than screen playfields are set up.
 c; COPPER_MODULO_EVEN; Amiga, ATARI520ST;i; $0108
+--Number of bytes skipped at the end of each line for the odd bitplanes.
 c; COPPER_MODULO_ODD; Amiga, ATARI520ST;i; $010A
+--Interrupt bit for the copper.
 c; COPPER_IRQ; Amiga, ATARI520ST; i; %00010000
+--Interrupt bit for the vertical blank, the usual once per frame interrupt.
 c; VB_IRQ; Amiga, ATARI520ST; i; %00100000
+--Interrupt bit for the CIA timers, often used to drive music replay.
 c; CIA_IRQ; Amiga; i; %00001000
+--Interrupt bit signalling that the blitter has finished its copy.
 c; BLITTER_IRQ; Amiga, ATARI520ST; i; %01000000
+--Interrupt bit for external hardware.
 c; EXTERN_IRQ; Amiga; i; %10000000000000
 
 # C128 schtøff
 
+--Kernal shadow of the VIC data location register. On the C128 the screen editor rewrites $D018 every frame, so change this copy instead.
 c; VIC_DATA_LOC; C128;a;$0A2C
+--Memory configuration register. It decides whether ROM or RAM is visible in each part of the address space.
 c; MMU ; C128 ; a ; $FF00
+--Kernal routine that swaps between the 40 column VIC screen and the 80 column VDC screen.<br>
+--<code>call(SWAPPER);</code>
 c; SWAPPER; C128; a; $FF5F
 
 m; VDCInit; C128; b
@@ -1296,21 +1679,39 @@ m; fill80; C128; b,b
 
 # Commander X16 stuff
 
+--High byte of the VERA address, plus the auto increment setting in the top nibble.<br>
+--<code>VERA_ADDR_HI:=$10; // bank 0, increment by 1 after each access</code>
 c; VERA_ADDR_HI; X16; a;$9F22
+--Middle byte of the VERA address.
 c; VERA_ADDR_MID; X16; a;$9F21
+--Low byte of the VERA address. Set all three address registers, then read or write through VERA_DATA1.
 c; VERA_ADDR_LO; X16; a;$9F20
+--Data port for the first VERA address register. Each access steps the address on by the chosen increment.<br>
+--<code>VERA_DATA1:=char; VERA_DATA1:=color;</code>
 c; VERA_DATA1; X16; a;$9F23
+--Data port for the second VERA address register, so two areas of video memory can be walked at once.
 c; VERA_DATA2; X16; a;$9F24
+--VERA control register: bit 0 chooses which address register the data ports use, and bit 7 resets the chip.
 c; VERA_CTRL; X16; a;$9F25
+--Enables the VERA interrupts: vsync, raster line, sprite collision and audio.
 c; VERA_IEN; X16; a;$9F26
+--Interrupt status. Read it to see which VERA interrupt fired, and write the same bit back to acknowledge it.
 c; VERA_ISR; X16; a;$9F27
+--Selects which 8K bank of banked RAM is visible at $A000.<br>
+--<code>RAM_BANK:=2;</code>
 c; RAM_BANK ; X16; a; $9F61
 
 
+--Kernal routine that initialises the screen editor and clears the screen.<br>
+--<code>call(CINT);</code>
 c;CINT;X16;a; $ff81
+--Kernal routine that restores the default input and output channels.
 c;CLRCHN;X16;a; $ffcc
+--Kernal routine that prints the character held in the accumulator.
 c;CHROUT;X16;a; $ffd2
+--Kernal routine that reads or sets the cursor position, depending on the carry flag.
 c;PLOT;X16;a; $fff0
+--Kernal routine that fetches the next character from the keyboard buffer, or zero when nothing is waiting.
 c;READ_KEYBOARD;X16;a; $ffe4
 
 #m; MoveTo; X16 ; b,b
@@ -1338,8 +1739,12 @@ m; copydatatovera; X16; a,b,b,b,b
 
 # PET STUFF
 
+--Start of PET screen memory, one character code per cell.<br>
+--<code>ClearScreen(32, SCREEN_CHAR_LOC);</code>
 c; SCREEN_CHAR_LOC; PET; a; $8000
+--Number of character columns on the PET screen.
 c; SCREEN_WIDTH ;PET; b; 80
+--Number of character rows on the PET screen.
 c; SCREEN_HEIGHT ;PET; b; 25
 
 
