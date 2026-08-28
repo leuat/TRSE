@@ -70,21 +70,41 @@ jobs:
           cp -r ../../../units .
           # opengl32sw.dll is not available on the GitHub machine but seems
           # necessary for windows machine that don't have hardware acceleration
-          # and don't have the DLL on the system directory from another source
-          cp ../dll/opengl32sw.dll ./
-          echo "Copy all required plugins"
-          # qt_lib_dir must be retrieved before copying the DLLs as after that, all the DLLs are resolved locally
-          qt_lib_dir=$(ldd trse.exe | awk '{ print $3 }' | grep "/Qt/" | sed 's,/Qt/.*,/Qt/,' | head -n 1)
-          echo "qt_lib_dir: '${qt_lib_dir}'"
+          # and don't have the DLL on the system directory from another source.
+          # The other DLLs here (VC/OpenMP runtime, OpenSSL) must be shipped from
+          # this directory too: they live in the system directory on the runner
+          # and are therefore skipped by the dependency copy below.
+          cp ../dll/* ./
           # The files are converted to dos format at checkout, we don't want the carriage returns.
           dos2unix ../plugins.txt
           dos2unix ../ignore_dlls.txt
-          windeployqt --release --compiler-runtime .    
+          # Never bundle DLLs taken from the runner's Windows directory: they are
+          # newer than the ones on the user's machine and, since Windows prefers
+          # the application directory, they shadow the local ones and fail to
+          # load (which breaks the qwindows platform plugin, among other things).
+          win_dir=$(cygpath -u "${SYSTEMROOT:-${SystemRoot:-C:\\Windows}}" | tr -d '\r')
+          echo "Skipping dependencies from '${win_dir}'"
+          copy_deps() {
+            ldd "$1" \
+              | grep -v -i -f ../ignore_dlls.txt \
+              | sed -n 's/^.* => \(.*\) (0x[0-9a-fA-F]*)$/\1/p' \
+              | grep -v -i "^${win_dir}/" \
+              | sort -u \
+              | tee /dev/stderr \
+              | xargs -r -I _ bash -c 'cp "_" ./ || echo "failed to copy _"'
+          }
+          # qt_plugin_dir is taken from qmake so that we always pick the plugins of
+          # the Qt we linked against, and never the ones bundled with Qt Creator or
+          # the installer framework.
+          qt_plugin_dir=$(qmake -query QT_INSTALL_PLUGINS | tr -d '\r' | xargs cygpath -u)
+          echo "qt_plugin_dir: '${qt_plugin_dir}'"
+          windeployqt --release --compiler-runtime .
+          echo "Copy all required plugins"
           while read plugin
           do
             echo "  Looking for '${plugin}'"
-            lib=$(find "${qt_lib_dir}" | grep "${plugin}" | head -n 1 || echo "")
-            if [ -z "${lib}" ]
+            lib="${qt_plugin_dir}/${plugin}"
+            if [ ! -f "${lib}" ]
             then
               echo "  - ${lib} NOT FOUND"
             else
@@ -92,13 +112,11 @@ jobs:
               mkdir -p $(dirname "${plugin}")
               cp "${lib}" "${plugin}"
               echo "    Copying its dependencies:"
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-              ldd "${lib}" | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+              copy_deps "${lib}"
             fi
           done < ../plugins.txt
           echo "Copy trse.exe dependencies"
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u
-          ldd trse.exe | grep -v -i -f ../ignore_dlls.txt | awk '{ print $3 }' | sort -u | xargs -I _ bash -c 'cp _ ./ || echo "failed to copy _"'
+          copy_deps trse.exe
           cd ..
           echo "Copy OK64 from old archive"
           mkdir tmp # Separate directory as the archive contain a trse dir that would clash with our own
