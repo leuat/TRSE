@@ -5,7 +5,6 @@ program Image;
 @use "system/screen"
 @use "system/graphics"
 @use "misc"
-
 @export "images/image2.flf" "images/image2.bin" 256
 
 @addemulatorparam "-nothrottle"
