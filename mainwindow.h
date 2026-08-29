@@ -163,6 +163,8 @@ public:
                 img.load(":resources/images/torus.jpg");
             if (f.contains(".tru"))
                 img.load(":resources/images/tru.png");
+            if (f.contains(".vicproj"))
+                img.load(":resources/images/plab.png");
 
             QIcon ic(QPixmap::fromImage(img));
 
@@ -221,9 +223,9 @@ public:
     TRSEProject m_currentProject;
 
 
-    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf" << "*.pal" <<"*.ll";
-    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt"<<"*.rtf" <<"*.pal";
-    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf" <<".pal" << ".ll";
+    QStringList exts_all = QStringList() << "*.ras" << "*.tru" <<"*.asm" << "*.txt"/* << "*.prg" */<< "*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.bin"<<"*.bin_c" <<"*.prg" << "*.sid" <<"*.trt"<<"*.rtf" << "*.pal" <<"*.ll" << "*.vicproj";
+    QStringList exts_few = QStringList() << "*.ras" << "*.tru" <<"*.inc" << "*.flf" <<"*.paw" << "*.fjo" <<"*.trt"<<"*.rtf" <<"*.pal" << "*.vicproj";
+    QStringList allowedOpenExtensions = QStringList() <<".tru"<<".ras"<<".asm"<<".inc"<<".flf"<<".paw"<<".fjo"<<".bin"<<".bin_c"<<".sid"<<".trt"<<".rtf" <<".pal" << ".ll" << "*.vicproj";
     TRSEDocument* m_currentDoc = nullptr;
 
     void LoadIniFile();
@@ -504,10 +506,16 @@ private slots:
 
     void on_actionChip_8_emulator_triggered();
 
+    void on_action8bit_Pixel_Lab_Image_Project_triggered();
+
 private:
     void cleanSymbol(QTreeWidgetItem* parent, QString on, QString name, int ln, QString fn,Parser* p, QColor bcol,QString search);
 
+
+    void errorPlabLoc();
+
     TRSEDocument* getMainDocument();
+
 
     void saveCurrentProject();
 

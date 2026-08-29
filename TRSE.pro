@@ -322,6 +322,7 @@ SOURCES += main.cpp\
     source/dialogcolorselect.cpp \
     source/dialogexport3d.cpp \
     source/dialoginfo.cpp \
+    source/dialognew8bplproject.cpp \
     source/dialognewproject.cpp \
     source/dialognewtrt.cpp \
     source/dialogselectcharset.cpp \
@@ -649,6 +650,7 @@ HEADERS  += mainwindow.h \
     source/dialogcolorselect.h \
     source/dialogexport3d.h \
     source/dialoginfo.h \
+    source/dialognew8bplproject.h \
     source/dialognewproject.h \
     source/dialognewtrt.h \
     source/dialogselectcharset.h \
@@ -803,6 +805,7 @@ FORMS    += mainwindow.ui \
     source/dialogcolorselect.ui \
     source/dialogexport3d.ui \
     source/dialoginfo.ui \
+    source/dialognew8bplproject.ui \
     source/dialognewproject.ui \
     source/dialognewtrt.ui \
     source/dialogselectcharset.ui \
@@ -861,6 +864,7 @@ DISTFILES += \
     resources/images/OK64.png \
     resources/images/PLUS4.png \
     resources/images/amiga_intro.png \
+    resources/images/plab.png \
     resources/images/portraits/red_sunglasses.png \
     resources/images/portraits/red_sunglasses_small.png \
     resources/images/tutorials/floskel.png \

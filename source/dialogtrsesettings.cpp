@@ -177,7 +177,6 @@ void DialogTRSESettings::FillFromIni()
     ui->cmb6809Assembler->setCurrentText(m_ini->getString("assembler_6809"));
     ui->cmbAssemblerM68k->setCurrentText(m_ini->getString("assembler_m68k"));
     ui->cmbPainter_2->setCurrentIndex((int)m_ini->getdouble("image_painter"));
-    ui->cmbImageEditor->setCurrentText(m_ini->getString("image_editor_type"));
 
 }
 
@@ -305,7 +304,6 @@ void DialogTRSESettings::FillToIni()
         m_ini->setFloat("windowpalette",1);
 
 
-    m_ini->setString("image_editor_type",ui->cmbImageEditor->currentText());
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
     m_ini->setString("assembler_z80", ui->cmbAssemblerZ80->currentText());
     m_ini->setString("assembler_6809", ui->cmb6809Assembler->currentText());

@@ -47,6 +47,7 @@
 #include "source/Compiler/compilers/compiler.h"
 #include "source/LeLib/data.h"
 #include "source/dialogsplash.h"
+#include "source/dialognew8bplproject.h"
 #include <QInputDialog>
 #include "source/dialogsizeanalyser.h"
 
@@ -667,6 +668,16 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
 
 }
 
+void MainWindow::errorPlabLoc()
+{
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Error");
+    msgBox.setText("You need to set up a link to 8bit Pixel Lab in the TRSE settings / Misc panel. Download 8bit Pixel Lab from : https://hewco.itch.io/8bit-pixel-lab");
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    msgBox.exec();
+}
+
 
 
 /*
@@ -712,13 +723,6 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     m_isClosingWindows = true;
     TRSEDocument* editor = nullptr;
     if (fileName.contains(".flf")) {
-
-        if (!m_iniFile->getString("image_editor_type").startsWith("Internal")) {
-            QProcess p;
-            p.startDetached(m_iniFile->getString("image_editor_loc"), QStringList() << m_currentPath+ fileName);
-            return;
-        }
-
         editor = new FormImageEditor(this);
         FormImageEditor* fe = (FormImageEditor*)editor;
         fe->m_projectPath = getProjectPath();
@@ -1212,6 +1216,10 @@ void MainWindow::setupIcons()
     m_icons["rtf"] = QIcon(QPixmap::fromImage(img));
     m_fileColors["rtf"] = QColor(c1,c2,c3);
 
+    img.load(":resources/images/plab.png");
+    m_icons["vicproj"] = QIcon(QPixmap::fromImage(img));
+    m_fileColors["vicproj"] = QColor(c5,c2,c3);
+
 
     m_fileColors["dir"] = QColor(c2,c2,c2);
 
@@ -1643,7 +1651,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
 void MainWindow::FindFileDialog()
 {
 
-    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt"<<"*.rtf" << "*.ll";
+    QStringList lst = QStringList() <<"*.asm" << "*.ras" << "*.tru"<< "*.fjo" << "*.flf" << "*.paw" << "*.sid" << "*.trt"<<"*.rtf" << "*.ll" <<"*.vicproj";
     QDirIterator it(getProjectPath(), lst, QDir::Files, QDirIterator::Subdirectories);
     QVector<QString> files;
     while (it.hasNext()) {
@@ -1700,6 +1708,16 @@ void MainWindow::on_treeFiles_doubleClicked(const QModelIndex &index)
 
     if (file.toLower().endsWith(".sid")) {
         OpenSidfile(file);
+        return;
+    }
+
+    if (file.toLower().endsWith(".vicproj")) {
+        if (m_iniFile->getString("image_editor_loc").trimmed()=="") {
+            errorPlabLoc();
+            return;
+        }
+        QProcess p;
+        p.startDetached(m_iniFile->getString("image_editor_loc").trimmed(), QStringList() <<m_currentPath+file);
         return;
     }
 
@@ -2732,8 +2750,6 @@ void TRSEProject::VerifyDefaults() {
     if (!m_ini->contains("override_target_settings"))
         m_ini->setFloat("override_target_settings",0);
 
-    if (!m_ini->contains("image_editor_type"))
-        m_ini->setString("image_editor_type","Internal editor");
 
     if (!m_ini->contains("image_editor_loc"))
         m_ini->setString("image_editor_loc","");
@@ -3206,5 +3222,18 @@ void MainWindow::on_btnSizeAnalyser_clicked()
 
 void MainWindow::on_actionChip_8_emulator_triggered()
 {
+}
+
+
+void MainWindow::on_action8bit_Pixel_Lab_Image_Project_triggered()
+{
+    if (m_iniFile->getString("image_editor_loc").trimmed()=="") {
+        errorPlabLoc();
+        return;
+    }
+    auto d = new DialogNew8bplProject(m_iniFile->getString("image_editor_loc"),m_currentPath);
+    d->exec();
+    delete d;
+
 }
 

@@ -561,6 +561,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <addaction name="action_TRU_Unit_source_file"/>
      <addaction name="action_include_source_file"/>
      <addaction name="actionImage"/>
+     <addaction name="action8bit_Pixel_Lab_Image_Project"/>
      <addaction name="actionPaw_packed_resource_file"/>
      <addaction name="actionFjong_Raymarcher_document"/>
      <addaction name="actionTRSE_Tracker_File_trt"/>
@@ -869,6 +870,11 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <action name="actionChip_8_emulator">
    <property name="text">
     <string>Chip-8 emulator</string>
+   </property>
+  </action>
+  <action name="action8bit_Pixel_Lab_Image_Project">
+   <property name="text">
+    <string>8bit Pixel Lab Image Project</string>
    </property>
   </action>
  </widget>

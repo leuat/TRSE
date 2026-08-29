@@ -781,5 +781,6 @@
         <file>resources/text/help/r/not.rtf</file>
         <file>resources/images/trse_banner.png</file>
         <file>resources/images/optic1.png</file>
+        <file>resources/images/plab.png</file>
     </qresource>
 </RCC>
