@@ -779,5 +779,7 @@
         <file>resources/text/help/r/cpcexporttile0.rtf</file>
         <file>resources/text/help/r/vbmexportpixel.rtf</file>
         <file>resources/text/help/r/not.rtf</file>
+        <file>resources/images/trse_banner.png</file>
+        <file>resources/images/optic1.png</file>
     </qresource>
 </RCC>

@@ -22,7 +22,7 @@ public:
 
 
 
-
+    bool m_isEnabled = false;
 
     QVector<GLSlide> m_slides;
     int m_curSlide = 0;

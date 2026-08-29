@@ -37,6 +37,8 @@ void LGLShowcases::Init()
 
 void LGLShowcases::initializeGL()
 {
+    if (!m_isEnabled)
+        return;
 //    qDebug() << "LGLShowcases HERE";
     //LGLShowcases::initializeGL();
     initializeOpenGLFunctions();
@@ -57,6 +59,8 @@ void LGLShowcases::initializeGL()
 //void LGLShowcases::paintEvent(QPaintEvent *event)
 void LGLShowcases::paintGL()
 {
+    if (!m_isEnabled)
+        return;
     if (m_time2>=1) {
         m_time2 = 0;
  //       m_time = 0;
@@ -133,6 +137,8 @@ void LGLShowcases::paintGL()
 
 void LGLShowcases::setCurrentTexture()
 {
+    if (!m_isEnabled)
+        return;
     if (m_texture1!=nullptr)
         delete m_texture1;
     if (m_texture2!=nullptr)
@@ -194,6 +200,8 @@ void LGLShowcases::mouseReleaseEvent(QMouseEvent *e)
 
 void LGLShowcases::mousePressEvent(QMouseEvent *e)
 {
+    if (!m_isEnabled)
+        return;
     QString url = m_slides[m_prevType%m_slides.count()].m_text;
     QDesktopServices::openUrl(QUrl(url, QUrl::TolerantMode));
 

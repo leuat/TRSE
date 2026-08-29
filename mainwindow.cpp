@@ -167,7 +167,10 @@ void MainWindow::slotLoadProject() {
 
 void MainWindow::InitOpenGLBanners()
 {
-
+    ui->glslider->hide();
+    ui->glShowcase->hide();
+    return;
+/*
     ui->glslider->m_slides.append(GLSlide(":resources/images/C64.png","Nibbler",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/rb1.png","RB1",""));
     ui->glslider->m_slides.append(GLSlide(":resources/images/tutorials/nibbler.gif","Nibbler",""));
@@ -217,6 +220,7 @@ void MainWindow::InitOpenGLBanners()
     ui->glShowcase->setCurrentTexture();
 
 
+*/
 
 
 }
