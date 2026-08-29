@@ -18,10 +18,6 @@
  *   along with this program (LICENSE.txt).
  *   If not, see <https://www.gnu.org/licenses/>.
 */
-
-
-
-
 #include "mainwindow.h"
 #include <QApplication>
 #include <QStyleFactory>
@@ -33,56 +29,6 @@ void fixCurrentDir(QString execFile) {
     QDir::setCurrent(exec.absoluteDir().absolutePath());
 }
 
-#include "source/LeLib/limage/multicolorimage.h"
-void CreateVICCharset() {
-    QByteArray ba;
-    for (int i=0;i<256;i++) {
-        PixelChar pc;
-        for (int j=0;j<8;j++) {
-            //0000
-            //0000
-            if (((i>>j)&1)==1) {
-                int x = j%4;
-                int y = (int)(j/4);
-                for (int dy=0;dy<4;dy++)
-                    for (int dx=0;dx<2;dx++)
-                        pc.set(x*2+dx,y*4+dy,1,0b1);
-            }
-        }
-        for (int i=0;i<8;i++)
-            ba.append(PixelChar::reverse(pc.p[i]));
-    }
-    Util::SaveByteArray(ba,"/Users/leuat/code/TRSE/Publish/tutorials/VIC20/tutorials/resources/charsets/gen.bin");
-
-}
-
-void CreateMergedTorus() {
-
-//    QString p = "SPECTRUM/tutorials";
-//    QString p = "/Users/leuat/code/TRSE/Publish/tutorials/TIM/tutorials";
-
-    QString p = "/Users/leuat/Dropbox/TRSE/dos_cga_party/";
-    auto b1 = Util::loadBinaryFile(p+"/data/inside_torus.bin");
-    auto b2 = Util::loadBinaryFile(p+"/data/inside_torus2.bin");
-    QByteArray d;
-    for (int i=0;i<b1.size();i++)
-        d.append(((b2[i]/16)&15) | (((b1[i]/8)&15)<<4));
-
-    Util::SaveByteArray(d,p+"/data/combined.bin");
-
-
-}
-
-void RandomList() {
-    QVector<int> b;
-    for (int i=0;i<200;i++) {
-        b.append(i);
-    }
-    for (int i=1; i<200; i++) {
-        qSwap (b[i],b[rand()%b.length()]);
-    }
-    qDebug() << b;
-}
 
 int main(int argc, char *argv[])
 {
@@ -95,6 +41,7 @@ int main(int argc, char *argv[])
     }
 */
 #endif
+    // run TRSE as CLI
     if (argc>=2) {
         if (QString(argv[1])=="-cli") {
             ClascExec ras(argc, argv);
