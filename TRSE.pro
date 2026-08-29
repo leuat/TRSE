@@ -136,7 +136,6 @@ linux*{
 
 
 SOURCES += main.cpp\
-    LeLib/Util/tcencode.cpp \
     formtutorialitem.cpp \
     mainwindow.cpp \
     imageworker.cpp \
@@ -464,7 +463,6 @@ SOURCES += main.cpp\
 
 
 HEADERS  += mainwindow.h \
-    LeLib/Util/tcencode.h \
     formtutorialitem.h \
     imageworker.h \
     source/Compiler/assembler/asm68000.h \
