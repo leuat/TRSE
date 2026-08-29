@@ -152,6 +152,7 @@ void formHelp::LoadItem(QString findword)
         s=s.replace(" ", "");
 
         QStringList data = s.split(";");
+        if (data.count()<2) continue;
         QString word = data[1];
         if (word!=findword)
             continue;
@@ -403,9 +404,13 @@ void formHelp::SearchForItem(QString item)
             s= s.simplified();
             if (s.length()==0) continue;
             if (s.startsWith("#")) continue;
+            // The "--" lines are the help text of the entry below them, not entries
+            // themselves, and most of them contain no ";" at all.
+            if (s.startsWith("--")) continue;
             s=s.replace(" ", "");
 
             QStringList data = s.split(";");
+            if (data.count()<2) continue;
 
             bool isTrue = false;
             // first, check for words that are *equal*.. then for startswith
