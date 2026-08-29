@@ -1,7 +1,7 @@
 program TRT_Music_player;
 
-@use "TrtPlayer"
-@use "screen"
+@use "trtplayer"
+@use "Screen"
 var  
 
 	// export the song from the tracker into a BIN format (4 implies VZ200)
@@ -9,10 +9,9 @@ var
 	@export "music/bubble.trt" 
 			"music/music.bin" 4 
 
-	music: incbin("music/music.bin");
+	music: incbin("music/music.bin",$1000);
 
 begin
-
 	TrtPlayer::Initialize( #music );
 	TrtPlayer::speed := 2;
 

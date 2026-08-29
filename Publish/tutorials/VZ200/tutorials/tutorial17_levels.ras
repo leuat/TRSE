@@ -1,7 +1,7 @@
 program Levels;
 @use "Screen"
 @use "Memory"
-@use "gfx/GenericLevels"
+@use "gfx/genericlevels"
 @use "Font"
 @use "Sprite"
 @use "gfx/tiles"

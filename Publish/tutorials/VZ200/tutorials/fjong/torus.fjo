@@ -68,7 +68,7 @@ function Init()
 
 
 	-- saves the object to disk, 8 bit style
-	if (frame==0) then
+	if (frame==2) then
 	Save3DObject("t1","data/torus1.bin",3,0.0);
 	end
 --	Message("saved to resources/data/torus1.bin");

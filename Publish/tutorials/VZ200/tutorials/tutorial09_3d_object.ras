@@ -11,8 +11,8 @@ program MyProgram;
 	frame : byte;
 	const object_width:byte=32;
 	const object_height:byte=16;
-	lookup : array[128] of integer = buildtable("i*(OBJECT_WIDTH/4)*OBJECT_HEIGHT");
-	
+	const noFrames : byte = 128;
+	lookup : array[noFrames] of integer = buildtable("i*(OBJECT_WIDTH/4)*OBJECT_HEIGHT");
 	
 	
 	
@@ -34,7 +34,7 @@ begin
 		Screen::WaitForVerticalBlank();
 		Sprite::StampAt(zp,16,16, object_width/4 ,object_height);
 		time+=1;
-		frame:=(frame+1)&127;
+		frame:=(frame+1)&(noFrames-1);
 		
 	end;
 	loop();
