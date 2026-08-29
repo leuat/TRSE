@@ -26,7 +26,7 @@
 #include <QStringList>
 #include <QHash>
 #include "source/LeLib/util/cinifile.h"
-#include "source/dialogmessage.h"
+#include "source/dialogs/dialogmessage.h"
 #include <QPixmap>
 #include <QImage>
 

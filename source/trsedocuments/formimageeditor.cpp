@@ -26,9 +26,9 @@
 #include <QPushButton>
 #include "source/LeLib/limage/charsetimage.h"
 #include "source/messages.h"
-#include "source/dialogselectcharset.h"
+#include "source/dialogs/dialogselectcharset.h"
 #include <QTimer>
-#include "source/dialogselectroom.h"
+#include "source/dialogs/dialogselectroom.h"
 
 FormImageEditor::FormImageEditor(QWidget *parent) :
     TRSEDocument(parent),

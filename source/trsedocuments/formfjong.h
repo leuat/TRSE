@@ -4,8 +4,8 @@
 #include <QWidget>
 #include "trsedocument.h"
 #include "source/LeLib/luascript.h"
-#include "source/dialogeffects.h"
-#include "source/dialoghelp.h"
+#include "source/dialogs/dialogeffects.h"
+#include "source/dialogs/dialoghelp.h"
 #include "source/PmmEdit/fjonghighlighter.h"
 
 namespace Ui {

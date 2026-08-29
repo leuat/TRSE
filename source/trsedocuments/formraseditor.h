@@ -32,8 +32,8 @@
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"
 #include <QElapsedTimer>
-#include "source/dialoghelp.h"
-#include "source/dialogmemoryanalyze.h"
+#include "source/dialogs/dialoghelp.h"
+#include "source/dialogs/dialogmemoryanalyze.h"
 #include "source/Compiler/misc/machinecodeanalyzer.h"
 #include "source/OrgAsm/orgasm.h"
 #include "source/OrgAsm/orgasmlexer.h"

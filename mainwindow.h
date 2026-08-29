@@ -39,7 +39,7 @@
 #include <source/toolbox.h>
 #include "source/workerthread.h"
 #include "imageeditor.h"
-#include "dialogimport.h"
+#include "source/dialogs/dialogimport.h"
 #include "source/PmmEdit/highlighter.h"
 #include "source/PmmEdit/codeeditor.h"
 #include "source/LeLib/util/cinifile.h"
@@ -50,25 +50,25 @@
 #include "source/trsedocuments/formpaw.h"
 #include "source/trsedocuments/formhexedit.h"
 #include "source/trsedocuments/formttredit.h"
-#include "source/dialogtrsesettings.h"
+#include "source/dialogs/dialogtrsesettings.h"
 #include "source/messages.h"
 #include "source/LeLib/limage/movieconverter.h"
 #include "ui_mainwindow.h"
-#include "source/dialogprojectsettings.h"
-#include "source/dialogdonate.h"
-#include "source/dialogfindfile.h"
-#include "source/dialogexport3d.h"
-#include "source/dialogprojectbuilder.h"
+#include "source/dialogs/dialogprojectsettings.h"
+#include "source/dialogs/dialogdonate.h"
+#include "source/dialogs/dialogfindfile.h"
+#include "source/dialogs/dialogexport3d.h"
+#include "source/dialogs/dialogprojectbuilder.h"
 #include "source/tutorials.h"
 #include <QDesktopServices>
-#include "source/dialognewproject.h"
+#include "source/dialogs/dialognewproject.h"
 #include <QStandardItemModel>
 #include <QFileSystemWatcher>
 #include <source/LeLib/lglslideshow.h>
-#include "source/dialogsplash.h"
-#include "source/dialognewtrt.h"
+#include "source/dialogs/dialogsplash.h"
+#include "source/dialogs/dialognewtrt.h"
 #include "source/LeLib/util/util.h"
-#include "source/dialogsizeanalyser.h"
+#include "source/dialogs/dialogsizeanalyser.h"
 
 namespace Ui {
 class MainWindow;

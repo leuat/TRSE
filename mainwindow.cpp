@@ -35,21 +35,21 @@
 #include <QFontMetrics>
 #include "source/LeLib/data.h"
 #include <QWheelEvent>
-#include "dialognewimage.h"
-#include "source/dialogabout.h"
+#include "source/dialogs/dialognewimage.h"
+#include "source/dialogs/dialogabout.h"
 #include "source/LeLib/limage/limageio.h"
 #include <QMessageBox>
 #include <QSettings>
 #include "source/Compiler/assembler/asm6502.h"
-#include "source/dialogeffects.h"
+#include "source/dialogs/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"
 #include "source/LeLib/data.h"
-#include "source/dialogsplash.h"
-#include "source/dialognew8bplproject.h"
+#include "source/dialogs/dialogsplash.h"
+#include "source/dialogs/dialognew8bplproject.h"
 #include <QInputDialog>
-#include "source/dialogsizeanalyser.h"
+#include "source/dialogs/dialogsizeanalyser.h"
 
 #include "source/chip8emu/dialogchip8.h"
 

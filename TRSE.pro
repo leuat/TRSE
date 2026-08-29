@@ -318,17 +318,17 @@ SOURCES += main.cpp\
     source/chip8emu/c8asm.c \
     source/chip8emu/chip8emu.cpp \
     source/chip8emu/dialogchip8.cpp \
-    source/dialogcolorselect.cpp \
-    source/dialogexport3d.cpp \
-    source/dialoginfo.cpp \
-    source/dialognew8bplproject.cpp \
-    source/dialognewproject.cpp \
-    source/dialognewtrt.cpp \
-    source/dialogselectcharset.cpp \
-    source/dialogselectroom.cpp \
-    source/dialogsimplelineedit.cpp \
-    source/dialogsizeanalyser.cpp \
-    source/dialogsplash.cpp \
+    source/dialogs/dialogcolorselect.cpp \
+    source/dialogs/dialogexport3d.cpp \
+    source/dialogs/dialoginfo.cpp \
+    source/dialogs/dialognew8bplproject.cpp \
+    source/dialogs/dialognewproject.cpp \
+    source/dialogs/dialognewtrt.cpp \
+    source/dialogs/dialogselectcharset.cpp \
+    source/dialogs/dialogselectroom.cpp \
+    source/dialogs/dialogsimplelineedit.cpp \
+    source/dialogs/dialogsizeanalyser.cpp \
+    source/dialogs/dialogsplash.cpp \
     source/formhelp.cpp \
     source/mynth/ma_context.cpp \
     source/toolbox.cpp \
@@ -345,21 +345,21 @@ SOURCES += main.cpp\
     source/tutorials.cpp \
     source/workerthread.cpp \
     imageeditor.cpp \
-    dialognewimage.cpp \
-    dialogimport.cpp \
+    source/dialogs/dialognewimage.cpp \
+    source/dialogs/dialogimport.cpp \
     source/PmmEdit/highlighter.cpp\
     source/PmmEdit/codeeditor.cpp\
 # PMM
     source/trsedocuments/trsedocument.cpp \
     source/trsedocuments/formraseditor.cpp \
     source/trsedocuments/formimageeditor.cpp \
-    source/dialogtrsesettings.cpp \
-    source/dialogmessage.cpp \
+    source/dialogs/dialogtrsesettings.cpp \
+    source/dialogs/dialogmessage.cpp \
     source/messages.cpp \
-    source/dialogabout.cpp \
-    source/dialoghelp.cpp \
-    source/dialogexport.cpp \
-    source/dialogmemoryanalyze.cpp \
+    source/dialogs/dialogabout.cpp \
+    source/dialogs/dialoghelp.cpp \
+    source/dialogs/dialogexport.cpp \
+    source/dialogs/dialogmemoryanalyze.cpp \
     source/Compiler/data_pmm.cpp \
     source/Compiler/errorhandler.cpp \
     source/Compiler/compilers/compiler.cpp \
@@ -414,18 +414,18 @@ SOURCES += main.cpp\
     source/LeLib/limage/movieconverter.cpp \
     source/LeLib/limage/limagecharsetfixedcolor.cpp \
     source/trsedocuments/formpaw.cpp \
-    source/dialogimagehelp.cpp \
+    source/dialogs/dialogimagehelp.cpp \
     source/Compiler/misc/machinecodeanalyzer.cpp \
-    source/dialogprojectsettings.cpp \
+    source/dialogs/dialogprojectsettings.cpp \
     source/OrgAsm/orgasm.cpp \
     source/Compiler/opcodes/opcodes6502.cpp \
     source/OrgAsm/orgasmlexer.cpp \
-    source/dialogdonate.cpp \
-    source/dialogfindfile.cpp \
+    source/dialogs/dialogdonate.cpp \
+    source/dialogs/dialogfindfile.cpp \
     source/LeLib/limage/limagevic20.cpp \
     source/LeLib/limage/limagesprites2.cpp \
     source/LeLib/limage/limagecontainer.cpp \
-    source/dialogeffects.cpp \
+    source/dialogs/dialogeffects.cpp \
     source/effects/abstractdemoeffect.cpp \
     source/effects/demoeffecttwister.cpp \
     source/effects/demoeffectraytracer.cpp \
@@ -452,13 +452,13 @@ SOURCES += main.cpp\
     source/Compiler/systems/systemc128.cpp \
     source/Compiler/systems/systemm6800.cpp \
     source/Compiler/systems/systemamiga.cpp \
-    source/dialogcolors.cpp \
+    source/dialogs/dialogcolors.cpp \
     source/LeLib/limage/bitmapfont.cpp \
     source/Raytracer/particles.cpp \
     source/Compiler/sourcebuilder.cpp \
     source/Compiler/projectbuilder.cpp \
     source/mynth/mynthesizer.cpp \
-    source/dialogprojectbuilder.cpp \
+    source/dialogs/dialogprojectbuilder.cpp \
     trc.cpp
 
 
@@ -645,17 +645,17 @@ HEADERS  += mainwindow.h \
     source/chip8emu/c8asm.h \
     source/chip8emu/chip8emu.h \
     source/chip8emu/dialogchip8.h \
-    source/dialogcolorselect.h \
-    source/dialogexport3d.h \
-    source/dialoginfo.h \
-    source/dialognew8bplproject.h \
-    source/dialognewproject.h \
-    source/dialognewtrt.h \
-    source/dialogselectcharset.h \
-    source/dialogselectroom.h \
-    source/dialogsimplelineedit.h \
-    source/dialogsizeanalyser.h \
-    source/dialogsplash.h \
+    source/dialogs/dialogcolorselect.h \
+    source/dialogs/dialogexport3d.h \
+    source/dialogs/dialoginfo.h \
+    source/dialogs/dialognew8bplproject.h \
+    source/dialogs/dialognewproject.h \
+    source/dialogs/dialognewtrt.h \
+    source/dialogs/dialogselectcharset.h \
+    source/dialogs/dialogselectroom.h \
+    source/dialogs/dialogsimplelineedit.h \
+    source/dialogs/dialogsizeanalyser.h \
+    source/dialogs/dialogsplash.h \
     source/formhelp.h \
 #    source/LeLib/miniaudio_engine.h \
     source/mynth/ma_context.h \
@@ -675,21 +675,21 @@ HEADERS  += mainwindow.h \
     source/tutorials.h \
     source/workerthread.h \
     imageeditor.h \
-    dialognewimage.h \
-    dialogimport.h \
+    source/dialogs/dialognewimage.h \
+    source/dialogs/dialogimport.h \
     source/PmmEdit/highlighter.h \
 # PMM
     source/PmmEdit/codeeditor.h \
     source/trsedocuments/formraseditor.h \
     source/trsedocuments/trsedocument.h \
     source/trsedocuments/formimageeditor.h \
-    source/dialogtrsesettings.h \
-    source/dialogmessage.h \
+    source/dialogs/dialogtrsesettings.h \
+    source/dialogs/dialogmessage.h \
     source/messages.h \
-    source/dialogabout.h \
-    source/dialoghelp.h \
-    source/dialogexport.h \
-    source/dialogmemoryanalyze.h \
+    source/dialogs/dialogabout.h \
+    source/dialogs/dialoghelp.h \
+    source/dialogs/dialogexport.h \
+    source/dialogs/dialogmemoryanalyze.h \
     source/Compiler/data_pmm.h \
     source/Compiler/errorhandler.h \
     source/Compiler/compilers/compiler.h \
@@ -747,18 +747,18 @@ HEADERS  += mainwindow.h \
     source/LeLib/limage/movieconverter.h \
     source/LeLib/limage/limagecharsetfixedcolor.h \
     source/trsedocuments/formpaw.h \
-    source/dialogimagehelp.h \
+    source/dialogs/dialogimagehelp.h \
     source/Compiler/misc/machinecodeanalyzer.h \
-    source/dialogprojectsettings.h \
+    source/dialogs/dialogprojectsettings.h \
     source/OrgAsm/orgasm.h \
     source/Compiler/opcodes/opcodes6502.h \
     source/OrgAsm/orgasmlexer.h \
-    source/dialogdonate.h \
-    source/dialogfindfile.h \
+    source/dialogs/dialogdonate.h \
+    source/dialogs/dialogfindfile.h \
     source/LeLib/limage/limagevic20.h \
     source/LeLib/limage/limagesprites2.h \
     source/LeLib/limage/limagecontainer.h \
-    source/dialogeffects.h \
+    source/dialogs/dialogeffects.h \
     source/effects/abstractdemoeffect.h \
     source/effects/demoeffecttwister.h \
     source/effects/demoeffectraytracer.h \
@@ -787,30 +787,30 @@ HEADERS  += mainwindow.h \
     source/Compiler/systems/systemamiga.h \
     source/Compiler/codegen/codegen_m68k.h \
     source/Compiler/assembler/asm68000.h \
-    source/dialogcolors.h \
+    source/dialogs/dialogcolors.h \
     source/LeLib/limage/bitmapfont.h \
     source/Raytracer/particles.h \
     source/Compiler/sourcebuilder.h \
     source/Compiler/projectbuilder.h \
-    source/dialogprojectbuilder.h \
+    source/dialogs/dialogprojectbuilder.h \
     trc.h
 
 FORMS    += mainwindow.ui \
-    dialognewimage.ui \
-    dialogimport.ui \
+    source/dialogs/dialognewimage.ui \
+    source/dialogs/dialogimport.ui \
     formtutorialitem.ui \
     source/chip8emu/dialogchip8.ui \
-    source/dialogcolorselect.ui \
-    source/dialogexport3d.ui \
-    source/dialoginfo.ui \
-    source/dialognew8bplproject.ui \
-    source/dialognewproject.ui \
-    source/dialognewtrt.ui \
-    source/dialogselectcharset.ui \
-    source/dialogselectroom.ui \
-    source/dialogsimplelineedit.ui \
-    source/dialogsizeanalyser.ui \
-    source/dialogsplash.ui \
+    source/dialogs/dialogcolorselect.ui \
+    source/dialogs/dialogexport3d.ui \
+    source/dialogs/dialoginfo.ui \
+    source/dialogs/dialognew8bplproject.ui \
+    source/dialogs/dialognewproject.ui \
+    source/dialogs/dialognewtrt.ui \
+    source/dialogs/dialogselectcharset.ui \
+    source/dialogs/dialogselectroom.ui \
+    source/dialogs/dialogsimplelineedit.ui \
+    source/dialogs/dialogsizeanalyser.ui \
+    source/dialogs/dialogsplash.ui \
     source/formhelp.ui \
     source/trsedocuments/dialogcustomwarning.ui \
     source/trsedocuments/formhexedit.ui \
@@ -818,21 +818,21 @@ FORMS    += mainwindow.ui \
     source/trsedocuments/formttredit.ui \
     source/trsedocuments/formraseditor.ui \
     source/trsedocuments/formimageeditor.ui \
-    source/dialogtrsesettings.ui \
-    source/dialogmessage.ui \
-    source/dialogabout.ui \
-    source/dialoghelp.ui \
-    source/dialogexport.ui \
-    source/dialogmemoryanalyze.ui \
+    source/dialogs/dialogtrsesettings.ui \
+    source/dialogs/dialogmessage.ui \
+    source/dialogs/dialogabout.ui \
+    source/dialogs/dialoghelp.ui \
+    source/dialogs/dialogexport.ui \
+    source/dialogs/dialogmemoryanalyze.ui \
     source/trsedocuments/formpaw.ui \
-    source/dialogimagehelp.ui \
-    source/dialogprojectsettings.ui \
-    source/dialogdonate.ui \
-    source/dialogfindfile.ui \
-    source/dialogeffects.ui \
+    source/dialogs/dialogimagehelp.ui \
+    source/dialogs/dialogprojectsettings.ui \
+    source/dialogs/dialogdonate.ui \
+    source/dialogs/dialogfindfile.ui \
+    source/dialogs/dialogeffects.ui \
     source/trsedocuments/formfjong.ui \
-    source/dialogcolors.ui \
-    source/dialogprojectbuilder.ui \
+    source/dialogs/dialogcolors.ui \
+    source/dialogs/dialogprojectbuilder.ui \
     source/trsetracker/dialogtrseinstrumenteditor.ui \
     source/trsetracker/widgetpattern.ui
 
