@@ -120,6 +120,8 @@ void Tool::PathTool(QString svgFile, QString outBinary, int dataCount, float deg
     for (int i=0;i<coords.count();i+=3) {
         QStringList l = coords[i].split(",");
         QVector3D p;
+        if (l.count()!=2)
+            continue;
         p.setX(l[0].toFloat());
         p.setY(l[1].toFloat());
 

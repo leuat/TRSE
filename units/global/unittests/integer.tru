@@ -161,6 +161,26 @@ begin
 	Vars::text := "14:"; if Vars::i1=14 then Common::PASS() else Common::FAIL();
 end;
 
+// Tests whether storing an int to a byte array works correctly
+procedure T15();
+begin
+
+	Vars::i1:=255;
+	Vars::barr[0]:=Vars::i1;
+	Vars::text := "15:"; if Vars::barr[0]=255 then Common::PASS() else Common::FAIL();
+	
+end;
+
+// Tests whether storing an int array to a byte array works correctly
+procedure T16();
+begin
+	
+	Vars::a1[1]:=255;
+	Vars::barr[1]:=Vars::a1[1];
+	Vars::text := "15:"; if Vars::barr[1]=255 then Common::PASS() else Common::FAIL();
+	
+end;
+
 
 procedure Exec();
 begin
@@ -191,6 +211,8 @@ begin
 	@endif
 	
 	@endif
+	T15();
+	T16();
 	
 	Common::WaitABit();
 	

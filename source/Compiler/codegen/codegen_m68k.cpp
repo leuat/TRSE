@@ -465,18 +465,25 @@ void CodeGen68k::dispatch(QSharedPointer<NodeProcedureDecl> node)
 }
 void CodeGen68k::dispatch(QSharedPointer<NodeVar> node)
 {
-    //    LoadVariable(node);
 
     if (m_inlineParameters.contains(node->value)) {
-        //      qDebug()<< "INLINE node override : "<< node->value;
         m_inlineParameters[node->value]->Accept(this);
         return;
     }
 
 
     if (node->m_expr!=nullptr) {
-        //        qDebug() << "HERE";
         LoadVariable(node);
+        return;
+    }
+    QString endian="";
+    // special case: if you need to load an integer var, but forced to use byte.
+    if (node->getOrgType(as)==TokenType::INTEGER && node->getLoadType()==TokenType::BYTE) {
+        as->Comment("Casting an integer to a byte");
+        auto a = as->m_regAcc.Get();
+        as->Asm("move.w "+node->getValue(as)+","+a);
+        as->m_varStack.push(a);
+        as->m_regAcc.Pop(a);
         return;
     }
     as->m_varStack.push(node->getValue(as));
@@ -538,14 +545,17 @@ void CodeGen68k::StoreVariable(QSharedPointer<NodeVar> n)
             if (n->getArrayType(as)==TokenType::LONG)
                 val*=4;*/
             QString a0 = as->m_regMem.Get();
+            QString endianShift = "";
+
 
             if (n->getType(as)==TokenType::POINTER)
                 TransformVariable("move.l",a0,n->getValue(as));
             else
                 TransformVariable("lea",a0,n->getValue(as));
 
+//            if (n->getArrayType(as)==TokenType::BYTE && n->m_expr->)
             //            as->Comment(";general X");
-            TransformVariable("move"+getEndType(n),Util::numToHex(val)+"("+a0+")",d0);
+            TransformVariable("move"+getEndType(n),Util::numToHex(val)+"("+a0+")",d0 + endianShift);
 
             as->m_regMem.Pop(a0);
             return;
@@ -1110,6 +1120,9 @@ void CodeGen68k::AssignVariable(QSharedPointer<NodeAssign> node) {
 
     if (node->m_left->getType(as)==TokenType::INTEGER) {
         node->m_right->setLoadType(TokenType::INTEGER); // FORCE integer on right-hand side
+    }
+    if (node->m_left->getArrayType(as)==TokenType::BYTE) {
+        node->m_right->setLoadType(TokenType::BYTE); // FORCE byte on right-hand side
     }
     if (node->m_left->getType(as)==TokenType::LONG) {
         node->m_right->setLoadType(TokenType::LONG); // FORCE integer on right-hand side
