@@ -1,7 +1,7 @@
 program MyProject;
 @use "Screen"
 @use "Memory"
-@use "Compression"
+@use "compression"
 @use "Font"
 @use "Input"
 @use "Sound"
