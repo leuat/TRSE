@@ -263,6 +263,8 @@ private slots:
 
     void on_btnHelpTVC_2_clicked();
 
+    void on_btn8bplLoc_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

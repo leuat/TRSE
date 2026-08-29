@@ -944,8 +944,7 @@ c; Joy2Pressed; C64, MEGA65; ;
 c; SCREEN_WIDTH; VZ200; b; 32
 --Number of character rows on the VZ200 text screen.
 c; SCREEN_HEIGHT; VZ200; b; 16
---Start of VZ200 screen memory. Write character codes here to draw on the screen.<br>
---<code>poke(SCREEN, y*SCREEN_WIDTH+x, char);</code>
+--Start of VZ200 screen memory.
 c; SCREEN; VZ200 ; a; $7000
 
 

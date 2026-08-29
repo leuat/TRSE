@@ -708,6 +708,13 @@ void MainWindow::LoadDocument(QString fileName, bool isExternal)
     m_isClosingWindows = true;
     TRSEDocument* editor = nullptr;
     if (fileName.contains(".flf")) {
+
+        if (!m_iniFile->getString("image_editor_type").startsWith("Internal")) {
+            QProcess p;
+            p.startDetached(m_iniFile->getString("image_editor_loc"), QStringList() << m_currentPath+ fileName);
+            return;
+        }
+
         editor = new FormImageEditor(this);
         FormImageEditor* fe = (FormImageEditor*)editor;
         fe->m_projectPath = getProjectPath();
@@ -2720,6 +2727,12 @@ void TRSEProject::VerifyDefaults() {
 
     if (!m_ini->contains("override_target_settings"))
         m_ini->setFloat("override_target_settings",0);
+
+    if (!m_ini->contains("image_editor_type"))
+        m_ini->setString("image_editor_type","Internal editor");
+
+    if (!m_ini->contains("image_editor_loc"))
+        m_ini->setString("image_editor_loc","");
 
     if (!m_ini->contains("remove_unused_symbols"))
         m_ini->setFloat("remove_unused_symbols",1);

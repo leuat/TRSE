@@ -92,6 +92,7 @@ void DialogTRSESettings::FillFromIni()
     //ui->leX16EmuParams->setText(m_ini->getString("x16_emulator_params"));
     ui->leC1541->setText(m_ini->getString("c1541"));
     ui->leFoenixEmulator->setText(m_ini->getString("foenix_emulator"));
+    ui->le8bplLoc->setText(m_ini->getString("image_editor_loc"));
     ui->lePasmo->setText(m_ini->getString("pasmo"));
     ui->leWasm->setText(m_ini->getString("lwasm"));
     ui->lePMAS->setText(m_ini->getString("pmas"));
@@ -176,6 +177,7 @@ void DialogTRSESettings::FillFromIni()
     ui->cmb6809Assembler->setCurrentText(m_ini->getString("assembler_6809"));
     ui->cmbAssemblerM68k->setCurrentText(m_ini->getString("assembler_m68k"));
     ui->cmbPainter_2->setCurrentIndex((int)m_ini->getdouble("image_painter"));
+    ui->cmbImageEditor->setCurrentText(m_ini->getString("image_editor_type"));
 
 }
 
@@ -231,6 +233,8 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("lz4",ui->leLZ4->text());
     //m_ini->setString("x16_emulator_params", ui->leX16EmuParams->text());
     m_ini->setString("c1541", ui->leC1541->text());
+
+    m_ini->setString("image_editor_loc", ui->le8bplLoc->text());
 
     m_ini->setString("spectrum_emulator", ui->leZXSpectrumEmulator->text());
     m_ini->setString("tiki100_emulator", ui->leTiki100->text());
@@ -301,6 +305,7 @@ void DialogTRSESettings::FillToIni()
         m_ini->setFloat("windowpalette",1);
 
 
+    m_ini->setString("image_editor_type",ui->cmbImageEditor->currentText());
     m_ini->setString("assembler", ui->cmbAssembler->currentText());
     m_ini->setString("assembler_z80", ui->cmbAssemblerZ80->currentText());
     m_ini->setString("assembler_6809", ui->cmb6809Assembler->currentText());
@@ -1130,4 +1135,16 @@ void DialogTRSESettings::on_btnHelpTVC_2_clicked()
     Help("Primo Emulator","Use http://primo.homeserver.hu/html/ultimoemulator.html");
 
 }
+
+
+void DialogTRSESettings::on_btn8bplLoc_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("8bit Pixel Lab Location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+     ui->le8bplLoc->setText(filename);
+
+
+}
+
 
