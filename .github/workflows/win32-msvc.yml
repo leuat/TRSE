@@ -93,12 +93,30 @@ jobs:
               | tee /dev/stderr \
               | xargs -r -I _ bash -c 'cp "_" ./ || echo "failed to copy _"'
           }
-          # qt_plugin_dir is taken from qmake so that we always pick the plugins of
-          # the Qt we linked against, and never the ones bundled with Qt Creator or
-          # the installer framework.
+          # qt_bin_dir and qt_plugin_dir are taken from qmake so that we always
+          # pick the tools and plugins of the Qt we linked against, and never the
+          # ones bundled with Qt Creator or the installer framework.
+          qt_bin_dir=$(qmake -query QT_HOST_BINS | tr -d '\r' | xargs cygpath -u)
           qt_plugin_dir=$(qmake -query QT_INSTALL_PLUGINS | tr -d '\r' | xargs cygpath -u)
+          echo "qt_bin_dir: '${qt_bin_dir}'"
           echo "qt_plugin_dir: '${qt_plugin_dir}'"
-          windeployqt --release --compiler-runtime .
+          # windeployqt cannot be called through the PATH: only some of the Qt
+          # directories are added to it by the install action, and the tool has
+          # moved around between Qt releases. Look it up next to qmake instead.
+          windeployqt="${qt_bin_dir}/windeployqt.exe"
+          if [ ! -f "${windeployqt}" ]
+          then
+            echo "windeployqt not found in '${qt_bin_dir}', which contains:"
+            ls -l "${qt_bin_dir}"
+            windeployqt=$(find "${qt_bin_dir}/.." -name 'windeployqt*.exe' | head -n 1)
+            if [ -z "${windeployqt}" ]
+            then
+              echo "No windeployqt under '$(dirname "${qt_bin_dir}")'"
+              exit 1
+            fi
+          fi
+          echo "windeployqt: '${windeployqt}'"
+          "${windeployqt}" --release --compiler-runtime .
           echo "Copy all required plugins"
           while read plugin
           do
