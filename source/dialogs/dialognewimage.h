@@ -25,7 +25,7 @@
 #include <QDialog>
 #include <QDebug>
 #include "source/LeLib/limage/imageleveleditor.h"
-#include "imageworker.h"
+#include "source/misc/imageworker.h"
 #include "source/LeLib/limage/limagefactory.h"
 
 namespace Ui {

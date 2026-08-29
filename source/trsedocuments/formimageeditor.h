@@ -28,7 +28,7 @@
 #include "source/toolbox.h"
 #include "source/LeLib/limage/limage.h"
 #include "source/LeLib/limage/limageqimage.h"
-#include "imageworker.h"
+#include "source/misc/imageworker.h"
 #include <QListWidget>
 #include <QAbstractItemView>
 #include <QListWidgetItem>

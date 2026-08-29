@@ -23,7 +23,7 @@
 #define DIALOGIMPORT_H
 
 
-#include "imageworker.h"
+#include "source/misc/imageworker.h"
 #include <QDialog>
 #include <QFontDatabase>
 #include "source/LeLib/limage/bitmapfont.h"

@@ -12,7 +12,7 @@
 #include <QComboBox>
 #include <QLabel>
 #include "source/LeLib/util/util.h"
-#include "formtutorialitem.h"
+#include "source/dialogs/formtutorialitem.h"
 
 class Tutorial {
 public:

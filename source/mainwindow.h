@@ -22,7 +22,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include <QMainWindow>
-#include "imageworker.h"
+#include "source/misc/imageworker.h"
 #include <QString>
 #include <QPixmap>
 #include <QFontDatabase>
@@ -38,7 +38,7 @@
 #include <QStandardPaths>
 #include <source/toolbox.h>
 #include "source/workerthread.h"
-#include "imageeditor.h"
+#include "source/misc/imageeditor.h"
 #include "source/dialogs/dialogimport.h"
 #include "source/PmmEdit/highlighter.h"
 #include "source/PmmEdit/codeeditor.h"

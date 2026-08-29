@@ -23,7 +23,7 @@
 #define WORKERTHREAD_H
 
 #include <QMainWindow>
-#include "imageworker.h"
+#include "source/misc/imageworker.h"
 #include <QString>
 #include <QPixmap>
 #include <QFileDialog>

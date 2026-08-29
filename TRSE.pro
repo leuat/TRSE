@@ -135,10 +135,10 @@ linux*{
 
 
 
-SOURCES += main.cpp\
-    formtutorialitem.cpp \
-    mainwindow.cpp \
-    imageworker.cpp \
+SOURCES += source/main.cpp\
+    source/dialogs/formtutorialitem.cpp \
+    source/mainwindow.cpp \
+    source/misc/imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
     source/Compiler/assembler/asm6809.cpp \
@@ -344,7 +344,7 @@ SOURCES += main.cpp\
     source/trsetracker/widgetpattern.cpp \
     source/tutorials.cpp \
     source/workerthread.cpp \
-    imageeditor.cpp \
+    source/misc/imageeditor.cpp \
     source/dialogs/dialognewimage.cpp \
     source/dialogs/dialogimport.cpp \
     source/PmmEdit/highlighter.cpp\
@@ -459,12 +459,12 @@ SOURCES += main.cpp\
     source/Compiler/projectbuilder.cpp \
     source/mynth/mynthesizer.cpp \
     source/dialogs/dialogprojectbuilder.cpp \
-    trc.cpp
+    source/misc/trc.cpp
 
 
-HEADERS  += mainwindow.h \
-    formtutorialitem.h \
-    imageworker.h \
+HEADERS  += source/mainwindow.h \
+    source/dialogs/formtutorialitem.h \
+    source/misc/imageworker.h \
     source/Compiler/assembler/asm68000.h \
     source/Compiler/assembler/asm6809.h \
     source/Compiler/assembler/asmTripe.h \
@@ -674,7 +674,7 @@ HEADERS  += mainwindow.h \
     source/trsetracker/widgetpattern.h \
     source/tutorials.h \
     source/workerthread.h \
-    imageeditor.h \
+    source/misc/imageeditor.h \
     source/dialogs/dialognewimage.h \
     source/dialogs/dialogimport.h \
     source/PmmEdit/highlighter.h \
@@ -793,12 +793,12 @@ HEADERS  += mainwindow.h \
     source/Compiler/sourcebuilder.h \
     source/Compiler/projectbuilder.h \
     source/dialogs/dialogprojectbuilder.h \
-    trc.h
+    source/misc/trc.h
 
-FORMS    += mainwindow.ui \
+FORMS    += source/mainwindow.ui \
     source/dialogs/dialognewimage.ui \
     source/dialogs/dialogimport.ui \
-    formtutorialitem.ui \
+    source/dialogs/formtutorialitem.ui \
     source/chip8emu/dialogchip8.ui \
     source/dialogs/dialogcolorselect.ui \
     source/dialogs/dialogexport3d.ui \
