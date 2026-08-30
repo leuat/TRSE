@@ -837,7 +837,8 @@ FORMS    += source/mainwindow.ui \
     source/trsetracker/widgetpattern.ui
 
 RESOURCES += \
-    resources.qrc
+    resources.qrc \
+    source/resources.qrc
 
 DISTFILES += \
     resources/bin/bk2010-0.7.jar \
