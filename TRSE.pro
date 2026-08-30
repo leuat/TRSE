@@ -138,6 +138,7 @@ linux*{
 SOURCES += source/main.cpp\
     source/dialogs/formtutorialitem.cpp \
     source/mainwindow.cpp \
+    source/misc/cli.cpp \
     source/misc/imageworker.cpp \
     source/Compiler/assembler/asm6502.cpp \
     source/Compiler/assembler/asm68000.cpp \
@@ -457,12 +458,12 @@ SOURCES += source/main.cpp\
     source/Compiler/sourcebuilder.cpp \
     source/Compiler/projectbuilder.cpp \
     source/mynth/mynthesizer.cpp \
-    source/dialogs/dialogprojectbuilder.cpp \
-    source/misc/trc.cpp
+    source/dialogs/dialogprojectbuilder.cpp
 
 
 HEADERS  += source/mainwindow.h \
     source/dialogs/formtutorialitem.h \
+    source/misc/cli.h \
     source/misc/imageworker.h \
     source/Compiler/assembler/asm68000.h \
     source/Compiler/assembler/asm6809.h \
@@ -790,8 +791,7 @@ HEADERS  += source/mainwindow.h \
     source/Raytracer/particles.h \
     source/Compiler/sourcebuilder.h \
     source/Compiler/projectbuilder.h \
-    source/dialogs/dialogprojectbuilder.h \
-    source/misc/trc.h
+    source/dialogs/dialogprojectbuilder.h
 
 FORMS    += source/mainwindow.ui \
     source/dialogs/dialognewimage.ui \

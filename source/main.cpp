@@ -22,7 +22,7 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include <QSettings>
-#include "source/misc/trc.h"
+#include "source/misc/cli.h"
 
 void fixCurrentDir(QString execFile) {
     QFileInfo exec(execFile);

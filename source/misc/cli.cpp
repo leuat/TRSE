@@ -1,4 +1,4 @@
-#include "trc.h"
+#include "cli.h"
 #include <QDebug>
 #include <QTextDocument>
 #include <stdio.h>
