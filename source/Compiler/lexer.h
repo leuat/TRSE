@@ -25,7 +25,6 @@
 #include <QString>
 #include "syntax.h"
 #include "token.h"
-#include "data_pmm.h"
 
 #include "errorhandler.h"
 

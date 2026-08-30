@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>963</width>
-    <height>370</height>
+    <width>984</width>
+    <height>415</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,11 +23,11 @@
    <item row="0" column="0">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Vertical</enum>
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
      <widget class="CodeEditor" name="txtEditor">
       <property name="lineWrapMode">
-       <enum>QPlainTextEdit::NoWrap</enum>
+       <enum>QPlainTextEdit::LineWrapMode::NoWrap</enum>
       </property>
       <property name="overwriteMode">
        <bool>false</bool>
@@ -144,7 +144,7 @@
                <item>
                 <spacer name="horizontalSpacer_2">
                  <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
@@ -249,7 +249,7 @@
            <item row="0" column="0">
             <spacer name="verticalSpacer">
              <property name="orientation">
-              <enum>Qt::Vertical</enum>
+              <enum>Qt::Orientation::Vertical</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -278,7 +278,7 @@
   <customwidget>
    <class>formHelp</class>
    <extends>QWidget</extends>
-   <header>source/formhelp.h</header>
+   <header location="global">source/dialogs/formhelp.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

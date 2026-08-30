@@ -1362,7 +1362,7 @@ void CodeGen6809::dispatch(QSharedPointer<NodeVar> node)
     node->DispatchConstructor(as,this);
 
     QString  val = getValue(node);
-    Pmm::Data::d.lineNumber = node->m_op.m_lineNumber;
+    Data::data.lineNumber = node->m_op.m_lineNumber;
     QSharedPointer<Symbol> s = as->m_symTab->Lookup(getValue(node), node->m_op.m_lineNumber);
     //        if (s==nullptr) {
     //          ErrorHandler::e.Error("Could not find variable '" + value +"'.\nDid you mispell?", m_op.m_lineNumber);

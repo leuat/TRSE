@@ -21,7 +21,6 @@
  */
 
 #include "parser.h"
-#include "source/Compiler/data_pmm.h"
 
 QStringList Parser::s_usedTRUs;
 QStringList Parser::s_usedTRUNames;
@@ -6640,7 +6639,7 @@ void Parser::HandleKrillsLoader() {
             "make sure that the loader line is exactly of the following format "
             "(including spaces and letter cases etc): '@use KrillsLoader $0200 "
             "$2000 $3000 '",
-            Pmm::Data::d.lineNumber);
+            Data::data.lineNumber);
     }
 
     //   qDebug() << replaceLine << orgL;

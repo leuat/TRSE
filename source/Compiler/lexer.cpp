@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include <QFile>
+#include "source/LeLib/data.h"
 
 
 int Lexer::getPositionInPercent()
@@ -32,7 +33,7 @@ int Lexer::getPositionInPercent()
         return 100;
 
     int val = (100*m_pos)/m_text.length();
-//    int val = (100*Pmm::Data::d.lineNumber)/m_lines.length();
+//    int val = (100*Data::data.lineNumber)/m_lines.length();
     return val;
 }
 
@@ -97,7 +98,7 @@ Lexer::Lexer(QString text, QStringList lines, QString path) {
         m_currentChar = m_text[m_pos];
     m_lines = lines;
     m_ignorePreprocessor = true;
-    Pmm::Data::d.Init();
+    Data::data.Init();
 }
 
 
@@ -125,14 +126,14 @@ void Lexer::PushState()
     m_stack.append(m_prevPos);
     m_stack.append(m_pos);
     m_stack.append(m_localPos);
-    m_stack.append(Pmm::Data::d.lineNumber);
+    m_stack.append(Data::data.lineNumber);
 }
 
 void Lexer::PopState()
 {
     if (m_stack.count()==0)
         return;
-    Pmm::Data::d.lineNumber= m_stack.last();m_stack.removeLast();
+    Data::data.lineNumber= m_stack.last();m_stack.removeLast();
     m_localPos = m_stack.last();m_stack.removeLast();
     m_pos = m_stack.last();m_stack.removeLast();
     m_prevPos = m_stack.last();m_stack.removeLast();
@@ -151,7 +152,7 @@ void Lexer::Advance()
     else {
         m_currentChar = m_text[m_pos];
         if (m_currentChar=="\n") {
-            Pmm::Data::d.lineNumber ++;
+            Data::data.lineNumber ++;
             m_localPos = 0;
 
         }
@@ -287,7 +288,7 @@ Token Lexer::_Id()
     bool isRef =  m_nextIsReference;
     m_nextIsReference = false;
 //    if (isRef && Syntax::s.isDigit(QString(result[0])))
-  //      ErrorHandler::e.Error("Constant numbers cannot be referenced by #",Pmm::Data::d.lineNumber);
+  //      ErrorHandler::e.Error("Constant numbers cannot be referenced by #",Data::data.lineNumber);
 //    qDebug() << result << isRef;
     return Syntax::s.GetID(result,isRef);
 
@@ -377,7 +378,7 @@ QString Lexer::peek(int n)
 
 void Lexer::Initialize()
 {
-    Pmm::Data::d.lineNumber = 0;
+    Data::data.lineNumber = 0;
     m_finished = false;
     if (m_text.length()>0)
         m_currentChar = m_text[0];
@@ -431,7 +432,7 @@ Token Lexer::GetNextToken()
 //            qDebug() << c;
             Advance();
             if (m_currentChar!="'")
-                ErrorHandler::e.Error( "Chars chan only contain one symbol",Pmm::Data::d.lineNumber );
+                ErrorHandler::e.Error( "Chars chan only contain one symbol",Data::data.lineNumber );
 
             Advance();
 
@@ -681,7 +682,7 @@ Token Lexer::GetNextToken()
             return Token(TokenType::NADA, "NADA");
         }
 
-        ErrorHandler::e.Error( "Error parsing: " + m_currentChar,Pmm::Data::d.lineNumber );
+        ErrorHandler::e.Error( "Error parsing: " + m_currentChar,Data::data.lineNumber );
 
 
 

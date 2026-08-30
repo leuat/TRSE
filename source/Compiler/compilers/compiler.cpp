@@ -347,7 +347,7 @@ void Compiler::HandleError(FatalErrorException fe, QString e)
 //        msg+="<br><i>Source code line</i>: " + m_parser.m_lexer->m_lines[linenr];
     msg+="<br>";
 //    msg+="<br><i>Message</i>: ";
-    Pmm::Data::d.lineNumber = linenr+1;
+    Data::data.lineNumber = linenr+1;
 
     recentError = fe;
     ErrorHandler::e.CatchError(fe, e + msg);

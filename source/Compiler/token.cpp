@@ -20,6 +20,7 @@
 */
 
 #include "token.h"
+#include "source/LeLib/data.h"
 
 QStringList TokenType::types = {
             "NONE", "INTEGER", "PLUS", "MINUS", "MUL", "DIV", "LPAREN",
@@ -49,8 +50,8 @@ QString Token::getType() {
 
 Token::Token()
 {
-    m_lineNumber = Pmm::Data::d.lineNumber;
-    m_currentLineText = Pmm::Data::d.currentLineText;
+    m_lineNumber = Data::data.lineNumber;
+    m_currentLineText = Data::data.currentLineText;
 }
 
 QString Token::getNumAsHexString()
@@ -66,16 +67,16 @@ QString Token::getNumAsHexString()
 Token::Token(TokenType::Type t, QString val, bool isRef) {
     m_value = val;
     m_type = t;
-    m_lineNumber = Pmm::Data::d.lineNumber;
-    m_currentLineText = Pmm::Data::d.currentLineText;
+    m_lineNumber = Data::data.lineNumber;
+    m_currentLineText = Data::data.currentLineText;
     m_isReference = isRef;
 }
 
 Token::Token(TokenType::Type t, long val, bool isRef) {
     m_intVal = val;
     m_type = t;
-    m_lineNumber = Pmm::Data::d.lineNumber;
-    m_currentLineText = Pmm::Data::d.currentLineText;
+    m_lineNumber = Data::data.lineNumber;
+    m_currentLineText = Data::data.currentLineText;
     m_isReference = isRef;
 
 }

@@ -1194,7 +1194,7 @@ void FormRasEditor::HandleBuildError()
     m_run = false;
     setOutputText(ErrorHandler::e.m_teOut);
     m_outputText = ErrorHandler::e.m_teOut;
-    int ln = Pmm::Data::d.lineNumber;
+    int ln = Data::data.lineNumber;
 
     m_builderThread.m_builder->m_system->m_buildSuccess = false;
     SetLights();

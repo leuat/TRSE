@@ -23,7 +23,7 @@
 #include "nodebuiltinmethod.h"
 
 void NodeCompound::ExecuteSym(QSharedPointer<SymbolTable>  symTab) {
-    Pmm::Data::d.Set(m_op.m_lineNumber, m_op.m_currentLineText);
+    Data::data.Set(m_op.m_lineNumber, m_op.m_currentLineText);
     for (QSharedPointer<Node> n:children) {
         ErrorHandler::e.DebugLow("Calling Compound Node",level);
         n->ExecuteSym(symTab);

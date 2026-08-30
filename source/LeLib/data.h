@@ -79,6 +79,18 @@ public:
     QColor aux2 = Qt::black;
     bool displayAux = false;
 
+    QString currentLineText;
+    int lineNumber = 0;
+    void Init() {
+        lineNumber = 0;
+        currentLineText ="";
+    }
+    void Set(int ln, QString txt) {
+        lineNumber = ln;
+        currentLineText = txt;
+    }
+
+
 signals:
     void EmitPenChanged();
 

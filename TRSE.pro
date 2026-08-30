@@ -360,7 +360,6 @@ SOURCES += source/main.cpp\
     source/dialogs/dialoghelp.cpp \
     source/dialogs/dialogexport.cpp \
     source/dialogs/dialogmemoryanalyze.cpp \
-    source/Compiler/data_pmm.cpp \
     source/Compiler/errorhandler.cpp \
     source/Compiler/compilers/compiler.cpp \
     source/Compiler/lexer.cpp \
@@ -690,7 +689,6 @@ HEADERS  += source/mainwindow.h \
     source/dialogs/dialoghelp.h \
     source/dialogs/dialogexport.h \
     source/dialogs/dialogmemoryanalyze.h \
-    source/Compiler/data_pmm.h \
     source/Compiler/errorhandler.h \
     source/Compiler/compilers/compiler.h \
     source/Compiler/lexer.h \

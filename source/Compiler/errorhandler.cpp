@@ -21,6 +21,7 @@
 
 #include "errorhandler.h"
 #include "source/Compiler/lexer.h"
+#include "source/LeLib/data.h"
 
 ErrorHandler ErrorHandler::e;
 
@@ -32,7 +33,7 @@ void ErrorHandler::Warning(QString str, int lineNumber) {
     QString ln ="";
 
     if (m_lexer!=nullptr) {
-        int linenr = Pmm::Data::d.lineNumber;
+        int linenr = Data::data.lineNumber;
         QString file = "";
         if (m_lexer!=nullptr && lineNumber!=0) {
             m_lexer->FindLineNumberAndFile(linenr, file, linenr);

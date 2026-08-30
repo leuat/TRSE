@@ -22,7 +22,7 @@
 #include "syntax.h"
 #include <QtMath>
 #include "source/Compiler/systems/factorysystem.h"
-
+#include "source/LeLib/data.h"
 
 Syntax Syntax::s;
 
@@ -307,7 +307,7 @@ Token Syntax::GetID(QString val, bool isRef) {
     }
     for (Token& t: reservedWords)
         if (val.toUpper()==t.m_value) {
-            t.m_lineNumber = Pmm::Data::d.lineNumber;
+            t.m_lineNumber = Data::data.lineNumber;
             t.m_isPointer = isPointer;
   //          qDebug() << "Found TYPE SPEC "<< t.m_value << isPointer;
             return t;
