@@ -22,7 +22,7 @@
 #ifndef TRSEDOCUMENT_H
 #define TRSEDOCUMENT_H
 
-#include "source/workerthread.h"
+#include "source/misc/workerthread.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QWidget>
 #include "source/LeLib/data.h"

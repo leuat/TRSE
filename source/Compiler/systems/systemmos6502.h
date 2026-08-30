@@ -4,7 +4,7 @@
 #include "source/Compiler/systems/abstractsystem.h"
 #include "source/Compiler/misc/machinecodeanalyzer.h"
 #include <QMessageBox>
-#include "source/messages.h"
+#include "source/misc/messages.h"
 
 
 class SystemMOS6502 : public AbstractSystem

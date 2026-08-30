@@ -25,30 +25,24 @@
 
 #include <QDebug>
 #include <QDate>
+#include <QMessageBox>
+#include <QSettings>
+#include <QInputDialog>
 #include <QThread>
 #include <QProcess>
 #include <QElapsedTimer>
 #include <QTextCursor>
 #include <QFontMetrics>
-#include "source/LeLib/data.h"
 #include <QWheelEvent>
 #include "source/dialogs/dialognewimage.h"
 #include "source/dialogs/dialogabout.h"
-#include "source/LeLib/limage/limageio.h"
-#include <QMessageBox>
-#include <QSettings>
 #include "source/Compiler/assembler/asm6502.h"
 #include "source/dialogs/dialogeffects.h"
 #include "source/Compiler/errorhandler.h"
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"
 #include "source/LeLib/data.h"
-#include "source/dialogs/dialogsplash.h"
 #include "source/dialogs/dialognew8bplproject.h"
-#include <QInputDialog>
-#include "source/dialogs/dialogsizeanalyser.h"
-
-#include "source/chip8emu/dialogchip8.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -85,10 +79,6 @@ MainWindow::MainWindow(QWidget *parent) :
     UpdateRecentProjects();
     SetupFileList();
 
-    /*QImage img;
-    img.load(":resources/images/trselogo.png");
-    ui->lblLogo->setPixmap(QPixmap::fromImage(img));
-    */
 
     ui->splitter->setStretchFactor(0,10);
     ui->splitter->setStretchFactor(1,100);
@@ -100,19 +90,13 @@ MainWindow::MainWindow(QWidget *parent) :
     this->installEventFilter(this);
 
     m_tutorials.Read(":resources/text/tutorials.txt");
-//    m_tutorials.PopulateTreeList(ui->treeTutorials);
-//    m_tutorials.PopulateSystemList(ui->lstSystems);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystem);
     m_tutorials.PopulateSystemCmb(ui->cmbSelectSystemRecent);
     ui->cmbSelectSystem->setCurrentText(m_iniFile->getString("current_display_system"));
     ui->cmbSelectSystemRecent->insertItem(0,"Show all systems (recent projects)");
-//    ui->cmbSelectSystem->setCurrentIndex(0);
     ui->cmbSelectSystemRecent->setCurrentIndex(0);
     on_cmbSelectSystem_activated(0);
-    //ui->lstSystems->setCurrentRow(0);
     setWindowTitle("Turbo Rascal Syntax error, \";\" expected but \"BEGIN\" Version " + Data::data.version);
-//    ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@version",Data::data.version));
-  //  ui->txtChangelog->setText( ui->txtChangelog->toHtml().replace("@build",QDate::currentDate().toString()));
 
     ui->treeSymbols->setHeaderHidden(true);
 
@@ -132,11 +116,12 @@ MainWindow::MainWindow(QWidget *parent) :
     m_splash->m_seconds = m_iniFile->getdouble("splash_seconds");
     QTimer::singleShot(10, this, SLOT(ShowSplash()));
 */
+    /*
     QString t0 = "Number of computer systems supported in TRSE: "+QString::number(ui->cmbSelectSystem->count());
     QString t1 = "Number of sample projects: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "tutorials/",QStringList() <<"trse"));
     QString t2 = "Total number of example source files: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "tutorials/",QStringList() <<"ras"<<"inc"));
     QString t3 = "Total number of units: "+QString::number(Util::CountFilesInAllDirectories(Util::GetSystemPrefix() + "units/",QStringList()<<"tru"));
-
+    */
 
 //    ((QObject*)(nullptr))->setObjectName("whoo");
 
@@ -335,9 +320,6 @@ void MainWindow::RestoreSettings()
     ui->psplitter->restoreState(settings.value("MainWindow/psplitter").toByteArray());
     ui->qsplitter->restoreState(settings.value("MainWindow/qsplitter").toByteArray());
     ui->splitter->restoreState(settings.value("MainWindow/splitter").toByteArray());
-
-
-
 }
 
 
@@ -2264,23 +2246,12 @@ void MainWindow::LoadProject(QString filename)
     m_currentProject.Load(filename);
     m_currentPath = QFileInfo(QFile(filename)).canonicalPath();
 
-
-
     Data::data.currentPath = m_currentPath;
     VerifyProjectDefaults();
-//    m_iniFile->setString("project_path", getProjectPath());
     m_iniFile->addStringList("recent_projects", filename, true);
     ui->chkShowAllFiles->setChecked(m_currentProject.m_ini->getdouble("show_all_files")==1.0);
 
     RefreshFileList();
-/*
-    qDebug() << m_currentProject.m_ini->contains("build_list");
-    qDebug() << m_currentProject.m_ini->getStringList("build_list");
-
-    for (int i=0;i<m_currentProject.m_ini->items.size();i++)
-        qDebug() << m_currentProject.m_ini->items[i].name << m_currentProject.m_ini->items[i].lst;
-
-*/
     m_iniFile->Save();
 
     // Set compiler syntax based on system
@@ -2301,9 +2272,7 @@ void MainWindow::LoadProject(QString filename)
     ui->lblSystemName->setFont(QFont(fnt));
     UpdateRecentProjects();
 
-
     QStringList files = m_currentProject.m_ini->getStringList("open_files");
-
 
     QString focusFile = m_currentProject.m_ini->getString("current_file");
     QStringList updatedFiles;
@@ -2324,7 +2293,6 @@ void MainWindow::LoadProject(QString filename)
         }
     }
     m_currentProject.m_ini->setStringList("open_files", updatedFiles);
-//    qDebug() << f;
     if (QFile::exists(getProjectPath() + "/"+ focusFile))
         if (!(QDir(getProjectPath() + "/"+ focusFile).exists()))
             LoadDocument(focusFile);

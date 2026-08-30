@@ -21,27 +21,20 @@
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-#include <QMainWindow>
-#include "source/misc/imageworker.h"
+
+#include "ui_mainwindow.h"
 #include <QString>
 #include <QPixmap>
-#include <QFontDatabase>
-#include <QMovie>
 #include <QFileDialog>
-#include "source/LeLib/data.h"
 #include <QThread>
-#include <thread>
 #include <QFileSystemModel>
-#include <QLayout>
-#include <QPointF>
 #include <QTimer>
 #include <QStandardPaths>
-#include <source/toolbox.h>
-#include "source/workerthread.h"
-#include "source/misc/imageeditor.h"
-#include "source/dialogs/dialogimport.h"
-#include "source/PmmEdit/highlighter.h"
-#include "source/PmmEdit/codeeditor.h"
+
+#include <QDesktopServices>
+#include <QStandardItemModel>
+#include <QFileSystemWatcher>
+#include "source/dialogs/dialogsplash.h"
 #include "source/LeLib/util/cinifile.h"
 #include "source/trsedocuments/formraseditor.h"
 #include "source/trsedocuments/formimageeditor.h"
@@ -51,24 +44,15 @@
 #include "source/trsedocuments/formhexedit.h"
 #include "source/trsedocuments/formttredit.h"
 #include "source/dialogs/dialogtrsesettings.h"
-#include "source/messages.h"
-#include "source/LeLib/limage/movieconverter.h"
-#include "ui_mainwindow.h"
 #include "source/dialogs/dialogprojectsettings.h"
 #include "source/dialogs/dialogdonate.h"
 #include "source/dialogs/dialogfindfile.h"
 #include "source/dialogs/dialogexport3d.h"
 #include "source/dialogs/dialogprojectbuilder.h"
-#include "source/tutorials.h"
-#include <QDesktopServices>
 #include "source/dialogs/dialognewproject.h"
-#include <QStandardItemModel>
-#include <QFileSystemWatcher>
-#include <source/LeLib/lglslideshow.h>
-#include "source/dialogs/dialogsplash.h"
 #include "source/dialogs/dialognewtrt.h"
-#include "source/LeLib/util/util.h"
 #include "source/dialogs/dialogsizeanalyser.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -293,18 +277,8 @@ public slots:
 
     void ForceOpenFile(QString s, int ln);
 
-    /*    void updateImage() {
-        FormImageEditor* imageEdit = dynamic_cast<FormImageEditor*>(ui->tabMain->currentWidget());
-        if (imageEdit==nullptr)
-            return;
-
-
-//        imageEdit->UpdateImage();
-
-    }*/
     void closeWindowSlot();
     void updatePalette() {
-        //setPalette(m_updateThread->m_pal);
         ui->lblSave->setHidden(false);
         QTimer::singleShot(500, ui->lblSave, &QLabel::hide);
     }

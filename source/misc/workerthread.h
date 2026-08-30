@@ -33,7 +33,7 @@
 #include <QLayout>
 #include <QPointF>
 #include <QLabel>
-#include <source/toolbox.h>
+#include "source/misc/toolbox.h"
 #include <QApplication>
 
 

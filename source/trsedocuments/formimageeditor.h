@@ -25,7 +25,7 @@
 
 #include <QWidget>
 #include "trsedocument.h"
-#include "source/toolbox.h"
+#include "source/misc/toolbox.h"
 #include "source/LeLib/limage/limage.h"
 #include "source/LeLib/limage/limageqimage.h"
 #include "source/misc/imageworker.h"

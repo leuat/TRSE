@@ -2,7 +2,6 @@
 #define SYSTEMCHIP8_H
 
 #include "source/Compiler/systems/abstractsystem.h"
-#include "source/messages.h"
 
 
 class SystemChip8 : public AbstractSystem

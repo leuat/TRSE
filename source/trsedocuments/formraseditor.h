@@ -27,7 +27,7 @@
 #include "source/PmmEdit/asmhighlighter.h"
 #include "source/PmmEdit/highlighter.h"
 #include "source/PmmEdit/codeeditor.h"
-#include "source/messages.h"
+#include "source/misc/messages.h"
 #include "source/Compiler/lexer.h"
 #include "source/Compiler/parser.h"
 #include "source/Compiler/compilers/compiler.h"

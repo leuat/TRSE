@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QStringList>
-#include "source/tutorials.h"
+#include "source/misc/tutorials.h"
 #include "source/LeLib/util/cinifile.h"
 #include <QFileDialog>
 namespace Ui {

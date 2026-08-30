@@ -22,7 +22,7 @@
 #ifndef TOOLBOX_H
 #define TOOLBOX_H
 
-#include "source/toolboxitem.h"
+#include "source/misc/toolboxitem.h"
 #include <QVector>
 #include <QLayout>
 #include <QPushButton>

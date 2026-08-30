@@ -1,5 +1,4 @@
 #include "systempdp11.h"
-#include "source/messages.h"
 
 SystemPDP11::SystemPDP11(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
     m_allowedGlobalTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" << "chipmem" <<"aligned" << "compressed";

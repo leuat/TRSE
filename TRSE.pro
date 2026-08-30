@@ -329,10 +329,10 @@ SOURCES += source/main.cpp\
     source/dialogs/dialogsimplelineedit.cpp \
     source/dialogs/dialogsizeanalyser.cpp \
     source/dialogs/dialogsplash.cpp \
-    source/formhelp.cpp \
+    source/dialogs/formhelp.cpp \
     source/mynth/ma_context.cpp \
-    source/toolbox.cpp \
-    source/toolboxitem.cpp \
+    source/misc/toolbox.cpp \
+    source/misc/toolboxitem.cpp \
     source/trsedocuments/dialogcustomwarning.cpp \
     source/trsedocuments/formhexedit.cpp \
     source/trsedocuments/formrtf.cpp \
@@ -342,8 +342,8 @@ SOURCES += source/main.cpp\
     source/trsetracker/dialogtrseinstrumenteditor.cpp \
     source/trsetracker/ttrplayer.cpp \
     source/trsetracker/widgetpattern.cpp \
-    source/tutorials.cpp \
-    source/workerthread.cpp \
+    source/misc/tutorials.cpp \
+    source/misc/workerthread.cpp \
     source/misc/imageeditor.cpp \
     source/dialogs/dialognewimage.cpp \
     source/dialogs/dialogimport.cpp \
@@ -355,7 +355,7 @@ SOURCES += source/main.cpp\
     source/trsedocuments/formimageeditor.cpp \
     source/dialogs/dialogtrsesettings.cpp \
     source/dialogs/dialogmessage.cpp \
-    source/messages.cpp \
+    source/misc/messages.cpp \
     source/dialogs/dialogabout.cpp \
     source/dialogs/dialoghelp.cpp \
     source/dialogs/dialogexport.cpp \
@@ -656,13 +656,13 @@ HEADERS  += source/mainwindow.h \
     source/dialogs/dialogsimplelineedit.h \
     source/dialogs/dialogsizeanalyser.h \
     source/dialogs/dialogsplash.h \
-    source/formhelp.h \
+    source/dialogs/formhelp.h \
 #    source/LeLib/miniaudio_engine.h \
     source/mynth/ma_context.h \
     source/mynth/mynth_osc.h \
     source/mynth/mynthesizer.h \
-    source/toolbox.h \
-    source/toolboxitem.h \
+    source/misc/toolbox.h \
+    source/misc/toolboxitem.h \
     source/trsedocuments/dialogcustomwarning.h \
     source/trsedocuments/formhexedit.h \
     source/trsedocuments/formrtf.h \
@@ -672,8 +672,8 @@ HEADERS  += source/mainwindow.h \
     source/trsetracker/dialogtrseinstrumenteditor.h \
     source/trsetracker/ttrplayer.h \
     source/trsetracker/widgetpattern.h \
-    source/tutorials.h \
-    source/workerthread.h \
+    source/misc/tutorials.h \
+    source/misc/workerthread.h \
     source/misc/imageeditor.h \
     source/dialogs/dialognewimage.h \
     source/dialogs/dialogimport.h \
@@ -685,7 +685,7 @@ HEADERS  += source/mainwindow.h \
     source/trsedocuments/formimageeditor.h \
     source/dialogs/dialogtrsesettings.h \
     source/dialogs/dialogmessage.h \
-    source/messages.h \
+    source/misc/messages.h \
     source/dialogs/dialogabout.h \
     source/dialogs/dialoghelp.h \
     source/dialogs/dialogexport.h \
@@ -811,7 +811,7 @@ FORMS    += source/mainwindow.ui \
     source/dialogs/dialogsimplelineedit.ui \
     source/dialogs/dialogsizeanalyser.ui \
     source/dialogs/dialogsplash.ui \
-    source/formhelp.ui \
+    source/dialogs/formhelp.ui \
     source/trsedocuments/dialogcustomwarning.ui \
     source/trsedocuments/formhexedit.ui \
     source/trsedocuments/formrtf.ui \

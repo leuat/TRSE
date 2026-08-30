@@ -25,7 +25,7 @@
 #include <QDialog>
 #include "source/LeLib/util/util.h"
 #include "source/LeLib/util/cinifile.h"
-#include "source/messages.h"
+#include "source/misc/messages.h"
 #include <QMessageBox>
 
 namespace Ui {
