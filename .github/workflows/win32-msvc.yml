@@ -116,6 +116,9 @@ jobs:
             fi
           fi
           echo "windeployqt: '${windeployqt}'"
+          # windeployqt.exe needs its own Qt DLLs in PATH to load; add the Qt
+          # bin dir explicitly since this bash step starts without it.
+          export PATH="${qt_bin_dir}:${PATH}"
           "${windeployqt}" --release --compiler-runtime .
           echo "Copy all required plugins"
           while read plugin
