@@ -268,14 +268,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 
 void MainWindow::mousePressEvent(QMouseEvent *e)
 {
-/*    if(e->buttons() == Qt::RightButton)
-        m_updateThread->m_currentButton = 2;
-    if(e->buttons() == Qt::LeftButton) {
-        m_updateThread->m_currentButton = 1;
-    }
-
-    qDebug() << "WTOF" << m_updateThread->m_currentButton;*/
-
 
 }
 
@@ -455,8 +447,6 @@ void MainWindow::VerifyDefaults()
 void MainWindow::VerifyProjectDefaults()
 {
     m_currentProject.VerifyDefaults();
-
-
 }
 
 void MainWindow::UpdateSymbolTree(QString search)
@@ -480,8 +470,6 @@ void MainWindow::UpdateSymbolTree(QString search)
 
     if (!doc->m_currentFileShort.toLower().endsWith(".ras"))
         return;
-
-
 
 
     ui->treeSymbols->setFont(QFont(m_iniFile->getString("editor_font_symbols"),m_iniFile->getInt("font_size_symbols")));
@@ -531,9 +519,6 @@ void MainWindow::UpdateSymbolTree(QString search)
             return;
         QString t = s->m_type;
         if (t.toLower()=="array") t = s->m_arrayTypeText.toLower()+"[ "+QString::number(s->m_size)+ " ]";
-        //if (t.toLower()=="record") t = s->m_arrayTypeText +"[ "+QString::number(s->m_size)+ " ]";
-//        qDebug() << t << s->m_arrayTypeText;
-        //if (p-) t = TokenType::getType(s->m_arrayType).toLower()+"[ "+QString::number(s->m_size)+ " ]";
         cleanSymbol(Symbols, s->m_name, s->m_name + " : " + t.toLower(), s->m_lineNumber, s->m_fileName,p,Qt::yellow,search);
     }
     m_symbolItems.clear();
@@ -545,7 +530,6 @@ void MainWindow::UpdateSymbolTree(QString search)
         // Interesting.. crash here?
         for (QSharedPointer<Node> n: proc->m_paramDecl) {
             QSharedPointer<NodeVarDecl> vd = qSharedPointerDynamicCast<NodeVarDecl>(n);
-//            params+=qSharedPointerDynamicCast<NodeVar>(vd->m_varNode)->value+" : ";
             params+=qSharedPointerDynamicCast<NodeVarType>(vd->m_typeNode)->value.toLower() + ",";
         }
         if (proc->m_paramDecl.count()!=0)
@@ -582,10 +566,6 @@ void MainWindow::cleanSymbol(QTreeWidgetItem* parent, QString on, QString n, int
     QColor col = bcol;
     QString ns = n;
 
-/*    if (ns.remove(":").trimmed().isUpper()) {
-        col = Qt::darkGray;
-        type = "Built-in";
-    }*/
     if (name.contains("::")) {
         col = QColor(50,100,255);
         type = name.split("::").first();
@@ -1596,6 +1576,7 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     QAction action51("Add existing file", this);
     QAction action8("New folder", this);
     QAction action3("Help - what is this type of file?", this);
+    QAction actionNewPlab("New 8bit Pixel Lab Project", this);
     connect(&action1, SIGNAL(triggered()), this, SLOT(xon_actionDelete_file_triggered()));
     connect(&action3, SIGNAL(triggered()), this, SLOT(xon_helpFileType()));
     connect(&action4, SIGNAL(triggered()), this, SLOT(xon_duplicate_file()));
@@ -1608,11 +1589,13 @@ void MainWindow::ShowFileContext(const QPoint &pos)
     connect(&action8, SIGNAL(triggered()), this, SLOT(xon_new_folder()));
     connect(&action5, SIGNAL(triggered()), this, SLOT(xon_rename_file()));
     connect(&action51, SIGNAL(triggered()), this, SLOT(xon_add_existing_file()));
+    connect(&actionNewPlab, SIGNAL(triggered()), this, SLOT(xon_new_plab()));
 
     contextMenu.addAction(&action8); // New Folder
     contextMenu.addAction(&action6); // New RAS
     contextMenu.addAction(&action61); // New INC
     contextMenu.addAction(&action7); // New TRU
+    contextMenu.addAction(&actionNewPlab); // New plab
     contextMenu.addAction(&action71); // New fjo
     contextMenu.addAction(&action72); // New flf
     contextMenu.addAction(&action7_rtf); // New rtf
@@ -1949,6 +1932,11 @@ void MainWindow::xon_new_flf_file()
     on_actionImage_triggered();
 }
 
+void MainWindow::xon_new_plab()
+{
+    on_action8bit_Pixel_Lab_Image_Project_triggered();
+}
+
 void MainWindow::xon_add_existing_file()
 {
     QFileDialog dialog;
@@ -2194,31 +2182,6 @@ void MainWindow::on_actionNew_project_triggered()
     UpdateRecentProjects();
     LoadProject(projectFile);
 
-/*    QFileDialog dialog;
-    QString filename = dialog.getSaveFileName(this, "New project",getProjectPath(),"*.trse");
-    if (filename=="")
-        return;
-
-    CloseAll();
-    QStringList splt = filename.split("/");
-    QString path="";
-    for (int i=0;i<splt.count()-1;i++)
-        path+=splt[i] + "/";
-
-    m_currentProject = TRSEProject();
-    m_currentPath = path;
-    //m_currentProject.m_ini->setString("project_path", path);
-    m_currentProject.m_filename = filename;
-    m_currentProject.Save();
-    RefreshFileList();
-
-   // m_iniFile->setString("project_path", getProjectPath());
-    m_iniFile->addStringList("recent_projects", filename, true);
-    m_iniFile->Save();
-
-    UpdateRecentProjects();
-    LoadProject(filename);
-*/
 }
 
 void MainWindow::on_actionClose_all_triggered()
@@ -2235,8 +2198,6 @@ void MainWindow::on_actionOpen_project_triggered()
 
     LoadProject(filename);
     VerifyTRSEVersion();
-
-
 }
 
 void MainWindow::LoadProject(QString filename)
@@ -2742,18 +2703,6 @@ void TRSEProject::VerifyDefaults() {
 
 }
 
-/*void MainWindow::on_treeTutorials_itemDoubleClicked(QTreeWidgetItem *item, int column)
-{
-    if (item->data(0,Qt::UserRole).toString()=="")
-        return;
-    QString dir = Util::GetSystemPrefix() + "tutorials/"+item->data(0,Qt::UserRole).toString().split(";")[0];
-
-    QString fileName = Util::findFileInDirectory("",dir,"trse");
-    LoadProject(fileName);
-    VerifyTRSEVersion();
-
-}
-*/
 void MainWindow::LoadTutorialProject(QString file)
 {
 //    qDebug() << "MainWindow tutorial: "<<file;
@@ -2766,15 +2715,6 @@ void MainWindow::LoadTutorialProject(QString file)
 }
 
 
-/*void MainWindow::on_treeTutorials_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem *previous)
-{
-    if (current->data(0,Qt::UserRole).toString()=="")
-        return;
-    QString text = current->data(0,Qt::UserRole).toString().split(";")[1];
-    //ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
-
-}
-*/
 void MainWindow::on_action_Project_Settings_triggered()
 {
     OpenProjectSettings();
@@ -2859,17 +2799,13 @@ void MainWindow::on_treeSymbols_itemClicked(QTreeWidgetItem *item, int column)
 
 void MainWindow::GotoSymbol(QString s)
 {
-//    qDebug() << s << m_symPointers.contains(s) << m_symPointers.keys();
     if (!m_orgSymPointers.contains(s))
         return;
 
     QSharedPointer<SymbolPointer> sp = m_orgSymPointers[s];
     ForceOpenFile(sp->m_file,sp->m_ln);
     m_currentDoc->Focus();
-//    qDebug() <<  s  << m_treeItems.keys();
-/*    if (m_treeItems.contains(s))
-        if (ui->treeSymbols->findItems(m_treeItems[s]))*/
-        ui->treeSymbols->setCurrentItem(m_treeItems[s]);
+    ui->treeSymbols->setCurrentItem(m_treeItems[s]);
 }
 
 void MainWindow::GotoAssemblerLine(QString s, int lineNumber)
@@ -2921,17 +2857,7 @@ void MainWindow::LoadIniFile()
 {
 #ifndef Q_OS_WIN
    QString pa = QDir::homePath() +QDir::separator() + m_iniFileHomeDir;
-/*   QString oldFile = Util::path + m_iniFileName;
-    if (!QDir().exists(pa))
-        QDir().mkdir(pa);*/
     m_iniFileNameOld = pa +QDir::separator()+ m_iniFileNameOld;
-/*
-    // Move old file
-    if (QFile::exists(oldFile)) {
-        QFile::copy(oldFile, m_iniFileName);
-        QFile::remove(oldFile);
-    }*/
-
 #endif
 
     m_iniFile = QSharedPointer<CIniFile>(new CIniFile);
@@ -2970,42 +2896,6 @@ void MainWindow::LoadIniFile()
 
 }
 
-
-
-/*void MainWindow::on_lstSystems_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
-{
-    QString key = current->data(Qt::UserRole).toString();
-    //m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
-
-}
-*/
-
-/*
-void MainWindow::on_lstSampleProjects_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
-{
-    if (current==nullptr)
-        return;
-    if (current->data(Qt::UserRole).toString()=="")
-        return;
-
-
-    QString text = current->data(Qt::UserRole).toString().split(";")[1];
-    //ui->txtTutorials->setText(text+"<p><font color=\"#A0FFA0\">Double click to load the project!</font>");
-
-}
-
-void MainWindow::on_lstSampleProjects_itemDoubleClicked(QListWidgetItem *item)
-{
-    if (item==nullptr) return;
-    if (item->data(Qt::UserRole).toString()=="")
-        return;
-    QString dir = Util::GetSystemPrefix() + "tutorials/"+item->data(Qt::UserRole).toString().split(";")[0];
-
-    QString fileName = Util::findFileInDirectory("",dir,"trse");
-    LoadProject(fileName);
-    VerifyTRSEVersion();
-}
-*/
 void MainWindow::removeFromRecentList()
 {
     int idx = ui->lstRecentProjects->currentRow();
@@ -3021,9 +2911,7 @@ void MainWindow::on_btnClearProject_clicked()
     dir.setNameFilters(QStringList() << "*.asm" << "*.sym" << "*.prg" << "*.gb" << "*.o" <<"*.tos");
     dir.setFilter(QDir::Files);
     foreach(QString dirFile, dir.entryList())
-    {
         dir.remove(dirFile);
-    }
 }
 
 void MainWindow::HandleBuildSuccess()
@@ -3053,11 +2941,6 @@ void MainWindow::on_cmbSelectSystem_activated(int index)
 
     m_iniFile->setString("current_display_system", key);
 
-    //m_tutorials.PopulateProjectList(key,ui->lstSampleProjects);
-/*    QWidget *scrollWidget = new QWidget;
-    ui->scrollArea->setWidget(scrollWidget);
-    scrollWidget->setLayout(ui->tblTutorials);*/
-
     for (auto w:m_tutorials.m_widgets)
         disconnect( w, SIGNAL(emitLoadTutorialProject(QString)),this, SLOT(LoadTutorialProject(QString)));
 
@@ -3066,8 +2949,6 @@ void MainWindow::on_cmbSelectSystem_activated(int index)
     area->setWidget(scrollWidget);
     auto    layoutWithLabels = new QGridLayout;
     scrollWidget->setLayout(layoutWithLabels);
-    //    m_tutorials.PopulateProjectTable(key,ui->tblTutorials);
-
 
     m_tutorials.PopulateProjectTable(key,layoutWithLabels);
     for (auto w:m_tutorials.m_widgets)

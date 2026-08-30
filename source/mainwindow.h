@@ -22,7 +22,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "ui_mainwindow.h"
 #include <QString>
 #include <QPixmap>
 #include <QFileDialog>
@@ -36,6 +35,7 @@
 #include <QFileSystemWatcher>
 #include "source/dialogs/dialogsplash.h"
 #include "source/LeLib/util/cinifile.h"
+#include "ui_mainwindow.h"
 #include "source/trsedocuments/formraseditor.h"
 #include "source/trsedocuments/formimageeditor.h"
 #include "source/trsedocuments/formfjong.h"
@@ -82,10 +82,6 @@ public:
     void VerifyDefaults();
     void ConvertFromOldDiskSystem()
     {
-        //   cc1541_disk_type
-        //  d64name
-        //    dirart_flf_file
-        //    d64_paw_file
         if (m_ini->contains("d64_paw_file") && m_ini->getString("d64_paw_file")!="none") {
             // Convert!
             m_ini->setString("disk1_paw",m_ini->getString("d64_paw_file"));
@@ -342,6 +338,8 @@ private slots:
     void xon_new_file(QString name);
 
     void xon_new_flf_file();
+
+    void xon_new_plab();
 
     void xon_add_existing_file();
 
