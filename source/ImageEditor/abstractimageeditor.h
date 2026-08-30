@@ -2,7 +2,7 @@
 #define ABSTRACTIMAGEEDITOR_H
 
 #include <QObject>
-#include "source/workerthread.h"
+#include "source/misc/workerthread.h"
 
 class AbstractImageEditor// : public QObject
 {

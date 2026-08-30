@@ -25,7 +25,7 @@
 #include <cmath>
 #include <QPushButton>
 #include "source/LeLib/limage/charsetimage.h"
-#include "source/messages.h"
+#include "source/misc/messages.h"
 #include "source/dialogs/dialogselectcharset.h"
 #include <QTimer>
 #include "source/dialogs/dialogselectroom.h"
