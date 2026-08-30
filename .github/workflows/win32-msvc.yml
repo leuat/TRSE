@@ -85,13 +85,29 @@ jobs:
           win_dir=$(cygpath -u "${SYSTEMROOT:-${SystemRoot:-C:\\Windows}}" | tr -d '\r')
           echo "Skipping dependencies from '${win_dir}'"
           copy_deps() {
-            ldd "$1" \
+            local deps dep
+            # The dependency list is collected before the loop rather than piped
+            # into it: `tee /dev/stderr` is not usable in this shell and, with
+            # `set -o pipefail`, a grep that filters out every line (exit code
+            # 1) would abort the whole step.
+            deps=$(ldd "$1" \
               | grep -v -i -f ../ignore_dlls.txt \
               | sed -n 's/^.* => \(.*\) (0x[0-9a-fA-F]*)$/\1/p' \
               | grep -v -i "^${win_dir}/" \
-              | sort -u \
-              | tee /dev/stderr \
-              | xargs -r -I _ bash -c 'cp "_" ./ || echo "failed to copy _"'
+              | sort -u) || true
+            while IFS= read -r dep
+            do
+              [ -n "${dep}" ] || continue
+              # Anything already here was put there on purpose (windeployqt,
+              # ../dll): copying it onto itself is an error, so skip it.
+              if [ -e "./${dep##*/}" ]
+              then
+                echo "      ${dep} (already present)"
+              else
+                echo "      ${dep}"
+                cp "${dep}" ./ || echo "      failed to copy ${dep}"
+              fi
+            done <<< "${deps}"
           }
           # qt_bin_dir and qt_plugin_dir are taken from qmake so that we always
           # pick the tools and plugins of the Qt we linked against, and never the
