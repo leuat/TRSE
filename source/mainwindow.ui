@@ -500,7 +500,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </property>
     <addaction name="actionHelp_F1"/>
     <addaction name="actionTRSE_Showcases"/>
-    <addaction name="actionDonate"/>
     <addaction name="actionAbout"/>
     <addaction name="actionView_changelog"/>
    </widget>
