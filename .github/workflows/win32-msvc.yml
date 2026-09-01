@@ -68,13 +68,6 @@ jobs:
           cp -r ../../tutorials .
           cp -r ../../project_templates .
           cp -r ../../../units .
-          # opengl32sw.dll is not available on the GitHub machine but seems
-          # necessary for windows machine that don't have hardware acceleration
-          # and don't have the DLL on the system directory from another source.
-          # The other DLLs here (VC/OpenMP runtime, OpenSSL) must be shipped from
-          # this directory too: they live in the system directory on the runner
-          # and are therefore skipped by the dependency copy below.
-          cp ../dll/* ./
           # The files are converted to dos format at checkout, we don't want the carriage returns.
           dos2unix ../plugins.txt
           dos2unix ../ignore_dlls.txt
@@ -85,13 +78,29 @@ jobs:
           win_dir=$(cygpath -u "${SYSTEMROOT:-${SystemRoot:-C:\\Windows}}" | tr -d '\r')
           echo "Skipping dependencies from '${win_dir}'"
           copy_deps() {
-            ldd "$1" \
+            local deps dep
+            # The dependency list is collected before the loop rather than piped
+            # into it: `tee /dev/stderr` is not usable in this shell and, with
+            # `set -o pipefail`, a grep that filters out every line (exit code
+            # 1) would abort the whole step.
+            deps=$(ldd "$1" \
               | grep -v -i -f ../ignore_dlls.txt \
               | sed -n 's/^.* => \(.*\) (0x[0-9a-fA-F]*)$/\1/p' \
               | grep -v -i "^${win_dir}/" \
-              | sort -u \
-              | tee /dev/stderr \
-              | xargs -r -I _ bash -c 'cp "_" ./ || echo "failed to copy _"'
+              | sort -u) || true
+            while IFS= read -r dep
+            do
+              [ -n "${dep}" ] || continue
+              # Anything already here was put there on purpose (windeployqt,
+              # ../dll): copying it onto itself is an error, so skip it.
+              if [ -e "./${dep##*/}" ]
+              then
+                echo "      ${dep} (already present)"
+              else
+                echo "      ${dep}"
+                cp "${dep}" ./ || echo "      failed to copy ${dep}"
+              fi
+            done <<< "${deps}"
           }
           # qt_bin_dir and qt_plugin_dir are taken from qmake so that we always
           # pick the tools and plugins of the Qt we linked against, and never the
@@ -119,7 +128,29 @@ jobs:
           # windeployqt.exe needs its own Qt DLLs in PATH to load; add the Qt
           # bin dir explicitly since this bash step starts without it.
           export PATH="${qt_bin_dir}:${PATH}"
-          "${windeployqt}" --release --compiler-runtime .
+          # When a native .exe cannot be started (typically because one of the
+          # DLLs it imports fails to load) bash reports exit code 127, which
+          # looks exactly like a missing command. Probe it first so that the log
+          # shows what is actually wrong instead of a bare 127.
+          if ! "${windeployqt}" --version
+          then
+            echo "windeployqt could not be started. Its dependencies:"
+            ldd "${windeployqt}" || true
+            exit 1
+          fi
+          "${windeployqt}" --release --compiler-runtime trse.exe
+          # opengl32sw.dll is not available on the GitHub machine but seems
+          # necessary for windows machines that don't have hardware acceleration
+          # and don't have the DLL on the system directory from another source.
+          # The OpenMP and OpenSSL runtimes live in the system directory on the
+          # runner and are therefore skipped by the dependency copy below, so
+          # they have to be shipped from here too.
+          # This is done *after* windeployqt on purpose: Windows also searches
+          # the current directory when loading DLLs, and the MSVC runtime in
+          # ../dll is from the VS2015/2017 era, so having it here breaks every
+          # Qt tool we run from this directory. The matching runtime is copied
+          # by windeployqt --compiler-runtime, we must not overwrite it either.
+          cp ../dll/opengl32sw.dll ../dll/vcomp140.dll ../dll/libeay32.dll ../dll/ssleay32.dll ./
           echo "Copy all required plugins"
           while read plugin
           do
