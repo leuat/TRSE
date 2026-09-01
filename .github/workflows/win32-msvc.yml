@@ -68,13 +68,6 @@ jobs:
           cp -r ../../tutorials .
           cp -r ../../project_templates .
           cp -r ../../../units .
-          # opengl32sw.dll is not available on the GitHub machine but seems
-          # necessary for windows machine that don't have hardware acceleration
-          # and don't have the DLL on the system directory from another source.
-          # The other DLLs here (VC/OpenMP runtime, OpenSSL) must be shipped from
-          # this directory too: they live in the system directory on the runner
-          # and are therefore skipped by the dependency copy below.
-          cp ../dll/* ./
           # The files are converted to dos format at checkout, we don't want the carriage returns.
           dos2unix ../plugins.txt
           dos2unix ../ignore_dlls.txt
@@ -135,7 +128,29 @@ jobs:
           # windeployqt.exe needs its own Qt DLLs in PATH to load; add the Qt
           # bin dir explicitly since this bash step starts without it.
           export PATH="${qt_bin_dir}:${PATH}"
-          "${windeployqt}" --release --compiler-runtime .
+          # When a native .exe cannot be started (typically because one of the
+          # DLLs it imports fails to load) bash reports exit code 127, which
+          # looks exactly like a missing command. Probe it first so that the log
+          # shows what is actually wrong instead of a bare 127.
+          if ! "${windeployqt}" --version
+          then
+            echo "windeployqt could not be started. Its dependencies:"
+            ldd "${windeployqt}" || true
+            exit 1
+          fi
+          "${windeployqt}" --release --compiler-runtime trse.exe
+          # opengl32sw.dll is not available on the GitHub machine but seems
+          # necessary for windows machines that don't have hardware acceleration
+          # and don't have the DLL on the system directory from another source.
+          # The OpenMP and OpenSSL runtimes live in the system directory on the
+          # runner and are therefore skipped by the dependency copy below, so
+          # they have to be shipped from here too.
+          # This is done *after* windeployqt on purpose: Windows also searches
+          # the current directory when loading DLLs, and the MSVC runtime in
+          # ../dll is from the VS2015/2017 era, so having it here breaks every
+          # Qt tool we run from this directory. The matching runtime is copied
+          # by windeployqt --compiler-runtime, we must not overwrite it either.
+          cp ../dll/opengl32sw.dll ../dll/vcomp140.dll ../dll/libeay32.dll ../dll/ssleay32.dll ./
           echo "Copy all required plugins"
           while read plugin
           do
