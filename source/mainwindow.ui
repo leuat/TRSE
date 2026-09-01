@@ -334,110 +334,7 @@
         </attribute>
         <layout class="QGridLayout" name="gridLayout_4" rowstretch="0,0" columnstretch="0">
          <item row="0" column="0">
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <layout class="QGridLayout" name="gridLayout_3" columnstretch="5,0,0,0,0,0">
-             <item row="1" column="4">
-              <widget class="LGLSlideshow" name="glslider" native="true">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="label_4">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>64</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="../resources.qrc">:/resources/images/trse_banner.png</pixmap>
-               </property>
-               <property name="scaledContents">
-                <bool>true</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Orientation::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="1" column="5">
-              <widget class="LGLShowcases" name="glShowcase" native="true">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="toolTip">
-                <string>Click to open URL to production</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_2">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>64</width>
-                 <height>64</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>64</width>
-                 <height>64</height>
-                </size>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="pixmap">
-                <pixmap resource="../resources.qrc">:/resources/images/trse_icon.png</pixmap>
-               </property>
-               <property name="scaledContents">
-                <bool>true</bool>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
+          <layout class="QVBoxLayout" name="verticalLayout_2"/>
          </item>
          <item row="1" column="0">
           <widget class="QTabWidget" name="tabWidget">
@@ -482,7 +379,7 @@
                         <x>0</x>
                         <y>0</y>
                         <width>546</width>
-                        <height>430</height>
+                        <height>496</height>
                        </rect>
                       </property>
                      </widget>
@@ -879,20 +776,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>LGLSlideshow</class>
-   <extends>QWidget</extends>
-   <header>source/LeLib/lglslideshow.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>LGLShowcases</class>
-   <extends>QWidget</extends>
-   <header location="global">source/LeLib/lglshowcases.h</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="../resources.qrc"/>
  </resources>
