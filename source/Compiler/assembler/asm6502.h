@@ -144,6 +144,7 @@ public:
     void OptimiseLdLd();
     void OptimisePassStaLdx(const QString& x);
     void OptimisePassLdyLdy(const QString& y);
+    void Optimise16BitStore();
 
 
     bool ContainsAChangingOpcodes(const QString& l1);

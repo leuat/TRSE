@@ -334,7 +334,7 @@ public:
     virtual void RemoveUnusedLabels();
 
 
-    QString getLine(int i);
+    QString getLine(const int i);
 
     QString getNextLine(int i, int &j);
 

@@ -21,7 +21,7 @@
 
 #include "asm6502.h"
 #include "source/Compiler/syntax.h"
-
+#include "source/Compiler/optimiser/postoptimiser6502.h"
 
 QString Asm6502::m_defaultZeroPointers = "$02, $04, $08, $16, $0B,$0D, $10, $12, $22,$24, $68";
 QString Asm6502::m_defaultViaZeroPointers = "$5B, $5C, $5D, $5E";
@@ -35,6 +35,7 @@ Asm6502::Asm6502() :Assembler()
     InitCStrings();
 
     m_countCycles = true;
+//    m_optimiser = QSharedPointer<PostOptimiser>(new PostOptimiser6502());
 }
 
 Asm6502::~Asm6502() {
@@ -830,10 +831,8 @@ void Asm6502::Optimise(CIniFile& ini)
     if (ini.getdouble("post_optimizer_passjmp")==1)
         OptimiseJumps();
 
-    //    if (ini.getdouble("post_optimizer_passcmp")==1)
     if (ini.getdouble("post_optimizer_passcmp")==1)
         OptimiseCmp("cmp");
-    // 6157
     if (ini.getdouble("post_optimizer_passphapla")==1)
         OptimisePhaPla1();
 
@@ -845,6 +844,10 @@ void Asm6502::Optimise(CIniFile& ini)
 
     OptimisePassLdyLdy("y");
     OptimisePassLdyLdy("x");
+
+    Optimise16BitStore();
+
+//    OptimisePassLoad
 
 
     //    if (ini.getdouble("post_optimizer_passldatax")==1)
@@ -1462,4 +1465,64 @@ void Asm6502::OptimisePassLdyLdy(const QString& y)
         }
     }
     RemoveLines();
+}
+
+
+/*
+ * if a and b are integer arrays,  and i some index, writing
+ * a[i]:=100;
+ * b[i]:=100
+ *
+ * will produce excessive
+ *
+ * pha
+ * lda i
+ * asl
+ * tax
+ * pla
+ *
+ * this method removes these
+ *
+ **/
+void Asm6502::Optimise16BitStore()
+{
+    m_removeLines.clear();
+    int j,k;
+    QString lastX = "";
+    for (int i=0;i<m_source.count()-4;i++) {
+        QString l0 = getLine(i).toLower().trimmed();
+        QString l1 = getLine(i+1).toLower().trimmed();
+        QString l2 = getLine(i+2).toLower().trimmed();
+        QString l3 = getLine(i+3).toLower().trimmed();
+        QString l4 = getLine(i+4).toLower().trimmed();
+
+        if (l0=="dex" || l0=="inx" || l0=="ldx" || l0.startsWith("jsr") || l0=="tsx")
+            lastX = ""; // reset
+
+        // special case. ignore tax if inside this loop
+        if (lastX!="")
+            if (l0=="tax" && (getLine(i-1).toLower().trimmed()!="asl") && getLine(i-2).toLower().trimmed()!="lda "+lastX)
+            lastX ="";
+
+        if (l0=="pha" && l1.startsWith("lda ") && l2=="asl" && l3=="tax" && l4=="pla") {
+            // First take:
+            QString cur = l1.split(" ")[1];
+            if (lastX=="")
+                lastX = cur;
+            else {
+                // ALready exists: if so, mark for removal
+                if (lastX==cur) {
+                    // Mark for removal
+                    m_removeLines.append(i);
+                    m_removeLines.append(i+1);
+                    m_removeLines.append(i+2);
+                    m_removeLines.append(i+3);
+                    m_removeLines.append(i+4);
+                }
+            }
+
+        }
+    }
+    RemoveLines();
+
 }

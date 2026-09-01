@@ -654,8 +654,10 @@ void Assembler::RemoveUnusedLabels()
 
 }
 
-QString Assembler::getLine(int i)
+QString Assembler::getLine(const int i)
 {
+    if (i<0 || i>=m_source.count())
+        return "";
     QString s = m_source[i].trimmed().toLower().simplified().remove("\n");
     //    return s;
 

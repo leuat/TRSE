@@ -136,6 +136,7 @@ linux*{
 
 
 SOURCES += source/main.cpp\
+    source/Compiler/optimiser/postoptimiser6502.cpp \
     source/dialogs/formtutorialitem.cpp \
     source/mainwindow.cpp \
     source/misc/cli.cpp \
@@ -462,6 +463,7 @@ SOURCES += source/main.cpp\
 
 
 HEADERS  += source/mainwindow.h \
+    source/Compiler/optimiser/postoptimiser6502.h \
     source/dialogs/formtutorialitem.h \
     source/misc/cli.h \
     source/misc/imageworker.h \

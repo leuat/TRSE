@@ -164,7 +164,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeForLoop> node) {
 
   auto v = qSharedPointerDynamicCast<NodeVar>(nVar->m_left);
   if (v == nullptr)
-    ErrorHandler::e.Error("Index must be a varialbe", node->m_op.m_lineNumber);
+    ErrorHandler::e.Error("Index must be a variable", node->m_op.m_lineNumber);
 
   if (node->m_unroll) {
     node->clearComment();
