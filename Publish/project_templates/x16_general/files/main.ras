@@ -1,0 +1,23 @@
+program X16Project;
+@use "system/screen"
+var
+	time:byte;
+
+	
+interrupt Raster();
+begin
+	Memory::StartIRQ();
+	time+=1;
+	Screen::PrintString("TRSE ",50,mod(time,Screen::Screen_height), random());
+	Memory::CloseIRQ();
+	
+end;	
+	
+begin
+	Memory_SetBank(0);
+	Screen::ClearScreen(32,black<<4);
+	Screen::PrintString("HELLO WORLD ON THE X16 WITH ",22,5, white |(blue<<4));
+	Memory::VSyncIRQ(#Raster);
+	loop();
+end.
+

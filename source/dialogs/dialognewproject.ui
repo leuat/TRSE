@@ -156,6 +156,11 @@
             <string>VZ200</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>X16</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
@@ -229,7 +234,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
