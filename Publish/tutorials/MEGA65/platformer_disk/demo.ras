@@ -1,0 +1,293 @@
+program platformer_demo;
+
+@use "mylib/graph"
+@use "mylib/DMA"
+@use "mylib/fileio"
+@use "mylib/joystick"
+@use "system/str"
+
+/*
+	Disk content in disk.paw
+	Disk settings in project settings/target output
+*/
+
+var mapx, mapy : integer;
+	const MAPWIDTH : byte = 200;	// 100 Tiles 
+@donotremove PALFILENAME
+	PALFILENAME : string = "AURORA.BIN";
+@donotremove TILESFILENAME
+	TILESFILENAME : string = "TILES.BIN";
+@donotremove UIFILENAME
+	UIFILENAME : string = "UI.BIN";	
+@donotremove MAPFILENAME
+	MAPFILENAME : string = "MAP.BIN";
+
+	s_dex : cstring = "dex";
+	s_str : cstring = "str";
+	s_int : cstring = "int";
+	s_mov : cstring = "mov";
+	
+	i_dex : integer = 0;
+	i_str : integer = 999;
+	i_int : integer = 0;
+	i_mov : integer = 999;
+	
+	y : byte;
+	addr : integer;	
+	maddr : integer;
+	
+	lestring : string = "      ";
+	const GOTOX : byte = $10;
+	const TRANSPARENT : byte = $80;
+	const TRANSPARENT_TILE : integer = 4108;
+	const PLAYER_TILE : integer = 4129;
+	
+	playerX : integer = 50;
+	playerY : byte = 50;
+	
+	RRB_playerTilePosition : array[25] of integer;
+	RRB_playerXPosition    : array[25] of integer;
+	
+
+procedure loadData;
+begin
+	// use file loading before eliminating the kernel rom!!!!!
+	
+	// loading palette data
+	fileio::LoadFile(0,$4000,10,#PALFILENAME);		
+	
+	// copy palette data
+	asm("
+		ldx #$ff
+	@cploop:
+		lda $4000,x
+		sta $d100,x
+		lda $4100,x
+		sta $d200,x
+		lda $4200,x
+		sta $d300,x
+		dex
+		bne @cploop
+	");
+	
+	// load tile data
+	fileio::LoadFile($0004,$0000,9,#TILESFILENAME);	
+	// load ui overlay
+	fileio::LoadFileHigh($0800,$0000,6,#UIFILENAME);	
+	// load map data
+	fileio::LoadFileHigh($0801,$0000,7,#MAPFILENAME);	
+end;
+
+
+procedure DrawMap;
+var i : byte;
+	x,y : byte;
+	addr : integer;
+	maddr : integer;
+begin
+	// draw the cut of the map into the map window
+	 fori y := 1 to 23 do
+	 begin
+		 maddr := (mapx*2)+(mapy+y)*MAPWIDTH;
+		 addr := 2+y*graph::LogicalRowSize;
+		 DMA::dmaCopy($80,$01,maddr,$00,5,addr,56);
+	 end;
+end;
+
+procedure UpdateUi;
+begin
+	// update the values and print into stats section	
+		
+	i_dex := i_dex + 1;
+	if (i_dex > 900) then i_dex := 0;
+
+	i_str := i_str - 1;
+	if (i_str <= 1) then i_str := 999;
+
+	i_int := i_int + 1;
+	if (i_int > 900) then i_int := 0;
+
+	i_mov := i_mov - 1;
+	if (i_mov <= 1) then i_mov := 999;
+	
+	graph::writeFCMString(31,2,#s_dex,2);
+	graph::writeFCMString(31,3,#s_str,3);
+	graph::writeFCMString(31,4,#s_int,4);
+	graph::writeFCMString(31,5,#s_mov,5);
+	
+
+	
+	str::itoa(i_dex,#lestring,10);
+	graph::writeFCMString(35,2,#lestring,5);
+	str::itoa(i_str,#lestring,10);
+	graph::writeFCMString(35,3,#lestring,4);
+	str::itoa(i_int,#lestring,10);
+	graph::writeFCMString(35,4,#lestring,3);
+	str::itoa(i_mov,#lestring,10);
+	graph::writeFCMString(35,5,#lestring,2);
+end;
+
+
+procedure InitRRB;
+var i : byte;
+	a : integer;
+begin	
+	fori i := 0 to 24 do
+	begin
+		// calculate position in attrib/screen ram 
+		// 40 chars visible on screen
+		
+		a := 80+i*graph::LogicalRowSize;
+		
+		graph::WPoke32($0f,$f8,a,GOTOX | TRANSPARENT);
+		graph::WPoke32($00,$05,a,0);					// Player X Position
+		RRB_playerXPosition[i] := a;					// save address
+		a := a + 2;
+		
+		graph::WPoke32($0f,$f8,a,$0000);
+		graph::WPoke32($00,$05,a,TRANSPARENT_TILE);		// Player Tile
+		RRB_playerTilePosition[i] := a;					// save address
+		a := a + 2;		
+		
+		graph::WPoke32($0f,$f8,a,GOTOX);
+		graph::WPoke32($00,$05,a,320);					// goto end of screen
+		a := a + 2;
+		
+		graph::WPoke32($0f,$f8,a,0);					// additional char to end row
+		graph::WPoke32($00,$05,a,0);
+	end;	
+end;
+
+procedure UpdatePlayer;
+var i : byte;
+	ly : byte;
+	dy : integer;
+begin
+	// Input Player
+	joystick::GetJoyStick();
+
+	if ((joystick::Joy2Up>0) and (playerY > 0)) then 	
+	begin
+		if playerY > 20 then 
+			playerY := playerY - 1
+		else
+			if (mapy > 0) then 
+			begin
+				playerY := playerY + 32;
+				mapy := mapy - 4;
+			end;
+	
+	end;
+	if ((joystick::Joy2Down>0) and (playerY < 200)) then 
+	begin
+		if playerY < 180 then 
+			playerY := playerY + 1
+		else
+			if mapy < 100 -24 then 
+			begin
+				playerY := playerY -32; 
+				mapy := mapy + 4;
+			end;
+	end;
+	if ((joystick::Joy2Left>0) and (playerX > 0)) then 
+	begin
+		if playerX > 20 then 
+			playerX := playerX - 1
+		else
+			if (mapx > 0) then 
+			begin
+				playerX := playerX + 32;
+				mapx := mapx - 4;
+			end;
+	end;
+	if ((joystick::Joy2Right>0) and (playerX < 320)) then 
+	begin
+		if playerX < 220 then 
+			playerX := playerX + 1
+		else
+			if mapx < 100 -23 then 
+			begin
+				playerX := playerX - 32; 
+				mapx := mapx + 4;
+			end;
+	end;
+	
+	
+	ly := playerY / 8;	// textrow of player
+	
+	// y fine value dy = y % 8 shifted to high 3 bits and stored in highyte of word (2 byte per char!)
+	asm ("
+		lda playerY
+		and #$07
+		eor #$07
+		asl
+		asl
+		asl
+		asl
+		asl
+	
+		sta localVariable_UpdatePlayer_dy	+1		
+	");
+	
+	fori i := 0 to 24 do
+		// clear all tiles - Screen Memory
+		graph::WPoke32($00,$05,RRB_playerTilePosition[i],TRANSPARENT_TILE);
+		
+	
+	
+	// Set Player X Position -  Screen Memory || row before for fine y
+	// Set Player Tile - Screen Memory || row before for fine y
+	graph::WPoke32($00,$05,RRB_playerTilePosition[ly-1],PLAYER_TILE-1);
+	graph::WPoke32($00,$05,RRB_playerXPosition[ly-1],playerX | dy);	// X Position & fine Y Position
+
+	// Set Player X Position -  Screen Memory
+	// Set Player Tile - Screen Memory
+	graph::WPoke32($00,$05,RRB_playerTilePosition[ly],PLAYER_TILE);
+	graph::WPoke32($00,$05,RRB_playerXPosition[ly],playerX | dy);	// X Position & fine Y Position
+	
+end;
+
+begin
+	//while (true)do  begin inc(^$D020); inc(^$D021); end;
+	
+	loadData;
+	graph::Initialize;
+	graph::EnableFastRRB;
+
+	graph::SetScreenLocation(5,0000);	// Screen at $50000
+	graph::SetScreenWidth(45);			// screen width with rrb in mind -> 1 single bob = 40->45 change with rrb!
+	
+	// clear out screen and attrib
+	DMA::dmaFill(0,5,$0000,25*graph::LogicalRowSize,0);	
+	DMA::dmaFill($ff,$08,$0000,25*graph::LogicalRowSize,0);		
+
+	// copy ui frame
+	fori y := 0 to 24 do
+	begin
+		addr := y*graph::LogicalRowSize;
+		maddr := y * 80;
+		DMA::dmaCopy($80,$00,maddr,$00,5,addr,80);			
+	end;
+
+	// zero out stats area
+	fori y := 1 to 23 do
+	begin
+		addr := 30*2+(y*graph::LogicalRowSize);
+		DMA::dmaFill($00,5,addr,18,0);
+		DMA::dmaFill($ff,$08,addr,18,0);
+	end;
+	
+	InitRRB;
+	
+	while(1) do
+	begin
+		graph::vsync(1);
+
+		poke($d020,1,90);		
+		DrawMap;
+		UpdateUi;
+		UpdatePlayer;
+		poke($d020,1,0);
+	end;
+	
+end.

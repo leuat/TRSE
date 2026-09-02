@@ -288,6 +288,19 @@ bool Syntax::StringIsAlnum(QString s)
     return true;
 }
 
+bool Syntax::isAlnumExcludePeriod(QString s) {
+    return alnumStringWithoutPeriod.contains(s.toLower());
+}
+
+bool Syntax::StringIsAlnumExcludePeriod(QString s)
+{
+    for (QChar c : s) {
+        if (!isAlnumExcludePeriod(c))
+            return false;
+    }
+    return true;
+}
+
 bool Syntax::isString(QString s) {
     return alnumString.contains(s.toLower());
 }

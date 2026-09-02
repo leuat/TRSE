@@ -1,0 +1,109 @@
+unit joystick;
+
+
+var 
+	Joy1Button : byte = 0;
+	Joy1Up : byte = 0 ;
+	Joy1Down : byte = 0 ;
+	Joy1Left : byte = 0 ;
+	Joy1Right : byte = 0 ;
+	
+	Joy2Button : byte = 0 ;
+	Joy2Up : byte = 0 ;
+	Joy2Down : byte = 0;
+	Joy2Left : byte = 0;
+	Joy2Right : byte = 0;
+
+
+procedure GetJoyStick() ;
+begin
+	Joy2Button := 0;
+	Joy2Up := 0;
+	Joy2Down := 0;
+	Joy2Left := 0;
+	Joy2Right := 0;
+	
+	Joy1Button := 0;
+	Joy1Up := 0;
+	Joy1Down := 0;
+	Joy1Left := 0;
+	Joy1Right := 0;
+	
+	
+	asm("
+	
+	@j2btn:
+		lda $DC00
+		and #$10
+		bne @j2up
+		lda #$01
+		sta joystick_Joy2Button
+		jmp @exit
+	@j2up:
+		lda $DC00
+		and #$01
+		bne @j2down
+		lda #$01
+		sta joystick_Joy2Up
+		jmp @exit
+	@j2down:
+		lda $DC00
+		and #$02
+		bne @j2left
+		lda #$01
+		sta joystick_Joy2Down
+		jmp @exit
+	@j2left:
+		lda $DC00
+		and #$04
+		bne @j2right
+		lda #$01
+		sta joystick_Joy2Left
+		jmp @exit
+	@j2right:
+		lda $DC00
+		and #$08
+		bne @j1btn
+		lda #$01
+		sta joystick_Joy2Right
+		jmp @exit
+	@j1btn:
+		lda $DC01
+		and #$10
+		bne @j1up
+		lda #$01
+		sta joystick_Joy1Button
+		jmp @exit
+	@j1up:
+		lda $DC01
+		and #$01
+		bne @j1down
+		lda #$01
+		sta joystick_Joy1Up
+		jmp @exit
+	@j1down:
+		lda $DC01
+		and #$02
+		bne @j1left
+		lda #$01
+		sta joystick_Joy1Down
+		jmp @exit
+	@j1left:
+		lda $DC01
+		and #$04
+		bne @j1right
+		lda #$01
+		sta joystick_Joy1Left
+		jmp @exit
+	@j1right:
+		lda $DC01
+		and #$08
+		bne @exit
+		lda #$01
+		sta joystick_Joy1Right
+	@exit:
+");
+end;
+
+
+end.

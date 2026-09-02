@@ -1,0 +1,82 @@
+unit fileio;
+
+var
+	s : ^byte;
+
+procedure LoadFileHigh(b : integer;addr : integer;l : byte;s : global ^byte);
+begin
+	ASM("
+		sei		
+	
+		lda localVariable_fileio_LoadFileHigh_fileio_b+1	; for load address
+		ora #$80
+		ldy localVariable_fileio_LoadFileHigh_fileio_b
+		ldx #$00	; bank for filename
+		jsr $ff6b
+
+		lda #$00
+		ldx #$08
+		ldy #$00
+		jsr $FFBA
+					
+		lda localVariable_fileio_LoadFileHigh_fileio_l
+		ldx fileio_s
+		ldy fileio_s+1
+		jsr $FFBD
+	
+		lda #$00
+		ldx localVariable_fileio_LoadFileHigh_fileio_addr
+		ldy localVariable_fileio_LoadFileHigh_fileio_addr+1
+		jsr $FFD5
+		bcs @derror
+		jmp @goexit
+	@derror:
+		inc $d020
+		jmp @derror
+		
+	@goexit:
+		cli
+
+	");	
+
+end;
+	
+procedure LoadFile(b : byte;addr : integer;l : byte;s : global ^byte);
+begin
+	ASM("
+		sei
+	
+	
+		lda localVariable_fileio_LoadFile_fileio_b	; for load address
+		ldx #$00
+		jsr $ff6b
+		
+
+		lda #$00
+		ldx #$08
+		ldy #$00
+		jsr $FFBA
+		
+		lda localVariable_fileio_LoadFile_fileio_l
+		ldx fileio_s
+		ldy fileio_s+1
+		jsr $FFBD
+	
+
+		lda #$00
+		ldx localVariable_fileio_LoadFile_fileio_addr
+		ldy localVariable_fileio_LoadFile_fileio_addr+1
+		jsr $FFD5
+		bcs @derror
+		jmp @goexit
+	@derror:
+		inc $d020
+		jmp @derror
+		
+	@goexit:
+		cli
+
+	");	
+end;
+
+end.

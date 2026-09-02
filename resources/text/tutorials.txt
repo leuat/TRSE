@@ -53,7 +53,8 @@ OK64; OK Operating System (KOS) ; OK64/KOS/; <h2>KOS: OK64 OS Operating system s
 ATARI2600; Atari 2600 tutorials; ATARI2600/tutorials/;  <h2>Main Atari 2600 tutorials</h2><p><img src=":resources/images/ATARI2600.png" width="200" class="center"><p>Proof-of-concept, but not much else. A couple of test tutorials. Will be expanded upon at a later point.
 
 MEGA65; Main Mega65 tutorials; MEGA65/Tutorials/ ;  <h2>Main Mega65 tutorials</h2><p><img src=":resources/images/tutorials/mega1.png" width="200" class="center"><p>Recommended starting point for anybody interested in coding for the MEGA65.
-MEGA65; Mega65 Demoeffects (raytracer); MEGA65/RayTracer/ ;  <h2><p><img src=":resources/images/tutorials/mega2.png" width="200" class="center"><p>The Mega65 demo effect ray tracer tutorials!</h2><p>Under construction.
+MEGA65; Disk loader platformer; MEGA65/platformer_disk/ ;  <h2><p><img src=":resources/images/tutorials/mega65_platformer.png" width="200" class="center"><p>Mega65 disk loader project</h2><p>Showcases how to set up a mega65 disk project in TRSE, and load various files from disk. Code by Roughnight86
+MEGA65; Mega65 Demoeffects (raytracer); MEGA65/Raytracer/ ;  <h2><p><img src=":resources/images/tutorials/mega2.png" width="200" class="center"><p>The Mega65 demo effect ray tracer tutorials!</h2><p>Under construction.
 
 BBCM; Main BBC Micro tutorials; BBCM/Tutorials/ ;  <h2>Main BBCM tutorials</h2><p><img src=":resources/images/tutorials/bbc1.png" width="200" class="center"><p><p>Main BBC Micro (32k) tutorials.
 BBCM; Beep! the demo; BBCM/Beep/ ;  <h2>Beep! the demo</h2><p><img src=":resources/images/beep.png" width="200" class="center"><p>Beep! is multi-part disk-loading demo for the BBC Micro that was made entirely with TRSE. Beep! was released at Deadline 2021.

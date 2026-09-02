@@ -8,6 +8,7 @@
 //#include "source/OrgAsm/orgasm.h"
 #include <QElapsedTimer>
 #include "source/Compiler/token.h"
+#include "source/LeLib/limage/limage.h"
 
 class Orgasm;
 
@@ -88,6 +89,10 @@ public:
         return CompressZX0(fileName, fileName +"_c");
     }
     QString CompressZX0(QString fileName, QString outFileName);
+
+    bool CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text, int track);
+    bool BuildDiskFilesCC1541(QString currentDir, QStringList& d64Params, QString iniData, QString &text);
+    void ApplyDirArt(QString currentDir, QString dirart, QString disk, QString& text);
 
 
     virtual QString getArkosTrackerSystemString() {return "";}

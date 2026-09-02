@@ -1,0 +1,66 @@
+unit math;
+
+var p : pointer;
+	result : long;
+
+function Mult(a,b : integer) : integer;
+begin
+	asm("
+		lda localVariable_math_Mult_math_a
+		sta $D770
+		lda localVariable_math_Mult_math_a+1
+		sta $D771
+		ldz #$00
+		stz $D772
+		stz $D773
+		lda localVariable_math_Mult_math_b
+		sta $D774
+		lda localVariable_math_Mult_math_b+1
+		sta $D775
+		stz $D776
+		stz $D777
+		ldz #$00
+		stz $D772
+		stz $D773
+		
+		; return value
+		ldy $D779 
+		lda $D778
+	");	
+end;
+
+procedure MultLong(a,b : long);
+begin
+	asm("
+		lda localVariable_math_MultLong_math_a
+		sta $D770
+		lda localVariable_math_MultLong_math_a+1
+		sta $D771
+		lda localVariable_math_MultLong_math_a+2
+		sta $D772
+		lda localVariable_math_MultLong_math_a+3
+		sta $D773
+		
+		lda localVariable_math_MultLong_math_b
+		sta $D774
+		lda localVariable_math_MultLong_math_b+1
+		sta $D775
+		lda localVariable_math_MultLong_math_b+2
+		sta $D776
+		lda localVariable_math_MultLong_math_b+3
+		sta $D777
+		
+		; return value
+		lda $D778
+		sta math_result+3
+		lda $D779
+		sta math_result+2
+		lda $D77A
+		sta math_result+1
+		lda $D77B
+		sta math_result
+	");
+
+end;
+
+end.

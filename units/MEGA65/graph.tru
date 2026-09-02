@@ -1,0 +1,343 @@
+unit graph;
+
+var s : ^byte;
+@donotremove LogicalRowSize
+	LogicalRowSize : integer;
+@donotremove RowSize
+	RowSize : integer;
+@donotremove PEEKVAL	
+	PEEKVAL : integer at $8000;
+	
+//	.const 80 = (HORIZONTAL_CENTER - ((SCREEN_WIDTH * HPIXELSCALE) / 2))
+//.const 104 = (VERTICAL_CENTER - ((SCREEN_HEIGHT * VPIXELSCALE) / 2))-2
+//.const 504 = (VERTICAL_CENTER + ((SCREEN_HEIGHT * VPIXELSCALE) / 2))-2
+
+//.const TEXTYPOS = 104
+/*
+@donotremove 80
+	LEFT_BORDER : integer = 80;
+@donotremove 104
+	TOP_BORDER : integer = 104;
+@donotremove 504
+	BOTTOM_BORDER : integer = 504;
+*/
+procedure Enable40Mhz;
+begin
+		asm("
+			lda #$41
+			sta $00
+		");
+end;
+
+procedure EnableVic4;
+begin	
+		asm("
+			lda #$00
+			tax
+			tay
+			taz
+			map
+			eom
+			
+			lda #$47
+			sta $d02f
+			lda #$53
+			sta $d02f		
+		");
+end;
+
+procedure DisableC65Rom;
+begin
+		asm ("
+			lda #$70
+			sta $d640
+			eom		
+		");
+end;
+
+procedure EnableFastRRB;
+begin
+		asm ("
+			lda #$08
+			tsb $d031
+			lda #$c0
+			tsb $d051
+			
+			lda #$00
+			sta $d05b
+		");
+end;
+
+
+
+procedure Initialize;
+begin
+		asm ("
+			sei
+			lda #$35
+			sta $01
+			; Disable CIA Interrupts
+			lda #$7f
+			sta $dc0d
+			sta $dd0d
+					
+		");
+		Enable40Mhz;
+		EnableVic4;
+		DisableC65Rom;
+		asm ("
+			; Disable IRQ raster interrupts
+			; because C65 uses raster interrupts in the ROM
+			lda #$00
+			sta $d01a
+			
+			; Unmap C64 Roms $d030 by clearing bits 3-7
+			lda #%11111000
+			trb $d030
+			cli
+		
+			; Disable Hot register to VIC2 register
+			lda #$80
+			trb $d05d
+			
+			; Disable Vic3 ATTR register to enable 8bit color
+			lda #$20
+			trb $d031
+			
+			; Disable H640
+			lda #%10000000
+			trb $d031
+			
+			; Disable V400
+			lda #%00001000
+			trb $d031
+			
+			; Enable RAM palettes
+			lda #$04
+			tsb $d030
+			
+			; Turm on FCM mode and 16bit per char num
+			lda #$05
+			sta $d054
+			
+			; border and back color
+			lda #0
+			sta $d020
+			sta $d021
+			
+			; exclude Kernel+Basic rom
+			lda    $00
+        		ora    #$07
+        		sta    $00
+        
+			;lda #$1D
+			;sta $01
+		
+			; enable fine raster compare
+			lda #%10000111
+            	trb $d07a
+			lda #%10000000
+			trb $d053
+			lda #$68
+            	sta $d079
+		");
+end;
+
+procedure Poke32(mb,b:byte;ad:integer;val:byte);
+begin
+		asm("
+			lda localVariable_graph_Poke32_graph_mb
+			sta $43
+			lda localVariable_graph_Poke32_graph_b
+			sta $42
+			lda localVariable_graph_Poke32_graph_ad+1
+			sta $41
+			lda	localVariable_graph_Poke32_graph_ad
+			sta $40
+			lda localVariable_graph_Poke32_graph_val
+			ldz #0
+			nop
+			sta ($40),z
+		");
+
+end;
+
+procedure WPoke32(mb,b:byte;ad:integer;val:integer);
+begin
+		asm("
+			lda localVariable_graph_WPoke32_graph_mb
+			sta $43
+			lda localVariable_graph_WPoke32_graph_b
+			sta $42
+			lda localVariable_graph_WPoke32_graph_ad+1
+			sta $41
+			lda	localVariable_graph_WPoke32_graph_ad
+			sta $40
+			
+			lda localVariable_graph_WPoke32_graph_val
+			ldz #0
+			nop
+			sta ($40),z
+			
+			lda localVariable_graph_WPoke32_graph_val+1
+			ldz #1
+			nop
+			sta ($40),z
+		");
+end;
+
+procedure WPeek32(mb,b:byte;ad:integer);
+begin
+		asm("
+			lda localVariable_graph_WPeek32_graph_mb
+			sta $43
+			lda localVariable_graph_WPeek32_graph_b
+			sta $42
+			lda localVariable_graph_WPeek32_graph_ad+1
+			sta $41
+			lda	localVariable_graph_WPeek32_graph_ad
+			sta $40
+			
+			ldz #0
+			nop
+			lda ($40),z
+			sta graph_PEEKVAL
+			
+			ldz #1
+			nop
+			lda ($40),z
+			sta graph_PEEKVAL+1
+
+		");
+end;
+
+
+
+procedure SetScreenBackground(back,border : byte);
+begin
+		asm("
+			lda localVariable_graph_SetScreenBackground_graph_back
+			sta $d020
+			lda localVariable_graph_SetScreenBackground_graph_border
+			sta $d021
+		");	
+end;
+
+procedure SetScreenLocation(b:byte;addr : integer);
+begin
+		asm("
+			lda localVariable_graph_SetScreenLocation_graph_b
+			sta $d062
+			lda localVariable_graph_SetScreenLocation_graph_addr
+			sta $d061
+			lda localVariable_graph_SetScreenLocation_graph_addr+1
+			sta $d060		
+		");
+end;
+
+procedure SetScreenWidth(newRowSize : integer);
+begin
+	RowSize := newRowSize;
+	LogicalRowSize := RowSize * 2;
+	
+	asm("
+		lda graph_RowSize
+		sta $D05E
+		lda graph_LogicalRowSize
+		sta $D058
+		lda graph_LogicalRowSize+1
+		sta $D059
+		lda #25
+		sta $d07b
+	
+	");
+end;
+
+
+procedure vsync(rline : integer);
+begin
+	asm("
+	@vsync_wait1:
+		lda $d053
+		and #$07
+		cmp localVariable_graph_vsync_graph_rline+1
+		bne @vsync_wait1
+		lda localVariable_graph_vsync_graph_rline
+		cmp $d052
+		bne @vsync_wait1
+	@vsync_wait2:
+		cmp $d052
+		beq @vsync_wait2
+	");	
+end;
+
+
+procedure writeChar(x,y : integer;char : byte;col : byte);
+begin
+	Poke32($0,$5,(x*2)+(y*LogicalRowSize),char);	
+	Poke32($0f,$f8,1+(x*2)+(y*LogicalRowSize),col);	
+end;
+
+procedure writeTile(x,y : integer;tilenum : integer);
+begin
+	Poke32($0,$5,(x*2)+(y*LogicalRowSize),lo(tilenum));
+	Poke32($0,$5,(x*2)+(y*LogicalRowSize)+1,hi(tilenum));
+end;
+
+procedure writeFCMString(x,y : integer;s : ^byte global ;col : byte);
+var i : byte;
+begin
+	i := 0;
+	while (s[i]<>0) do
+	begin
+		writeChar(x+i,y,s[i],col);
+		i := i+1;
+	end;
+end;
+
+procedure InitBorder;
+begin
+	asm("
+		; SDBDRWDLSB,SDBDRWDMSB - Side Border size
+		lda #80
+		sta $d05c
+		lda #%00111111
+		trb $d05d
+		lda #(>80) & %00111111
+		tsb $d05d
+	
+		; TBDRPOS - Top Border position
+		lda #<104
+		sta $d048
+		lda #%00001111
+		trb $d049
+		lda #(>104) & %00001111
+		tsb $d049
+	
+		; BBDRPOS - Bottom Border position
+		lda #<504
+		sta $d04a
+		lda #%00001111
+		trb $d04b
+		lda #(>504) & %00001111
+		tsb $d04b
+	
+		; TEXTXPOS - Text X position - position of left most pixel
+		lda #<80
+		sta $d04c
+		lda #%00001111
+		trb $d04d
+		lda #(>80) & %00001111
+		tsb $d04d
+	
+		; TEXTYPOS - Text Y position - position of top most pixel
+		lda #<104
+		sta $d04e
+		lda #%00001111
+		trb $d04f
+		lda #(>104) & %00001111
+		tsb $d04f
+		
+	");
+end;
+end.

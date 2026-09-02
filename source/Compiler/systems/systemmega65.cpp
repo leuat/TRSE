@@ -1,6 +1,15 @@
 #include "systemmega65.h"
 
 
+void SystemMega65::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+
+    if (m_projectIni->getString("output_type")=="d64")
+        params << "-besure" << "-8" <<  filename+"_disk1."+m_projectIni->getString("disk1_type") << "-autoload";
+    else
+        params  <<"-besure" <<"-prgmode" <<"65"<< "-prg" <<filename+".prg";
+
+}
+
 void SystemMega65::PrepareInitialAssembler(Assembler *as)
 {
     as->Asm(" .org $2001");

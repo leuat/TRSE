@@ -128,6 +128,7 @@ public:
     QString alpha = "abcdefghijklmnopqrstuvwxyz_";
     QString alnum =alpha+digit;
     QString alnumString =alpha+digit+ " ;:æøå!#¤%&/()=.,-+*";
+    QString alnumStringWithoutPeriod =alpha+digit+ ".";
     QString binop = digitAll + " +-*/";
     uint lineNumber = 0;
     void SetupConstants();
@@ -142,7 +143,9 @@ public:
     bool isDigit(QString s);
     bool isDigitHex(QString s);
     bool isAlnum(QString s);
+    bool isAlnumExcludePeriod(QString s);
     bool StringIsAlnum(QString s);
+    bool StringIsAlnumExcludePeriod(QString s);
     bool isString(QString s);
 
     bool isAlpha(QString s);

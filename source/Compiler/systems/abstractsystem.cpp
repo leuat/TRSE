@@ -8,6 +8,9 @@
 #include "source/OrgAsm/orgasm68k.h"
 #include <QMessageBox>
 #include "source/LeLib/data.h"
+#include "source/LeLib/util/cc1541.h"
+#include "source/LeLib/limage/limageio.h"
+#include "source/LeLib/util/dirartd64.h"
 
 extern "C" {
     #include "source/LeLib/util/zx0/zx0.h"
@@ -659,13 +662,145 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
     //    Util::CopyFile()
 
 }
-/*
-bool AbstractSystem::isSupported(QString currentSystem, QString list) {
-    QStringList lst  = list.toLower().trimmed().simplified().split(",");
-    for (QString s : lst)
-        if (s == currentSystem.toLower() || s=="all")
-            return true;
 
-    return false;
+bool AbstractSystem::CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text, int track)
+{
+    QString f = filename.split("/").last();
+    QStringList d64Params = QStringList();
+
+
+    QString type = m_projectIni->getString(disk+"_type");
+
+    if (QFile::exists(filename+"."+type))
+        QFile::remove(filename+"."+type);
+
+
+    QStringList shadow;
+    if (track==19)
+        shadow <<"-d"<<QString::number(track) ;
+
+
+    QString diskName = filename+"_"+disk+"."+type;
+
+    if (QFile::exists(diskName))
+        QFile::remove(diskName);
+
+    d64Params  <<"cc1541"<<shadow <<"-n" << m_projectIni->getString(disk+"_name");// << shadowDir;
+    if (addPrg)
+        d64Params << "-f"<<f << "-w"<<filename+".prg";
+
+    if (!BuildDiskFilesCC1541(currentDir, d64Params,m_projectIni->getString(disk+"_paw"), text))
+    {
+        text+="<br><font color=\"#FF8080\">Error</font>! Could not build C64 "+disk+".. please make sure that all the files specified in "+filename+" exist!<br>";
+        return false;
+    }
+    d64Params<< diskName;
+
+    cc1541(d64Params.size(), Util::StringListToChar(d64Params));
+    std::cout << stdout;
+    std::cout << stderr;
+
+
+
+    if (QFile::exists(filename+"."+type) && track==19) {
+        ApplyDirArt(currentDir,m_projectIni->getString(disk+"_flf"),filename+"."+type, text);
+    }
+    return true;}
+
+bool AbstractSystem::BuildDiskFilesCC1541(QString currentDir, QStringList &d64Params, QString pawFile, QString& text)
+{
+
+    CIniFile paw;
+    paw.Load(currentDir + "/"+pawFile);
+    QStringList data = paw.getStringList("data");
+    QStringList data_tc = paw.getStringList("data_tinycrunch");
+    int count = data.count()/3;
+    QString outFolder = currentDir+"/"+ paw.getString("output_dir");
+
+    if (!QDir().exists(outFolder))
+        QDir().mkdir(outFolder);
+
+    for (int i=0;i<count;i++) {
+        QString orgFileName = data[3*i+1];
+        bool isCrunched = false;
+        if (i<data_tc.count())
+            isCrunched = data_tc[i]=="1";
+
+        QString name = data[3*i];
+
+        if (!Syntax::s.StringIsAlnumExcludePeriod(name) || name.contains("_")) {
+            text=text + "<br><font color=\"#FF6040\">Error: Filename '"+name+"' is incorrect since it must be alphanumerical and not contain other characters (a-z-0-9)</font><br>";
+            m_buildSuccess = false;
+            return false;
+
+        }
+
+        int address = Util::NumberFromStringHex( data[3*i+2]);
+        QString fn = currentDir+"/"+orgFileName;
+        if (!QFile::exists(fn)) {
+            text=text + "<br><font color=\"#FF6040\">Error: Could not append disk file '"+fn+"' because it does not exist</font><br>";
+            m_buildSuccess = false;
+
+            return false;
+        }
+        QString oname = name;
+
+        if (!isCrunched) {
+            QString of = outFolder+"/"+orgFileName.split("/").last();
+            Util::ConvertFileWithLoadAddress(fn,of,address);
+
+            d64Params  /*<<"-T" << "USR"*/ <<"-f" <<oname << "-w" <<of;
+        }
+        else {
+            //            QString ending = orgFileName.split(".").last();
+            QString iff = name;
+            QString of = outFolder+"/"+iff+"_c.bin";
+            if (!QFile::exists(of)) {
+                text=text + "<br><font color=\"#FF6040\">Error: Could not append compressed disk file '"+of+"' because it does not exist. Did you build your disk before compiling?</font><br>";
+                m_buildSuccess = false;
+                return false;
+            }
+            d64Params <<"-f" << oname << "-w" <<of;
+        }
+    }
+
+    return true;
+
 }
-*/
+void AbstractSystem::ApplyDirArt(QString currentDir, QString dirart, QString diskf, QString &text)
+{
+    if (dirart=="none")
+        return;
+
+    if (!QFile::exists(currentDir+dirart))
+        return;
+
+    LImage* img = LImageIO::Load(currentDir + dirart);
+    QString dirartfn = currentDir + "dirart.bin";
+    QByteArray art = img->getDirArt();
+
+    while (art.size()>0 && ((uchar)art[art.size()-1]==(uchar)0x20))
+        art.remove(art.size()-1,1);
+    Util::SaveByteArray(art,dirartfn);
+
+
+    DirArtD64 da;
+    QStringList p;
+#ifdef _WIN32
+#else
+#endif
+    p<<"";
+
+
+    p  << "-b" << dirartfn << diskf << diskf;
+    try {
+
+        da.Write(p.count(), Util::StringListToChar(p));
+
+    } catch (QString s) {
+        text+="<br><font color=\"#FF6040\">Error: Could not apply dir art: "+s+"</font><br>";
+        m_buildSuccess = false;
+    }
+
+
+}

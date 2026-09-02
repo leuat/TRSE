@@ -1,0 +1,45 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "gamemap.tmx": {
+            "scale": 1.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 371.33333333333326,
+                "y": 494.6666666666667
+            }
+        },
+        "ui.tmx": {
+            "scale": 3.503125,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 160.42818911685995,
+                "y": 104.19268510258698
+            }
+        }
+    },
+    "last.exportedFilePath": "C:/Users/schol/Documents/platformer/assets",
+    "last.imagePath": "C:/Users/schol/Documents/platformer/assets",
+    "map.height": 100,
+    "map.lastUsedExportFilter": "Alle Dateien (*)",
+    "map.lastUsedFormat": "tmx",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 100,
+    "openFiles": [
+    ],
+    "project": "game.tiled-project",
+    "recentFiles": [
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}

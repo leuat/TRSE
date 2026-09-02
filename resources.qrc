@@ -782,5 +782,6 @@
         <file>resources/images/trse_banner.png</file>
         <file>resources/images/optic1.png</file>
         <file>resources/images/plab.png</file>
+        <file>resources/images/tutorials/mega65_platformer.png</file>
     </qresource>
 </RCC>

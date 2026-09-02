@@ -606,8 +606,10 @@ void Util::ConvertFileWithLoadAddress(QString input, QString output, int address
     //  exit(1);
     if ((((char)a[0])==(char)((address>>8)&0xFF)) && (((char)a[1])==((char)(address)&0xFF)))
         return;
-    a.insert(0,(address>>8)&0xFF);
-    a.insert(0,(address)&0xFF);
+    if (address!=-1) {
+        a.insert(0,(address>>8)&0xFF);
+        a.insert(0,(address)&0xFF);
+    }
 
     QFile o(output);
     o.open(QFile::WriteOnly);

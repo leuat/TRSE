@@ -1,0 +1,114 @@
+unit Keyboard;
+
+var 
+	const MKEY_INST : byte = 0;
+	const MKEY_THREE : byte = 1;
+	const MKEY_FIVE : byte = 2;
+	const MKEY_SEVEN : byte = 3;
+	const MKEY_NINE : byte = 4;
+	const MKEY_PLUS : byte = 5;
+	const MKEY_POUND : byte = 6;
+	const MKEY_ONE : byte = 7;
+	
+	const MKEY_ENTER : byte = 8;
+	const MKEY_W : byte = 9;
+	const MKEY_R : byte = 10;
+	const MKEY_Y : byte = 11;
+	const MKEY_I : byte = 12;
+	const MKEY_P : byte = 13;
+	const MKEY_ASTERISK : byte = 14;
+	const MKEY_LEFT : byte = 15;
+	
+	const MKEY_RIGHT : byte = 16;
+	const MKEY_A : byte = 17;
+	const MKEY_D : byte = 18;
+	const MKEY_G : byte = 19;
+	const MKEY_J : byte = 20;
+	const MKEY_L : byte = 21;
+	const MKEY_SEMICOLON : byte = 22;
+	const MKEY_CTRL : byte = 23;
+	
+	const MKEY_F7 : byte = 24;
+	const MKEY_FOUR : byte = 25;
+	const MKEY_SIX : byte = 26;
+	const MKEY_EIGHT : byte = 27;
+	const MKEY_ZERO : byte = 28;
+	const MKEY_MINUS : byte = 29;
+	const MKEY_CLR : byte = 30;
+	const MKEY_TWO : byte = 31;
+	
+	const MKEY_F1 : byte = 32;
+	const MKEY_Z : byte = 33;
+	const MKEY_C : byte = 34;
+	const MKEY_B : byte = 35;
+	const MKEY_M : byte = 36;
+	const MKEY_POINT : byte = 37;
+	const MKEY_RSHIFT : byte = 38;
+	const MKEY_SPACE : byte = 39;
+	
+	const MKEY_F3 : byte = 40;
+	const MKEY_S : byte = 41;
+	const MKEY_F : byte = 42;
+	const MKEY_H : byte = 43;
+	const MKEY_K : byte = 44;
+	const MKEY_COLON : byte = 45;
+	const MKEY_EQUAL : byte = 46;
+	const MKEY_COM : byte = 47;
+	
+	const MKEY_F5 : byte = 48;
+	const MKEY_E : byte = 49;
+	const MKEY_T : byte = 50;
+	const MKEY_U : byte = 51;
+	const MKEY_O : byte = 52;
+	const MKEY_SYMAT : byte = 53;
+	const MKEY_UP : byte = 54;
+	const MKEY_Q : byte = 55;
+	
+	const MKEY_DOWN : byte = 56;
+	const MKEY_LSHIFT : byte = 57;
+	const MKEY_X : byte = 58;
+	const MKEY_V : byte = 59;
+	const MKEY_N : byte = 60;
+	const MKEY_COMMA : byte = 61;
+	const MKEY_SLASH : byte = 62;
+	const MKEY_RUNSTOP : byte = 63;
+	
+	
+	const K_SPACE_1 : byte = 7;
+	const K_SPACE_2 : byte = %00010000;
+	
+	
+	D614 : array[64] of byte = (0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7,
+								0,1,2,3,4,5,6,7);
+								
+	D613 : array[64] of byte = (1,1,1,1,1,1,1,1,
+								2,2,2,2,2,2,2,2,
+								4,4,4,4,4,4,4,4,
+								8,8,8,8,8,8,8,8,
+								16,16,16,16,16,16,16,16,
+								32,32,32,32,32,32,32,32,
+								64,64,64,64,64,64,64,64,
+								128,128,128,128,128,128,128,128
+								);
+
+
+function CheckKeyPressed (k : byte) : boolean;
+var b : byte;
+	ret : boolean;
+begin
+	asm("sei");
+	ret := false;
+	POKE(^$D614,0,D614[k]);
+	if (PEEK(^$D613,0)&D613[k])=0 then ret := true;
+	
+	CheckKeyPressed := ret;
+	asm("cli");
+end;
+
+end.

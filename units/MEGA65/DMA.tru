@@ -1,0 +1,101 @@
+unit DMA;
+
+  
+var p : pointer;
+
+
+procedure dmaFill(dstmb,dstbank:byte;dst:integer;countx,value : integer);
+begin
+	asm("
+		lda localVariable_DMA_dmaFill_DMA_countx
+		ldy localVariable_DMA_dmaFill_DMA_countx+1
+		sta @dmaFillCount
+		sty @dmaFillCount+1
+		
+		lda localVariable_DMA_dmaFill_DMA_value
+		ldy localVariable_DMA_dmaFill_DMA_value+1
+		sta @dmaFillValue
+		sty @dmaFillValue+1
+		
+		lda localVariable_DMA_dmaFill_DMA_dst
+		ldy localVariable_DMA_dmaFill_DMA_dst+1
+		sta @dmaFillDst
+		sty @dmaFillDst+1
+	
+		lda localVariable_DMA_dmaFill_DMA_dstbank
+		sta @dmaFillDstBank
+		
+		lda localVariable_DMA_dmaFill_DMA_dstmb
+		sta @dmaDstMB
+		
+		
+		sta $d707												; execute DMA
+		.byte $0B												; F011B DMA format
+		.byte $81
+		@dmaDstMB:
+		.byte $00												; set MB of destination
+		.byte $00												; end of job options
+		.byte $03												; fill
+		@dmaFillCount: 		.word $0028							; count
+		@dmaFillValue: 		.word $00							; value
+		.byte $00												; src bank
+		@dmaFillDst: 		.word $f800							; dst
+		@dmaFillDstBank: 	.byte $01							; dst bank
+		.byte $00												; cmd hi
+		.word $00												; modulo / ignored
+	");
+	
+end;
+
+
+procedure dmaCopy(srcmb,srcbank : byte;src : integer;dstmb,dstbank:byte;dst:integer;countx: integer);
+begin
+	asm("
+		lda localVariable_DMA_dmaCopy_DMA_countx
+		ldy localVariable_DMA_dmaCopy_DMA_countx+1
+		sta @dmaCopyCount
+		sty @dmaCopyCount+1
+				
+		lda localVariable_DMA_dmaCopy_DMA_dst
+		ldy localVariable_DMA_dmaCopy_DMA_dst+1
+		sta @dmaFillDst
+		sty @dmaFillDst+1
+	
+		lda localVariable_DMA_dmaCopy_DMA_dstbank
+		sta @dmaFillDstBank
+		
+		lda localVariable_DMA_dmaCopy_DMA_dstmb
+		sta @dmaDstMB
+		
+		lda localVariable_DMA_dmaCopy_DMA_src
+		ldy localVariable_DMA_dmaCopy_DMA_src+1
+		sta @dmaSrc
+		sty @dmaSrc+1
+		
+		lda localVariable_DMA_dmaCopy_DMA_srcbank
+		sta @dmaSrcBank
+
+		lda localVariable_DMA_dmaCopy_DMA_srcmb
+		sta @dmaSrcMB
+		
+		sta $d707												; execute DMA
+		.byte $0B												; F011B DMA format
+		.byte $81
+		@dmaDstMB:			.byte $00							; set MB of destination
+		.byte $80
+		@dmaSrcMB:			.byte $00
+		.byte $00												; end of job options
+		.byte $00												; copy
+		@dmaCopyCount: 		.word $0028							; count
+		@dmaSrc: 			.word $00							; source
+		@dmaSrcBank:     	.byte $00							; src bank
+		@dmaFillDst: 		.word $f800							; dst
+		@dmaFillDstBank: 	.byte $01							; dst bank
+		.byte $00												; cmd hi
+		.word $00												; modulo / ignored
+	");
+	
+end;
+
+
+end.
