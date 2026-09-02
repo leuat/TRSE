@@ -43,6 +43,8 @@ public:
 //    void dispatch(QSharedPointer<NodeBuiltinMethod> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
 
+    void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+
 
 
     void LoadVariable(QSharedPointer<NodeVar> n) override ;

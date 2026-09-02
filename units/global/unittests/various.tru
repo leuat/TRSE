@@ -77,6 +77,40 @@ begin
 	if (Vars::addr[Vars::v1]=$A0) then Common::PASS() else Common::FAIL();
 end;
 
+
+procedure UnaryByte();
+begin
+	Vars::v1 := 2;
+	Vars::v2 := -Vars::v1;
+	Vars::text := "U1:";
+	if (Vars::v2=254) then Common::PASS() else Common::FAIL();
+end;
+
+procedure UnaryInteger1();
+begin
+	Vars::i1 := 2;
+	Vars::i2 := -Vars::i1;
+	Vars::text := "U2:";
+	if (Vars::i2=$FFFE) then Common::PASS() else Common::FAIL();
+end;
+
+procedure UnaryInteger2();
+begin
+	Vars::i1 := $100;
+	Vars::i2 := -Vars::i1;
+	Vars::text := "U3:";
+	if (Vars::i2=$FF00) then Common::PASS() else Common::FAIL();
+end;
+
+
+procedure UnaryInteger3();
+begin
+	Vars::i1 := $1FF;
+	Vars::i2 := -Vars::i1;
+	Vars::text := "U4:";
+	if (Vars::i2=$FE01) then Common::PASS() else Common::FAIL();
+end;
+
 procedure Exec();
 begin
 	Common::Initialise("VARIOUS");
@@ -101,6 +135,11 @@ begin
 	TestAddress3();
 	@endif
 	@endif
+	
+	UnaryByte();
+	UnaryInteger1();
+	UnaryInteger2();
+	UnaryInteger3();
 	Common::WaitABit();
 end;
 

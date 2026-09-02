@@ -511,6 +511,30 @@ void CodeGenX86::dispatch(QSharedPointer<NodeComment> node)
 
 }
 
+void CodeGenX86::dispatch(QSharedPointer<NodeUnaryOp> node)
+{
+    node->DispatchConstructor(as,this);
+    AbstractCodeGen::dispatch(node);
+    //    as->Comment("Unary op beware!");
+    if (node->m_right->isPureNumeric())
+        return;
+    node->m_right->Accept(this);
+    as->Term();
+    if (node->m_op.m_type==TokenType::MINUS) {
+
+        if (node->m_right->isWord(as)) {
+            as->Comment("Unary operator: Negate 16-bit number");
+            as->Asm("neg ax");
+        }
+        else {
+            as->Comment("Unary operator: Negate 8-bit number");
+            as->Asm("neg al");
+        }
+    }
+
+
+}
+
 void CodeGenX86::StoreVariable(QSharedPointer<NodeVar> n)
 {
     if (n->hasArrayIndex()) {
