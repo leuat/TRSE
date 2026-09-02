@@ -380,10 +380,17 @@ QStringList SystemMOS6502::CompressData(QStringList& inData, QString& string) {
 }
 
 void SystemMOS6502::applyEmulatorParametersVICE(QStringList &params, QString debugFile, QString filename) {
-    if (QFile::exists(debugFile))
-        params<<"-moncommands"<<debugFile;
-    if (m_settingsIni->getdouble("auto_inject")==1.0) {
-        params << "-autostartprgmode" << "1";
+
+    auto en = getEmulatorName().toLower().trimmed();
+    bool isVice= en.contains("x64") || en.contains("xvic") || en.contains("x128") || en.contains("xpet") || en.contains("vice") || en.contains("xplus4");
+
+    if (isVice) {
+        if (QFile::exists(debugFile))
+            params<<"-moncommands"<<debugFile;
+
+        if ((m_settingsIni->getdouble("auto_inject")==1.0)) {
+            params << "-autostartprgmode" << "1";
+        }
     }
     auto type=m_projectIni->getString("output_type");
     if (type!="d64" || m_projectIni->getString("disk_system")=="Sparkle")
