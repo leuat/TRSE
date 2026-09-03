@@ -316,6 +316,7 @@ private:
     void VerifyNotInClassAssignTypespec();
 
 
+    void HandlePixelLab();
     void HandleExportPalette();
     void HandleExportSubregion();
     void HandleSetCompressionWeights();

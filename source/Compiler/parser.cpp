@@ -1256,6 +1256,12 @@ void Parser::HandlePreprocessorInParsing() {
                 Eat();
             return;
         }
+        if (m_currentToken.m_value == "pixellab") {
+            Eat();
+            Eat();
+            Eat();
+            return;
+        }
         if (m_currentToken.m_value == "pathtool") {
             Eat();
             Eat();
@@ -2333,6 +2339,7 @@ void Parser::VerifyNotInClassAssignTypespec() {
             m_currentToken.m_lineNumber);
 }
 
+
 QSharedPointer<Node> Parser::AssignStatement() {
     QSharedPointer<Node> arrayIndex = nullptr;
     m_currentProcedureCall = nullptr;
@@ -3305,6 +3312,9 @@ void Parser::PreprocessSingle() {
     } else if (m_currentToken.m_value.toLower() == "export") {
         Eat(TokenType::PREPROCESSOR);
         HandleExport();
+    } else if (m_currentToken.m_value.toLower() == "pixellab") {
+        Eat(TokenType::PREPROCESSOR);
+        HandlePixelLab();
     } else if (m_currentToken.m_value.toLower() == "bin2inc") {
         Eat(TokenType::PREPROCESSOR);
         HandleBin2Inc();
@@ -5748,6 +5758,28 @@ void Parser::HandleExportSubregion() {
     LImage *img = LImageIO::Load(inFile);
     img->ExportSubregion(outFile, x, y, w, h, type);
 }
+
+
+void Parser::HandlePixelLab(){
+    int ln = m_currentToken.m_lineNumber;
+    QString projFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString rawParams = m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    if (m_settingsIni->getString("image_editor_loc").trimmed()=="") {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Error");
+        msgBox.setText("You need to set up a link to 8bit Pixel Lab in the TRSE settings / Misc panel. Download 8bit Pixel Lab from : https://hewco.itch.io/8bit-pixel-lab");
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        return;
+    }
+    QProcess p;
+    QStringList params = rawParams.trimmed().simplified().split(" ");
+    p.startDetached(m_settingsIni->getString("image_editor_loc"),params);
+}
+
 
 void Parser::HandleExport() {
     int ln = m_currentToken.m_lineNumber;
