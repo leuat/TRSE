@@ -1146,3 +1146,9 @@ void DialogTRSESettings::on_btn8bplLoc_clicked()
 }
 
 
+
+void DialogTRSESettings::on_btnOricHelp_clicked()
+{
+    Help("Oric Atmos Emulator","Use Auric: https://github.com/pugo/Auric");
+}
+

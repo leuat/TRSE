@@ -90,7 +90,7 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
+                 <y>-982</y>
                  <width>919</width>
                  <height>1617</height>
                 </rect>
@@ -455,7 +455,7 @@
                   <item row="30" column="0">
                    <widget class="QLabel" name="label_59">
                     <property name="text">
-                     <string>Oric emulator:</string>
+                     <string>Oric Atmos emulator:</string>
                     </property>
                    </widget>
                   </item>

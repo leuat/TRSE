@@ -1260,6 +1260,7 @@ void Parser::HandlePreprocessorInParsing() {
             Eat();
             Eat();
             Eat();
+            Eat();
             return;
         }
         if (m_currentToken.m_value == "pathtool") {
@@ -5761,11 +5762,6 @@ void Parser::HandleExportSubregion() {
 
 
 void Parser::HandlePixelLab(){
-    int ln = m_currentToken.m_lineNumber;
-    QString projFile = m_currentDir + "/" + m_currentToken.m_value;
-    Eat(TokenType::STRING);
-    QString rawParams = m_currentToken.m_value;
-    Eat(TokenType::STRING);
     if (m_settingsIni->getString("image_editor_loc").trimmed()=="") {
         QMessageBox msgBox;
         msgBox.setWindowTitle("Error");
@@ -5775,8 +5771,17 @@ void Parser::HandlePixelLab(){
         msgBox.exec();
         return;
     }
+
+    int ln = m_currentToken.m_lineNumber;
+    QString projFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString dstFile = m_currentDir + "/" + m_currentToken.m_value;
+    Eat(TokenType::STRING);
+    QString rawParams = m_currentToken.m_value;
+    Eat(TokenType::STRING);
     QProcess p;
-    QStringList params = rawParams.trimmed().simplified().split(" ");
+    QStringList params = dstFile.trimmed().simplified().split(" ") + rawParams.trimmed().simplified().split(" ");
+    qDebug() << params;
     p.startDetached(m_settingsIni->getString("image_editor_loc"),params);
 }
 

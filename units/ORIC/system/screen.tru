@@ -1,0 +1,27 @@
+unit Screen;
+
+var
+	
+	const screen_width : byte = 40;
+	const screen_height : byte = 28;
+	
+	const screenText : address = $BB80;
+	
+	tabY : array[screen_height] of integer = buildtable("i*SCREEN_WIDTH");
+	
+	p1, p2, zp : ^byte;
+	i,j,x,y,c : byte;
+	
+procedure PrintText(zp: global ^byte, x,y,c : global byte);
+begin
+	p1:=#screenText + tabY[y] +x;
+	while (zp^<>0) do
+	begin
+		p1^ := zp^ | c;
+		p1+=1;
+		zp+=1;
+	end;
+end;
+	
+end.
+

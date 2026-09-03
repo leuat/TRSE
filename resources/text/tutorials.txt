@@ -142,4 +142,5 @@ CHIP8; Unit tests; CHIP8/unittests/; <h2>TRSE internal CHIP8 unit tests</h2><p><
 CrossPlatform; Grave Intentions; CrossPlat/GraveIntentions; <h2>Grave Intentions</h2><p><img src=":resources/images/tutorials/grave_intentions.png" width="300"><p>A C64/VIC-20/PET/PLUS4 cross-platform text-based adventure engine/ game. Still under construction.
 CrossPlatform; Cross platform text mode tutorials; CrossPlat/txt_tutorials/ ;  <h2>Main TRSE cross-platform text mode tutorials</h2><p><img src=":resources/images/tutorials/crossplatform.png" width="300" class="center"><p>
 
+ORIC; Oric Atmos tutorials; ORIC/tutorials/; <h2>Main Oric Atmos tutorials</h2><p><img src=":resources/images/ORIC.png" width="200" class="center"><p>Main TRSE Oric Atmos tutorials. Under construction.
 

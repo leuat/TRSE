@@ -13,7 +13,7 @@ SystemOric::SystemOric(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFil
 void SystemOric::DefaultValues()
 {
     m_startAddress = getDefaultBasicAddress();
-    m_programStartAddress = 0x0501;
+    m_programStartAddress = 0x0500;
     m_ignoreSys = true;
     m_stripPrg = true;
 }
@@ -38,7 +38,7 @@ void SystemOric::Assemble(QString &text, QString filename, QString currentDir, Q
     header.append((char)0xC7); // Run as machine code
 
     int start = m_programStartAddress;
-    int end = m_programStartAddress+ba.length()-1;
+    int end = m_programStartAddress+ba.length()+1;
 
     header.append((end>>8)&0xff); // end BIG endian
     header.append((end)&0xff); // end BIG endian
@@ -48,11 +48,22 @@ void SystemOric::Assemble(QString &text, QString filename, QString currentDir, Q
     header.append((char)0xE8);
     header.append((char)0x41);
 
-    header.append((char)0x00);
+//    header.append((char)0x00);
     header.append((char)0x00);
 
     header.append(ba);
-    Util::SaveByteArray(header,filename+".prg");
+    Util::SaveByteArray(header,filename+".tap");
+
+}
+
+void SystemOric::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+
+    m_requireEmulatorWorkingDirectory = true;
+    QString fn = filename + ".tap";
+    if (QFile::exists(fn))
+        fn = QFileInfo(fn).absoluteFilePath();
+
+    params = QStringList() <<"-t"<<fn;
 
 }
 

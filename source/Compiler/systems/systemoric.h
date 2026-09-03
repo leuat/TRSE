@@ -20,16 +20,7 @@ public:
     virtual QString getEmulatorName() override {
         return m_settingsIni->getString("oric_emulator");
     }
-    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override {
-
-
-        QString fn = filename + ".prg";
-        if (QFile::exists(fn))
-            fn = QFileInfo(fn).absoluteFilePath();
-
-        params = QStringList() <<"-m" <<"atmos"<<"-t"<<fn;
-
-    }
+    void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 
 
 };

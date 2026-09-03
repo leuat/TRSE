@@ -265,6 +265,8 @@ private slots:
 
     void on_btn8bplLoc_clicked();
 
+    void on_btnOricHelp_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };
