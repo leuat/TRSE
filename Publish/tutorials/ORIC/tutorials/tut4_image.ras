@@ -13,6 +13,7 @@ var
 	
 	
 begin
+	Screen::DisableCursor();
 	Screen::SetScreenMode(0, Screen::screen_height, Screen::hires_mode_60hz);
 	Compression::Decompress(#img, #Screen::ScreenHires);
 	loop();
