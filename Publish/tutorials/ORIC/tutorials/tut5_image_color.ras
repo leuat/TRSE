@@ -1,0 +1,28 @@
+program OricMonochromeImage;
+@use "system/screen"
+@use "compression/compression"
+var
+	
+	p : ^byte;
+	typ,i : byte;
+	cnt : integer;
+	
+	// the last parameter is the threshold for number of non-blac pixel
+	// higher number means more correct colors, but worse pixels. values 0-8
+	@export "resources/images/image21.flf" "resources/images/image2.bin" 2
+	
+	img : incbin("resources/images/image2.bin") compressed;
+
+	
+	
+begin
+	Screen::DisableCursor();
+	Screen::SetScreenMode(0, Screen::screen_height, Screen::hires_mode_60hz);
+	Compression::Decompress(#img, #Screen::ScreenHires);
+	p:=#Screen::ScreenHires;
+	cnt:=0;
+	typ:=0; // either invert or regular
+	// Loop through all pixel data and toggle the invert bit 128 on/off
+	loop();
+	
+end.

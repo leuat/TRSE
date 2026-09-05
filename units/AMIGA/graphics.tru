@@ -1,6 +1,10 @@
 unit Graphics;
 var
 	pa,pb : pointer of integer;
+	pbyte : pointer of byte;
+	// Backing storage for SetupDualPlayfieldScreen/SetupDualPlayfieldFrame's "global" parameters
+	pf1buf, pf2buf, bpl6buf, sdpfbpl6buf : pointer of integer;
+	totalbpl, pf2planes, pf2front, sdpftotalbpl : integer;
 	pl : pointer of long;
 	ll:long;
 	bpl,j,i,k,x,y,z : integer;
@@ -91,7 +95,18 @@ begin
 	j:=$1000*bpl | $200;
 	poke16(#copper_resolution, 0 , j); // $4000  = bitplanes, $200 = colours
 	// Set palette at copper palette location, 16 colors
-	// Setup image copper list (4 bitplanes, 40*40 modulo 120
+	// Setup image copper list (5 bitplanes, 40*40 modulo 120
+	if (bpl=6) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane3);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane4);pa:=pa+40;
+		SetCopperList32(pa, #copper_bitplane5);
+		poke16(#copper_mod_even,0,200);
+		poke16(#copper_mod_odd,0,200);
+	end;
 	if (bpl=5) then
 	begin
 		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40;
@@ -135,6 +150,29 @@ begin
 end;
 
 
+// Update a copper bitplane pointer in the same word order the copper reads
+// it: PTH first, then PTL. This avoids combining an old high word with a new
+// low word when the CPU updates the list near the copper's next pass.
+//
+// pa is a normal call argument (a runtime buffer address, never a bare
+// label), so it passes through fine. The DESTINATION copper_bitplaneN
+// label cannot be a second parameter the same way: passing a bare #label
+// directly as a call argument, OR assigning it with := to a variable
+// declared in a DIFFERENT unit via its cross-unit mangled name, both
+// silently truncate it to 16 bits on this compiler.
+procedure SetCopperList32PTHFirst(pa:global pointer of integer);
+begin
+	asm("
+		move.l Graphics_pa,d0
+		move.l d0,d1
+		swap d1
+		move.l Graphics_pbyte,a0
+		move.w d1,2(a0)
+		move.w d0,6(a0)
+	");
+end;
+	
+	
  /**
 	Sets up the copper list to point to a 320x256 buffer. Note that the screen will be set up 
 	non-interlaced, with 40*256 bytes per bitplane. <p>
@@ -163,7 +201,16 @@ begin
 	poke16(#copper_mod_even,0,0);
 	poke16(#copper_mod_odd,0,0);
 	// Set palette at copper palette location, 16 colors
-	// Setup image copper list (4 bitplanes, 40*40 modulo 120
+	// Setup image copper list (5 bitplanes, 40*40 modulo 120
+	if (bpl=6) then
+	begin
+		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane1);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane2);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane3);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane4);pa:=pa+40*256;
+		SetCopperList32(pa, #copper_bitplane5);
+	end;
 	if (bpl=5) then
 	begin
 		SetCopperList32(pa, #copper_bitplane0);pa:=pa+40*256;
@@ -198,6 +245,110 @@ begin
 	end;
 end;
 
+
+// ============================================================================
+// Dual playfield screen setup (Amiga hardware DUAL PLAYFIELD mode, BPLCON0
+// bit 10 / DBLPF)
+// ============================================================================
+//
+// totalbpl must be 5 or 6 -- the only two totals that keep playfield 1 at
+// exactly 3 bitplanes (ceil(5/2)=ceil(6/2)=3, since dual-playfield hardware
+// always splits a single total bitplane count as odd planes -> PF1, even
+// planes -> PF2, walking BPL1,2,3,4,5(,6) in that fixed order, never letting
+// the two sides be chosen independently). A caller needing some other PF1
+// count needs a more general procedure than this one.
+//
+// pf1buf: PF1's own 3-plane interleaved buffer (BPL1/3/5 at
+// pf1buf+0/40/80 respectively).
+// pf2buf: PF2's first 2 planes (BPL2/4 at pf2buf+0/40).
+// bpl6buf: PF2's 3rd plane (BPL6), used ONLY when totalbpl=6 -- passed as
+// an EXPLICIT, independent pointer rather than derived as "pf2buf+80"
+// internally, so a caller isn't forced into one combined 3-plane buffer for
+// PF2 -- BPL2/4/6 are electrically independent hardware pointers; nothing
+// requires them to share a buffer's layout.
+// pf2planes: how many REAL content planes pf2buf ITSELF is laid out for
+// (i.e. what its own modulo needs to be) -- a property of pf2buf, NOT of
+// totalbpl. THIS PARAMETER IS THE FIX for a real bug found by testing: an
+// earlier version derived PF2's modulo directly from totalbpl (totalbpl=6
+// => assume PF2 has 3 planes => modulo=80), which is only correct if
+// bpl6buf is genuinely unified with pf2buf (bpl6buf = pf2buf+80, one real
+// 3-plane-interleaved buffer). It breaks the instant bpl6buf is a
+// genuinely SEPARATE, independently-addressed buffer -- BPL2MOD is ONE
+// hardware register shared by EVERY active even bitplane, so forcing it to
+// 80 to suit a hypothetical 3rd plane silently breaks BPL2/BPL4's OWN
+// addressing against their real 2-plane pf2buf: they advance 40
+// bytes/scanline too far, drifting out of alignment with their own rows
+// and periodically reading each other's plane data.
+// pf2front: 1 gives playfield 2 display priority (BPLCON2 PF2PRI) over
+// playfield 1, 0 gives playfield 1 priority instead -- PF2-front is the
+// right choice whenever PF1 carries real photographic/pixel-art content
+// that uses colour index 0 as genuine image data rather than a reserved
+// "transparent" value.
+//
+// No per-frame companion call is needed even when totalbpl=6: this unit's
+// copper-list template carries a real copper_bitplane5 slot for BPL6, in
+// the same no-wait block as copper_bitplane0-4, so the copper itself
+// re-asserts BPL6PTH/PTL every frame exactly like it already does for
+// BPL1PTH-BPL5PTH. (SetupDualPlayfieldFrame below is kept for
+// reference/backward compatibility, for a caller that updates BPL6 by some
+// other, non-copper-list means and needs its own per-frame reset.)
+procedure SetupDualPlayfieldScreen(pf1buf, pf2buf, bpl6buf : global pointer of integer; totalbpl, pf2planes, pf2front : global integer);
+var dpfptr : pointer of integer;
+begin
+	dpfptr := pf1buf;
+	asm("
+		move.l #copper_bitplane0,Graphics_pbyte
+	");
+	SetCopperList32PTHFirst(dpfptr);   // BPL1 = PF1 plane 0
+	dpfptr := pf1buf+40;
+	asm("
+		move.l #copper_bitplane2,Graphics_pbyte
+	");
+	SetCopperList32PTHFirst(dpfptr);   // BPL3 = PF1 plane 1
+	dpfptr := pf1buf+80;
+	asm("
+		move.l #copper_bitplane4,Graphics_pbyte
+	");
+	SetCopperList32PTHFirst(dpfptr);   // BPL5 = PF1 plane 2
+
+	dpfptr := pf2buf;
+	asm("
+		move.l #copper_bitplane1,Graphics_pbyte
+	");
+	SetCopperList32PTHFirst(dpfptr);   // BPL2 = PF2 plane 0
+	dpfptr := pf2buf+40;
+	asm("
+		move.l #copper_bitplane3,Graphics_pbyte
+	");
+	SetCopperList32PTHFirst(dpfptr);   // BPL4 = PF2 plane 1
+
+	if (totalbpl=6) then begin
+		asm("
+			move.l #copper_bitplane5,Graphics_pbyte
+		");
+		SetCopperList32PTHFirst(bpl6buf);
+	end;
+
+	
+	poke16(#copper_mod_even, 0, 80);
+	
+	poke16(#copper_mod_odd, 0, (pf2planes-1)*40);
+
+	// BPLCON0: BPU = totalbpl (bits 14-12), $200 = COLOR (composite
+	// colour burst), $0400 = DBLPF (bit 10, dual playfield enable).
+	poke16(#copper_resolution, 0, ($1000*totalbpl) | $200 | $0400);
+
+	// BPLCON2 ($dff104) bit 6 = PF2PRI.
+	if (pf2front=1) then begin
+		asm("
+			move.w #$0040,$dff104
+		");
+	end else begin
+		asm("
+			move.w #$0000,$dff104
+		");
+	end;
+end;
 
 procedure HlineI(hx, hy, hl:global integer;pa:global pointer);
 begin
@@ -414,6 +565,42 @@ begin
 	");
 	
 end;
+
+// ============================================================================
+// CPU idle halt -- general-purpose, not graphics-specific, but this is the
+// closest thing this TRSE install has to a general Amiga hardware-utility unit
+// ============================================================================
+//
+// Genuine CPU-halt for an otherwise-empty main loop: the 68000 STOP
+// instruction loads the given 16-bit value into SR, then stops
+// fetching/executing entirely until ANY interrupt whose priority exceeds
+// the resulting IPL mask occurs, at which point it resumes at the
+// instruction right after STOP -- unlike an empty while-loop, the CPU is
+// not executing NOP-equivalent iterations while idle, it is doing nothing
+// at all, which frees real bus bandwidth/power for the rest of the system
+// while there's genuinely nothing for the CPU to do.
+//
+// $2000 = supervisor bit (13) set, IPL mask (bits 8-10) at 0, trace (15)
+// off, condition codes cleared. IPL=0 ("wake on anything") sidesteps
+// needing to know any particular interrupt source's exact hardware
+// priority level -- if interrupts are already firing and being serviced
+// correctly elsewhere in the calling program, the CPU's own interrupt mask
+// is necessarily already low enough for that to happen, and 0 is the
+// lowest it can be, so this can only be at least as permissive as
+// whatever's already working.
+//
+// STOP is PRIVILEGED -- requires supervisor mode. If a program using this
+// crashes or guru-meditates the instant it's reached, that's the first
+// thing to suspect: the program may be running in user mode, in which
+// case STOP needs a supervisor-mode transition first, rather than being
+// usable directly here.
+procedure IdleUntilInterrupt();
+begin
+	asm("
+		stop #$2000
+	");
+end;
+
 
 /*
 procedure CopySingleBitplaneData(pa,pb : global ^integer; bpl, j : global integer);

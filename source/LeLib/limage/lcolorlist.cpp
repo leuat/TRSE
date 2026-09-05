@@ -167,6 +167,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 21;
   if (t==ORIC)
       return 22;
+  if (t==ORIC8)
+      return 23;
 
   return 255;
 }
@@ -219,6 +221,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return MONO;
     if (c==22)
         return ORIC;
+    if (c==23)
+        return ORIC8;
 
     return UNSUPPORTED;
 
@@ -502,6 +506,8 @@ void LColorList::Initialize(Type t)
         InitMono();
     if (m_type == Type::ORIC)
         InitOric();
+    if (m_type == Type::ORIC8)
+        InitOric8();
 
 
 
@@ -825,6 +831,23 @@ void LColorList::InitOric()
     DefaultPen(LPen::FixedSingle);
 
 }
+void LColorList::InitOric8()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),"black"));
+    m_list.append(LColor(QColor(0xFF, 0x0, 0x0),"red"));
+    m_list.append(LColor(QColor(0x0, 0xff, 0x0),"green"));
+    m_list.append(LColor(QColor(0xff, 0xff, 0x0),"yellow"));
+    m_list.append(LColor(QColor(0x0, 0x0, 0xff),"blue"));
+    m_list.append(LColor(QColor(0xff, 0x0, 0xff),"magenta"));
+    m_list.append(LColor(QColor(0x00, 0xff, 0xff),"cyan"));
+    m_list.append(LColor(QColor(0xff, 0xff, 0xff),"white"));
+
+    m_pens.clear();
+    DefaultPen(LPen::FixedSingle);
+
+}
+
 
 void LColorList::InitTVC()
 {
