@@ -66,6 +66,8 @@ void LImageOric::ExportBin(QFile &ofile)
     if (m_width==160)  xw=80;
     if (m_width==256)  xw=64;
 */
+    // mono
+    if (m_colorList.m_type==LColorList::ORIC)
     for (int y=0;y<m_height;y++) {
         char c = 0;
         int curBit = 0;
@@ -84,6 +86,55 @@ void LImageOric::ExportBin(QFile &ofile)
 
     }
 
+    if (m_colorList.m_type==LColorList::ORIC8)
+        for (int y=0;y<m_height;y++) {
+            char c = 0;
+            int curBit = 0;
+            int curColor = 7;
+            for (int x=0;x<m_width;x+=6) {
+                //int pixel = ((dy+y)/10)&15;
+                int dom = curColor;
+                QVector<int> w;
+                w.resize(8);
+                w.fill(0);
+                c=0;
+                // get next step
+                if (x+6<m_width)
+                for (int i=0;i<6;i++) {
+                    int pixel = getPixel(x+i+6,y);
+                    w[pixel]++;
+
+                }
+                int cnt =0;
+                for (int i=0;i<6;i++) {
+                    int pixel = getPixel(x+i,y);
+                    if (pixel!=0) {
+                        c|= 1<<(5-i);
+                        cnt++;
+                    }
+
+                }
+                int maxIndex = -1;
+                int maxx = -1;
+                for (int i=1;i<8;i++)
+                    if (w[i]>=maxx) {
+                        maxx=w[i];
+                        maxIndex = i;
+                    }
+
+                if (cnt<m_exportParams["export1"] && curColor!=0 && curColor!=maxIndex) {
+                    int add = 0;
+                    curColor = maxIndex;
+                    c = curColor + add;
+
+                }
+                else c+=64;
+               data.append(c);
+            //            if (rand()%100>98) qDebug() << pixel;
+//                c |= (pixel<<(5-curBit));
+            }
+
+        }
 
 
 
