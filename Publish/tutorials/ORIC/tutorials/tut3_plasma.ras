@@ -1,37 +1,26 @@
 program GoodOldPlasma;
 var
-	time : byte;
-	// Sqrt table	
 	
 	const width : byte = 40;
 	const height : byte = 28;
 	
 	// some plasma variables
-	xx,yy,d,cur,val,c2x, b, c2y,ax, ay,c,i,j : byte at $40;
+	xx,yy,d,val,c2x,  c2y,ax, ay : byte at $40;
 	colorP: ^byte; // same as "pointer" or "pointer of byte";	
 
 	sin : array[256] of byte = buildsinetable(127);
-	cols : array[31] of byte = buildsinetable(15);
-	tab : array[] of byte = (7,1);
 
  	const baseCharacter:byte = $68;
  	
-	// Custom c64 charset
-//	@export "charsets/charset.flf" "charsets/charset.bin" 256
-	// Include it
-//	charset : incbin("charsets/charset.bin");
-	
-
 	// mini sine table
-    siny : array[height] of byte; 
-	sinx : array[width] of byte; 
+    siny : array[ height ] of byte; 
+	sinx : array[ width ] of byte; 
 
-	// Lookup table for division by 16
+	// Lookup table for text and colors
 	lookupDiv16 : array[256] of byte = buildtable("i/20 + 33");
-	lookupDiv162 : array[256] of byte = buildtable("i/36+1");
+	lookupDiv16_colors : array[256] of byte = buildtable("i/36+1");
 
 	ptr : ^byte;
-	l:byte;
 
 	const yStart:byte = 0;
 	const yEnd:byte = 28;
@@ -66,39 +55,41 @@ begin
 
 	end;
 	
-//		Screen::out(Screen::cursor_home);
 	ptr:=$BB80;	
-	for yy:=yStart to yEnd offpage do 
+	// Monochrome upper part
+	for yy:=yStart to yEnd/2 offpage do 
+	begin
+		val:=siny[yy];
+		for xx:=xStart to xEnd offpage do 
+		begin
+			d:=(sinx[xx] +val);
+			ptr[xx]:=lookupDiv16[ d ];
+		end;
+		ptr+=width;
+	end;
+	
+	
+	// Color lower part
+	for yy:=yEnd/2 to yEnd offpage do 
 	begin
 		val:=siny[yy];
 		for xx:=xStart to xEnd step 2 offpage do 
 		begin
-		
-			// here, we take (sin[x]+val) and divide by 16. However, since this is a slow procedure,
-			// we have created a lookup table instead!
 			d:=(sinx[xx] +val);
-			ptr[xx]:=lookupDiv162[ d ];
+			// Set the color attribute
+			ptr[xx]:=lookupDiv16_colors[ d ];
+			// .. and then the actual ascii
 			ptr[xx+1]:=lookupDiv16[ d ];
-//			Screen::out(c+128);
-			// Set color memory
 		end;
 		ptr+=width;
-		// Increase color pointer by 40 (next row)
 	end;
 
 end;
 
 
 begin
-	
-	asm("
-	lda #8+2	
-	sta $26a	
-	");
-
 
 	while (true) do 
 		Plasma();
-
 
 end.

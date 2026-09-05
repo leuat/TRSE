@@ -1,26 +1,19 @@
-program HelloWorldOric;
+program AlternateCharacterSet;
 @use "system/screen"
+@use "compression/compression"
 var
 
 	@export "resources/charmaps/charmap1.flf" "resources/charmaps/charmap1.bin" 256
 	
-	charmap: incbin("resources/charmaps/charmap1.bin");
+	// Please note: the ORIC Atmos uses a 6x8 font, not 8x8!
+	charmap: incbin("resources/charmaps/charmap1.bin") compressed;
 
 	src, dst: ^byte;
 	i:byte;
 
 begin
-	Screen::PrintText("Hello world TRSE", 5, 10, %00000000);
-//	Screen::PrintText("ABCDEFGGHIJKLMNOPQRSTUVWZYS", 5, 10, %00000001);
-//	blockmemcpy(#charmap,#Screen::charmap,4);
-/*
-	src:=#charmap;
-	dst:=$B400+64*8;
-	for i:=0 to 4 do
-	begin
-		memcpy(src, 0, dst, 0);
-		asm(" inc src+1");
-		asm(" inc dst+1");
-	end;*/
+	// decompress character set to ascii postion 64
+	Compression::Decompress(#charmap, #Screen::charmap+64*8);
+	Screen::PrintText("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 10, Screen::ink_yellow);
 	loop();
 end.

@@ -6,8 +6,38 @@ var
 	const screen_height : byte = 28;
 	
 	const screenText : address = $BB80;
+	const charmap : address = $B400;
 	
 	tabY : array[screen_height] of integer = buildtable("i*SCREEN_WIDTH");
+
+	const ink_black: byte = 0;
+	const ink_red: byte = 1;
+	const ink_green: byte = 2;
+	const ink_yellow: byte = 3;
+	const ink_blue: byte = 4;
+	const ink_magenta: byte = 5;
+	const ink_cyan: byte = 6;
+	const ink_white: byte = 7;
+
+	const paper_black: byte = 16;
+	const paper_red: byte = 17;
+	const paper_green: byte = 18;
+	const paper_yellow: byte = 19;
+	const paper_blue: byte = 20;
+	const paper_magenta: byte = 21;
+	const paper_cyan: byte = 22;
+	const paper_white: byte = 23;
+	
+	const standard_charset: byte = 8;
+	const alternate_charset: byte = 9;
+	const standard_charset_double: byte = 10;
+	const alternate_charset_double: byte = 11;
+	
+	const text_mode_60hz: byte = 24;
+	const text_mode_50hz: byte = 26;
+	const hires_mode_60hz: byte = 28;
+	const hires_mode_50hz: byte = 30;
+	
 	
 	p1, p2, zp : ^byte;
 	i,j,x,y,c : byte;
@@ -15,12 +45,24 @@ var
 procedure PrintText(zp: global ^byte, x,y,c : global byte);
 begin
 	p1:=#screenText + tabY[y] +x;
+	p1^ := c;
+	p1+=1;
 	while (zp^<>0) do
 	begin
-		p1^ := zp^ | c;
+		p1^ := zp^;
 		p1+=1;
 		zp+=1;
 	end;
+end;
+
+procedure DisableClicking() inline;
+begin
+	asm("
+	lda #8+2	
+	sta $26a	
+	");
+
+	
 end;
 	
 end.
