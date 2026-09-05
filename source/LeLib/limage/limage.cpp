@@ -139,6 +139,8 @@ unsigned char LImage::TypeToChar(LImage::Type t)
         return 46;
     if (t==CGA_HIRES)
         return 47;
+    if (t==ORIC)
+        return 48;
 
 
     return 255;
@@ -242,6 +244,8 @@ QString LImage::TypeToString(LImage::Type t)
         return "Generic PRIMO image";
     if (t==CGA_HIRES)
         return "Hires CGA";
+    if (t==ORIC)
+        return "ORIC";
 
 
     return "Unknown image type";
@@ -347,6 +351,8 @@ LImage::Type LImage::CharToType(unsigned char c)
         return PRIMO;
     if (c==47)
         return CGA_HIRES;
+    if (c==48)
+        return ORIC;
 
     return NotSupported;
 

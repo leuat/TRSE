@@ -62,7 +62,7 @@ public:
     bool m_supportsFooterPen = false;
     bool m_isLevelEditor = false;
     QVector3D m_bpp = QVector3D(8,8,8);
-    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC, VGA, SPECTRUM, SNES, VZ200, DOS, TIM, TVC, COCO3, THOMSON, MONO };
+    enum Type{ NES, C64, C64_ORG, CGA1_LOW, CGA1_HIGH, CGA2_LOW, CGA2_HIGH, UNSUPPORTED, TIFF, VIC20, PICO8,OK64,X16, AMSTRADCPC, BBC, VGA, SPECTRUM, SNES, VZ200, DOS, TIM, TVC, COCO3, THOMSON, MONO, ORIC };
     bool m_selectClosestFromPen = true;
     QVector<int> m_enabledColors;
     QByteArray m_customPalette;
@@ -130,6 +130,7 @@ public:
     void InitC64_org();
     void InitC64();
     void InitMono();
+    void InitOric();
     void InitTVC();
     void InitCOCO3();
     void InitThomson();

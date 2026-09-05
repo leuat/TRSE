@@ -6,6 +6,7 @@ var
 	const screen_height : byte = 28;
 	
 	const screenText : address = $BB80;
+	const screenHires : address = $A000;
 	const charmap : address = $B400;
 	
 	tabY : array[screen_height] of integer = buildtable("i*SCREEN_WIDTH");
@@ -61,8 +62,20 @@ begin
 	lda #8+2	
 	sta $26a	
 	");
+end;
+/**
+   Sets screen mode on rows x-y
 
-	
+
+**/
+procedure SetScreenMode(x,y,c : global byte);
+begin
+	p1:=#screenText + tabY[x];
+	for i:=x to y do
+	begin
+		p1^:=c;
+		p1+=screen_width;
+	end;	
 end;
 	
 end.

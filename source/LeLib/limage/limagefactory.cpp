@@ -126,6 +126,8 @@ LImage *LImageFactory::Create(LImage::Type t, LColorList::Type colorType) {
         return new LImagePrimo(colorType);
     if (t == LImage::CGA_HIRES)
         return new LImageCGAHires(colorType);
+    if (t == LImage::ORIC)
+        return new LImageOric(colorType);
 
     qDebug() << "ERROR: LImageFactory could not find type " << t;
     return nullptr;

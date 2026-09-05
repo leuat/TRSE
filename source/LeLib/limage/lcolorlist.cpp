@@ -165,6 +165,8 @@ unsigned char LColorList::TypeToChar(LColorList::Type t)
       return 20;
   if (t==MONO)
       return 21;
+  if (t==ORIC)
+      return 22;
 
   return 255;
 }
@@ -215,6 +217,8 @@ LColorList::Type LColorList::CharToType(unsigned char c)
         return THOMSON;
     if (c==21)
         return MONO;
+    if (c==22)
+        return ORIC;
 
     return UNSUPPORTED;
 
@@ -496,6 +500,8 @@ void LColorList::Initialize(Type t)
         InitTVC();
     if (m_type == Type::MONO)
         InitMono();
+    if (m_type == Type::ORIC)
+        InitOric();
 
 
 
@@ -801,6 +807,16 @@ void LColorList::InitC64()
 }
 
 void LColorList::InitMono()
+{
+    m_list.clear();
+    m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));
+    m_list.append(LColor(QColor(0xFF, 0xFF, 0xFF),""));
+    m_pens.clear();
+    DefaultPen(LPen::FixedSingle);
+
+}
+
+void LColorList::InitOric()
 {
     m_list.clear();
     m_list.append(LColor(QColor(0x0, 0x0, 0x0),""));

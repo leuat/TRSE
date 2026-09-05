@@ -72,6 +72,7 @@
 #include "source/LeLib/limage/limageagon.h"
 #include "source/LeLib/limage/limageprimo.h"
 #include "source/LeLib/limage/limagecga_hires.h"
+#include "source/LeLib/limage/limageoric.h"
 
 class LImageFactory {
 public:
