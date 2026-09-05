@@ -4,9 +4,10 @@ program OricMonochromeImage;
 var
 	
 	p : ^byte;
-	i,j : byte;
+	typ : byte;
+	cnt : integer;
 	
-	@export "resources/images/image1.flf" "resources/images/image1.bin" 256
+	@export "resources/images/image1.flf" "resources/images/image1.bin" 0
 	
 	img : incbin("resources/images/image1.bin") compressed;
 
@@ -16,6 +17,26 @@ begin
 	Screen::DisableCursor();
 	Screen::SetScreenMode(0, Screen::screen_height, Screen::hires_mode_60hz);
 	Compression::Decompress(#img, #Screen::ScreenHires);
+	p:=#Screen::ScreenHires;
+	cnt:=0;
+	typ:=0; // either invert or regular
+	// Loop through all pixel data and toggle the invert bit 128 on/off
+	while (true) do
+	begin
+		if (typ=0) then
+			p^ := p^ | 128 // invert
+		else p^:= p^&%01111111;		 // regular		
+		
+		p+=1;
+		cnt+=1;
+		// end of screen: go back to start, flip type		
+		if (cnt=40*200) then
+		begin
+			typ:=(typ+1)&1;
+			cnt:=0;
+			p:=#Screen::ScreenHires;
+		end;
+	end;
 	loop();
 	
 end.
