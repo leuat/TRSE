@@ -1,4 +1,4 @@
-program OricMonochromeImage;
+program OricColorImage;
 @use "system/screen"
 @use "compression/compression"
 var
@@ -12,17 +12,12 @@ var
 	@export "resources/images/image_logo.flf" "resources/images/image2.bin" 2
 	
 	img : incbin("resources/images/image2.bin") compressed;
-
 	
 	
 begin
 	Screen::DisableCursor();
 	Screen::SetScreenMode(0, Screen::screen_height, Screen::hires_mode_60hz);
 	Compression::Decompress(#img, #Screen::ScreenHires);
-	p:=#Screen::ScreenHires;
-	cnt:=0;
-	typ:=0; // either invert or regular
-	// Loop through all pixel data and toggle the invert bit 128 on/off
 	loop();
 	
 end.
