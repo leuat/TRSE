@@ -414,8 +414,9 @@ QPixmap CharsetImage::ToQPixMap(int chr)
     for (int i=0;i<size;i++)
         for (int j=0;j<size;j++) {
             uchar v = getPixel(i/4+xx,j/4+yy);
+            if (v<m_colorList.m_list.count())
             //if (rand()%1000>996 && v!=0) qDebug() << (int)v;
-            img.setPixelColor(i,j,m_colorList.m_list[v].color);
+                 img.setPixelColor(i,j,m_colorList.m_list[v].color);
         }
 
     m_footer.set(LImageFooter::POS_DISPLAY_CHAR,keep);

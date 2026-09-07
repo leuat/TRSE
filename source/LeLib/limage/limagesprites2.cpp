@@ -1,5 +1,8 @@
 #include "limagesprites2.h"
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+
 
 LImageSprites2::LImageSprites2(LColorList::Type t) : CharsetImage(t) {
     m_type = LImage::Type::Sprites2;
@@ -300,7 +303,53 @@ void LImageSprites2::ImportSpritepad(QString filename)
 {
     auto val = Util::loadTextFile(filename);
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
+    auto o  = d.object();
+    auto cols = d["colors"];
+    auto sprites = d["sprites"];
+    int col = 1;
+    for (auto s : sprites.toArray()) {
+        auto px = s.toObject()["pixels"].toArray();
+        AddNew(1,1);
+        auto cur = ((LSprite*)m_items[m_current].get());
+        int dy = 0;
+        int y = 0;
+        bool isMulticolor = s.toObject()["multicolor"].toBool(false);
+        cur->m_header[cur->HEADER_MULTICOLOR]=(int)isMulticolor;
+        int c1 = cols["2"].toInt();
+        int c2 = cols["3"].toInt();
+        for (auto row: px) {
+            int x = 0;
 
+            uint32_t v = 0;
+            if (!isMulticolor)
+                for (auto val: row.toArray()) {
+                    v |= val.toInt()<<x;
+                    x+=1;
+                }
+            else
+                for (auto val: row.toArray()) {
+                    if ((x&1)==0) {
+                        v |= val.toInt()<<(x);
+                    }
+                    x+=1;
+                }
+
+            for (int i=0;i<3;i++) {
+                cur->m_data[y*3+i].p[dy] = (v>>(8*i))&0xff;
+
+                cur->m_data[y*3+i].c[0] = 0;
+                cur->m_data[y*3+i].c[1] = col;
+                cur->m_data[y*3+i].c[2] = c1;
+                cur->m_data[y*3+i].c[3] = c2;
+
+            }
+            dy+=1;
+            if (dy==8) {
+                y++;
+                dy = 0;
+            }
+        }
+     }
 }
 
 

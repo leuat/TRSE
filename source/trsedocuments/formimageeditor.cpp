@@ -447,6 +447,9 @@ void FormImageEditor::keyPressEvent(QKeyEvent *e)
             pressed = true;
             m_work.m_currentImage->m_image->BuildData(ui->tblData, lst);
             UpdateLevels();
+            emit onImageMouseEvent();
+            Data::data.forceRedraw = true;
+            Data::data.Redraw();
 
         }
 
@@ -2808,6 +2811,9 @@ void FormImageEditor::on_btnSpritepad_clicked()
         return;
 
     m_work.m_currentImage->m_image->ImportSpritepad(filename);
+    emit onImageMouseEvent();
+    Data::data.forceRedraw = true;
+    Data::data.Redraw();
 
 }
 
