@@ -7,7 +7,7 @@ program Tutorial8;
 @use "compression/compression"
 @use "gfx/genericlevels"
 
-@addemulatorparam "-nothrottle"
+//@addemulatorparam "-nothrottle"
 
 var
 	@export "resources/images/tiles.flf" "resources/images/tiles.bin" 320

@@ -6,7 +6,7 @@ program Tutorial9_16_colors;
 @use "system"
 @use "compression/compression"
 
-@addemulatorparam "-nothrottle"
+//@addemulatorparam "-nothrottle"
 
 var
 	@export "resources/images/squiddy.flf" "resources/images/squiddy.bin" 256

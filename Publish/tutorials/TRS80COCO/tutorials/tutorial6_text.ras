@@ -5,7 +5,7 @@ var
 	p: pointer;
 	i: integer;
 	
-@addemulatorparam "-nothrottle"
+//@addemulatorparam "-nothrottle"
 	
 	
 begin
