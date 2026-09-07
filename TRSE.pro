@@ -49,6 +49,7 @@ QMAKE_CXXFLAGS_WARN_ON += -Wno-unused-parameter -Wno-unused-but-set-variable -Wn
 DEFINES -= QT_DEPRECATED_WARNINGS
 
 
+
 macx{
     QMAKE_CXXFLAGS += -O3
     QMAKE_CXXFLAGS += -Werror=return-type -Werror=deprecated-declarations
@@ -130,6 +131,12 @@ linux*{
     share.path = $$PREFIX/share
     share.files += $$PWD/Publish/publish_linux/share/*
     INSTALLS += bin share
+}
+
+freebsd*{
+    LIBS += -L$$PWD/libs/lua/ -llua_bsd 
+    DEFINES -=USE_OMP
+
 }
 
 

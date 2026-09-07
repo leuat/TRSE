@@ -32,6 +32,11 @@ bool Tool::AKGCompiler(QString filename, int Address, SymbolTable *symTab)
     Util::CopyFile(":resources/bin/rasm",rasm);
     QFile::setPermissions(rasm,QFile::ExeUser);
 #endif
+#ifdef __FreeBSD__
+    QString rasm = path+"rasm";
+    Util::CopyFile(":resources/bin/rasm",rasm);
+    QFile::setPermissions(rasm,QFile::ExeUser);
+#endif
 #ifdef _WIN32
     QString rasm = path+"rasm.exe";
     Util::CopyFile(":resources/bin/rasm.exe",rasm);
