@@ -22,7 +22,7 @@ public:
         return "";
     }
     virtual QString getEmulatorName() override {
-        return m_settingsIni->getString("pokemonmini_emulator");
+        return m_settingsIni->getString("coco3_emulator");
     }
     void applyEmulatorParameters(QStringList& params, QString debugFile, QString filename, CIniFile* pini) override;
 

@@ -267,6 +267,10 @@ private slots:
 
     void on_btnOricHelp_clicked();
 
+    void on_btnCoco3_clicked();
+
+    void on_btnCoco3Help_clicked();
+
 private:
     Ui::DialogTRSESettings *ui;
 };

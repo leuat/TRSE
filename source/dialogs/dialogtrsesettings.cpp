@@ -75,6 +75,7 @@ void DialogTRSESettings::FillFromIni()
     ui->leTVCEmulator->setText(m_ini->getString("TVC_emulator"));
     ui->lePrimoEmulator->setText(m_ini->getString("primo_emulator"));
     ui->leAgonEmulator->setText(m_ini->getString("agon_emulator"));
+    ui->leCoco3->setText(m_ini->getString("coco3_emulator"));
     ui->leSparkle->setText(m_ini->getString("sparkle"));
 
     ui->leTRS80->setText(m_ini->getString("trs80_emulator"));    ui->leSNES->setText(m_ini->getString("snes_emulator"));
@@ -213,6 +214,7 @@ void DialogTRSESettings::FillToIni()
     m_ini->setString("tim_emulator", ui->leTimEmulator->text());
     m_ini->setString("pcw_emulator", ui->lePCWEmulator->text());
     m_ini->setString("TVC_emulator", ui->leTVCEmulator->text());
+    m_ini->setString("coco3_emulator", ui->leCoco3->text());
     m_ini->setString("primo_emulator", ui->lePrimoEmulator->text());
     m_ini->setString("agon_emulator", ui->leAgonEmulator->text());
     m_ini->setString("trs80_emulator", ui->leTRS80->text());
@@ -356,7 +358,8 @@ void DialogTRSESettings::Help(QString tit, QString text)
 void DialogTRSESettings::SetupExtras()
 {
     QStringList data;
-    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"AGON" <<"TVC" << "PRIMO"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM"<<"FOENIX" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+    data<<"C64"<<"C128"<<"VIC20"<<"PET"<<"PLUS4"<<"NES"<<"GAMEBOY"<<"SPECTRUM"<<"TIM"<<"PCW"<<"THOMSON"<<"MSX" << "DRAGON"<<"BK0010"<<"AGON" <<"TVC" << "PRIMO"<<"VECTREX"<<"COLECO"<<"AMSTRADCPC"<<"ATARI2600"<<"TIKI100"<<"X86" << "OK64" << "X16" <<"MEGA65"<<"BBCM"<<"FOENIX" <<"ATARI800" <<"APPLEII" <<"ORIC"<<"TRS80"<<"TRS80COCO"<<"SNES"<<"VZ200"<<"ACORN"<<"QEMU"<<"JDH8"<<"POKEMONMINI"<<"WONDERSWAN" ;
+//    qDebug() << ui->grdEmulators->rowCount() << data.count();
     for (int i=0;i<ui->grdEmulators->rowCount();i++) {
         if (data[i]=="QEMU")
             continue;
@@ -1150,5 +1153,21 @@ void DialogTRSESettings::on_btn8bplLoc_clicked()
 void DialogTRSESettings::on_btnOricHelp_clicked()
 {
     Help("Oric Atmos Emulator","Use Auric: https://github.com/pugo/Auric");
+}
+
+
+void DialogTRSESettings::on_btnCoco3_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("CoCo3 emulator location"), m_ini->getString("project_path"), "*");
+    if (filename!="")
+        ui->leCoco3->setText(filename);
+}
+
+
+void DialogTRSESettings::on_btnCoco3Help_clicked()
+{
+    Help("TRS80 CoCo3 emulator","Use xroar (preferred): https://www.6809.org.uk/xroar/  or mame (need image tools installed)");
+
 }
 

@@ -2382,15 +2382,16 @@ void CodeGen6809::dispatch(QSharedPointer<NodeUnaryOp> node)
     if (node->m_op.m_type==TokenType::MINUS) {
         if (node->m_right->isWord(as)) {
 
-            ErrorHandler::e.Error("Unary operator (-) for integer not implemented yet. Please bug the developer!",node->m_op.m_lineNumber);
-            /*Token t = node->m_op;
-            QSharedPointer<NodeBinOP> bop = new QSharedPointer<NodeBinOP>(new NodeBinOP())
-            */
+            as->Asm("tfr x,d");
+            as->Asm("eorb #$FF");
+            as->Asm("addb #1");
+            as->Asm("eora #$FF");
+            as->Asm("adca #0");
+            as->Asm("tfr d,x");
+            return;
         }
         as->Comment("Unary operator: Negate 8-bit number");
-        as->Asm("eorb #$FF");
-//        as->Asm("clc");
-        as->Asm("addb #1");
+        as->Asm("negb");
     }
 
 

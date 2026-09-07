@@ -36,7 +36,8 @@ void SystemTRS80CoCo::PostProcess(QString &text, QString file, QString currentDi
 #ifdef _WIN32
     imgtool+=".exe";
 #endif
-    if (!QFile::exists(imgtool)) {
+    if (!QFile::exists(imgtool) && getEmulatorName().toLower().contains("mame"))
+    {
         text+="Could not find 'imgtool' in mame directory. please verify!";
         m_buildSuccess = false;
 
@@ -77,14 +78,22 @@ void SystemTRS80CoCo::PostProcess(QString &text, QString file, QString currentDi
 
     Util::SaveByteArray(all,file+".cmd");
   */
-    StartProcess(imgtool,QStringList() <<"create"<<"coco_jvc_rsdos"<<file+".dsk", output);
- //   qDebug() << output;
-    StartProcess(imgtool,QStringList() <<"put"<<"coco_jvc_rsdos"<<file+".dsk"<<file+".bin"<<"t.bin", output);
-   // qDebug() << output;
+    if (getEmulatorName().toLower().contains("mame")) {
+        StartProcess(imgtool,QStringList() <<"create"<<"coco_jvc_rsdos"<<file+".dsk", output);
+     //   qDebug() << output;
+        StartProcess(imgtool,QStringList() <<"put"<<"coco_jvc_rsdos"<<file+".dsk"<<file+".bin"<<"t.bin", output);
+       // qDebug() << output;
+    }
 
 }
 
 void SystemTRS80CoCo::applyEmulatorParameters(QStringList &params, QString debugFile, QString filename, CIniFile *pini) {
+    if (getEmulatorName().toLower().contains("xroar")) {
+        params << "-run" <<filename+".bin";
+        return;
+
+    }
+
     params << "coco3";
     params << "-flop1" <<filename+".dsk";
     params << ApplyDefaultMameParams();

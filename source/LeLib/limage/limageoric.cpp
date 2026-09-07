@@ -91,20 +91,14 @@ void LImageOric::ExportBin(QFile &ofile)
             char c = 0;
             int curBit = 0;
             int curColor = 7;
+            int cadd = 0;
             for (int x=0;x<m_width;x+=6) {
                 //int pixel = ((dy+y)/10)&15;
-                int dom = curColor;
-                QVector<int> w;
-                w.resize(8);
-                w.fill(0);
                 c=0;
+                bool ok=false;
                 // get next step
-                if (x+6<m_width)
-                for (int i=0;i<6;i++) {
-                    int pixel = getPixel(x+i+6,y);
-                    w[pixel]++;
-
-                }
+                int curIndex = getMaxIndexColorAt(x,y);
+                int nextIndex = getMaxIndexColorAt(x+6,y);
                 int cnt =0;
                 for (int i=0;i<6;i++) {
                     int pixel = getPixel(x+i,y);
@@ -114,21 +108,28 @@ void LImageOric::ExportBin(QFile &ofile)
                     }
 
                 }
-                int maxIndex = -1;
-                int maxx = -1;
-                for (int i=1;i<8;i++)
-                    if (w[i]>=maxx) {
-                        maxx=w[i];
-                        maxIndex = i;
+                if (curColor!=curIndex) {
+                    // check for inversion
+                    if (curColor==7-curIndex) { // can invert!
+                        ok = true;
+                        cadd = 128;
+                        //curColor = 7-maxIndex;
                     }
+                }
 
-                if (cnt<m_exportParams["export1"] && curColor!=0 && curColor!=maxIndex) {
-                    int add = 0;
-                    curColor = maxIndex;
-                    c = curColor + add;
+                if (cnt<m_exportParams["export1"] && curColor!=0 && curColor!=nextIndex && !ok) {
+//                    cadd = 64;
+                    curColor = nextIndex;
+                    c = curColor;
 
                 }
-                else c+=64;
+                else c+=64 + cadd;
+
+                cadd = 0;
+
+//                if (ok)
+  //                  cadd = 128;
+
                data.append(c);
             //            if (rand()%100>98) qDebug() << pixel;
 //                c |= (pixel<<(5-curBit));
@@ -152,5 +153,30 @@ void LImageOric::LoadBin(QFile &file)
             setPixel(i,j, temp_data[i+j*m_width]);
         }
     delete[] temp_data;
+}
+
+int LImageOric::getMaxIndexColorAt(int x, int y)
+{
+    if (x+6>=m_width)
+        return 0;
+
+    QVector<int> w;
+    w.resize(8);
+    w.fill(0);
+
+    for (int i=0;i<6;i++) {
+        int pixel = getPixel(x+i,y);
+        w[pixel]++;
+
+    }
+    int maxIndex = -1;
+    int maxx = -1;
+    for (int i=1;i<8;i++)
+        if (w[i]>=maxx) {
+            maxx=w[i];
+            maxIndex = i;
+        }
+
+    return maxIndex;
 }
 

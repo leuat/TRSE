@@ -27,6 +27,8 @@ public:
     void ExportBin(QFile& ofile) override;
     void LoadBin(QFile& file) override;
 
+    int getMaxIndexColorAt(int x, int y);
+
 
 };
 
