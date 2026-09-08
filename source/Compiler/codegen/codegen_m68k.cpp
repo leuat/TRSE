@@ -240,7 +240,23 @@ void CodeGen68k::dispatch(QSharedPointer<NodeUnaryOp> node)
         node->m_right->Accept(this);
     }
 
+    if (node->m_right->isPureNumeric())
+        return;
+
+
     as->Comment("Unary op for : " + node->m_right->getValue(as));
+    if (node->m_op.m_type==TokenType::MINUS) {
+//        node->m_right->Accept(this);
+        as->Term();
+        if (node->m_right->isWord(as)) {
+
+            as->Asm("neg.w d0");
+            return;
+        }
+        as->Comment("Unary operator: Negate 8-bit number");
+        as->Asm("neg.b d0");
+    }
+
 }
 
 

@@ -1,5 +1,5 @@
 program MusicUnitDemo;
-@use "Music"
+@use "music"
 @use "crtc"
 
 // Good old plasma example with 3 channel music!

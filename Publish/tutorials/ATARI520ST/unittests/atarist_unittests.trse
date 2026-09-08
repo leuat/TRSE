@@ -56,3 +56,7 @@ use_track_19 = 1
 disable_compiler_comments = 0
 use_vice_c1541 = 0
 use_python = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/ATARI520ST/unittests/
+image_editor_loc = 0
+open_files = ,Turbo Rascal Solution, utests.ras, [ext]units/global/unittests/various.tru, utests.asm
+current_file = [ext]units/global/unittests/various.tru

@@ -2,7 +2,7 @@ Program UnitTests6809;
 @use "unittests/unittests"
 @use "unittests/common"
 
-@addemulatorparam "-nothrottle"
+//@addemulatorparam "-nothrottle"
 
 procedure TestResult(s : pointer);
 begin

@@ -70,3 +70,7 @@ exomizer_toggle = 0
 data_header_charsets/charset.flf = 0
 data_header_images/squiddy.flf = 0
 data_header_images/squiddy_small.flf = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/AGON/tutorials/
+image_editor_loc = 0
+open_files = ,Turbo Rascal Solution, 06_disk_anim.ras, 03_plasma.ras, 10_3d.ras
+current_file = 03_plasma.ras

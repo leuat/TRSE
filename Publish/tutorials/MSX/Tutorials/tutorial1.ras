@@ -1,5 +1,5 @@
 program Tutorial1;
-@use "Screen"
+@use "screen"
 var
 
 	text : string = "WHOO TRSE ON THE MSX";	

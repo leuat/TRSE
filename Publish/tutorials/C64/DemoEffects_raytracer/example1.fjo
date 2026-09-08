@@ -43,7 +43,6 @@ output = {
 	c64_imageType = 0,
 }
 
-
 -- Sample material #1, low reflections
 
 Material1 = {

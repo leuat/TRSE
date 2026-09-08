@@ -1,5 +1,5 @@
 program Tutorial1;
-@use "Screen"
+@use "screen"
 var
 	py,y,time : byte;
 	

@@ -61,3 +61,7 @@ use_vice_c1541 = 0
 disable_compiler_comments = 0
 use_track_19 = 1
 use_python = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/wormwood/
+image_editor_loc = 0
+open_files = ,Turbo Rascal Solution, images/splash2.flf, main.ras, include/entities.ras, include/intro.ras, include/levels.ras, include/map.ras
+current_file = include/levels.ras

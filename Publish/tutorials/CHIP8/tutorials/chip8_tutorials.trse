@@ -68,3 +68,6 @@ data_header_resources/charsets/charset1.flf = 0
 charset_resources/charsets/charset1.flf = :resources/character.rom
 exomizer_toggle = 0
 use_python = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/CHIP8/tutorials/
+image_editor_loc = 0
+open_files = ,Turbo Rascal Solution, tut1.ras

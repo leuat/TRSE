@@ -1,9 +1,9 @@
 program platformer_demo;
 
-@use "mylib/graph"
-@use "mylib/DMA"
-@use "mylib/fileio"
-@use "mylib/joystick"
+@use "graph"
+@use "DMA"
+@use "fileio"
+@use "joystick"
 @use "system/str"
 
 /*

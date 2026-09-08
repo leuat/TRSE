@@ -77,4 +77,6 @@ data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
 use_python = 0
-open_files =, main.ras
+open_files = ,Turbo Rascal Solution, main.ras
+project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/Disk_loader_project/
+image_editor_loc = 0

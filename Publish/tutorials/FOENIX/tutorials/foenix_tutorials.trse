@@ -67,3 +67,7 @@ override_target_settings_sys = 1
 override_target_settings_prg = 1
 build_list = ,
 exomizer_toggle = 0
+project_path = /home/leuat/code/TRSE/Release/../tutorials/FOENIX/tutorials/
+image_editor_loc = 0
+open_files = ,Turbo Rascal Solution, tutorial1.ras
+current_file = tutorial1.ras

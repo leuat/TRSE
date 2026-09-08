@@ -21,7 +21,7 @@ program Sparkle3_disk_example;
 <<Header: sparkleme
 <<name: hurrah
 <<Start:		1000
-Tracks:		40
+Tracks:		35
 
 File:	main.prg
 
@@ -32,7 +32,7 @@ File:	images/image1_color.bin	2000
 File:	images/image1_data.bin	6000
 
 
-DirIndex:	02
+DirIndex: 02
 File:	images/image2_color.bin	2000
 File:	images/image2_data.bin	6000
 
