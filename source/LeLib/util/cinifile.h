@@ -30,6 +30,7 @@
 #include <QVector3D>
 #include <QColor>
 #include <QSettings>
+
 class CItem : public QVariant {
 public:
     QString name="", strval="";
@@ -67,6 +68,8 @@ public:
 
     QString getString(QString name);
 
+
+    int toFloat(QString v);   
 
     QVector3D getVec(QString name);
     QColor getColor(QString name);

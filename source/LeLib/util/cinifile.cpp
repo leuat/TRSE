@@ -22,6 +22,16 @@
 #include "cinifile.h"
 
 
+int CIniFile::toFloat(QString v) {
+  if (v.startsWith("$")) {
+    v= v.remove("$");
+    bool ok;
+    return v.toInt(&ok,16);
+  }
+  return v.toFloat();
+}
+
+
 void CIniFile::Load(QString fname) {
 
 /*    if (isMainSettings) {
@@ -60,9 +70,9 @@ void CIniFile::Load(QString fname) {
 
             if (strval.split(":").count()==3) {
                 QStringList v = strval.split(":");
-                it.vec.setX( v[0].toFloat());
-                it.vec.setY( v[1].toFloat());
-                it.vec.setZ( v[2].toFloat());
+                it.vec.setX( toFloat(v[0]));
+                it.vec.setY( toFloat(v[1]));
+                it.vec.setZ( toFloat(v[2]));
             }
 
 //            qDebug() << "Loading :  " << it.name;
