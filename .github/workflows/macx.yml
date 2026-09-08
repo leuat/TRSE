@@ -84,9 +84,13 @@ jobs:
             STATUS="FAILURE"
           fi
 
-          VERSION="${{ steps.version.outputs.TRSE_VERSION }}"
-          RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          CONTENT=$(printf '**MacOS Nightly Build: %s**\nVersion: %s\nRun: %s' "$STATUS" "$VERSION" "$RUN_URL")
+          if [ "$STATUS" = "SUCCESS" ]; then
+            CONTENT="MacOS Build: Success"
+          else
+            VERSION="${{ steps.version.outputs.TRSE_VERSION }}"
+            RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            CONTENT=$(printf '**MacOS Nightly Build: %s**\nVersion: %s\nRun: %s' "$STATUS" "$VERSION" "$RUN_URL")
+          fi
 
           if [ -z "$DISCORD_WEBHOOK_URL" ]; then
             echo "DISCORD_WEBHOOK_URL is empty; skipping Discord notification"
