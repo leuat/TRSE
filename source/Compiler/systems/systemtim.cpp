@@ -82,6 +82,9 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
 #ifdef __APPLE__
     cpmcp = "cpmcp";
 #endif
+#ifdef __FreeBSD__
+    cpmcp = "cpmcp";
+#endif
 
 
 /*    QDir dir(cpmtools);
@@ -121,6 +124,10 @@ void SystemTIM::Assemble(QString &text, QString filename, QString currentDir, QS
     QString out;
 
 #ifdef __linux__
+    //base = base.remove("x16emu");
+    StartProcess("chmod",QStringList() <<"a+rw"<<dname,out,true,workDir);
+#endif
+#ifdef __FreeBSD__
     //base = base.remove("x16emu");
     StartProcess("chmod",QStringList() <<"a+rw"<<dname,out,true,workDir);
 #endif
