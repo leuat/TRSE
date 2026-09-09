@@ -270,7 +270,6 @@ qt_add_executable(trse WIN32 MACOSX_BUNDLE
     source/OrgAsm/morgasm.cpp source/OrgAsm/morgasm.h
     source/OrgAsm/orgasm.cpp source/OrgAsm/orgasm.h
     source/OrgAsm/orgasm68k.cpp
-    source/OrgAsm/orgasmlexer.cpp source/OrgAsm/orgasmlexer.h
     source/OrgAsm/zorgasm.cpp source/OrgAsm/zorgasm.h
     source/PmmEdit/asmhighlighter.cpp source/PmmEdit/asmhighlighter.h
     source/PmmEdit/codeeditor.cpp source/PmmEdit/codeeditor.h
@@ -1242,12 +1241,12 @@ if(LINUX)
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/lua/
     )
     target_compile_definitions(trse PRIVATE
-        #USE_OMP
+        USE_OMP
     )
-
+    find_package(OpenMP)
     target_link_libraries(trse PRIVATE
         # Remove flag: -fopenmp
-	#omp
+	OpenMP::OpenMP_CXX
         #dl
         lua
     )
