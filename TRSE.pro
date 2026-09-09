@@ -309,7 +309,7 @@ SOURCES += source/main.cpp\
     source/LeLib/ttrfile.cpp \
     source/LeLib/util/cc1541.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
-    source/LeLib/util/lz4/lz4.c \
+ #   source/LeLib/util/lz4/lz4.c \
     source/LeLib/util/lz4/lz4hc.c \
     source/LeLib/util/spline2d.cpp \
     source/LeLib/util/tikidisk.cpp \
