@@ -309,7 +309,7 @@ SOURCES += source/main.cpp\
     source/LeLib/ttrfile.cpp \
     source/LeLib/util/cc1541.cpp \
     source/LeLib/util/fc8/FC8Compression.cpp \
-    source/LeLib/util/lz4/lz4.c \
+ #   source/LeLib/util/lz4/lz4.c \
     source/LeLib/util/lz4/lz4hc.c \
     source/LeLib/util/spline2d.cpp \
     source/LeLib/util/tikidisk.cpp \
@@ -428,7 +428,6 @@ SOURCES += source/main.cpp\
     source/dialogs/dialogprojectsettings.cpp \
     source/OrgAsm/orgasm.cpp \
     source/Compiler/opcodes/opcodes6502.cpp \
-    source/OrgAsm/orgasmlexer.cpp \
     source/dialogs/dialogdonate.cpp \
     source/dialogs/dialogfindfile.cpp \
     source/LeLib/limage/limagevic20.cpp \
@@ -762,7 +761,6 @@ HEADERS  += source/mainwindow.h \
     source/dialogs/dialogprojectsettings.h \
     source/OrgAsm/orgasm.h \
     source/Compiler/opcodes/opcodes6502.h \
-    source/OrgAsm/orgasmlexer.h \
     source/dialogs/dialogdonate.h \
     source/dialogs/dialogfindfile.h \
     source/LeLib/limage/limagevic20.h \

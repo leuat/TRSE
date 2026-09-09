@@ -1,5 +1,0 @@
-#ifndef ORGASMLEXER_H
-#define ORGASMLEXER_H
-
-
-#endif // ORGASMLEXER_H

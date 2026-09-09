@@ -37,14 +37,16 @@ On windows/macos, you need to download and install the qt libraries, msvc, xcode
 - make -j8
 
 ## Lua issues
-TRSE needs Lua 5.3.5 (for .fjo ray tracer support), and has static libraries compiled up for x64/apple arm/freebsd/linux. If you have some other OS, do the following: - - download lua 5.3.5 from https://www.lua.org/ftp/lua-5.3.5.tar.gz
+TRSE needs Lua 5.3.5 (for .fjo ray tracer support), and has static libraries compiled up for x64/apple arm/freebsd/linux. If you have some other OS, do the following: - 
+
+- download lua 5.3.5 from https://www.lua.org/ftp/lua-5.3.5.tar.gz
 - compile it (just "make")
 - copy the liblua.a file to TRSE/libs/lua/liblua_myos.a
 - add the library to the project path in TRSE.pro, ie "LIBS += -L$$PWD/libs/lua/ -llua_myos"
 
 ## OpenMP issues
 The fjong ray tracer uses OpenMP if available. If you are having issues with compiling up / getting openMP to work, add
-DEFINE-=USE_OMP in the TRSE.pro file
+
 
 Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
 
