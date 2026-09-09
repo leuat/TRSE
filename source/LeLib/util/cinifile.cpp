@@ -74,7 +74,6 @@ void CIniFile::Load(QString fname) {
                 it.vec.setX( toFloat(v[0]));
                 it.vec.setY( toFloat(v[1]));
                 it.vec.setZ( toFloat(v[2]));
-                qDebug() << toFloat(v[0])<< toFloat(v[1])<< toFloat(v[2]) << strval;
             }
 
 //            qDebug() << "Loading :  " << it.name;
