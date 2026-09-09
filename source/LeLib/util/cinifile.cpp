@@ -23,6 +23,7 @@
 
 
 int CIniFile::toFloat(QString v) {
+    v = v.trimmed();
   if (v.startsWith("$")) {
     v= v.remove("$");
     bool ok;
