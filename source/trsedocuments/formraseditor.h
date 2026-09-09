@@ -36,7 +36,6 @@
 #include "source/dialogs/dialogmemoryanalyze.h"
 #include "source/Compiler/misc/machinecodeanalyzer.h"
 #include "source/OrgAsm/orgasm.h"
-#include "source/OrgAsm/orgasmlexer.h"
 
 
 #include "source/Compiler/systems/abstractsystem.h"

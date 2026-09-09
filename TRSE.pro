@@ -428,7 +428,6 @@ SOURCES += source/main.cpp\
     source/dialogs/dialogprojectsettings.cpp \
     source/OrgAsm/orgasm.cpp \
     source/Compiler/opcodes/opcodes6502.cpp \
-    source/OrgAsm/orgasmlexer.cpp \
     source/dialogs/dialogdonate.cpp \
     source/dialogs/dialogfindfile.cpp \
     source/LeLib/limage/limagevic20.cpp \
@@ -762,7 +761,6 @@ HEADERS  += source/mainwindow.h \
     source/dialogs/dialogprojectsettings.h \
     source/OrgAsm/orgasm.h \
     source/Compiler/opcodes/opcodes6502.h \
-    source/OrgAsm/orgasmlexer.h \
     source/dialogs/dialogdonate.h \
     source/dialogs/dialogfindfile.h \
     source/LeLib/limage/limagevic20.h \
