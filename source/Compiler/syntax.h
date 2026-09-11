@@ -17,140 +17,133 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program (LICENSE.txt).
  *   If not, see <https://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef SYNTAX_H
 #define SYNTAX_H
 
-#include <QString>
-#include <QVector>
 #include "token.h"
 #include <QDebug>
 #include <QHash>
 #include <QList>
-#include "pvar.h"
-#include "errorhandler.h"
+#include <QString>
+#include <QVector>
+// #include "errorhandler.h"
 #include "source/Compiler/systems/abstractsystem.h"
 
 class C64Key {
 public:
-    QString m_name = "";
-    QString m_key = "";
-    unsigned char m_value = 0;
-    unsigned char m_row = 0;
-    unsigned char m_column = 0;
+  QString m_name = "";
+  QString m_key = "";
+  unsigned char m_value = 0;
+  unsigned char m_row = 0;
+  unsigned char m_column = 0;
 
-    C64Key() {}
-    C64Key(QString name, QString key, int value, int row, int column) {
-        m_name = name;
-        m_key = key;
-        m_value = value;
-        m_row = row;
-        m_column = column;
-
-    }
-
+  C64Key() {}
+  C64Key(QString name, QString key, int value, int row, int column) {
+    m_name = name;
+    m_key = key;
+    m_value = value;
+    m_row = row;
+    m_column = column;
+  }
 };
-
-
 
 class BuiltInFunction {
 public:
-    enum Type {STRING, NUMBER, ADDRESS, BYTE, INTEGER, PROCEDURE, LONG, IGNOREPARAM};
-    QString m_name;
-    QList<Type> m_params;
+  enum Type {
+    STRING,
+    NUMBER,
+    ADDRESS,
+    BYTE,
+    INTEGER,
+    PROCEDURE,
+    LONG,
+    IGNOREPARAM
+  };
+  QString m_name;
+  QList<Type> m_params;
 
-    BuiltInFunction() {}
-    bool m_initFunction = false;
-//    QVector<PVar> m_params;
+  BuiltInFunction() {}
+  bool m_initFunction = false;
 
-    BuiltInFunction(QString name, QList<BuiltInFunction::Type> params, bool initFunction = false) {
-        m_name = name;
-        m_params = params;
-        m_initFunction = initFunction;
-    }
+  BuiltInFunction(QString name, QList<BuiltInFunction::Type> params,
+                  bool initFunction = false) {
+    m_name = name;
+    m_params = params;
+    m_initFunction = initFunction;
+  }
 };
 
-// Singleton
-class Syntax
-{
+// Singleton class
+class Syntax {
 private:
-    Syntax();
+  Syntax();
+
 public:
-    QVector<Token> reservedWords, reservedWordsFjong;
-    QStringList keywords = QStringList() <<"for" <<"fori" <<"case"<<"if"<<"repeat"<<"until"<<"do"<<"array"
-                                            <<"begin"<<"end" <<"to"<<"and"<<"or"<<"xor"<<"const"<<"public"<<"private"<<"then"<<"incbin"<<"length";
 
-/*
-            "END", "SEMI", "DOT", "VAR", "REAL",
-            "PROGRAM", "COLON", "COMMA", "INTEGER_CONST", "REAL_CONST", "PROCEDURE",
-            "STRING", "IF", "THEN", "EQUALS", "NOTEQUALS", "GREATER", "LESS",
-            "FOR", "FORI", "TO","DO", "NADA","ADDRESS", "WHILE", "ARRAY", "OF",
-            "BYTE", "LBRACKET", "RBRACKET", "INCBIN", "ASM", "INCSID",
-            "INTERRUPT", "BITAND", "BITOR", "ELSE", "OR", "AND", "POINTER","AT",
-            "INCLUDE", "DEFINE", "PREPROCESSOR", "IFDEF", "ENDIF", "IFNDEF", "OFFPAGE", "ONPAGE",
-            "STEP", "UNROLL", "LOOPX", "LOOPY", "CSTRING", "USERDATA", "STARTBLOCK", "ENDBLOCK",
-            "IGNOREMETHOD", "ERROR", "WEDGE", "USE", "INCNSF", "STARTASSEMBLER", "LONG", "CHIPMEM",
-            "GREATEREQUAL", "LESSEQUAL","DONOTREMOVE", "CASE", "WORD", "SHR", "SHL", "XOR", "REPEAT",
-            "UNTIL", "CONST", "COMMENT", "ABSOLUTE", "LENGTH", "RECORD", "UNIT", "GLOBAL",
-            "WRAM", "HRAM", "ALIGNED", "BANK", "SPRRAM","INLINE", "BUILDTABLE", "USES", "FUNCTION", "COMPRESSED",
-            "PURE", "PURE_VARIABLE", "PURE_NUMBER", "NO_TERM", "INVERT","MACRO", "REFERENCE", "SIGNED",
-            "BREAK", "CONTINUE", "RETURN", "ASSIGNOP", "RAM", "TYPE", "BOOLEAN", "CLASS", "PUBLIC", "PRIVATE",
-            "SIZEOF"
-*/
-    QStringList m_illegaVariableNames;
-    //QVector<BuiltInFunction> builtinFunctions;
-    QHash<QString, BuiltInFunction> builtInFunctions, builtinFunctionsFjong;
-  //  enum System {C64, VIC20, PET, NES, C128, BBCM, AMIGA};
-    QString m_syntaxData; // File syntax data
-    QString m_systemString;
+  static Syntax s;
 
-    QString m_numID = "*&NUM";
+  QVector<Token> reservedWords, reservedWordsFjong;
+  QStringList keywords =
+      QStringList() << "for" << "fori" << "case" << "if" << "repeat" << "until"
+                    << "do" << "array" << "begin" << "end" << "to" << "and"
+                    << "or" << "xor" << "const" << "public" << "private"
+                    << "then" << "incbin" << "length";
 
-    QString thisName = "this";
+  QStringList m_illegaVariableNames;
+  QHash<QString, BuiltInFunction> builtInFunctions, builtinFunctionsFjong;
+  QString m_syntaxData; // File syntax data
+  QString m_systemString;
 
-    QHash<QString, bool> m_reservedWordsRegularFont;
+    // String used for representing a number within a string (for replacement)
+  QString m_numID = "*&NUM";
+    // name of "this" in TRSE
+  QString thisName = "this";
 
-    QSharedPointer<AbstractSystem> m_currentSystem;
-    bool m_ignoreSys = false;
-    void Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini, QSharedPointer<CIniFile> m_proj);
-    void SetupReservedWords(QVector<Token>& list, QString id, bool ignoreSystem);
-    void SetupIllegalVariables();
-    void SetupBuiltinFunctions(QHash<QString, BuiltInFunction>& lst, AbstractSystem::System s, QString id, bool ignoreSystem);
-    void SetupKeys();
-    void LoadSyntaxData();
-    void Reload();
+  QHash<QString, bool> m_reservedWordsRegularFont;
 
+  QSharedPointer<AbstractSystem> m_currentSystem;
+  bool m_ignoreSys = false;
 
-    QString puredigit = "0123456789^";
-    QString digit = "^0123456789$%!";
-    QString digitAll = "^0123456789$%!ABCDEFabcdef";
-    QString alpha = "abcdefghijklmnopqrstuvwxyz_";
-    QString alnum =alpha+digit;
-    QString alnumString =alpha+digit+ " ;:æøå!#¤%&/()=.,-+*";
-    QString alnumStringWithoutPeriod =alpha+digit+ ".";
-    QString binop = digitAll + " +-*/";
-    uint lineNumber = 0;
-    void SetupConstants();
+  QString puredigit = "0123456789^";
+  QString digit = "^0123456789$%!";
+  QString digitAll = "^0123456789$%!ABCDEFabcdef";
+  QString alpha = "abcdefghijklmnopqrstuvwxyz_";
+  QString alnum = alpha + digit;
+  QString alnumString = alpha + digit + " ;:æøå!#¤%&/()=.,-+*";
+  QString alnumStringWithoutPeriod = alpha + digit + ".";
+  QString binop = digitAll + " +-*/";
+  uint lineNumber = 0;
 
+  void Init(AbstractSystem::System s, QSharedPointer<CIniFile> m_ini,
+            QSharedPointer<CIniFile> m_proj);
 
-    QHash<unsigned char, C64Key> m_c64keys;
+  void SetupReservedWords(QVector<Token> &list, QString id, bool ignoreSystem);
+  void SetupIllegalVariables();
+  void SetupBuiltinFunctions(QHash<QString, BuiltInFunction> &lst,
+                             AbstractSystem::System s, QString id,
+                             bool ignoreSystem);
+  void SetupKeys();
+  void LoadSyntaxData();
+  void Reload();
 
-    static Syntax s;
+  void SetupConstants();
 
-    bool isNumeric(QString s);
+  QHash<unsigned char, C64Key> m_c64keys;
 
-    bool isDigit(QString s);
-    bool isDigitHex(QString s);
-    bool isAlnum(QString s);
-    bool isAlnumExcludePeriod(QString s);
-    bool StringIsAlnum(QString s);
-    bool StringIsAlnumExcludePeriod(QString s);
-    bool isString(QString s);
+  bool isNumeric(QString s);
+  bool isDigit(QString s);
+  bool isDigitHex(QString s);
+  bool isAlnum(QString s);
+  bool isAlnumExcludePeriod(QString s);
+  bool StringIsAlnum(QString s);
+  bool StringIsAlnumExcludePeriod(QString s);
+  bool isString(QString s);
 
-    bool isAlpha(QString s);
+  bool isAlpha(QString s);
 
-    Token GetID(QString val, bool isRef);
+  Token GetID(QString val, bool isRef);
 };
 
 #endif // SYNTAX_H
