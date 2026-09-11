@@ -40,19 +40,19 @@ d64_paw_file_disk2 = none
 override_target_settings_sys = 0
 override_target_settings_prg = 0
 build_list = ,
-charset_ = /home/leuat/code/TRSE/tutorials/NES/intro_tutorial/tiles/game_meta_tiles.flf
+
 data_header_tiles/game_meta_tiles.flf = 0
 data_header_levels/game_levels.flf = 0
 exomize_toggle = 0
 data_header_tiles/main_tiles.flf = 6.90915e-310
 data_header_tiles/game_sprite_meta.flf = 0
-charset_levels/game_levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/NES/intro_tutorial/tiles/game_tiles.flf
+
 remove_unused_symbols = 1
 ignore_initial_jump = 0
 zeropage_colormemory = $fc
 exomizer_toggle = 0
 show_all_files = 1
-charset_tiles/game_sprite_meta.flf = /Users/leuat/code/TRSE/Publish/tutorials/NES/intro_tutorial/tiles/game_tiles.flf
+
 dirart_flf_file = none
 d64name = main
 use_vice_c1541 = 0

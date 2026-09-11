@@ -50,6 +50,6 @@ use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution, example5_single_sprite.ras, example1.fjo
-project_path = /home/leuat/code/TRSE/Release/../tutorials/C64/DemoEffects_raytracer/
+project_path = .
 image_editor_loc = 0
 current_file = example5_single_sprite.ras

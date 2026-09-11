@@ -74,11 +74,11 @@ data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 data_header_resources/images/tiles.flf = 0
 data_header_resources/images/levels.flf = 0
-charset_resources/images/levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/TRS80COCO/tutorials/resources/images/tiles.flf
+
 data_header_resources/images/image1.flf = 0
 data_header_resources/images/squiddy.flf = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution, tutorial1_putpixel.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/TRS80COCO/tutorials/
+project_path = .
 image_editor_loc = 0
 current_file = tutorial1_putpixel.ras

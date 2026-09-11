@@ -64,6 +64,6 @@ use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution, game.ras, main.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/cheesy/
+project_path = .
 image_editor_loc = 0
 current_file = game.ras

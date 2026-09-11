@@ -69,5 +69,5 @@ exomizer_toggle = 0
 data_header_images/image1.flf = 0
 data_header_images/image2.flf = 0
 open_files = ,disk.paw, main.ras
-project_path = /Users/leuat/code/TRSE/Release/trse.app/Contents/MacOS/../../tutorials/C64/disk_demo_project/
+
 current_file = main.ras

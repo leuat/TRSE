@@ -53,7 +53,7 @@ zeropage_colormemory = $fc
 data_header_resources/images/sprites.flf = 6.92484e-310
 data_header_resources/images/sprite1.flf = 6.92316e-310
 data_header_resources/images/background.flf = 6.92316e-310
-data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc/tutorials/resources/images/trse.flf = 6.48302e-314
+
 show_all_files = 1
 amstradcpc_model = 464
 zeropages_userdefined = ,
@@ -82,7 +82,7 @@ use_vice_c1541 = 0
 disable_compiler_comments = 0
 use_track_19 = 1
 use_python = 0
-project_path = /home/leuat/code/TRSE/Release/../tutorials/X86/unittests/
+project_path = .
 image_editor_loc = 0
 open_files = ,Turbo Rascal Solution, utests.ras, [ext]units/global/unittests/boolean.tru
 current_file = [ext]units/global/unittests/boolean.tru

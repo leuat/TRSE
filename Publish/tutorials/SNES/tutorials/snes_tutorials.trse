@@ -61,14 +61,14 @@ data_header_snes.flf = 0
 data_header_test.flf = 0
 data_header_sprites.flf = 0
 data_header_sprites1.flf = 0
-charset_ = /Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/tiles.flf
+
 data_header_level.flf = 0
-charset_level.flf = /Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/test.flf
+
 data_header_levels.flf = 0
-charset_levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/tiles.flf
+
 data_header_levels16.flf = 0
 data_header_font2bb.flf = 0
-charset_levels16.flf = /Users/leuat/code/TRSE/Publish/tutorials/SNES/tutorials/tiles.flf
+
 data_header_resources/gfx/tiles.flf = 0
 data_header_resources/gfx/text_tiles.flf = 0
 data_header_resources/gfx/sprites.flf = 0
@@ -90,6 +90,6 @@ disable_compiler_comments = 0
 use_python = 0
 data_header_resources/gfx/image.flf = 0
 open_files = ,Turbo Rascal Solution, 01_tiles.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/SNES/tutorials/
+project_path = .
 image_editor_loc = 0
 current_file = 01_tiles.ras

@@ -66,9 +66,9 @@ data_header_images/test.flf = 0
 data_header_images\test.flf = 0
 data_header_images\trse.flf = 0
 data_header_images/font1.flf = 0
-charset_ = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/tiles.flf
+
 data_header_images/level1.flf = 0
-charset_images/level1.flf = /Users/leuat/code/TRSE/Publish/tutorials/VZ200/tutorials/images/tiles.flf
+
 data_header_images/sprites1.flf = 0
 dirart_flf_file = none
 d64name = main
@@ -79,6 +79,6 @@ data_header_images/tiles.flf = 0
 data_header_images/sprites2.flf = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution, images/trse.flf
-project_path = /home/leuat/code/TRSE/Release/../tutorials/VZ200/tutorials/
+project_path = .
 image_editor_loc = 0
 current_file = images/trse.flf

@@ -53,7 +53,7 @@ zeropage_colormemory = $fc
 data_header_resources/images/sprites.flf = 0
 data_header_resources/images/sprite1.flf = 0
 data_header_resources/images/background.flf = 6.92316e-310
-data_header_/users/leuat/code/trse/publish/tutorials/amstradcpc/tutorials/resources/images/trse.flf = 6.48302e-314
+
 show_all_files = 0
 amstradcpc_model = 464
 zeropages_userdefined = ,

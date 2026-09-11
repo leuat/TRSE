@@ -43,12 +43,12 @@ override_target_settings_prg = 0
 build_list = ,
 zeropage_colormemory = $fc
 show_all_files = 0
-data_header_/users/leuat/code/trse/publish/tutorials/spectrum/tutorials/resources/images/trse.flf = 0
+
 data_header_resources/images/trse.flf = 0
 exomizer_toggle = 0
-data_header_/users/leuat/code/trse/publish/tutorials/spectrum/tutorials/resources/images/image12.flf = 3.03235e-314
+
 data_header_resources/images/image12.flf = 0
-data_header_/users/leuat/code/trse/publish/tutorials/spectrum/tutorials/resources/images/image11.flf = 3.04633e-314
+
 data_header_resources/images/image11.flf = 3.04633e-314
 zeropages_userdefined = ,
 petmodel = 2001-8N
@@ -65,6 +65,6 @@ use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution
-project_path = /home/leuat/code/TRSE/Release/../tutorials/SPECTRUM/tutorials/
+project_path = .
 image_editor_loc = 0
 current_file = tutorial1.ras

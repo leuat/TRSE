@@ -17,7 +17,7 @@ post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
 vic_memory_config = 24k
 data_header_images/logo.flf = 0
-charset_ = /home/leuat/Dropbox/TRSE/VIXMas/charsets/charset.flf
+
 data_header_images/anim1.flf = 0
 charset_images/anim1.flf = :resources/character.rom
 data_header_images/anim2.flf = 0
@@ -33,7 +33,7 @@ charset_images/ballbackground.flf = :resources/character.rom
 data_header_images/logo2.flf = 0
 data_header_images/logo3.flf = 0
 data_header_images/credzbackground.flf = 0
-charset_images/credzbackground.flf = /home/leuat/Dropbox/TRSE/VIXMas/charsets/charset.flf
+
 data_header_images/anim4.flf = 0
 data_header_images/vixmas.flf = 0
 charset_images/vixmas.flf = :resources/character.rom

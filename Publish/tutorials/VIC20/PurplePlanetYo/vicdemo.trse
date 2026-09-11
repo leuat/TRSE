@@ -1,4 +1,4 @@
-data_header_/home/leuat/dropbox/trse/vicdemo/images/image1.flf = 0
+
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 temp_zeropages = ,$54, $56, $58, $5A
 zeropage_screenmemory = $fe
@@ -32,7 +32,7 @@ border_color = 0
 background_color = 0
 output_type = prg
 d64_paw_file = none
-charset_images/logo.flf = /home/leuat/Dropbox/TRSE/VICDemo/charset/charset.flf
+
 data_header_images/logo.flf = 0
 override_target_settings = 0
 override_target_settings_org = $810
@@ -61,6 +61,6 @@ disable_compiler_comments = 0
 use_vice_c1541 = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution, demo.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/VIC20/PurplePlanetYo/
+project_path = .
 image_editor_loc = 0
 current_file = demo.ras

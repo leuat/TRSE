@@ -81,7 +81,7 @@ dosbox_cycles = 0
 data_header_images/hans.flf = 0
 exomizer_toggle = 0
 data_header_images/caramel.flf = 3.04656e-314
-data_header_images/leuat.flf = 3.04656e-314
+
 data_header_images/caramel1.flf = 3.04656e-314
 data_header_images/caramel11.flf = 3.04656e-314
 data_header_images/caramel21.flf = 0
@@ -93,7 +93,7 @@ data_header_images/caramel3111.flf = 3.04656e-314
 data_header_images/caramel31111.flf = 3.04656e-314
 data_header_images/credits_caramel.flf = 0
 data_header_images/grl1.flf = 3.02665e-314
-data_header_images/credits_leuat.flf = 0
+
 data_header_images/woman1.flf = 0
 data_header_images/stain.flf = 3.04825e-314
 data_header_images/tent1.flf = 0
@@ -108,7 +108,7 @@ data_header_images/spaghetti1.flf = 0
 data_header_images/spiral_tent.flf = 0
 data_header_images/spiral_tent1.flf = 0
 data_header_images/credits_nosf.flf = 0
-data_header_credits_leuat.flf = 3.01376e-314
+
 data_header_images/prxlogo2.flf = 0
 data_header_images/trse.flf = 0
 data_header_images/prxlogo3.flf = 3.01399e-314
@@ -122,6 +122,6 @@ use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
-project_path = /home/leuat/code/TRSE/Release/../tutorials/AMIGA/hopscotch/
+project_path = .
 image_editor_loc = 0
 open_files = ,Turbo Rascal Solution, demo.ras

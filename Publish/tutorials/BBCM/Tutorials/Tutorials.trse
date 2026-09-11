@@ -41,15 +41,15 @@ override_target_settings_sys = 1
 override_target_settings_prg = 1
 build_list = ,
 exomizer_toggle = 0
-data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/images/image1.flf = 0
+
 data_header_resources/images/image1.flf = 0
-data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/images/image2.flf = 0
+
 data_header_resources/images/image2.flf = 0
-data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/image3.flf = 6.48602e-314
-data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/images/image3.flf = 6.44841e-314
+
+
 data_header_resources/images/image3.flf = 6.44841e-314
-data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/images/mibri.flf = 6.4237e-314
-data_header_/users/leuat/code/trse/publish/tutorials/bbcm/tutorials/resources/images/test.flf = 0
+
+
 data_header_resources/images/test.flf = 0
 zeropages_userdefined = ,
 petmodel = 2001-8N

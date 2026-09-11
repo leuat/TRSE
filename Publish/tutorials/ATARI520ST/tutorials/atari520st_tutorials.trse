@@ -47,7 +47,7 @@ data_header_images/logo.flf = 0
 data_header_images/image2.flf = 0
 data_header_images/image3.flf = 0
 zeropage_colormemory = $fc
-data_header_/users/leuat/code/trse/publish/tutorials/atari520st/tutorials/images/trseflf.flf = 6.42462e-314
+
 show_all_files = 0
 data_header_images/trseflf.flf = 0
 data_header_images/background.flf = 0
@@ -62,8 +62,8 @@ data_header_images/sprites_balls2.flf = 0
 data_header_fonts/font8x8.flf = 0
 data_header_fonts/font16x16.flf = 0
 data_header_images/tiles.flf = 0
-charset_ = /Users/leuat/code/TRSE/Publish/tutorials/ATARI520ST/tutorials/images/tiles.flf
+
 data_header_images/levels.flf = 0
-charset_images/levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/ATARI520ST/tutorials/images/tiles.flf
+
 data_header_images/level_sprite.flf = 0
 open_files =, tut1.ras

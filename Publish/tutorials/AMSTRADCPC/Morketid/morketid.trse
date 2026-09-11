@@ -69,9 +69,9 @@ data_header_charset/temp.flf = 6.92517e-310
 data_header_images/leaf1.flf = 0
 data_header_images/proxima.flf = 0
 data_header_images/cabin.flf = 0
-data_header_images/leuat.flf = 0
-data_header_images/leuat_sil_2.flf = 6.94496e-310
-data_header_images/leuat_text.flf = 6.94496e-310
+
+
+
 data_header_images/forest.flf = 6.94496e-310
 data_header_images/forest2.flf = 0
 data_header_images/forest3.flf = 0

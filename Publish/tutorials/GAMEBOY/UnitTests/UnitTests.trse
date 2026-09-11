@@ -51,6 +51,6 @@ use_vice_c1541 = 0
 use_track_19 = 1
 disable_compiler_comments = 0
 use_python = 0
-project_path = /home/leuat/code/TRSE/Release/../tutorials/GAMEBOY/UnitTests/
+project_path = .
 image_editor_loc = 0
 open_files = ,Turbo Rascal Solution, unittests.ras

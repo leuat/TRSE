@@ -107,7 +107,7 @@ data_header_images/p2.flf = 0
 data_header_charsets/charset.flf = 6.92696e-310
 data_header_images/star.flf = 6.89996e-310
 data_header_images/hand_sprite.flf = 0
-data_header_images/leuat.flf = 6.91892e-310
+
 data_header_images/petscii.flf = 6.91892e-310
 data_header_charsets/petscii.flf = 6.91892e-310
 charset_charsets/petscii.flf = :resources/character.rom
@@ -122,7 +122,7 @@ data_header_charsets/cyrillic.flf = 6.90754e-310
 data_header_images/knowledge_spr.flf = 2.68121e-314
 data_header_images/ville_petscii2.flf = 2.37173e-314
 data_header_images/hand_sprite2.flf = 2.76972e-314
-data_header_images/leuat2.flf = 2.76998e-314
+
 data_header_images/me.flf = 5.56539e-314
 data_header_images/fatherfrost.flf = 2.36157e-314
 data_header_images/brezhnev2.flf = 0

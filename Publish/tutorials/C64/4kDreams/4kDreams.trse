@@ -15,18 +15,18 @@ post_optimizer_passjmp = 1
 post_optimizer_passldatax = 1
 post_optimizer_passstalda = 1
 post_optimizer_passldx = 1
-charset_images/hflogo.flf = /home/leuat/Dropbox/TRSE/Mintro/charsets/charset.flf
+
 data_header_images/hflogo.flf = 0
 charset_charsets/charset.flf = :resources/character.rom
 data_header_charsets/charset.flf = 0
 data_header_images/lslogo2.flf = 0
-charset_images/lslogo2.flf = /home/leuat/Dropbox/TRSE/Mintro/charsets/charset.flf
+
 data_header_images/trse.flf = 0
 data_header_images/lslogo3.flf = 0
-charset_images/lslogo3.flf = /home/leuat/Dropbox/TRSE/Mintro/charsets/charset.flf
+
 data_header_images/trse2.flf = 0
 data_header_images/lslogo4.flf = 0
-charset_images/lslogo4.flf = /home/leuat/Dropbox/TRSE/Mintro/charsets/charset.flf
+
 main_ras_file = intro.ras
 border_color = 0
 background_color = 0

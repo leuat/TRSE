@@ -59,7 +59,7 @@ data_header_resources/images/paint.flf = 0
 zeropages_userdefined = ,$5e, $5f, $60, $61, $62, $63
 petmodel = 2001-8N
 show_all_files = 0
-data_header_/users/leuat/code/trse/publish/tutorials/c64/tutorials/resources/images/hammerfist.flf = 2.55794e-314
+
 custom_system_cpu = 6502
 custom_system_methods = C64
 custom_system_assembler = From System
@@ -90,7 +90,7 @@ data_header_resources/charsets/space.flf = 0
 charset_resources/charsets/space.flf = :resources/character.rom
 charset_ = :resources/character.rom
 data_header_resources/images/space_map.flf = 0
-charset_resources/images/space_map.flf = /Users/leuat/code/TRSE/Publish/tutorials/C64/Tutorials/resources/charsets/space.flf
+
 data_header_test2.flf = 0
 use_python = 0
 charset_resources/charsets/charset.flf = :resources/character.rom
@@ -99,6 +99,6 @@ data_header_resources/images/squiddy_hires1.flf = 0
 disk_system = Krill
 save_unrolled_macros = 0
 open_files = ,Turbo Rascal Solution, Hello.ras, advanced/07_real_3d.ras, resources/sprites/sprites.flf
-project_path = /home/leuat/code/TRSE/Debug/../tutorials/C64/Tutorials/
+project_path = .
 image_editor_loc = 0
 current_file = advanced/07_real_3d.ras

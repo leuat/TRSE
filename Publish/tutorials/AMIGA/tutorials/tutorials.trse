@@ -45,7 +45,7 @@ cpu_x86_system = 8086
 override_target_settings_basic = 0
 build_list = ,
 zeropage_colormemory = $fc
-data_header_/users/leuat/code/trse/publish/tutorials/amiga/tutorials/images/trse.flf = 6.41269e-314
+
 data_header_images/trse.flf = 0
 show_all_files = 1
 dirart_flf_file = none
@@ -61,9 +61,9 @@ data_header_images/logo.flf = 0
 data_header_images/sprites.flf = 0
 data_header_resources/images/tiles.flf = 0
 data_header_resources/images/levels.flf = 0
-charset_resources/images/levels.flf = /Users/leuat/code/TRSE/Publish/tutorials/AMIGA/tutorials/resources/images/tiles.flf
+
 data_header_resources/images/image2.flf = 0
 open_files = ,Turbo Rascal Solution, readme.rtf, 06_copper3.ras, 01_image.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/AMIGA/tutorials/
+project_path = .
 image_editor_loc = 0
 current_file = 06_copper3.ras

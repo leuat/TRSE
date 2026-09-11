@@ -92,6 +92,6 @@ disable_compiler_comments = 0
 use_vice_c1541 = 0
 use_python = 0
 open_files = ,Turbo Rascal Solution, graveintentions.ras
-project_path = /home/leuat/code/TRSE/Release/../tutorials/CrossPlat/GraveIntentions/
+project_path = .
 image_editor_loc = 0
 current_file = graveintentions.ras
