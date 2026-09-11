@@ -45,7 +45,8 @@ TRSE needs Lua 5.3.5 (for .fjo ray tracer support), and has static libraries com
 - add the library to the project path in TRSE.pro, ie "LIBS += -L$$PWD/libs/lua/ -llua_myos"
 
 ## OpenMP issues
-The fjong ray tracer uses OpenMP if available. If you are having issues with compiling up / getting openMP to work, add
+The fjong ray tracer uses OpenMP if available. If you are having issues with compiling up / getting openMP to work, add "DEFINES -= USE_OMP" to the TRSE.pro file.
+
 
 
 Select "Release", and under the qt project/build make sure you set the build directory to be **TRSE/Release**
