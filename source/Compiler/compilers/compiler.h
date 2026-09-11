@@ -17,34 +17,34 @@
  *   You should have received a copy of the GNU General Public License
  *   along with this program (LICENSE.txt).
  *   If not, see <https://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef Compiler_H
 #define Compiler_H
 
 #include "../parser.h"
 #include "source/Compiler/assembler/asm6502.h"
-#include "source/Compiler/assembler/asm6809.h"
 #include "source/Compiler/assembler/asm68000.h"
-#include "source/Compiler/assembler/asmx86.h"
-#include "source/Compiler/assembler/asmz80.h"
+#include "source/Compiler/assembler/asm6809.h"
 #include "source/Compiler/assembler/asmarm.h"
 #include "source/Compiler/assembler/asmjdh8.h"
 #include "source/Compiler/assembler/asmpdp11.h"
+#include "source/Compiler/assembler/asmx86.h"
+#include "source/Compiler/assembler/asmz80.h"
 #include "source/Compiler/codegen/codegen_6502.h"
-#include "source/Compiler/codegen/codegen_m68k.h"
+#include "source/Compiler/codegen/codegen_6809.h"
 #include "source/Compiler/codegen/codegen_arm.h"
+#include "source/Compiler/codegen/codegen_jdh8.h"
+#include "source/Compiler/codegen/codegen_m68k.h"
+#include "source/Compiler/codegen/codegen_pdp11.h"
+#include "source/Compiler/codegen/codegen_s1c88.h"
+#include "source/Compiler/codegen/codegen_tripe.h"
 #include "source/Compiler/codegen/codegen_x86.h"
 #include "source/Compiler/codegen/codegen_z80.h"
-#include "source/Compiler/codegen/codegen_jdh8.h"
-#include "source/Compiler/codegen/codegen_tripe.h"
-#include "source/Compiler/codegen/codegen_s1c88.h"
-#include "source/Compiler/codegen/codegen_6809.h"
-#include "source/Compiler/codegen/codegen_pdp11.h"
-#include "source/LeLib/util/cinifile.h"
-#include <QSharedPointer>
 #include "source/Compiler/systems/abstractsystem.h"
+#include "source/LeLib/util/cinifile.h"
 #include "source/OrgAsm/orgasm.h"
+#include <QSharedPointer>
 /*
  *
  *
@@ -67,56 +67,53 @@
  *
  *
  */
-class Compiler : public QObject
-{
-    Q_OBJECT
+class Compiler : public QObject {
+  Q_OBJECT
 
 public:
-    QSharedPointer<Node> m_tree = nullptr;
-    QSharedPointer<Assembler> m_assembler = nullptr;
-    QSharedPointer<AbstractCodeGen> m_codeGen = nullptr;
+  QSharedPointer<Node> m_tree = nullptr;
+  QSharedPointer<Assembler> m_assembler = nullptr;
+  QSharedPointer<AbstractCodeGen> m_codeGen = nullptr;
 
-    Parser m_parser;
-    QSharedPointer<Lexer> m_lexer;
-    QSharedPointer<CIniFile> m_ini, m_projectIni;
-    FatalErrorException recentError;
-    bool m_isTRU = false;
+  Parser m_parser;
+  QSharedPointer<Lexer> m_lexer;
+  QSharedPointer<CIniFile> m_ini, m_projectIni;
+  FatalErrorException recentError;
+  bool m_isTRU = false;
 
+  Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni);
+  Compiler() {}
+  virtual ~Compiler();
 
+  void Parse(QString text, QStringList lst, QString fname);
+  bool Build(QSharedPointer<AbstractSystem> system, QString projDir);
+  void CleanupBlockLinenumbers();
+  virtual void CleanupCycleLinenumbers(QString currentFile,
+                                       QHash<int, int> &ocycles,
+                                       QHash<int, int> &retcycles,
+                                       bool isCycles = true) {}
+  virtual bool SetupMemoryAnalyzer(QString filename, Orgasm *orgAsm = nullptr);
 
-    Compiler(QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> pIni);
-    Compiler() {}
-    virtual ~Compiler();
-
-    void Parse(QString text, QStringList lst, QString fname);
-    bool Build( QSharedPointer<AbstractSystem> system, QString projDir);
-    void CleanupBlockLinenumbers();
-    virtual void CleanupCycleLinenumbers(QString currentFile, QHash<int, int> &ocycles, QHash<int, int> &retcycles, bool isCycles=true) {}
-    virtual bool SetupMemoryAnalyzer(QString filename, Orgasm* orgAsm = nullptr);
-
-    void SaveBuild(QString filename);
-    void ApplyOptions(QHash<QString,QStringList>& opt);
+  void SaveBuild(QString filename);
+  void ApplyOptions(QHash<QString, QStringList> &opt);
 
 private:
+  virtual void
+  InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) = 0;
+  virtual void Connect() = 0;
 
-
-    virtual void InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) = 0;
-    virtual void Connect() = 0;
-
-
-    void HandleError(FatalErrorException fe, QString se);
-//    void Destroy();
-//    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
-    void WarningUnusedVariables();
-
+  void HandleError(FatalErrorException fe, QString se);
+  //    void Destroy();
+  //    void FindLineNumberAndFile(int inLe, QString& file, int& outle);
+  void WarningUnusedVariables();
 
 public:
 signals:
-    void EmitTick(QString val);
-    void emitRequestSystemChange(QString val);
+  void EmitTick(QString val);
+  void emitRequestSystemChange(QString val);
 public slots:
-    void AcceptDispatcherTick(QString val);
-    void AcceptRequestSystemChange(QString val);
+  void AcceptDispatcherTick(QString val);
+  void AcceptRequestSystemChange(QString val);
 };
 
 #endif // Compiler_H
