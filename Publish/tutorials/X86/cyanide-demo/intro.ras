@@ -1,0 +1,159 @@
+program IntroFake3d;
+@use "system/file"
+@use "system/compression"
+@use "system/screen"
+@use "demounit"
+
+@projectsettings "startaddress" $4100
+
+var
+	// Box data generated with resources/fjong/intro_box_rot.fjo. Edit/run this to change the 3d model
+	
+	// height and width of image data
+	const height : byte = 32;
+	const width : byte = 64;
+	// number of frames
+	const noFrames : byte = 128;
+	// generate the lookup table
+	lookup : array[noFrames] of integer = buildtable("i*(HEIGHT*2)");
+
+	src, dst ,dst2 : ^byte;
+	lp : ^integer;
+	i,j,k,l,time,f2,t2,t3 : integer;
+	data, tdata, img : ^byte;
+	lenn : byte = 1;
+
+	sin : array[256] of byte = buildsinetable(45);
+	const cw : integer = 68;
+	pos : array[cw] of integer;
+	dpos : array[cw] of integer = buildtable("Math.random()*8.0+24");
+	cur, first : integer = 0;
+	
+
+@export "resources/images/cyanide.flf" "resources/images/cyanide.bin" 0 0
+@compress "resources/images/cyanide.bin" "resources/images/cyanide_c.bin"
+
+
+	image : incbin("resources/images/cyanide_c.bin");
+
+// Update logo fadein
+procedure UpdateCyan();
+begin
+	for i:=cur to 40+cur step 2 do
+	begin
+		j:=pos[i]>>5;
+		if (j<196) then
+		begin
+			k := Screen::ytab_cga[j]+i+5;
+			dst:=ptr($b800,k);
+			j:=img[k];	
+			dst^ := j&%01010101;
+			pos[i] += dpos[i];
+			
+		end;
+	end;
+	for i:=40+cur to cw+cur step 2 do
+	begin
+		j:=pos[i]>>5;
+		if (j<196) then
+		begin
+			k := Screen::ytab_cga[j]+i+5;
+			dst:=ptr($b800,k);
+			j:=img[k];	
+			dst^ := j;
+			pos[i] += dpos[i];
+			
+		end;
+	end;
+	
+end;
+
+// Update logo fadeout
+procedure UpdateCyanOut();
+begin
+	if (first=0) then
+	begin
+		fillw(#pos,32*58,length(pos));
+		first := 1;
+	end;
+	for i:=cur to cw+cur step 2 do
+	begin
+		j:=pos[i]>>5;
+		if (j<192) then
+		begin
+			k := Screen::ytab_cga[j]+i+5;
+			dst:=ptr($b800,k);
+			dst^ := 0;
+			pos[i] += dpos[i];
+			
+		end;
+	end;
+end;
+
+// Write the animation frames, cheat : vary the frame lookup for each y to make it twirl
+procedure PrintFrame(f : byte);
+begin
+	dst := ptr($B800, 80*8 + 40);
+	dst2 := dst + $2000;
+	f2:=f;
+	if (time&7=0) then
+	begin
+		if (DemoUnit::cnt<DemoUnit::len-220) then
+		begin
+			if (lenn<height) then lenn+=1;
+		end
+		else
+			if (lenn<>1) then lenn-=1;
+	end;
+	for j:=0 to lenn do
+	begin
+		f2 := f + sin[(t3-j)&255];
+		lp := tdata + lookup[f2&(noFrames-1)];
+		src:=data + lp[j];
+		memcpy16(src,dst,width/8);
+		dst+=80;
+		dst2+=80;
+	end;
+	fillw(dst,0,width/8);
+	
+end;
+	
+	
+begin
+	DemoUnit::Init();
+
+//	setcgapalette($102);
+	data := ptr($2000,0);
+	tdata := ptr($3000,0);
+	img := ptr($5000,0);
+	
+	// Load the box data and table	
+	
+	File::ReadAllLarge("DATA\BDATA.BIN",data);
+	File::ReadAllLarge("DATA\BDATAT.BIN",tdata);
+	
+	setscreenmode(mode_cga_320x200);
+	Compression::Decompress(#image, img);
+	first := 0;
+	while (DemoUnit::notDone()) do
+	begin
+		waitforverticalblank();
+		if (not DemoUnit::fadeOut) then
+			UpdateCyan()
+		else
+			UpdateCyanOut();
+			
+		@ifndef IS_DEMO
+			if (t2=240) then DemoUnit::fadeOut:=true;
+		@endif
+		f:=t2;
+		PrintFrame(f&(noFrames-1));
+		DemoUnit::Tick();
+		time+=1;
+		cur:=(cur+1)&1;
+		if (time&1=0) then t2+=1;
+		if (time&3=0) then t3-=1;
+	end;
+
+	DemoUnit::Endd();
+end.

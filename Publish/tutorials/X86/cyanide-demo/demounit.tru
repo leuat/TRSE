@@ -1,0 +1,49 @@
+unit DemoUnit;
+var
+	len,cnt : integer;
+	b, fadeOut : boolean;
+	
+	
+procedure Tick()	 inline;
+begin
+	cnt+=1;
+	if (cnt>len-320) then fadeOut := true;
+end;
+		
+procedure Init() inline;
+begin	
+	
+	@ifdef IS_DEMO
+	asm("
+		mov ds,ax
+		mov [DemoUnit_len],bx
+	");
+	@else	
+	asm("
+;		mov ax,$22-$80
+		mov ax,$92-$300
+		mov ds,ax
+	");
+	len:=40000;
+	
+	@endif	
+	cnt:=0;
+	fadeOut := false;
+end;
+	
+	
+function notDone(): boolean;
+begin
+	b:=false;
+	if (cnt<len) then 
+		b:=true;
+		
+	notDone := b;
+end;
+
+procedure Endd() inline; 
+begin
+	asm(" ret");
+end;
+	
+end.
