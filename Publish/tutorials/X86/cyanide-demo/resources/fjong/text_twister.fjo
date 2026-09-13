@@ -1,0 +1,165 @@
+globals = {
+	camera = { x = 0, y=0.3, z=6.0 },
+	fov = 11, 
+	
+	target = { x = 0, y=0.3, z=0 },
+	up = { x = 0, y=1, z=0 },
+	light0 = {   	direction = {x=1, y=0, z=2 }, 
+				color = {x=1, y=1, z=1}, 
+			},
+	ambient = { x = 0, y = 0, z = 0 },
+     raymarch_steps = 120,
+	raymarch_shadow_steps = 100,
+
+	sky = 0,
+	shadow_scale = 0.0,
+	isPaused = 0
+	
+}
+
+
+
+output = {
+	resolution = { width = 32, height=12},
+	output_type = 3, --RGB output
+	aspect = 1.06,
+	dither = 1,
+	ditherStrength = { x = 8, y= 1, z= 1},
+	
+	palette = {  0,0,0,  
+				0,0,0xaa,
+				0,0xaa,0,
+				0,0xaa,0xaa,
+				0xaa,0,0,
+				0xaa,0,0xaa,
+				0xaa,0x55, 00,
+				0xaa,0xaa,0xaa,
+				0x55,0x55,0x55,
+				0x55,0x55,0xff,
+				0x55,0xff,0x55,
+				0x55,0xff,0xff,
+				0xff,0x55,0x55,
+				0xff,0x55,0xff,
+				0xff,0xff,0x55,
+				0xff,0xff,0xff,
+				
+				
+
+			},
+		index_colors = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 }
+	
+}
+
+
+Material0 = {
+   color = { x=0.3, y=0.8, z=0.2 },
+	reflection = 0.0,
+	shininess = 100,
+	shininess_intensity = 0 
+}
+
+
+m2 = 0.5
+Material2 = {
+	color = { x=m2, y=m2, z=m2*4.5 },
+	reflection = 0.1,
+	shininess = 100,
+	shininess_intensity = 0.5 
+
+}
+
+
+
+-- Init is called on start  
+
+
+messageDisplayed = 0
+ 
+
+function Init()
+
+	ClearAllObjects()
+	if (messageDisplayed==0) then
+		Message("Need to render all characters A...Z and save to disk... please wait");
+		messageDisplayed = 1
+	end
+
+
+--  AddObject("cylinder","cyl1", "", "Material0", 0,0,0,    0.4,0.5, 3 )
+  AddObject("box","cyl1", "", "Material0", 0,0,0,    2.4,14,0.5 )
+
+	font = "rom"
+	--font = "charsets/worked_charset.flf"
+
+	z = 1.2
+	if (char ~= 0) then	
+
+	AddObject("char","char1", "", "Material2",  font, char,   
+0,0,-z,            -- position
+0.5,0.50,0.0,      -- width xyz 
+0.200,0.26,0.31  -- stretch xyz
+);          
+
+	AddObject("char","char2", "", "Material2",  font, char,   
+0,0,z,            -- position
+0.5,0.50,0.0,      -- width xyz 
+0.200,0.26,0.31  -- stretch xyz
+);          
+
+--	jj = sin(char+1)*10
+	jj = 0
+	SetRotation("char1",0,45,jj);
+
+	SetRotation("char2",0,45+90,jj);
+	end
+	UpdateGraphics()
+
+end
+
+
+distance = 10
+frame = 0
+noFrames = 64
+char = 0
+
+
+function UpdateGraphics()
+
+  	t = ((frame)/noFrames)*3.14159+3.14159/2;--*2 
+	r = 14
+	r = 25
+	globals.camera.x = sin(t)*r
+	globals.camera.z = cos(t)*r
+	t=t+3.14159/6
+	globals.light0.direction.x = sin(t)
+	globals.light0.direction.z = cos(t)
+
+
+end
+
+frame = -1
+
+function Update()
+	
+
+	if frame == noFrames then 
+		char=char+1
+		frame = -1
+		if char == 27 then 
+			--globals.isPaused = 1
+			CompressAndSaveHorizontalData(output.resolution.width/2,2, "data/tdata.bin","data/twister_table.bin");
+
+			Message("Files written to disk. This window can now be closed")
+			
+		end
+		Init()
+	end
+
+	UpdateGraphics()
+	frame=frame+1
+
+	-- 16 x 16 screen with characters starting at 0xA0     screen values (0-255) are divided by 32,restricting the data between 0xA0 and 0xA8
+	if (frame>0) then
+    AddCGA16Screen(output.resolution.width,output.resolution.height, 7,64) 
+	end
+end

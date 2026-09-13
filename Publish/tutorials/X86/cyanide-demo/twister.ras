@@ -1,0 +1,125 @@
+program Twister;
+var  
+
+	@use "system/file"
+	@use "gfx/cga16"
+	@use "demounit"
+
+	@projectsettings "startaddress" $4100
+
+
+	table: incbin("data/twister_table.bin");
+	@export "resources/images/cga_160x100_computer.flf" "data/cgaimg.bin" 256 0
+	
+
+	/* 
+
+	The classic TRSE twister in 160x100 CGA 16 color fake bitmap mode (text mode, really)
+	
+	twister data generated with resources/fjong/text_twister.fjo. Open this and run to regenerate data. 
+	
+	*/
+	
+	addr,dst,zp,tp : pointer;
+	tab : pointer of integer;   
+	j,ll,l : integer;	
+  	k,time,tt,t2,frame,col: integer; 
+  	const height : byte = 12;
+  	const noFrames : byte = 64;
+
+	text : string = ("    HELLO THIS IS A SCROLLER YES IT IS TRUE AND IT EVEN TWISTS WHO WOULD HAVE THOUGHT");
+	// twisting sin
+    sine32 : array[256] of byte = BuildTable("((Math.sin(i/256.0*Math.PI*2.0)+1)/2.0*512)/12");
+
+	// Character lookup table
+	charLookup : array[32] of integer = BuildTable("(2*NOFRAMES*(HEIGHT)*i)");
+	// Frame lookup 
+	frameLookup : array[noFrames] of integer = BuildTable("(2*HEIGHT*i)");
+
+
+
+procedure CopyData() inline;
+begin
+	asm("
+	
+		push ds
+
+		les di,[dst]
+		add di,1
+		lds si,[zp]
+		; write char $DE in this mode
+		mov ah, $DE
+		%rep 16
+		lodsb
+		stosw
+		%endrep
+		add di,160-32
+		sub si,16
+		%rep 16
+		lodsb
+		stosw
+		%endrep
+
+		pop ds
+	
+	");
+end;
+
+
+procedure RenderTwister(tx,xp:integer);
+begin
+	// Speed of twist
+	t2:=t2+3;
+	tt:=-(tx>>1); // Text goes up
+	//t2:=tx*2; // Twist goes down
+	dst:=ptr($B800,xp);
+	
+	tp:=#text;
+	
+	for k:=0 to 50 offpage do
+	begin
+		// get sine shift
+		j:=sine32[(t2-k)&255];
+		// lookup current frame
+		frame:=(((tx-j))&(noFrames-1)); // Current rotation frame
+		ll:=(k-tt); // Current shift & text position in y
+	 	j:=text[ll/12]-64; // Look up current character, store in j
+	 	// ignore all chars above 31
+	 	if (j>=31) then j:=0;
+	 	// get the position in the lookup table
+		tab :=#table + charLookup[j] + frameLookup[frame];
+		// get data adrdress into cp
+		zp:=addr + tab[mod(ll,height)];
+		
+		CopyData();
+		dst+=320; // next line
+
+	end;
+	
+end;
+
+
+
+begin
+	DemoUnit::Init();	
+	
+	// Point to start of text
+	addr:=ptr($2000,0);
+	dst:=ptr($B800,0);
+	// init 160x100 16 color fake bitmap mode
+	CGA16::Init();	
+	// Load the image
+	File::ReadAllLarge("DATA\CGAIMG.BIN",addr);
+	// Copy the image to the screen
+	CGA16_CopyScreen(addr,dst,8000);
+	// Read the table data from disk
+	File::ReadAllLarge("DATA\TDATA.BIN",addr);
+	
+	while (DemoUnit::notDone()) do
+	begin
+		RenderTwister(time,112);
+		DemoUnit::Tick();
+		time+=1;
+	end;
+	DemoUnit::Endd();	
+end.

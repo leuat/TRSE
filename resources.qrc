@@ -784,5 +784,6 @@
         <file>resources/images/plab.png</file>
         <file>resources/images/tutorials/mega65_platformer.png</file>
         <file>resources/images/ORIC.png</file>
+        <file>resources/images/tutorials/cyanide.png</file>
     </qresource>
 </RCC>

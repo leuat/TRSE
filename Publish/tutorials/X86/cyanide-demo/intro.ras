@@ -9,6 +9,22 @@ program IntroFake3d;
 var
 	// Box data generated with resources/fjong/intro_box_rot.fjo. Edit/run this to change the 3d model
 	
+	
+	/*
+		How the effect works:
+		
+		128 pre-generated frames of a rotating box with TRSE logo is generated, and exported
+		as raw bitmap data (per frame) together with a lookup table for data 
+		for each line for each frame. 
+
+		You could display these frames just as is, but where is the fun in that? 
+		Instead, we use the line lookup table and display different frames on different lines, 
+		making the box look like it is rotating at different speeds on different lines
+	
+	
+	
+	*/
+	
 	// height and width of image data
 	const height : byte = 32;
 	const width : byte = 64;
@@ -107,7 +123,11 @@ begin
 	end;
 	for j:=0 to lenn do
 	begin
+		// f2 is the frame lookup on the current line, skewing the frame with a sine
 		f2 := f + sin[(t3-j)&255];
+		// replace with the following line to display the current boring normal frame instead
+//		f2 := f;
+
 		lp := tdata + lookup[f2&(noFrames-1)];
 		src:=data + lp[j];
 		memcpy16(src,dst,width/8);

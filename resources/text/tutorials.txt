@@ -127,8 +127,9 @@ TRS80; TRS-80 tutorials; TRS80/tutorials/;  <h2>Main TRS-80 tutorials</h2><p><im
 
 
 X86; IBM 8086 AT (CGA) tutorials; X86/CGA/; <h2>Main IBM AT (CGA) tutorials</h2><p><img src=":resources/images/tutorials/dos1.png" width="200" class="center"><p>Preliminary X86 DOS tutorials for the IBM XT with CGA running at 4.77 mhz. Extremely early development, compiler is totally incomplete and inefficient. <p>Proof of concept.
-X86; X86 Simple OS; X86/X86-OS/; <h2>Write your own X86 OS using TRSE</h2><p><img src=":resources/images/tutorials/dos2.png" width="200" class="center"><p>Did you know that it is possible to write a fully functional i386-X86 OS using TRSE? In this single tutorial, we show you how.
 X86; VGA (386) + Adlib tutorials; X86/VGA_386/; <h2>Main 386 VGA + Adlib player tutorials</h2><p><img src=":resources/images/tutorials/dos3.png" width="200" class="center"><p>386 VGA + Adllib DOS tutorials.
+X86; Cyanide wip demo (CGA); X86/cyanide-demo/; <h2>Cyanide (CGA)</h2><p><img src=":resources/images/tutorials/cyanide.png" width="200" class="center"><p>Cyanide is a work-in-progress 8086 demo for the original IBM XT running at 4.77mhz with a CGA display. <p>More examples/effects will be added as Leuat finishes stuff.
+X86; X86 Simple OS; X86/X86-OS/; <h2>Write your own X86 OS using TRSE</h2><p><img src=":resources/images/tutorials/dos2.png" width="200" class="center"><p>Did you know that it is possible to write a fully functional i386-X86 OS using TRSE? In this single tutorial, we show you how.
 X86; Unit tests; X86/unittests/;<h2>Unit tests</h2><p><img src=":resources/images/tutorials/units.png" width="200" height="200" class="center"><p>TRSE X86 internal Unit tests
 
 WONDERSWAN; Main Wonderswan examples ; WONDERSWAN/tutorials/; <h2>Main Wonderswan tutorials</h2><tr><td><img src=":resources/images/WONDERSWAN.png" width="150" class="center"></td><td><p>WIP </td></tr>
