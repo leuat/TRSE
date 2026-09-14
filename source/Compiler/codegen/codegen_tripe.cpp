@@ -457,7 +457,7 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 	as->Comment("VarNode StoreVariable");
 	auto val = m_curTemp.pop();
-	as->Asm("mov "+TripeValue(node) + " " +val);
+	as->Asm("mov	 "+TripeValue(node) + " " +val);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
 /*	as->Term();
@@ -510,11 +510,13 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
 //            ErrorHandler::e.Error("BinOp not yet supported",node->m_op.m_lineNumber);
             //QString tempVar = BinopTemp(as,node->m_right);
             node->m_right->Accept(this);
-            QString tempVar = m_curTemp.pop();
+			QString tempVar = "ball";
+			if (m_curTemp.size()!=0)
+				tempVar = m_curTemp.pop();
 			as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
 			return true;
 
-        }
+		}
     }
 
     return false;
