@@ -28,10 +28,10 @@ AsmTripe::AsmTripe() :Assembler()
 {
 //    m_stack["for"] = new Stack();
 
-    byte = "i8";
-    word = "i16";
-    llong = "i32";
-    ppointer = "*i8";
+	byte = "uint8";
+	word = "uint16";
+	llong = "uint32";
+	ppointer = "uint16";
 
 }
 
@@ -57,7 +57,7 @@ QString AsmTripe::intToHexString(int val)
 void AsmTripe::Program(QString programName, QString vicConfig)
 {
 
-    m_source+=m_startInsertAssembler;
+//    m_source+=m_startInsertAssembler;
 
     Nl();
 
@@ -201,7 +201,6 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
 {
     QString n = name;
     n=n.toLower();
-
     QString t = "";
     if (initval=="")
         initval="0";
@@ -236,7 +235,7 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 
-    Write("decl \t" + name +"\t" + t + ":"+initval);
+	Write("\tdecl \t" + name +"\t" + t + ":"+initval);
 
 }
 
@@ -389,11 +388,11 @@ void AsmTripe::Peek(bool start)
 
 QString AsmTripe::GetOrg(int pos)
 {
-    return "; org " + Util::numToHex(pos);
+	return ".code uint16:" + Util::numToHex0(pos) + " name";
 }
 
 QString AsmTripe::GetOrg() {
-    return "; org ";
+	return ".code ";
 }
 
 void AsmTripe::Label(QString s)

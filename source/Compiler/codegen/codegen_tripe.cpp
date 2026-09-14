@@ -47,7 +47,6 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
 
     node->DispatchConstructor(as,this);
 
-
     QString v = getTempName("t_"+getIntType(node)+"_");
     if (node->m_left->isWord(as) && !node->m_right->isWord(as))
         node->m_right->setLoadType(TokenType::INTEGER);
@@ -472,7 +471,7 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
             //QString tempVar = BinopTemp(as,node->m_right);
             node->m_right->Accept(this);
             QString tempVar = m_curTemp.pop();
-            as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
+			as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
 
         }
         return true;
@@ -492,8 +491,21 @@ bool CodeGenTRIPE::AssignPointer(QSharedPointer<NodeAssign> node) {
 
         }
         else {
-            ErrorHandler::e.Error("Tripe: non-pure pointer index not yet supported",node->m_op.m_lineNumber);
-        }
+//            ErrorHandler::e.Error("Tripe: non-pure pointer index not yet supported",node->m_op.m_lineNumber);
+			// a[expr]:=b;
+			QString expr = TripeValue(var->m_expr);
+			if (!var->m_expr->isPure()) {
+				as->Comment("here");
+				var->m_expr->Accept(this);
+				as->Term();
+				QString tempVar = m_curTemp.pop();
+				//as->Asm("mov "+TripeValue(var->m_expr)+" "+tempVar);
+				qDebug() << "TEMPVAR: " <<tempVar;
+				expr = tempVar;
+			}
+			as->Asm("store_p "+TripeValue(var)+" "+expr + " " +TripeValue( node->m_right));
+
+		}
     }
 
     return false;

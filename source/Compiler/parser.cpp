@@ -238,6 +238,7 @@ void Parser::InitBuiltinFunctions() {
         InitBuiltinFunction(QStringList() << "SetPixelCGA", "init_cga_scanlines");
     }
 
+    if (m_projectIni->getdouble("use_tripe") != 1.0)
     if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 ||
         Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C816 ||
         Syntax::s.m_currentSystem->m_processor == AbstractSystem::WDC65C02) {

@@ -1,5 +1,19 @@
 #include "factorymethods.h"
 
+#include "methods6502.h"
+#include "methods6502c64.h"
+#include "methods6502ok64.h"
+#include "methods6502vic20.h"
+#include "methods68000.h"
+#include "methods68000atari.h"
+#include "methods6800amiga.h"
+#include "methods6809.h"
+#include "methodsx86.h"
+#include "methodsz80.h"
+#include "methodstripe.h"
+
+bool FactoryMethods::s_useTripe = false;
+
 FactoryMethods::FactoryMethods()
 {
 
@@ -7,6 +21,9 @@ FactoryMethods::FactoryMethods()
 
 QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::System s)
 {
+
+	if (s_useTripe)
+		return QSharedPointer<MethodsTripe>(new MethodsTripe);
 
     if (s==AbstractSystem::VIC20)
         return QSharedPointer<Methods6502Vic20>(new Methods6502Vic20);

@@ -8,6 +8,7 @@ void Compiler6502::InitAssemblerAnddispatcher(
   if (m_projectIni->getdouble("use_tripe") == 1.0) {
     m_codeGen = QSharedPointer<CodeGenTRIPE>(new CodeGenTRIPE());
     m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
+	FactoryMethods::s_useTripe = true;
   } else {
     m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
     m_assembler = QSharedPointer<Asm6502>(new Asm6502());
