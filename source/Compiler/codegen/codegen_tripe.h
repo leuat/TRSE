@@ -49,6 +49,7 @@ public:
     void dispatch(QSharedPointer<NodeRepeatUntil> node) override;
     void dispatch(QSharedPointer<NodeComment> node) override;
     void dispatch(QSharedPointer<NodeUnaryOp> node) override;
+	void dispatch(QSharedPointer<NodeAsm> node) override;
 
 
 //    QString  BinopTemp(Assembler*as, QSharedPointer<Node> node);

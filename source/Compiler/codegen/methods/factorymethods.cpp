@@ -22,8 +22,8 @@ FactoryMethods::FactoryMethods()
 QSharedPointer<AbstractMethods> FactoryMethods::CreateMethods(AbstractSystem::System s)
 {
 
-	if (s_useTripe)
-		return QSharedPointer<MethodsTripe>(new MethodsTripe);
+//	if (s_useTripe)
+	//	return QSharedPointer<MethodsTripe>(new MethodsTripe);
 
     if (s==AbstractSystem::VIC20)
         return QSharedPointer<Methods6502Vic20>(new Methods6502Vic20);

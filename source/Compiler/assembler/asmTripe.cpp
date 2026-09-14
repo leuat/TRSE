@@ -157,13 +157,14 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
     else {
 
         QString s="";
-        s=s+getLabelEnding(name) + "\t"+t+" ";
+//		s="\tdecl\t" + getLabelEnding(name) + "\t"+t+" ";
+		s="\tdecl\t"+getLabelEnding(name) + "\t"+t+":" + data[0];
 
-        for (int i=0;i<data.count();i++) {
+		for (int i=1;i<data.count();i++) {
             s=s+data[i];
             if (i%8==7 && i!=data.count()-1) {
                 s=s+"\n";
-                s=s + "\t" +t + " ";
+				s=s + "\t." +t + " ";
             }
             else if (i!=data.count()-1) s=s+" ";
 
