@@ -1,0 +1,158 @@
+program Demo;
+var  
+	@projectsettings "startaddress" $4100
+	
+@use "system/compression"	
+@use "system/screen"
+@use "demounit"
+@use "gfx/cga16"
+
+    time, roll: integer;
+    x,y: integer = 0; 
+	j,k,i,xtime:integer;
+	src,dst,p1:pointer;
+	p2:^integer;
+
+
+/*
+	A cheating "scroller" : the effect is basically just displaying
+	a large, narrow pre-made image with text in 160x100 cga 16 color mode. The only
+	difference from displaying a regular picture is using a lookup table to 
+	shift the values in the x direction
+
+*/	
+	
+// Automatically export the image
+@export "resources/images/scroller_text.flf" "resources/images/scroller_text.bin" 256 0
+	image : incbin("resources/images/scroller_text.bin");
+
+
+	// rate of change
+	const FALL : integer =2;
+	// initial value
+	const START : integer =60;
+	// shiftTab is used to centering the image
+	shiftTab : array[32] of integer = buildtable("i*0.8");
+	// the actual lookup table. Generated with FALL and START
+	tab : array[80*32] of integer;
+	add1 : integer = 1;
+
+	// counter for switching effects
+	cnt : integer = 0;
+
+	// main sinx table
+	sinx : array[256] of integer = buildsinetable(200);
+	// height of the effect
+	const height : integer = 50;
+	// sin table for shifting y positions
+	sin8 : array[HEIGHT*2] of integer = buildtable("31*(1+Math.cos(i/(HEIGHT*2)*3.14159*2))*0.5");
+
+	// Width of the entire image (in pixels)
+	const width : integer = 600;
+	
+	// 160 table lookup for fast y access
+	ytab : array[64] of integer = buildtable("i*160");
+
+
+procedure Effect();
+begin
+	// load from the image
+	src:=#image;
+	// write directly to text mode screen
+	dst:=ptr($B800,80*40);
+	x:=xtime;
+	k:=time*2;
+	// Vary different effects
+	if (roll=0) then
+	begin
+		k:=0;
+		if (time>128) then
+			k:=(time-128);
+		add1:=2;
+	end;
+	
+	if (roll=1) then
+		add1:=1;
+		
+	if (cnt<>0) then
+	for i:=0 to cnt do
+	begin
+		p1:=src + x;
+		y:=sin8[mod(k,HEIGHT*2)];
+		p2:=#tab + ytab[y];
+		p1-=shiftTab[y];
+		// some quick copying
+		asm("
+			les di,[dst]
+			inc di
+			mov si,[p1]
+			mov bp,[p2]
+			mov ah,$de
+			%assign ic 0
+			%rep 80
+			mov bx, word [ds:bp+ic]
+			mov al,byte [ds:si+bx]
+			; uncomment the next line to fill every line
+;			mov [es:di+160],ax
+			stosw
+			%assign ic ic+2			
+			
+			%endrep
+		");
+		k+=add1;
+		src+=width*2;
+		dst+=160*2;
+	end;
+	
+end;
+
+// Initialize the main tab used for this effect. Play around with the values!
+procedure InitTab();
+begin
+	p2:=#tab;
+	for i:=0 to 32 do
+	begin
+		for j:=0 to 80 do
+		begin
+			p2[j]:=j*(START+FALL*i)/100;			
+		end;
+		p2+=160;
+	end;	
+end;
+
+
+begin
+	DemoUnit::Init();
+	Memory::Init();
+	Screen::InitCGABuffers(4);
+	CGA16::Init();	
+	InitTab();
+	
+	p1:=ptr($B800,0);
+	fillw(p1,$00de,8000);
+	
+	while (DemoUnit::notDone()) do
+	begin
+		// perform the effect
+		DemoUnit::Tick();			
+		Effect();
+		// Update counter
+		if (time&1=0) then 
+			if (cnt<25) then cnt+=1;
+		// Update time and x pos
+		time+=1;
+		xtime+=1;
+		// Update effect types based on time
+		if (time>256) then roll:=1;
+		if (time>256+192) then roll:=2;
+		if (time=512) then add1:=0; 
+		if (time=512+256) then add1:=2; 
+		if (time=1024) then add1:=3; 
+	end;	
+	
+	Screen::ReleaseCGABuffers();
+	@ifndef IS_DEMO
+	loop();
+	@endif
+	DemoUnit::Endd();
+end.
