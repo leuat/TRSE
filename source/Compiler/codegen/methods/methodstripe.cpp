@@ -10,4 +10,5 @@ void MethodsTripe::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 bool MethodsTripe::Command(QString name)
 {
 
+	return false;
 }
