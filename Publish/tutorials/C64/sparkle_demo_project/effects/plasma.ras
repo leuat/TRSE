@@ -4,8 +4,6 @@ program PlasmaProgram;
 @use "demounit"
 var
 
-
-
 // set to "0" to get the unoptimized version
 @define OPTIMIZED 1
 

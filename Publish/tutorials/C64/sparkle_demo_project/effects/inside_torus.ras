@@ -24,7 +24,6 @@ var
 	sqr : incbin("data/inside_torus.bin");
 	@export "resources/images/insekt_mask.flf" "resources/images/insekt_mask.bin" 256
 
-
 @generate_unrolled_asm1 "UpdateTorusA" "data/torusA.inc" "resources/images/insekt_mask_data.bin" $8000 $6000 23 24 0 0  80 		
 @generate_unrolled_asm1 "UpdateTorusB" "data/torusB.inc" "resources/images/insekt_mask_data.bin" $8000 $6000 23 24 2 40 120 		
 	
