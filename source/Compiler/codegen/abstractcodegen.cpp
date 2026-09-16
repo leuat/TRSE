@@ -702,7 +702,7 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node) {
 
   // arr[i] := 10;
   if (IsAssignArrayWithIndex(node))
-    return;
+	return;
 
   GenericAssign(node);
 }

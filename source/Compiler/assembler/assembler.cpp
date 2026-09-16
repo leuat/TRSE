@@ -844,7 +844,7 @@ QString Assembler::StoreInTempVar(QString name, QString type, bool actuallyStore
     m_currentBlock = m_tempVarsBlock;
     if (Syntax::s.m_currentSystem->m_system == AbstractSystem::GAMEBOY)
         m_currentBlock = m_wram;
-    DeclareVariable(name,type,0,"");
+	DeclareVariable(name,type,0,"");
     m_currentBlock = cb;
     return name;
 }

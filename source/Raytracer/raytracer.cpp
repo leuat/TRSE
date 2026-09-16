@@ -158,7 +158,7 @@ void RayTracer::Raymarch(QImage &img, int w, int h)
             Ray ray(m_camera.m_camera,dir);
             ray.m_reflect=3;
 #ifdef USE_OMP
-            int tid = omp_get_thread_num();
+			int tid = omp_get_thread_num();
 #else
             int tid = 0;
 #endif

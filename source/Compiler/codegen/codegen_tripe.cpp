@@ -74,7 +74,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
 void CodeGenTRIPE::dispatch(QSharedPointer<NodeNumber>node)
 {
 	node->DispatchConstructor(as,this);
-	as->Asm("mov "+getTempName("t_store") + " " +TripeValue(node));
+	as->Asm("mov "+getTempName("t_uint8_store") + " " +TripeValue(node));
 }
 /*
  *
@@ -355,6 +355,12 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 
 void CodeGenTRIPE::LoadByteArray(QSharedPointer<NodeVar> node) {
 	as->Comment("::LoadByteArray");
+	auto tmp = getTempName("t_uint8_load");
+	auto idx = getTempName("t_uint8_idx");
+	node->m_expr->Accept(this);
+	as->Asm("mov "+idx + " " + m_curTemp.pop());
+	as->Asm("load " + TripeValue(node) + " " +idx + " " + tmp);
+	m_curTemp.pop();
 
 }
 
@@ -511,9 +517,11 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
             //QString tempVar = BinopTemp(as,node->m_right);
             node->m_right->Accept(this);
 			QString tempVar = "ball";
-			if (m_curTemp.size()!=0)
+			as->Comment("FAIL");
+			if (m_curTemp.size()!=0) {
 				tempVar = m_curTemp.pop();
-			as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
+				as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
+			}
 			return true;
 
 		}

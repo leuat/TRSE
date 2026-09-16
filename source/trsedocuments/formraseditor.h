@@ -23,30 +23,29 @@
 #define FORMRASEDITOR_H
 
 #include <QWidget>
-#include "trsedocument.h"
-#include "source/PmmEdit/asmhighlighter.h"
-#include "source/PmmEdit/highlighter.h"
-#include "source/PmmEdit/codeeditor.h"
-#include "source/misc/messages.h"
-#include "source/Compiler/lexer.h"
-#include "source/Compiler/parser.h"
-#include "source/Compiler/compilers/compiler.h"
 #include <QElapsedTimer>
-#include "source/dialogs/dialoghelp.h"
-#include "source/dialogs/dialogmemoryanalyze.h"
-#include "source/Compiler/misc/machinecodeanalyzer.h"
-#include "source/OrgAsm/orgasm.h"
-
-
-#include "source/Compiler/systems/abstractsystem.h"
-#include "source/Compiler/systems/factorysystem.h"
-
-#include "source/Compiler/sourcebuilder.h"
-#include "dialogcustomwarning.h"
+#include "trsedocument.h"
 #include <QThread>
 #include <QElapsedTimer>
 #include <QSharedPointer>
 #include <QTimer>
+
+
+#include "source/PmmEdit/codeeditor.h"
+#include "source/dialogs/dialoghelp.h"
+#include "source/Compiler/misc/machinecodeanalyzer.h"
+#include "source/PmmEdit/asmhighlighter.h"
+#include "source/PmmEdit/highlighter.h"
+#include "source/misc/messages.h"
+#include "source/Compiler/lexer.h"
+#include "source/Compiler/parser.h"
+#include "source/Compiler/compilers/compiler.h"
+#include "source/dialogs/dialogmemoryanalyze.h"
+#include "source/OrgAsm/orgasm.h"
+#include "source/Compiler/systems/abstractsystem.h"
+#include "source/Compiler/systems/factorysystem.h"
+#include "source/Compiler/sourcebuilder.h"
+#include "dialogcustomwarning.h"
 
 namespace Ui {
     class FormRasEditor;

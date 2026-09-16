@@ -18,25 +18,10 @@ var
 	const maxhei : byte = 100;
 	@define WIDTH 23
 	@define DWIDTH 50
-//	@define HEIGHT 26
 	@define HEIGHT 20
-//	data : array[256] of byte = buildtable("0");
 
-	@ifndef IS_DEMO
-//		music:incsid("music/tengel2.sid",2);
-	@endif
 	data: incbin("data/data_torus.bin");
-//	atan : array[] of byte = buildtable2d(40,140,"Math.atan2((i-20)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*4");	
-//	nr2 : array[] of byte = buildtable2d(@DWIDTH,180,"Math.atan2((i-@DWIDTH/2)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*8");	
-//	sqr2 : array[] of byte = buildtable2d(40,180,"Math.atan2((i-20)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
-//	nr2 : array[] of byte = buildtable2d(@DWIDTH,140,"255/(Math.sqrt(Math.pow(i-@DWIDTH/2,2)*4+Math.pow(j-HEI/2-20,2))+5)*32.0");	
 	sqr : incbin("data/inside_torus.bin");
-//	sqr : incbin("data/outside_torus.bin");
-
-//	atan : array[] of byte = buildtable2d(@DWIDTH,140,"255/(Math.sqrt(Math.pow(i-@DWIDTH/2,2)*4+Math.pow(j-HEI/2,2))+5)*24.0");	
-//	sqr : array[] of byte = buildtable2d(40,140,"(Math.sqrt(Math.pow(i-20,2)*4+Math.pow(j-HEI/2,2))+1)*8");	
-	//atan : array[] of byte = buildtable2d(40,140,"(Math.sqrt(Math.pow(i-20,2)*4+Math.pow(j-HEI/2,2))+1)*16");	
-
 	@export "resources/images/insekt_mask.flf" "resources/images/insekt_mask.bin" 256
 
 
@@ -62,9 +47,7 @@ var
 	siny: array[256] of byte=buildsinetable(48); // 76, 48
 	sinx2: array[256] of byte=buildsinetable(127/4);
 	sinxx: array[256] of byte=buildsinetable(28);
-//	@perlinnoise "data/per1.bin" 16 16 1 1 1  2 50
-
-//	per:incbin("data/per1.bin");
+	
 @userdata $8000 $8800 "Table"
 
 
@@ -86,27 +69,14 @@ procedure UpdateTbl();
 begin
 	dst:=#tbl;
 	dx :=sinxx[time2]; 
-//	dy:=sinx[time3+64];
 	dy:=siny[time3+shift];
-//	p1:=#nr2+tab40[sinx[time2]>>1];
 	p2:=#sqr+tab40[dy>>1];
-//	p1+=sinx[time3]>>3;
 	p2+=dx;
 
-/*	if (starty<>0) then
-	begin
-		dst-=80;
-		fill(dst,0,80);
-		dst+=80;
-		
-	end;
-*/	
-//	t:=sine[time<<1]>>2;
 	t:=time;
 	if (time&1=0) then
 	begin
 		dst+=40;
-//		p1+=@DWIDTH;
 		p2+=@DWIDTH;
 	end;
 	k:=time1*6;
@@ -114,12 +84,8 @@ begin
 	if (time1>128) then t:=time;
 	for j:=0 to hei step 2 offpage do
 	begin
-//		t+=37;
-//	p2:=#sqr+tab40[dy>>1+sin[k]>>3+j<<1]+dx;
-//	p1:=#sqr+tab40[dy>>1+sin[k]>>3+j<<1];
 	tp:=#tab40 + (j+sinx2[j]+dy)<<1;
 	p2:=#sqr+tp^+dx;
-//	k+=2;
 		if j>starty offpage then 		
 		asm("
 		ldy #@WIDTH-1
@@ -138,7 +104,6 @@ lp1:
 		
 		")
 		else fillfast(dst,0,@WIDTH);
-//		p1+=@DWIDTH*2;
 		dst+=80;
 	
 	end;
@@ -164,10 +129,7 @@ begin
 	DemoUnit::PlayMusic(#sidfile_1_play);
 	@endif
 
-//	setmulticolormode();
-//	VIC_DATA_LOC:=$18;
 	DemoUnit::SetSparkleVicBank(1);
-//	closeirq();
 	Memory::CloseIrqMemoryMode();
 end;	
 

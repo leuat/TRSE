@@ -1,4 +1,4 @@
-project_path = .
+project_path = /home/leuat/code/TRSE/Debug/../tutorials/X86/cyanide-demo/
 zeropages = ,$02, $04, $08, $16, $0B, $0D, $10, $12, $22, $24, $68
 use_track_19 = 1
 disable_compiler_comments = 0
@@ -38,7 +38,7 @@ override_target_settings_ignore_sys = 0
 override_target_settings_ignore_prg = 0
 output_debug_symbols = 1
 ignore_initial_jump = 0
-open_files = ,Turbo Rascal Solution, intro.ras, resources/fjong/intro_box_rot.fjo, resources/fjong/text_twister.fjo, twister.ras, demounit.tru
+open_files = ,Turbo Rascal Solution, intro.ras, resources/fjong/intro_box_rot.fjo, resources/fjong/text_twister.fjo, demounit.tru, scroll1.ras
 var_zeropages = ,
 zeropages_userdefined = ,
 global_defines = ,

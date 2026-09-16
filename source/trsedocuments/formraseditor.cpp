@@ -28,7 +28,6 @@
 #include "source/chip8emu/dialogchip8.h"
 
 
-
 bool FormRasEditor::m_broadcast = true;
 QString FormRasEditor::m_globalOutput = "";
 //SourceBuilder* BuilderThread::m_builder = nullptr;

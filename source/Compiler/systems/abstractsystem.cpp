@@ -629,11 +629,15 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 
 	QString error="";
 //	Util::CopyFile(file+".asm",file+".ll");
-	Util::CopyFile(file+".asm",file+"_tripe.asm");
+	Util::CopyFile(file+".asm",file+"_tripe_unopt.asm");
 	QFile::remove(file+".asm");
 
+	// Optimise
+	QStringList params  = QStringList() << "-arch" <<"tropt" << "-i"<< file+"_tripe_unopt.asm" << "-o"<<file+"_tripe.asm";
+	GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
 
-	QStringList params  = QStringList() << "-arch" <<"trasm2tripe" << "-i"<< file+"_tripe.asm" << "-o"<<file+".trp";
+
+	params  = QStringList() << "-arch" <<"trasm2tripe" << "-i"<< file+"_tripe.asm" << "-o"<<file+".trp";
 	GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
 
 	//    qDebug() << m_settingsIni->getString("tripe_location");
