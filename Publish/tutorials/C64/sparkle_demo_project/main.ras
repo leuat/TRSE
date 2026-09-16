@@ -1,0 +1,328 @@
+program Demo;
+
+@use "system/sparkle"
+// Force exomizing OFF, set start address of main (the other effects start at $1000)
+
+@projectsettings "exomize" "0"
+@projectsettings "startaddress" "$801"
+@projectsettings "ignorebasicsysstart" "1"
+
+// keep unused symbols, as they are used by other effects
+@setvalue "remove_unused_symbols" "0"
+// no exomizer, let sparkle handle packing
+@setvalue "exomizer_toggle" 0
+@setvalue "main_ras_file" "main.ras"
+@setvalue "disk_system" "Sparkle"
+@setvalue "output_type" "d64"
+
+
+@define track_music 1
+/*
+note the defines in the project settings/target:
+// position of the this program, effects will jump to this address when finished
+@define loaderPos $801
+// position to call in each raster update from the various effects.
+// this method will update counters, transition numbers and play music
+@define callPos $B06
+@define outerCall $BA0
+// transition value, used to signal time to start end transitions to effects
+@define transition $B00
+@define globalTime $B01
+
+
+*/
+
+
+/*
+
+	This demo consist of three parks, and are assembled using the SPARKLE c64 system. 
+	How it works:
+	
+	To compile the main demo, and run it with loading parts, do the following:
+	- press the "Build All" button. this will build all the effects using the IS_DEMO
+	paramters set
+	- Press ctrl-R on main.ras to build and run the actual disk
+
+	To see the build script, go to "project settings/build list", a script that is executed
+	when you press "build all". It looks something like this:
+
+		// IS_DEMO is used in the various effect to compile with demo flags (start addresses etc)	
+		define IS_DEMO 1
+		// override target settings for the individual effects
+		setvalue override_target_settings 1
+		// don't use disk, just compile individual effects to $1000, no crunch
+		setvalue perform_crunch 0
+		setvalue disk_system 0
+		// "b" will buld and individual file. as you add more effects, add to this list
+		b effects/plasma.ras
+		b effects/inside_torus.ras
+		b effects/image.ras
+		// set sparle sparkle
+		setvalue override_target_settings 0
+		setvalue disk_system Sparkle
+
+
+	the project settings here are important: the "build all" button is executed 
+	with the parameters set in the TRSE project settings/build list. here, settings
+	are change so that each effect is built to compile to $1000, in addition to stripping the 
+	files from the BASIC header etc. 
+
+	How this file works:
+	This is main.prg, and will be compiled and added to the disk as the first
+	file to be loaded. This file follows the regular C64 stuff, loaded at $801 code 
+	starts at $810 etc. We then proceed to load the music file (moskou2.sid, track 1) to $E000,
+	before initialising stuff and loading the next part.
+	
+	all parts in this loader loads to $1000 (see "projects settings/target settings".
+	
+	When a part has been loaded, this code will jump to $1000. 
+	
+	the code at $1000 will check various variables (again, see the const list in
+	"projects settings/target settings") : 
+	
+		@define loaderPos $801
+		@define callPos $B06
+		@define outerCall $BA0
+		@define transition $B00
+		@define globalTime $B01
+		@define programStartAddress $1001
+
+	these addresses can be accessed by the individial parts to check with stuff, like
+	"transition" (a value specifying how long until the next transition happens) etc
+	
+	The important thing is that the demo effects call "DemoUnit::Playmusic" in their raster
+	methods in order to a) play music and b) update the counter of the effects
+
+	music must be placed at $E000, and be initialized at $E003 
+
+   Main file is main.prg, music is loaded to track 1 "moskou2.sid" which is located at $E000
+*/
+
+@sparklefile
+
+"
+zp:	02
+
+File:	main.prg
+
+DirIndex:	01
+File:	resources/music/moskou2.sid
+
+DirIndex:	02
+File:	effects/plasma.prg
+
+DirIndex:	03
+File:	effects/image.prg
+
+DirIndex:	04
+File:	effects/inside_torus.prg
+
+"
+
+@use "demounit"
+var
+// Some internal variables used for the "main" loader	
+   	curBorderY,i,j,currentBg,curbg,advance,k,isInitialized,ldr,curtar: byte = 0;
+   	clearcnt : byte = 255;
+   	playmusic : byte = 1;
+	currentScene : byte = 1;
+	p1,p2,zp:pointer;
+
+
+@define useKernal 0
+@donotremove MainUpdate
+@donotremove UpdateMusic
+@donotremove OuterLoop
+
+/*
+	The scenes used in this sample project. 
+	
+	@scene_plasma here has value 2, meaning it is the 2nd track to be loaded (see the sparke file)
+	the value "8" here represents the time that the effect is going to play. Updated by
+	"DemoUnit::PlayMusic" called from the demounit TRU in each raster update
+	
+	the remaining parameters are unused, but could be used for stuff like specifying bg color 
+	while loading etc etc
+	
+
+*/
+// Define the scenes
+
+@define scene_plasma 2
+@define scene_image  3
+@define scene_torus 4
+
+	order : array[] of byte = (
+		@scene_plasma,8,green,
+		@scene_image,8,white,
+		@scene_torus,20,blue,
+		@scene_image,8,red,
+		@scene_plasma,8,black,,
+		@scene_torus,255,yellow,,
+		);
+
+// forward declare some methods
+
+procedure UpdateMusic();
+procedure Bars();
+procedure RasterInside();
+
+@donotremove RasterInside
+
+// This method happens inside the main raster
+procedure RasterInside();
+begin
+	UpdateMusic();
+end;
+
+// The main update method is located at $B80, and is called by the playmusic routine
+// This is defined as @callPos ($B06) in the trse project settings
+@startblock $B00 "Main Update"
+
+@donotremove MainUpdate
+procedure MainUpdate();
+var
+	transition, curData, time, time2, timeStop : byte = 0;
+	volume:byte=15;
+begin
+	if (isInitialized=1) then 
+		UpdateMusic();
+		
+	inc(time);
+	if (time&31=0) then inc(time2);
+	if (timeStop<>0) then begin
+			if (time2>=timeStop) then advance:=1;
+		transition:=abs(time2-timeStop);
+	end;
+end;
+
+@donotremove UpdateMusic
+// actual play muisc. set $01 to $35 before playing music to enable the SID at $D400
+procedure UpdateMusic();
+begin
+	asm("
+		lda $01
+		pha
+		lda #$35
+		sta $01
+	");
+	call(^$E003); 
+	asm("
+		pla
+		sta $01	
+	");
+end;
+
+
+@donotremove RasterMain
+interrupt RasterMain();
+begin
+	DemoUnit::LocalStartIRQ();
+	RasterInside();
+	DemoUnit::LocalCloseIRQ();
+end;
+
+
+@startblock $BA0 "Main Loop Update"
+
+@donotremove OuterLoop
+// Checks whether the effect should end. called within an while loop in the individual effects
+procedure OuterLoop();
+begin
+	//if (advance=1) then call(^$810);
+	asm(" lda advance");
+end;
+
+procedure StartLoadChain();
+begin
+	
+	asm("
+Sparkle_IRQ_JSR = $016E	
+Sparkle_IRQ = $0160
+		ldx #$7f					//Disable CIA interrupts, I=0 here
+		stx $dc0d
+		stx $dd0d
+		lda $dd0d-$7f,x				//Acknowledge pending CIA interrupts
+
+		lda #$1b
+		sta $d011
+
+	lda #$00					//Raster line
+	;	ldx #>RasterInside				//Music player subroutine address high byte
+	;	ldy #<RasterInside				//Music player subroutine address low byte
+		ldx #>UpdateMusic				//Music player subroutine address high byte
+		ldy #<UpdateMusic				//Music player subroutine address low byte
+
+		sty Sparkle_IRQ_JSR+1
+		stx Sparkle_IRQ_JSR+2
+
+		sta $d012
+		lda #<Sparkle_IRQ			//Fallback IRQ in Sparkle's C64 resident code
+		sta $fffe
+		lda #>Sparkle_IRQ
+		sta $ffff
+		
+		lda #$01
+		sta $d01a					//Enable raster IRQ
+		sta $d019					//Acknowledge pending raster IRQ
+
+		cli
+		
+	");
+	
+end;
+	
+begin
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	sprite_bitmask:=0;
+	// turn off screen while loading, make sure screen is cleared and text mode set
+	screenoff();
+	Sparkle_SetBank(0);	
+	settextmode();
+	setregularcolormode();
+	clearscreen($20,^$400);
+	setcharsetandscreenlocation($1000,$400);
+	
+	screenon();
+
+	// initialize variables, reset advance and transition	
+	advance:=0;
+	time:=0;
+	time2:=0;
+	transition:=0;
+	
+	// load and iniialize (track 1) 
+	if (isInitialized=0) offpage 
+	then begin	
+		disableciainterrupts();
+		setmemoryconfig(1,@useKernal,0);
+		DemoUnit::keep:=peek(^$01,0);
+		poke(^$A0,0,DemoUnit::keep);
+		DemoUnit::keep2:=$35;
+		// Load the music		
+		Sparkle::LoadBundle(@track_music);
+		initsid(^$E000);
+		isInitialized:=1;
+		volume:=15;
+	end;
+	// set local raster to enable music while loading	
+	StartLoadChain();
+	// get the play length of the next effectt
+	timeStop:=order[ldr+1];
+	// set the defined background color while loading
+	screen_bg_col := order[ldr +2];
+	// get the actual track index
+	i:=order[ldr];
+	// increment to next position in the order list
+	ldr+=3;
+	
+	// Load the next effect to $1000
+	Sparkle::LoadBundle(i);
+	inc(currentScene);
+	// jump tp the next effect
+	asm( " jmp $1000");
+		
+end.
+
+@endblock

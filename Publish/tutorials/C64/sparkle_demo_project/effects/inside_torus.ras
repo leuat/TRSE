@@ -1,0 +1,258 @@
+program Torus;
+@use "tables/luminosities"
+@use "memory/memory"
+@use "demounit"
+@use "compression/compression"
+@use "screen/fadeinout"
+/*
+@ifndef IS_DEMO
+@projectsettings "startaddress" $1000
+@projectsettings "basicsysaddress" $1000
+@projectsettings "ignorebasicsysstart" 0
+@endif
+*/
+var
+	hei : byte = 2;
+	starty : byte = 0;
+	clear : byte = 0;
+	const maxhei : byte = 100;
+	@define WIDTH 23
+	@define DWIDTH 50
+//	@define HEIGHT 26
+	@define HEIGHT 20
+//	data : array[256] of byte = buildtable("0");
+
+	@ifndef IS_DEMO
+//		music:incsid("music/tengel2.sid",2);
+	@endif
+	data: incbin("data/data_torus.bin");
+//	atan : array[] of byte = buildtable2d(40,140,"Math.atan2((i-20)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*4");	
+//	nr2 : array[] of byte = buildtable2d(@DWIDTH,180,"Math.atan2((i-@DWIDTH/2)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*8");	
+//	sqr2 : array[] of byte = buildtable2d(40,180,"Math.atan2((i-20)*4,j-HEI/2-20)*255.0/(3.14159*2.0)*6");	
+//	nr2 : array[] of byte = buildtable2d(@DWIDTH,140,"255/(Math.sqrt(Math.pow(i-@DWIDTH/2,2)*4+Math.pow(j-HEI/2-20,2))+5)*32.0");	
+	sqr : incbin("data/inside_torus.bin");
+//	sqr : incbin("data/outside_torus.bin");
+
+//	atan : array[] of byte = buildtable2d(@DWIDTH,140,"255/(Math.sqrt(Math.pow(i-@DWIDTH/2,2)*4+Math.pow(j-HEI/2,2))+5)*24.0");	
+//	sqr : array[] of byte = buildtable2d(40,140,"(Math.sqrt(Math.pow(i-20,2)*4+Math.pow(j-HEI/2,2))+1)*8");	
+	//atan : array[] of byte = buildtable2d(40,140,"(Math.sqrt(Math.pow(i-20,2)*4+Math.pow(j-HEI/2,2))+1)*16");	
+
+	@export "resources/images/insekt_mask.flf" "resources/images/insekt_mask.bin" 256
+
+
+@generate_unrolled_asm1 "UpdateTorusA" "data/torusA.inc" "resources/images/insekt_mask_data.bin" $8000 $6000 23 24 0 0  80 		
+@generate_unrolled_asm1 "UpdateTorusB" "data/torusB.inc" "resources/images/insekt_mask_data.bin" $8000 $6000 23 24 2 40 120 		
+	
+	tbl : array[1000] of byte at $8000;
+	src,zp,dst,p1,p2:pointer;
+	tp : pointer of integer;
+	il : integer;
+	shift:byte=64;
+	t,x,y,z,i,j,k,time,time2,time3,tt,l,time1,dx,m : byte;
+	dy:integer;
+
+	r1,ry,ri,rk : byte;
+	@export "resources/images/insekt.flf" "resources/images/insekt.bin" 256
+	
+	image: incbin("resources/images/insekt_data.bin",$6000);
+	cols: incbin("resources/images/insekt_color.bin") compressed;
+
+	tab40 : array[200] of integer = buildtable("i*@DWIDTH");
+	sinx: array[256] of byte=buildsinetable(127);
+	siny: array[256] of byte=buildsinetable(48); // 76, 48
+	sinx2: array[256] of byte=buildsinetable(127/4);
+	sinxx: array[256] of byte=buildsinetable(28);
+//	@perlinnoise "data/per1.bin" 16 16 1 1 1  2 50
+
+//	per:incbin("data/per1.bin");
+@userdata $8000 $8800 "Table"
+
+
+procedure ClearImage(pos:byte);
+begin
+	dst := $6000+160+8 + pos&7;
+	i:=pos>>3;
+	dst+=320*i;
+	asm("
+		lda #0
+		repeat 19
+		ldy #[i*8]
+		sta (dst),y
+		repend 
+		");
+end;
+	
+procedure UpdateTbl();
+begin
+	dst:=#tbl;
+	dx :=sinxx[time2]; 
+//	dy:=sinx[time3+64];
+	dy:=siny[time3+shift];
+//	p1:=#nr2+tab40[sinx[time2]>>1];
+	p2:=#sqr+tab40[dy>>1];
+//	p1+=sinx[time3]>>3;
+	p2+=dx;
+
+/*	if (starty<>0) then
+	begin
+		dst-=80;
+		fill(dst,0,80);
+		dst+=80;
+		
+	end;
+*/	
+//	t:=sine[time<<1]>>2;
+	t:=time;
+	if (time&1=0) then
+	begin
+		dst+=40;
+//		p1+=@DWIDTH;
+		p2+=@DWIDTH;
+	end;
+	k:=time1*6;
+	t:=sinx[time]-time;
+	if (time1>128) then t:=time;
+	for j:=0 to hei step 2 offpage do
+	begin
+//		t+=37;
+//	p2:=#sqr+tab40[dy>>1+sin[k]>>3+j<<1]+dx;
+//	p1:=#sqr+tab40[dy>>1+sin[k]>>3+j<<1];
+	tp:=#tab40 + (j+sinx2[j]+dy)<<1;
+	p2:=#sqr+tp^+dx;
+//	k+=2;
+		if j>starty offpage then 		
+		asm("
+		ldy #@WIDTH-1
+lp1:
+;		clc
+
+		repeat @WIDTH
+		lda (p2),y
+		adc t
+		tax
+		lda data,x
+		sta (dst),y
+		dey
+		repend
+		
+		
+		")
+		else fillfast(dst,0,@WIDTH);
+//		p1+=@DWIDTH*2;
+		dst+=80;
+	
+	end;
+	
+end;
+	
+
+@startblock $9000 "WHOO"	
+@include "data/torusA.inc"
+@include "data/torusB.inc"
+@endblock
+
+
+
+
+	
+
+interrupt RasterMain();
+begin
+	Memory::StartIrqMemoryMode();
+	setbitmapmode();
+	@ifdef IS_DEMO
+	DemoUnit::PlayMusic(#sidfile_1_play);
+	@endif
+
+//	setmulticolormode();
+//	VIC_DATA_LOC:=$18;
+	DemoUnit::SetSparkleVicBank(1);
+//	closeirq();
+	Memory::CloseIrqMemoryMode();
+end;	
+
+	
+begin
+	screen_bg_col:=0;
+	screen_fg_col:=0;
+	clearscreen(0,$4400);
+	clearscreen(0,$D800);
+	@ifndef IS_DEMO
+	disableciainterrupts();
+	setmemoryconfig(1,0,0);
+	preventirq();
+	@endif
+	zp:=#tbl;
+	for i:=0 to 16 do 
+	begin
+		fill(zp,0,0);
+		asm(" inc zp+1");
+	end;
+	
+	setbitmapmode();
+	setcharsetandscreenlocation($2000,$400);	
+	
+	setmulticolormode();
+	DemoUnit_SetSparkleVicBank(1);
+	vic_data_loc:=$18;
+	
+//	clearscreen($82,^$4400);
+//	clearscreen(7,^$D800);
+	Compression::Decompress(#cols,$4800);
+//	copyfullscreen(^$4800+2,^$4400);
+//	copyfullscreen(^$4800+2+1000,^$D800);
+	screen_bg_col:=black;
+	screen_fg_col:=black;
+	copyimagecolordata($4800,1);
+	zp:=$4400;
+	dst:=$D800;
+	for i:=0 to screen_height do
+	begin
+		fill(zp, yellow | (green<<4), @WIDTH);
+		fill(dst, grey, @WIDTH);
+		dst+=screen_width;
+		zp+=screen_width;
+	end;
+	
+	Memory::keep:=peek(^$01,0);
+	StartRasterChain(RasterMain(),0,0);
+	while (true) do
+	begin
+		UpdateTbl();
+//		waitforverticalblank();
+		enableallram();
+		
+		if (time&1=1) then
+			UpdateTorusA()
+		else
+			UpdateTorusB();
+			
+			setmemoryconfig(1,0,0);
+			
+		if (time&1=0) then shift+=1;
+		DemoUnit_EndClearInsideWhileLoop();	
+		time-=13;
+		time2+=3;
+		time3+=4;
+		time1+=1;
+		if (peek(^@transition,0)>8) then
+		begin
+			if (hei<maxhei) then hei+=2;
+		end
+		else
+		begin
+			if (starty<hei) then starty+=2;
+			ClearImage(clear);
+			ClearImage(clear+1);
+			if (clear<200) then clear+=2;
+			if (clear=196) then 
+			begin
+				clearscreen(0,$4400);
+				clearscreen(0,$D800);
+			end;
+		end;
+		@ifndef IS_DEMO
+			if (keypressed(KEY_SPACE)<>0) then poke(^@transition,0,1);
+		@endif
+	end;
+end.

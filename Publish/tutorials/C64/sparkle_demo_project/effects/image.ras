@@ -1,0 +1,41 @@
+program MyProgram;
+@use "compression/compression"
+@use "demounit"
+var  
+   i: byte; 
+
+@export "resources/images/image.flf" "resources/images/image.bin" 256
+
+	data:incbin("resources/images/image_data.bin",$8000) compressed;
+	col : incbin("resources/images/image_color.bin");
+
+interrupt Raster();
+begin
+	startirq(0);
+	@ifdef IS_DEMO
+	DemoUnit::PlayMusic(0);
+	@endif	
+	closeirq();
+end;
+
+begin
+	// if IS_DEMO, then ignore setting up memory config etc
+	@ifndef IS_DEMO
+	disableciainterrupts();
+	preventirq();
+	setmemoryconfig(1,0,0);
+//	initsid(sidfile_1_init);
+	@endif
+	startrasterchain(Raster(),0,0);
+	setmulticolormode();
+	setbitmapmode();
+	vic_data_loc:=$18;
+	DemoUnit::SetSparkleVicBank(0);
+	copyimagecolordata(#col,0);
+	Compression::Decompress($8000,$2000);
+	while (true) do
+	begin
+		waitforraster(0);
+		DemoUnit_EndClearInsideWhileLoop();
+	end;
+end.
