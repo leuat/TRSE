@@ -1,0 +1,317 @@
+program Starfield;
+@use "graphics"
+
+var
+	// =======================
+	// Configurable variables:
+	// =======================
+
+	// 1 = stars fall down the screen, 0 = stars drift up.
+	stars_direction : integer = 1;
+
+	// Flat color for each plane.
+	background_color : integer = $000;
+	fast_color : integer = $DDD;	// muted grey
+	med_color  : integer = $999;	// slightly more muted grey
+	slow_color : integer = $000;	// black (for invisible against backdrop)
+
+	// 0 = rainbow color table for slow stars,
+	// 1 = color gradient mode between 2 colors.
+	star_color_mode : integer = 0;
+
+	// gradient selectable colors
+	star_color_gradient_color_a : integer = $f00;
+	star_color_gradient_color_b : integer = $00f;
+
+	// =======================
+
+	// 3 interleaved bitplanes = 3 star "speeds" (slow/medium/fast). Instead of
+	// redrawing pixels each frame, every plane holds a static pattern and we
+	// scroll it by moving its BPLxPT read pointer (see SetSlowPointer etc).
+	const NUM_PLANES  : integer = 3;
+	const ROW_STRIDE  : integer = 120;	// bytes per screen row (3 planes * 40 bytes)
+
+	// Each plane's pattern repeats every 200 rows. The buffer holds that
+	// pattern twice back to back (400 rows) so the pointer never needs to
+	// wrap mid-frame -- it just always has a full window of rows ahead of it.
+	const PLANE_CYCLE_ROWS : integer = 200;
+
+	// Byte offset of each plane within one interleaved screen row.
+	const PLANE_SLOW : integer = 0;
+	const PLANE_MED  : integer = 40;
+	const PLANE_FAST : integer = 80;
+
+	screen : array[40*400*3] of byte chipmem;
+
+	isDone : integer = 0;		// stays 0; while() needs a real variable, not a literal
+	frame_count : integer = 0;
+	last_frame : integer = 0;
+	seedidx : integer = 0;
+
+	// Current scroll position of each plane, 0..199.
+	slow_off : integer = 0;
+	med_off  : integer = 0;
+	fast_off : integer = 0;
+	
+	// When it's safe to poke screen memory / pointers without tearing).
+	DISPLAY_TOP_LINE    : integer = 44;	
+
+	// Per-star color table for the slow plane. There are 25 slow stars,
+	// evenly spaced every 8 rows; each one keeps its own color from this
+	// table as it scrolls down the screen (see BuildSlowTrackCopper).
+	const SLOW_GRID_SLOTS : integer = 25;
+	slow_track_colors : array[25] of integer = ($F00,$F30,$F60,$F90,$FC0,$FF0,$CF0,$9F0,$6F0,$3F0,$0F0,$0F3,$0F6,$0F9,$0FC,$0FF,$0CF,$09F,$06F,$03F,$00F,$30F,$60F,$90F,$F0F);
+
+	wait_word : integer = 0;	// scratch: packed copper WAIT value
+
+	// ------------------------------------------------------------------
+	// Star layout, reverse-engineered from C64 demo 22_galencia_stars (which
+	// animates by redrawing shared ranges of the character set rather than
+	// plotting individual stars). Columns split into two disjoint families,
+	// each with its own fixed starting row per column and per star type.
+	// ------------------------------------------------------------------
+	const N_LOW  : integer = 22;
+	const N_HIGH : integer = 18;
+
+	low_col : array[22] of integer = (0,2,3,5,7,8,11,12,14,15,16,17,18,21,23,24,25,27,30,32,33,39);
+	high_col : array[18] of integer = (1,4,6,9,10,13,19,20,22,26,28,29,31,34,35,36,37,38);
+
+	slow1_row : array[22] of integer = (0,80,152,168,16,136,192,32,24,96,56,128,8,40,184,64,160,144,120,72,176,48);
+	slow2_row : array[22] of integer = (112,192,64,80,128,48,104,144,136,8,168,40,120,152,96,176,72,56,32,184,88,160);
+	med_row  : array[18] of integer = (120,128,112,104,168,160,96,56,64,184,0,88,152,136,72,176,48,80);
+	fast_row : array[18] of integer = (0,8,184,176,48,40,168,128,136,64,72,160,32,16,144,56,120,152);
+
+	// Each byte packs up to 4 stars, 2 bits per star type (same packing the
+	// original C64 charset used).
+	const SLOW1_BIT : integer = %00000011;
+	const SLOW2_BIT : integer = %00110000;
+	const MED_BIT   : integer = %00001100;
+	const FAST_BIT  : integer = %11000000;
+
+
+// Hardware scrolling: move a plane not by touching pixels, but by writing a
+// new address into the copper list's own BPLxPTH/PTL words (the pair of
+// MOVEs Graphics::SetupDefaultScreen laid down as copper_bitplaneN). High
+// word first, then low word, matching the order the copper itself reads them.
+procedure SetSlowPointer(newslowoff : integer);
+var slowptroff : integer; slowptraddr : pointer of byte;
+begin
+	slowptroff := newslowoff*ROW_STRIDE;
+	slowptroff := slowptroff + PLANE_SLOW;
+	slowptraddr := #screen + slowptroff;
+	asm("
+		move.l slowptraddr,d0
+		move.l d0,d1
+		swap d1
+		lea copper_bitplane0,a0
+		move.w d1,2(a0)
+		move.w d0,6(a0)
+	");
+end;
+
+procedure SetMedPointer(newmedoff : integer);
+var medptroff : integer; medptraddr : pointer of byte;
+begin
+	medptroff := newmedoff*ROW_STRIDE;
+	medptroff := medptroff + PLANE_MED;
+	medptraddr := #screen + medptroff;
+	asm("
+		move.l medptraddr,d0
+		move.l d0,d1
+		swap d1
+		lea copper_bitplane1,a0
+		move.w d1,2(a0)
+		move.w d0,6(a0)
+	");
+end;
+
+procedure SetFastPointer(newfastoff : integer);
+var fastptroff : integer; fastptraddr : pointer of byte;
+begin
+	fastptroff := newfastoff*ROW_STRIDE;
+	fastptroff := fastptroff + PLANE_FAST;
+	fastptraddr := #screen + fastptroff;
+	asm("
+		move.l fastptraddr,d0
+		move.l d0,d1
+		swap d1
+		lea copper_bitplane2,a0
+		move.w d1,2(a0)
+		move.w d0,6(a0)
+	");
+end;
+
+// Fills slow_track_colors with a two-color gradient instead of the rainbow
+// table. Mirrored around the middle slot (distance from either end, not raw
+// index) so the cyclic table wraps from the last slot back to the first
+// without a visible seam.
+procedure BuildSlowTrackGradient();
+var grad_i, grad_d, grad_diff : integer;
+var grad_ra, grad_ga, grad_ba : integer;
+var grad_rb, grad_gb, grad_bb : integer;
+var grad_r, grad_g, grad_b : integer;
+begin
+	grad_ra := (star_color_gradient_color_a >> 8) & 15;
+	grad_ga := (star_color_gradient_color_a >> 4) & 15;
+	grad_ba := star_color_gradient_color_a & 15;
+	grad_rb := (star_color_gradient_color_b >> 8) & 15;
+	grad_gb := (star_color_gradient_color_b >> 4) & 15;
+	grad_bb := star_color_gradient_color_b & 15;
+
+	for grad_i:=0 to SLOW_GRID_SLOTS do begin
+		grad_d := grad_i;
+		if (grad_d > 12) then grad_d := 24 - grad_d;
+
+		if (grad_rb >= grad_ra) then begin
+			grad_diff := grad_rb - grad_ra;
+			grad_r := grad_ra + (grad_diff*grad_d)/12;
+		end else begin
+			grad_diff := grad_ra - grad_rb;
+			grad_r := grad_ra - (grad_diff*grad_d)/12;
+		end;
+
+		if (grad_gb >= grad_ga) then begin
+			grad_diff := grad_gb - grad_ga;
+			grad_g := grad_ga + (grad_diff*grad_d)/12;
+		end else begin
+			grad_diff := grad_ga - grad_gb;
+			grad_g := grad_ga - (grad_diff*grad_d)/12;
+		end;
+
+		if (grad_bb >= grad_ba) then begin
+			grad_diff := grad_bb - grad_ba;
+			grad_b := grad_ba + (grad_diff*grad_d)/12;
+		end else begin
+			grad_diff := grad_ba - grad_bb;
+			grad_b := grad_ba - (grad_diff*grad_d)/12;
+		end;
+
+		slow_track_colors[grad_i] := (grad_r << 8) | (grad_g << 4) | grad_b;
+	end;
+end;
+
+// The 25 slow stars sit on a fixed grid, one every 8 rows. Rebuilds a small
+// copper list that, for each grid slot, waits for the screen line that star
+// is currently on and sets COLOR01 (the slow stars' color) to that star's
+// own fixed color -- then restores the normal slow color at the end. Called
+// every time slow_off changes, so each star keeps its own color as it falls.
+procedure BuildSlowTrackCopper();
+var track_start, track_line, track_k, track_id : integer;
+begin
+	track_start := 200 - slow_off;
+	track_start := track_start & 7;	// grid phase: exact since all seed rows are multiples of 8
+
+	track_id := track_start + slow_off;
+	track_id := track_id >> 3;		// which of the 25 stars is at track_start (exact divide by 8)
+	if (track_id >= 25) then track_id := track_id - 25;
+
+	InitCustomCopperList();
+	AddCopperCommand($096, $8100);	// DMACON: bitplane DMA on for this frame's content
+
+	track_line := track_start;
+	for track_k:=0 to SLOW_GRID_SLOTS do begin
+		wait_word := ((DISPLAY_TOP_LINE + track_line) << 8) | 1;
+		AddCopperCommand(wait_word, COPPER_WAIT_FOR_RASTER);
+		AddCopperCommand(COPPER_PALETTE_START+2, slow_track_colors[track_id]);
+		track_line := track_line + 8;
+		track_id := track_id + 1;
+		if (track_id >= 25) then track_id := track_id - 25;
+	end;
+	AddCopperCommand(COPPER_PALETTE_START+2, slow_color);
+
+	// Nothing past the effect's own 200 rows is meaningful -- left on, DMA
+	// keeps fetching into whatever chip RAM follows the screen buffer, which
+	// only shows up as garbage once the display window is taller than NTSC
+	// (e.g. testing under PAL). Turn it off here, back on above for next frame.
+	wait_word := ((DISPLAY_TOP_LINE + PLANE_CYCLE_ROWS) << 8) | 1;
+	AddCopperCommand(wait_word, COPPER_WAIT_FOR_RASTER);
+	AddCopperCommand($096, $0100);	// DMACON: bitplane DMA off past here
+
+	EndCustomCopperList();
+end;
+
+// Plots (ORs) a star's bit pattern into a plane at (row, col).
+procedure PlotBit(plplane, plrow, plcol, plbit : integer);
+var poffset : integer; pplot : pointer of byte;
+begin
+	poffset := plrow*ROW_STRIDE;
+	poffset := poffset + plplane;
+	poffset := poffset + plcol;
+	pplot := #screen + poffset;
+	pplot[0] := pplot[0] | plbit;
+end;
+
+interrupt VBlank();
+begin
+	frame_count := frame_count + 1;
+end;
+
+begin
+	vbirq(VBlank());
+	EnableInterrupt(VB_IRQ);
+
+	Graphics::SetupDefaultScreen(#screen, NUM_PLANES);
+
+	// copper_palette is a list of copper (register, value) pairs, 4 bytes
+	// apart -- the value word for color index i is at byte offset i*4+2.
+	// Pixel value = (fast_bit<<2)|(med_bit<<1)|slow_bit, so index 1/2/4 are
+	// the plain slow/medium/fast colors; 6 (medium+fast together) is left
+	// black.
+	poke16(#copper_palette, 2,  background_color);
+	poke16(#copper_palette, 6,  slow_color);
+	poke16(#copper_palette, 10, med_color);
+	poke16(#copper_palette, 18, fast_color);
+	poke16(#copper_palette, 26, $000);
+
+	if (star_color_mode = 1) then BuildSlowTrackGradient();
+	BuildSlowTrackCopper();
+
+	// Seed every star once, at both its real row and (row+PLANE_CYCLE_ROWS)
+	// -- the doubled-buffer mirror copy -- so the 200-row pattern already
+	// repeats correctly before any scrolling happens.
+	for seedidx:=0 to N_LOW do begin
+		PlotBit(PLANE_SLOW, slow1_row[seedidx], low_col[seedidx], SLOW1_BIT);
+		PlotBit(PLANE_SLOW, slow1_row[seedidx]+PLANE_CYCLE_ROWS, low_col[seedidx], SLOW1_BIT);
+		PlotBit(PLANE_SLOW, slow2_row[seedidx], low_col[seedidx], SLOW2_BIT);
+		PlotBit(PLANE_SLOW, slow2_row[seedidx]+PLANE_CYCLE_ROWS, low_col[seedidx], SLOW2_BIT);
+	end;
+	for seedidx:=0 to N_HIGH do begin
+		PlotBit(PLANE_MED,  med_row[seedidx],  high_col[seedidx], MED_BIT);
+		PlotBit(PLANE_MED,  med_row[seedidx]+PLANE_CYCLE_ROWS,  high_col[seedidx], MED_BIT);
+		PlotBit(PLANE_FAST, fast_row[seedidx], high_col[seedidx], FAST_BIT);
+		PlotBit(PLANE_FAST, fast_row[seedidx]+PLANE_CYCLE_ROWS, high_col[seedidx], FAST_BIT);
+	end;
+
+	while (isDone=0) do begin
+		while (frame_count=last_frame) do begin
+		end;
+		last_frame := frame_count;
+
+		// Advance each plane's scroll offset and re-point its BPLxPT.
+		// Medium moves every frame, slow every other frame, fast 2 rows a
+		// frame -- same speed ratios the original had.
+		if (stars_direction = 1) then begin
+			if (med_off = 0) then med_off := 199 else med_off := med_off-1;
+		end else begin
+			if (med_off >= 199) then med_off := 0 else med_off := med_off+1;
+		end;
+		SetMedPointer(med_off);
+
+		if ((frame_count & 1) = 0) then begin
+			if (stars_direction = 1) then begin
+				if (slow_off = 0) then slow_off := 199 else slow_off := slow_off-1;
+			end else begin
+				if (slow_off >= 199) then slow_off := 0 else slow_off := slow_off+1;
+			end;
+			SetSlowPointer(slow_off);
+			BuildSlowTrackCopper();
+		end;
+
+		if (stars_direction = 1) then begin
+			if (fast_off = 0) then fast_off := 198 else fast_off := fast_off-2;
+		end else begin
+			if (fast_off >= 198) then fast_off := 0 else fast_off := fast_off+2;
+		end;
+		SetFastPointer(fast_off);
+	end;
+end.
