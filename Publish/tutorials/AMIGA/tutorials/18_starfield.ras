@@ -91,54 +91,47 @@ var
 
 // Hardware scrolling: move a plane not by touching pixels, but by writing a
 // new address into the copper list's own BPLxPTH/PTL words (the pair of
-// MOVEs Graphics::SetupDefaultScreen laid down as copper_bitplaneN). High
-// word first, then low word, matching the order the copper itself reads them.
+// MOVEs Graphics::SetupDefaultScreen laid down as copper_bitplaneN, each a
+// (register, value) pair 4 bytes apart -- so the PTH value word sits at
+// label offset 2 and PTL's at offset 6). High word first, then low word,
+// matching the order the copper itself reads them.
 procedure SetSlowPointer(newslowoff : integer);
-var slowptroff : integer; slowptraddr : pointer of byte;
+var slowptroff : integer; slowptraddr : pointer of byte; slowptrlong : long; slowhiword, slowloword : integer;
 begin
 	slowptroff := newslowoff*ROW_STRIDE;
 	slowptroff := slowptroff + PLANE_SLOW;
 	slowptraddr := #screen + slowptroff;
-	asm("
-		move.l slowptraddr,d0
-		move.l d0,d1
-		swap d1
-		lea copper_bitplane0,a0
-		move.w d1,2(a0)
-		move.w d0,6(a0)
-	");
+	slowptrlong := slowptraddr;
+	slowhiword := (slowptrlong >> 8) >> 8;
+	slowloword := slowptrlong & $ffff;
+	poke16(#copper_bitplane0, 2, slowhiword);
+	poke16(#copper_bitplane0, 6, slowloword);
 end;
 
 procedure SetMedPointer(newmedoff : integer);
-var medptroff : integer; medptraddr : pointer of byte;
+var medptroff : integer; medptraddr : pointer of byte; medptrlong : long; medhiword, medloword : integer;
 begin
 	medptroff := newmedoff*ROW_STRIDE;
 	medptroff := medptroff + PLANE_MED;
 	medptraddr := #screen + medptroff;
-	asm("
-		move.l medptraddr,d0
-		move.l d0,d1
-		swap d1
-		lea copper_bitplane1,a0
-		move.w d1,2(a0)
-		move.w d0,6(a0)
-	");
+	medptrlong := medptraddr;
+	medhiword := (medptrlong >> 8) >> 8;
+	medloword := medptrlong & $ffff;
+	poke16(#copper_bitplane1, 2, medhiword);
+	poke16(#copper_bitplane1, 6, medloword);
 end;
 
 procedure SetFastPointer(newfastoff : integer);
-var fastptroff : integer; fastptraddr : pointer of byte;
+var fastptroff : integer; fastptraddr : pointer of byte; fastptrlong : long; fasthiword, fastloword : integer;
 begin
 	fastptroff := newfastoff*ROW_STRIDE;
 	fastptroff := fastptroff + PLANE_FAST;
 	fastptraddr := #screen + fastptroff;
-	asm("
-		move.l fastptraddr,d0
-		move.l d0,d1
-		swap d1
-		lea copper_bitplane2,a0
-		move.w d1,2(a0)
-		move.w d0,6(a0)
-	");
+	fastptrlong := fastptraddr;
+	fasthiword := (fastptrlong >> 8) >> 8;
+	fastloword := fastptrlong & $ffff;
+	poke16(#copper_bitplane2, 2, fasthiword);
+	poke16(#copper_bitplane2, 6, fastloword);
 end;
 
 // Fills slow_track_colors with a two-color gradient instead of the rainbow
