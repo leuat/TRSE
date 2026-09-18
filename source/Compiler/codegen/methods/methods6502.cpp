@@ -40,7 +40,6 @@ void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
         as->EndWriteln();
     }
 */
-
     if (Command("EnableAllRam")) {
             as->Comment("Enable all ram visible");
 /*            as->Asm("lda $01");

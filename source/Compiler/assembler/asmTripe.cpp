@@ -159,6 +159,8 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
         QString s="";
 //		s="\tdecl\t" + getLabelEnding(name) + "\t"+t+" ";
 		s="\tdecl\t"+getLabelEnding(name) + "\t"+t+":" + data[0];
+		s=s+"\n";
+		s=s + "\t." +t + " ";
 
 		for (int i=1;i<data.count();i++) {
             s=s+data[i];
@@ -242,8 +244,16 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
 
 void AsmTripe::DeclareString(QString name, QStringList initval, QStringList flags)
 {
+//	void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
 
-    Write(getLabelEnding(name) +"\t" + String(initval,!flags.contains("no_term")));
+	qDebug() << initval << initval.size();
+	QStringList data;
+	for (auto s: initval)
+		for (auto c : s)
+			data.append(Util::numToHex0(c.toLatin1()));
+	data.push_back("0");
+	DeclareArray(name,"byte",data.size(),data,"");
+//    Write(getLabelEnding(name) +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
 }
 

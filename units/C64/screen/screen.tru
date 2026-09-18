@@ -75,8 +75,8 @@ end;
 **/
 procedure PrintCStringColor(p1 : global pointer; x, y, c : global byte);
 begin
-	sp := #screen_char_loc + y*screen_width + x;
-	cp := $D800 + y*screen_width + x;
+	sp := #screen_char_loc + tab40[y] + x;
+	cp := $D800 + tab40[y] + x;
 	
 	while (p1^<>0) do
 		PrintSingleChar(p1^);

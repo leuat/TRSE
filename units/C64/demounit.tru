@@ -197,12 +197,6 @@ begin
 		beq pp_cnt2
 		");
 		RasterIRQ(DemoUnit::RasterClear(),0,0);
-//			waitforraster(0);
-//			waitforraster(0);
-		//settextmode();
-		//setregularcolormode();
-
-//			setregularcolormode();
 
 		asm("
 		jmp @loaderPos

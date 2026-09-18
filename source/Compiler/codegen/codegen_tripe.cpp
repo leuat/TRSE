@@ -143,7 +143,7 @@ void CodeGenTRIPE::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
 //    as->Asm(".data uint64: "+initVal);
-    as->Asm("declptr\t"+v->value + "\t uint16:0");
+	as->Asm("decl\t"+v->value + "\t ptr:0");
 
 }
 
@@ -260,9 +260,12 @@ QString CodeGenTRIPE::TripeValue(QSharedPointer<Node> node)
 {
     if (node->isPureNumeric())
         return TripeNumber(node);
+	QString s = "";
+	if (node->isReference())
+		s="#";
     if (node->isPureVariable())
-        return node->getValue(as);
-    return node->getValue(as);
+		return s+node->getValue(as);
+	return s+node->getValue(as);
 
 }
 
@@ -322,10 +325,16 @@ void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> node
 
 
 void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
+	if (node->m_expr== nullptr) {
+		as->Asm("mov "+getTempName("t_uint16_ret")+ " " +TripeValue(node));
+		return;
+	}
 	as->Comment("LoadPointer");
 	node->m_expr->Accept(this);
+
 	QString val = m_curTemp.pop();
 	QString idx = getTempName("t_uint8_idx");
+	m_curTemp.pop();
 	as->Asm("mov "+ idx + " " +val);
 	as->Asm("load_p "+TripeValue(node) + " " +idx + " " +getTempName("t_uint8_ret"));
 
@@ -355,7 +364,8 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 
 void CodeGenTRIPE::LoadByteArray(QSharedPointer<NodeVar> node) {
 	as->Comment("::LoadByteArray");
-	auto tmp = getTempName("t_uint8_load");
+	QString type = node->isWord(as)?"16":"8";
+	auto tmp = getTempName("t_uint"+type+"_load");
 	auto idx = getTempName("t_uint8_idx");
 	node->m_expr->Accept(this);
 	as->Asm("mov "+idx + " " + m_curTemp.pop());
@@ -517,7 +527,7 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
             //QString tempVar = BinopTemp(as,node->m_right);
             node->m_right->Accept(this);
 			QString tempVar = "ball";
-			as->Comment("FAIL");
+//			as->Comment("FAIL");
 			if (m_curTemp.size()!=0) {
 				tempVar = m_curTemp.pop();
 				as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);

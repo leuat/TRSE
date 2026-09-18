@@ -143,6 +143,7 @@ freebsd*{
 
 
 SOURCES += source/main.cpp\
+    source/Compiler/assembler/factoryassembler.cpp \
     source/Compiler/codegen/methods/methodstripe.cpp \
     source/Compiler/optimiser/postoptimiser6502.cpp \
     source/LeLib/limage/limageoric.cpp \
@@ -471,6 +472,7 @@ SOURCES += source/main.cpp\
 
 
 HEADERS  += source/mainwindow.h \
+    source/Compiler/assembler/factoryassembler.h \
     source/Compiler/codegen/methods/methodstripe.h \
     source/Compiler/optimiser/postoptimiser6502.h \
     source/LeLib/limage/limageoric.h \

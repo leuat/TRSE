@@ -19,6 +19,7 @@
 
 #include "source/Compiler/systems/systemcustom.h"
 #include "source/LeLib/util/fc8/FC8Compression.h"
+#include "source/Compiler/assembler/factoryassembler.h"
 
 AbstractCodeGen::AbstractCodeGen() {}
 
@@ -1564,7 +1565,21 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
   methods->m_node = node;
   //    qDebug() << "BALLE"<<methods << Syntax::s.m_currentSystem->m_system <<
   //    qSharedPointerDynamicCast<Methods6502>(methods);
-  methods->Assemble(as, this);
+
+  auto assembler = as;
+  auto p = FactoryAssembler::create(Syntax::s.m_currentSystem->m_processor);
+  if (FactoryMethods::s_useTripe) {
+	  as->Term();
+	  as->Asm(".asm");
+	  assembler = p.get();
+	  assembler->m_symTab = as->m_symTab;
+  }
+  methods->Assemble(assembler, this);
+  if (FactoryMethods::s_useTripe) {
+	  as->m_currentBlock->m_source.append(assembler->m_source);
+	  as->Asm(".endasm");
+  }
+
 }
 
 void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node) {
