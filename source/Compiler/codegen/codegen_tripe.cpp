@@ -22,11 +22,13 @@ void CodeGenTRIPE::HandleGenericBinop(QSharedPointer<Node> node) {
 void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString cmd)
 {
     QString l = "";
+	int pop = 0;
     if (a->isPure())
         l = TripeValue(a);
     else {
         a->Accept(this);
-        l = m_curTemp.pop();
+		l = m_curTemp.last();
+		pop++;
     }
 
     QString r = "";
@@ -35,9 +37,88 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
     }
     else {
         b->Accept(this);
-        r = m_curTemp.pop();
+		r = m_curTemp.last();
+		pop++;
     }
-    as->Asm(cmd+"\t"+ l+"\t"+r);
+	for (int i=0;i<pop;i++)
+		m_curTemp.pop();
+
+	as->Asm(cmd+tab+ l+tab+r);
+
+}
+/*
+void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> c, QString cmd)
+{
+	QString l = "";
+	int pop = 0;
+	if (a->isPure())
+		l = TripeValue(a);
+	else {
+		a->Accept(this);
+		l = m_curTemp.pop();
+	}
+
+	QString r = "";
+	if (b->isPure()) {
+		r = TripeValue(b);
+	}
+	else {
+		b->Accept(this);
+		r = m_curTemp.pop();
+	}
+
+	QString rr = "";
+	if (c->isPure()) {
+		rr = TripeValue(c);
+	}
+	else {
+		c->Accept(this);
+		rr = m_curTemp.pop();
+	}
+	as->Asm(cmd+"\t"+ l+"\t"+r+"\t"+rr);
+
+}
+*/
+void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString c, QString cmd)
+{
+	QString l = "";
+	int pop=0;
+	if (a->isPure())
+		l = TripeValue(a);
+	else {
+		a->Accept(this);
+		l = m_curTemp.last();
+		pop++;
+	}
+
+	QString r = "";
+	if (b->isPure()) {
+		r = TripeValue(b);
+	}
+	else {
+		b->Accept(this);
+		r = m_curTemp.last();
+		pop++;
+	}
+	for (int i=0;i<pop;i++)
+		m_curTemp.pop();
+
+	as->Asm(cmd+tab+ l+tab+r+tab+c);
+
+}
+
+void CodeGenTRIPE::Triplette(QString l, QSharedPointer<Node> b, QString c, QString cmd)
+{
+	QString r = "";
+	if (b->isPure()) {
+		r = TripeValue(b);
+	}
+	else {
+		b->Accept(this);
+		r = m_curTemp.pop();
+	}
+
+	as->Asm(cmd+tab+ l+tab+r+tab+c);
 
 }
 
@@ -143,7 +224,7 @@ void CodeGenTRIPE::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
 //    as->Asm(".data uint64: "+initVal);
-	as->Asm("decl\t"+v->value + "\t ptr:0");
+	as->Asm("decl"+tab+v->value + tab+"ptr:0");
 
 }
 
@@ -311,7 +392,10 @@ void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> node
     Doublette(nodeA->m_left,nodeB,"cmp");
  //   BuildToCmp()
 //    PrintCompare(nodeA->m_left, lblSuccess,lblFailed);
-    as->Asm("bne "+loopNotDone);
+	if (isLarge)
+		as->Asm("beq "+loopDone);
+	else
+		as->Asm("bne "+loopNotDone);
 }
 
 
@@ -330,14 +414,16 @@ void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
 		return;
 	}
 	as->Comment("LoadPointer");
-	node->m_expr->Accept(this);
+	QString type = node->isWord(as)?"16":"8";
+	Triplette(node->getValue(as), node->m_expr,getTempName("t_uint"+type+"_load"),"load_p");
+/*	node->m_expr->Accept(this);
 
 	QString val = m_curTemp.pop();
 	QString idx = getTempName("t_uint8_idx");
 	m_curTemp.pop();
 	as->Asm("mov "+ idx + " " +val);
 	as->Asm("load_p "+TripeValue(node) + " " +idx + " " +getTempName("t_uint8_ret"));
-
+*/
 
 }
 
@@ -364,14 +450,9 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 
 void CodeGenTRIPE::LoadByteArray(QSharedPointer<NodeVar> node) {
 	as->Comment("::LoadByteArray");
-	QString type = node->isWord(as)?"16":"8";
-	auto tmp = getTempName("t_uint"+type+"_load");
-	auto idx = getTempName("t_uint8_idx");
-	node->m_expr->Accept(this);
-	as->Asm("mov "+idx + " " + m_curTemp.pop());
-	as->Asm("load " + TripeValue(node) + " " +idx + " " + tmp);
-	m_curTemp.pop();
 
+	QString type = node->isWord(as)?"16":"8";
+	Triplette(node->getValue(as), node->m_expr,getTempName("t_uint"+type+"_load"),"load");
 }
 
 void CodeGenTRIPE::LoadVariable(QSharedPointer<Node> node)
@@ -473,6 +554,10 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 	as->Comment("VarNode StoreVariable");
 	auto val = m_curTemp.pop();
+	if (node->hasArrayIndex()) {
+		Triplette(node->getValue(as), node->m_expr,val,"store");
+		return;
+	}
 	as->Asm("mov	 "+TripeValue(node) + " " +val);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
@@ -547,12 +632,16 @@ bool CodeGenTRIPE::AssignPointer(QSharedPointer<NodeAssign> node) {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 	if (var->isPointer(as) && var->hasArrayIndex()) {
         if (node->m_right->isPure() && var->m_expr->isPure()) {
+			as->Comment("store_p optimized");
             as->Asm("store_p "+TripeValue(var)+" "+TripeValue(var->m_expr) + " " +TripeValue( node->m_right));
 
         }
         else {
 //            ErrorHandler::e.Error("Tripe: non-pure pointer index not yet supported",node->m_op.m_lineNumber);
 			// a[expr]:=b;
+			node->m_right->Accept(this);
+			Triplette(var->getValue(as),var->m_expr, m_curTemp.pop(),"store_p");
+			/*
 			QString expr = TripeValue(var->m_expr);
 			if (!var->m_expr->isPure()) {
 				as->Comment("here");
@@ -564,7 +653,7 @@ bool CodeGenTRIPE::AssignPointer(QSharedPointer<NodeAssign> node) {
 				expr = tempVar;
 			}
 			as->Asm("store_p "+TripeValue(var)+" "+expr + " " +TripeValue( node->m_right));
-
+			*/
 		}
 		return true;
     }
@@ -614,7 +703,7 @@ QString CodeGenTRIPE::getTempName(QString t)
         s = t+QString::number(++i);
 
     m_curTemp.push(s);
-    QString name = "decl\t"+s+"\t"+t.split("_")[1]+":0";
+	QString name = "decl"+tab+s+tab+t.split("_")[1]+":0";
     if (!as->m_tempVars.contains(name))
        as->m_tempVars.append(name);
     return s;
@@ -683,20 +772,20 @@ void CodeGenTRIPE::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
     }
 
 
-    QString loopDone = as->NewLabel("loopdone");
-    QString loopNotDone = as->NewLabel("loopnotdone");
+	QString loopDone = as->NewLabel("loopdone");
+	QString loopNotDone = as->NewLabel("loopnotdone");
 
-    IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
-    Compare(nodeA, nodeB, step, true, loopDone, loopNotDone, isInclusive);
+	IncreaseCounter(step,qSharedPointerDynamicCast<NodeVar>(nodeA->m_left));
+	Compare(nodeA, nodeB, step, true, loopDone, loopNotDone, isInclusive);
+	as->Term();
+	as->Label(loopNotDone);
+	as->Asm("jump " + lblJump);
 
-    as->Label(loopNotDone);
-    as->Asm("jmp " + lblJump);
+	as->Label(loopDone);
+	//  Compare(node, var, false, loopDone, nullptr, inclusive);
 
-    as->Label(loopDone);
-    //  Compare(node, var, false, loopDone, nullptr, inclusive);
-
-    as->PopLabel("loopdone");
-    as->PopLabel("loopnotdone");
+	as->PopLabel("loopdone");
+	as->PopLabel("loopnotdone");
 
 
 

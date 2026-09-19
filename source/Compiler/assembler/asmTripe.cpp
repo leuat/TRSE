@@ -150,23 +150,23 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
             scale = 3;
 
 
-        Write(getLabelEnding(name) +"\t" + t + "\t ");
-        Asm("org "+name+"+" +QString::number(count*scale));
-
-    }
-    else {
+	   // Write(getLabelEnding(name) +"\t" + t + "\t ");
+	   // Asm("org "+name+"+" +QString::number(count*scale));
+		for (int i=0;i<count;i++)
+			data.append("0");
+	}
 
         QString s="";
 //		s="\tdecl\t" + getLabelEnding(name) + "\t"+t+" ";
-		s="\tdecl\t"+getLabelEnding(name) + "\t"+t+":" + data[0];
+		s=tab+"decl"+tab+getLabelEnding(name) + tab+t+":" + data[0];
 		s=s+"\n";
-		s=s + "\t." +t + " ";
+		s=s + tab+"." +t + " ";
 
 		for (int i=1;i<data.count();i++) {
             s=s+data[i];
             if (i%8==7 && i!=data.count()-1) {
                 s=s+"\n";
-				s=s + "\t." +t + " ";
+				s=s + tab+"." +t + " ";
             }
             else if (i!=data.count()-1) s=s+" ";
 
@@ -190,7 +190,7 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
             m_appendix.append(app);
         }
 
-    }
+  //  }
 }
 
 
@@ -226,7 +226,7 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
 
     }
     if (Syntax::s.m_currentSystem->useZByte) {
-        Write(name +"\t=\t"+Util::numToHex0(m_zbyte));
+		Write(name +tab+"="+tab+Util::numToHex0(m_zbyte));
         m_zbyte++;
         if (t==word)
             m_zbyte++;
@@ -238,23 +238,36 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
     if (t=="")
         ErrorHandler::e.Error("Cannot declare variable of type: " + type);
 
-	Write("\tdecl \t" + name +"\t" + t + ":"+initval);
+	Write(tab+"decl"+tab+  name +tab + t + ":"+initval);
 
 }
 
 void AsmTripe::DeclareString(QString name, QStringList initval, QStringList flags)
 {
-//	void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
-
-	qDebug() << initval << initval.size();
 	QStringList data;
 	for (auto s: initval)
 		for (auto c : s)
 			data.append(Util::numToHex0(c.toLatin1()));
 	data.push_back("0");
 	DeclareArray(name,"byte",data.size(),data,"");
-//    Write(getLabelEnding(name) +"\t" + String(initval,!flags.contains("no_term")));
     m_term="";
+}
+
+void AsmTripe::DeclareCString(QString name, QStringList initval, QStringList flags)
+{
+	QStringList data;
+	for (auto s: initval)
+		for (auto c : s) {
+			char d = c.toLatin1();
+			if (d>64 && d<64+32)
+				d-=64;
+			data.append(Util::numToHex0(d));
+		}
+
+	data.push_back("0");
+	DeclareArray(name,"byte",data.size(),data,"");
+	m_term="";
+
 }
 
 
@@ -319,9 +332,9 @@ QString AsmTripe::String(QStringList lst, bool term)
         bool ok=false;
         uchar val = s.toInt(&ok);
         if (!ok)
-            res=res+"\t"+mark+"\t" +"\"" + s + "\"\n";
+			res=res+tab+mark+tab +"\"" + s + "\"\n";
 
-        else res=res + "\t"+mark+"\t"+QString::number(val) + "\n";
+		else res=res + tab+mark+tab+QString::number(val) + "\n";
 
 /*        if (s!=lst.last())
             res=res + "\n";
@@ -329,7 +342,7 @@ QString AsmTripe::String(QStringList lst, bool term)
 
     }
     if (term)
-        res=res + "\t"+mark+"\t0";
+		res=res + tab+mark+tab+"0";
     m_term +=res;
     return res;
 }
@@ -375,6 +388,12 @@ void AsmTripe::BinOP(TokenType::Type t,  bool clearFlag)
     if (t == TokenType::DIV) {
         m_term = "divu ";
     }
+	if (t == TokenType::SHL) {
+		m_term = "shl ";
+	}
+	if (t == TokenType::SHR) {
+		m_term = "shr ";
+	}
 
 }/*
 
@@ -426,7 +445,20 @@ void AsmTripe::Connect()
         if (l.endsWith(":"))
             l = l.remove(l.length()-1,1);
     }
-    // Delete appendix
+	QStringList n;
+	for (QString& l: m_source) {
+
+		bool ok = true;
+		if (l.trimmed().startsWith(".code $"))
+			ok = false;
+		if (l.trimmed().startsWith("end_incbin_"))
+			ok = false;
+
+		if (ok)
+			n.append(l);
+	}
+	m_source = n;
+	// Delete appendix
     //    qDebug() << "Deleting appendices : "<<m_appendix.count() << m_blockStack.count();
 
 

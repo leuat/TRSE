@@ -55,6 +55,7 @@ public:
 //    QString  BinopTemp(Assembler*as, QSharedPointer<Node> node);
 
     QStack<QString> m_curTemp;
+	QString tab = " \t";
 //    QHash<QString,QString> m_temporaryVariables;
     QVector<QString> m_temporaryVariables;
 
@@ -65,6 +66,9 @@ public:
     QString getTempName(QString t);
 
     void Doublette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);
+//	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QSharedPointer<Node> c,QString cmd);
+	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString c,QString cmd);
+	void Triplette(QString a,QSharedPointer<Node> b, QString c,QString cmd);
 
 
     QString getJmp(bool isOffPage) override {

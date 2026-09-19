@@ -1406,10 +1406,10 @@ void AbstractCodeGen::IncBin(QSharedPointer<NodeVarDecl> node) {
     if (Syntax::s.m_currentSystem->CL65Syntax()) {
       app->Append(".res " + t->m_position + "-*", 0);
 
-    } else
+	} else
       app->Append(as->GetOrg() + t->m_position, 1);
 
-    app->Append(v->value + ":", 0);
+	app->Append(as->printLabel(v->value), 0);
     app->Append(getIncbin() + "\t \"" + filename + "\"", 1);
     as->m_appendix.append(app);
     bool ok;

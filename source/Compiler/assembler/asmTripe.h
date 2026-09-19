@@ -53,6 +53,12 @@ public:
     void VarDeclHeader();
     void DeclareVariable(QString name, QString type, QString initval, QString position) override;
     void DeclareString(QString name, QStringList initval, QStringList flags) override;
+	void DeclareCString(QString name, QStringList initval, QStringList flags) override;
+
+	virtual QString printLabel(QString s) override {
+		return ".label "+s;
+	}
+	QString tab = "  ";
 
     void PopTempVar() override;
     void BeginBlock() override;

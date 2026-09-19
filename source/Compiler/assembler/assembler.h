@@ -264,6 +264,10 @@ public:
 
     QString DeclareWRamVar(QString name, QString t);
 
+	virtual QString printLabel(QString s) {
+		return s+":";
+	}
+
     Assembler();
     virtual ~Assembler();
     void Save(QString filename);
