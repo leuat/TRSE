@@ -62,7 +62,7 @@ var
 	const SLOW_GRID_SLOTS : integer = 25;
 	slow_track_colors : array[25] of integer = ($F00,$F30,$F60,$F90,$FC0,$FF0,$CF0,$9F0,$6F0,$3F0,$0F0,$0F3,$0F6,$0F9,$0FC,$0FF,$0CF,$09F,$06F,$03F,$00F,$30F,$60F,$90F,$F0F);
 
-	wait_word : integer = 0;	// scratch: packed copper WAIT value
+	wait_word : integer = 0;
 
 	plane_addr : array[3] of long = (0,0,0);	// per-plane scroll address, emitted by BuildSlowTrackCopper
 	cp_i : integer;
@@ -221,12 +221,7 @@ begin
 	EnableInterrupt(VB_IRQ);
 
 	Graphics::SetupDefaultScreen(#screen, NUM_PLANES);
-
-	// copper_palette is a list of copper (register, value) pairs, 4 bytes
-	// apart -- the value word for color index i is at byte offset i*4+2.
-	// Pixel value = (fast_bit<<2)|(med_bit<<1)|slow_bit, so index 1/2/4 are
-	// the plain slow/medium/fast colors; 6 (medium+fast together) is left
-	// black.
+	
 	poke16(#copper_palette, 2,  background_color);
 	poke16(#copper_palette, 6,  slow_color);
 	poke16(#copper_palette, 10, med_color);
@@ -238,7 +233,7 @@ begin
 	BuildSlowTrackCopper();
 
 	// Seed every star once, at both its real row and (row+PLANE_CYCLE_ROWS)
-	// -- the doubled-buffer mirror copy -- so the 200-row pattern already
+	// at the buffer mirror copy so the 200-row pattern already
 	// repeats correctly before any scrolling happens.
 	for seedidx:=0 to N_LOW do begin
 		PlotBit(PLANE_SLOW, slow1_row[seedidx], low_col[seedidx], SLOW1_BIT);
@@ -260,7 +255,7 @@ begin
 
 		// Advance each plane's scroll offset and re-point its BPLxPT.
 		// Medium moves every frame, slow every other frame, fast 2 rows a
-		// frame -- same speed ratios the original had.
+		// frame -- same speed ratios the C64 original had.
 		if (stars_direction = 1) then begin
 			if (med_off = 0) then med_off := 199 else med_off := med_off-1;
 		end else begin
