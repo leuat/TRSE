@@ -7,7 +7,7 @@ var
 @define OPTIMIZED 1
 
 	// some plasma variables
-	val,c2x, c2y,ax, ay : byte;
+	val,c2x, c2y,ax, ay, c : byte;
 	x,y : byte;
 	colorP: ^byte; // same as "pointer" or "pointer of byte";	
 
@@ -33,7 +33,7 @@ var
 
 
 	const yStart:byte = 2;
-	const yEnd:byte = 23;
+	const yEnd:byte = 24;
 	const xStart:byte = 1;
 	const xEnd:byte = 39;
 
@@ -80,9 +80,9 @@ begin
 			// we have created a lookup table instead!
 			c:=lookupDiv16[ (sinx[x] +val) ];
 			// Set the screen memory
-			screenmemory[x]:=c;
+			ptr[x]:=c;
 			// Set color memory
-			colorP[x] := fade[ c ];
+			colorP[x] := fadeTab[ c ];
 @endif
 // This is the optimized version
 @if OPTIMIZED = 1

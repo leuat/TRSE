@@ -400,7 +400,7 @@ Screen::SetCharsetLocation($1000); // point to ROM
 **/
 procedure SetCharsetLocation(i1: global integer);
 begin
-	i:=((hi(i1)/8)&%00001111)<<1;
+	i:=((hi(i1)>>3)&%00001111)<<1;
 	vic_data_loc:=((vic_data_loc)&%11110000)|i;
 end;
 

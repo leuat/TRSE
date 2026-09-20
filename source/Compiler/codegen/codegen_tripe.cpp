@@ -224,7 +224,13 @@ void CodeGenTRIPE::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
 //    as->Asm(".data uint64: "+initVal);
-	as->Asm("decl"+tab+v->value + tab+"ptr:0");
+	QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
+
+//	qDebug() << "Tripe DATA SIZE ptr : " << v->value << TokenType::getType(s->m_arrayType)  << node->m_typeNode->getArrayType(as) << node->getArrayDataSize(as) << node->getArrayType(as) << TokenType::getType(t->m_arrayVarType.m_type);
+	QString ptr = "ptr8";
+	if (t->m_arrayVarType.m_type==TokenType::INTEGER) ptr="ptr16";
+	if (t->m_arrayVarType.m_type==TokenType::LONG) ptr="ptr32";
+	as->Asm("decl"+tab+v->value + tab+ptr+":0");
 
 }
 
@@ -415,7 +421,7 @@ void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
 	}
 	as->Comment("LoadPointer");
 	QString type = node->isWord(as)?"16":"8";
-	Triplette(node->getValue(as), node->m_expr,getTempName("t_uint"+type+"_load"),"load_p");
+	Triplette(node->getValue(as), node->m_expr,getTempName("t_uint"+type+"_load"),"load");
 /*	node->m_expr->Accept(this);
 
 	QString val = m_curTemp.pop();
@@ -632,15 +638,15 @@ bool CodeGenTRIPE::AssignPointer(QSharedPointer<NodeAssign> node) {
     auto var = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 	if (var->isPointer(as) && var->hasArrayIndex()) {
         if (node->m_right->isPure() && var->m_expr->isPure()) {
-			as->Comment("store_p optimized");
-            as->Asm("store_p "+TripeValue(var)+" "+TripeValue(var->m_expr) + " " +TripeValue( node->m_right));
+			as->Comment("store optimized");
+			as->Asm("store "+TripeValue(var)+" "+TripeValue(var->m_expr) + " " +TripeValue( node->m_right));
 
         }
         else {
 //            ErrorHandler::e.Error("Tripe: non-pure pointer index not yet supported",node->m_op.m_lineNumber);
 			// a[expr]:=b;
 			node->m_right->Accept(this);
-			Triplette(var->getValue(as),var->m_expr, m_curTemp.pop(),"store_p");
+			Triplette(var->getValue(as),var->m_expr, m_curTemp.pop(),"store");
 			/*
 			QString expr = TripeValue(var->m_expr);
 			if (!var->m_expr->isPure()) {
