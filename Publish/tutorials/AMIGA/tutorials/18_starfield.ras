@@ -27,7 +27,7 @@ var
 
 	// 3 interleaved bitplanes = 3 star "speeds" (slow/medium/fast). Instead of
 	// redrawing pixels each frame, every plane holds a static pattern and we
-	// scroll it by moving its BPLxPT read pointer (see SetSlowPointer etc).
+	// scroll it by moving its BPLxPT read pointer (see SetPlanePointer).
 	const NUM_PLANES  : integer = 3;
 	const ROW_STRIDE  : integer = 120;	// bytes per screen row (3 planes * 40 bytes)
 
@@ -64,6 +64,10 @@ var
 
 	wait_word : integer = 0;	// scratch: packed copper WAIT value
 
+	plane_addr : array[3] of long = (0,0,0);	// per-plane scroll address, emitted by BuildSlowTrackCopper
+	cp_i : integer;
+	cp_ptr : pointer of integer;
+
 	// ------------------------------------------------------------------
 	// Star layout, reverse-engineered from C64 demo 22_galencia_stars (which
 	// animates by redrawing shared ranges of the character set rather than
@@ -89,56 +93,15 @@ var
 	const FAST_BIT  : integer = %11000000;
 
 
-// Hardware scrolling: move a plane not by touching pixels, but by writing a
-// new address into the copper list's own BPLxPTH/PTL words (the pair of
-// MOVEs Graphics::SetupDefaultScreen laid down as copper_bitplaneN). High
-// word first, then low word, matching the order the copper itself reads them.
-procedure SetSlowPointer(newslowoff : integer);
-var slowptroff : integer; slowptraddr : pointer of byte;
+// Hardware scrolling: a plane is moved not by touching pixels but by changing
+// where its bitplane pointer points.
+procedure SetPlanePointer(planeidx, newplaneoff : integer);
+var ptroff : integer; ptraddr : pointer of byte;
 begin
-	slowptroff := newslowoff*ROW_STRIDE;
-	slowptroff := slowptroff + PLANE_SLOW;
-	slowptraddr := #screen + slowptroff;
-	asm("
-		move.l slowptraddr,d0
-		move.l d0,d1
-		swap d1
-		lea copper_bitplane0,a0
-		move.w d1,2(a0)
-		move.w d0,6(a0)
-	");
-end;
-
-procedure SetMedPointer(newmedoff : integer);
-var medptroff : integer; medptraddr : pointer of byte;
-begin
-	medptroff := newmedoff*ROW_STRIDE;
-	medptroff := medptroff + PLANE_MED;
-	medptraddr := #screen + medptroff;
-	asm("
-		move.l medptraddr,d0
-		move.l d0,d1
-		swap d1
-		lea copper_bitplane1,a0
-		move.w d1,2(a0)
-		move.w d0,6(a0)
-	");
-end;
-
-procedure SetFastPointer(newfastoff : integer);
-var fastptroff : integer; fastptraddr : pointer of byte;
-begin
-	fastptroff := newfastoff*ROW_STRIDE;
-	fastptroff := fastptroff + PLANE_FAST;
-	fastptraddr := #screen + fastptroff;
-	asm("
-		move.l fastptraddr,d0
-		move.l d0,d1
-		swap d1
-		lea copper_bitplane2,a0
-		move.w d1,2(a0)
-		move.w d0,6(a0)
-	");
+	ptroff := newplaneoff*ROW_STRIDE;
+	ptroff := ptroff + planeidx*PLANE_MED;	// PLANE_MED = 40 = one plane's byte width
+	ptraddr := #screen + ptroff;
+	plane_addr[planeidx] := ptraddr;
 end;
 
 // Fills slow_track_colors with a two-color gradient instead of the rainbow
@@ -208,6 +171,13 @@ begin
 	InitCustomCopperList();
 	AddCopperCommand($096, $8100);	// DMACON: bitplane DMA on for this frame's content
 
+	// This frame's bitplane pointers. Runs before the first WAIT, i.e. before
+	// the display window starts, so it takes effect for this frame.
+	for cp_i:=0 to 3 do begin
+		cp_ptr := plane_addr[cp_i];
+		Graphics::AddCopperCommandBitplane(cp_i, cp_ptr);
+	end;
+
 	track_line := track_start;
 	for track_k:=0 to SLOW_GRID_SLOTS do begin
 		wait_word := ((DISPLAY_TOP_LINE + track_line) << 8) | 1;
@@ -264,6 +234,7 @@ begin
 	poke16(#copper_palette, 26, $000);
 
 	if (star_color_mode = 1) then BuildSlowTrackGradient();
+	
 	BuildSlowTrackCopper();
 
 	// Seed every star once, at both its real row and (row+PLANE_CYCLE_ROWS)
@@ -295,7 +266,7 @@ begin
 		end else begin
 			if (med_off >= 199) then med_off := 0 else med_off := med_off+1;
 		end;
-		SetMedPointer(med_off);
+		SetPlanePointer(1, med_off);
 
 		if ((frame_count & 1) = 0) then begin
 			if (stars_direction = 1) then begin
@@ -303,8 +274,7 @@ begin
 			end else begin
 				if (slow_off >= 199) then slow_off := 0 else slow_off := slow_off+1;
 			end;
-			SetSlowPointer(slow_off);
-			BuildSlowTrackCopper();
+			SetPlanePointer(0, slow_off);
 		end;
 
 		if (stars_direction = 1) then begin
@@ -312,6 +282,10 @@ begin
 		end else begin
 			if (fast_off >= 198) then fast_off := 0 else fast_off := fast_off+2;
 		end;
-		SetFastPointer(fast_off);
+		SetPlanePointer(2, fast_off);
+
+		// The pointers live in the custom copper list, which med/fast change
+		// every frame -- so rebuild it every frame.
+		BuildSlowTrackCopper();
 	end;
 end.
