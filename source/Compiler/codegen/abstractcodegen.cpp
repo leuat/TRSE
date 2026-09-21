@@ -1136,7 +1136,6 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node) {
     }
     na->Accept(this);
   }
-
   ProcedureStart();
   //    if (node->m_procedure->m_returnType!=nullptr)
   //      as->Comment("Return type:
@@ -1307,7 +1306,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node) {
 
     IncBin(node);
   } else if (t->m_op.m_type == TokenType::POINTER) {
-    DeclarePointer(node);
+	DeclarePointer(node);
     as->m_symTab->Lookup(v->getValue(as), node->m_op.m_lineNumber)
         ->m_arrayType = t->m_arrayVarType.m_type;
 
