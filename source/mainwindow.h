@@ -223,13 +223,14 @@ public:
     void RestoreSettings();
 
     void ConnectDocument();
+	void ReloadAllNewerFiles();
 
     void VerifyDefaults();
-    void VerifyProjectDefaults();
+	void VerifyProjectDefaults();
 
+	bool eventFilter(QObject *object, QEvent *event) override;
 
-
-    void SetDarkPalette();
+	void SetDarkPalette();
 
 
 

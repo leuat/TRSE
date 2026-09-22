@@ -72,7 +72,7 @@ void FormTTREdit::Save(QString filename)
 
 }
 
-void FormTTREdit::Reload()
+void FormTTREdit::Reload(bool force)
 {
 //    if (!ui->scrollArea->m_isChanged)
 //        Load(m_rawFilename);

@@ -743,12 +743,8 @@ void FormImageEditor::Initialize()
 
 bool FormImageEditor::Load(QString filename)
 {
-/*    QString f = "Image Files (*." + LImageIO::m_fileExtension + ")";
-    QString filename = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), m_iniFile->getString("project_path"), f);
-    if (filename=="")
-        return;
-*/
+	auto nada = TRSEDocument::Load(filename);
+
     if (!QFile::exists(filename))
         return false;
     LImage* img = LImageIO::Load(filename);
@@ -772,6 +768,8 @@ bool FormImageEditor::Load(QString filename)
 
 void FormImageEditor::Save(QString filename)
 {
+	TRSEDocument::Save(filename);
+
     m_work.m_currentImage->m_image->StoreData(ui->tblData);
 
     LImageIO::Save(filename,m_work.m_currentImage->m_image);
@@ -1013,9 +1011,12 @@ void FormImageEditor::OpenSelectCharset()
 
 
 
-void FormImageEditor::Reload()
+void FormImageEditor::Reload(bool force)
 {
+	if (force)
+		Load(m_currentFilename);
     m_work.m_currentImage->m_image->onFocus();
+
 }
 
 bool FormImageEditor::eventFilter(QObject *ob, QEvent *e)

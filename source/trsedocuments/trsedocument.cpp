@@ -29,6 +29,10 @@ TRSEDocument::TRSEDocument(QWidget* parent) : QWidget(parent)
 
 }
 
+void TRSEDocument::Save(QString filename) {
+	m_lastSaved = QDateTime::currentDateTime();
+}
+
 bool TRSEDocument::SaveChanges()
 {
 //    qDebug() << "Document changed: " << m_documentIsChanged;
@@ -144,4 +148,16 @@ void TRSEDocument::UserDefined()
     p.startDetached(cmd, params);
     p.waitForFinished();
 
+}
+
+void TRSEDocument::ReloadIfNewerFile() {
+	auto file = m_currentSourceFile;
+	if (!QFile::exists(file))
+		return;
+
+	const QFileInfo info(file);
+	const QDateTime lastModified = info.lastModified();
+	if (lastModified>m_lastSaved) {
+		Reload(true);
+	}
 }

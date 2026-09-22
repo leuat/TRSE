@@ -41,6 +41,7 @@ public:
     enum Type {FJONG, RAS, PAW, NONE };
 
     Type m_type = NONE;
+	QDateTime m_lastSaved;
     bool m_run = false;
 
     bool m_hasFocus = true;
@@ -61,8 +62,16 @@ public:
 
 
     virtual bool isBuilding() {return false;}
-    virtual void Save(QString filename) {}
-    virtual bool Load(QString filename) { return false;}
+	virtual void Save(QString filename);
+	virtual bool Load(QString filename) {
+		if (!QFile::exists(filename))
+			return false;
+
+		const QFileInfo info(filename);
+		m_lastSaved = info.lastModified();
+
+		return false;
+	}
     virtual void AutoFormat() {}
 
     virtual void ToggleComment() {}
@@ -119,7 +128,8 @@ public:
 
     void UserDefined();
 
-    virtual void Reload() {}
+	virtual void Reload(bool force=false) {}
+	virtual void ReloadIfNewerFile();
 
     virtual void setOutputText(QString text) {}
     virtual void SearchInSource(QString text) {}

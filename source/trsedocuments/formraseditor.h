@@ -143,7 +143,7 @@ public:
     void MemoryAnalyze(bool isHidden) override;
 
 
-    void Reload() override;
+	void Reload(bool force) override;
 
     void Save(QString filename) override;
     bool Load(QString filename) override;

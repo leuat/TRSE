@@ -798,6 +798,13 @@ void MainWindow::ConnectDocument()
 
 }
 
+void MainWindow::ReloadAllNewerFiles()
+{
+	for (TRSEDocument* doc : m_documents)
+		doc->ReloadIfNewerFile();
+
+}
+
 void MainWindow::SetupFileList()
 {
     RefreshFileList();
@@ -3083,3 +3090,9 @@ void MainWindow::on_action8bit_Pixel_Lab_Image_Project_triggered()
 
 }
 
+bool MainWindow::eventFilter(QObject *object, QEvent *event) {
+	if (event->type() == QEvent::Enter) {
+		ReloadAllNewerFiles();
+	}
+	return false;
+}

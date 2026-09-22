@@ -25,12 +25,13 @@ bool FormHexEdit::Load(QString filename) {
 
 void FormHexEdit::Save(QString filename)
 {
-    m_data = ui->scrollArea->m_pdata->m_data;
+	TRSEDocument::Save(filename);
+	m_data = ui->scrollArea->m_pdata->m_data;
     Util::SaveByteArray(m_data,filename);
 
 }
 
-void FormHexEdit::Reload()
+void FormHexEdit::Reload(bool force)
 {
     if (!ui->scrollArea->m_isChanged)
         Load(m_rawFilename);

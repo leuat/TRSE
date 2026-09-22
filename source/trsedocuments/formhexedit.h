@@ -23,7 +23,7 @@ public:
     bool Load(QString filename) override;
     void Save(QString filename) override;
 
-    void Reload() override;
+	void Reload(bool force) override;
 
     void InitDocument(WorkerThread* t, QSharedPointer<CIniFile> ini, QSharedPointer<CIniFile> iniProject) override;
 

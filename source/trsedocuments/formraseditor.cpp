@@ -1094,9 +1094,9 @@ void FormRasEditor::MemoryAnalyze(bool isHidden)
     delete dma;
 }
 
-void FormRasEditor::Reload()
+void FormRasEditor::Reload(bool force)
 {
-    if (!m_currentSourceFile.contains(".asm"))
+	if (!m_currentSourceFile.contains(".asm") && !force)
         return;
     int pos = ui->txtEditor->textCursor().position();
 
@@ -1107,8 +1107,10 @@ void FormRasEditor::Reload()
 
 }
 
+
 void FormRasEditor::Save(QString filename)
 {
+	TRSEDocument::Save(filename);
     //  if (QFile::exists(filename))
     //    QFile::remove(filename);
     QString txt = ui->txtEditor->document()->toPlainText();
@@ -1125,6 +1127,7 @@ void FormRasEditor::Save(QString filename)
 
 bool FormRasEditor::Load(QString filename)
 {
+	auto nada = TRSEDocument::Load(filename);
     if (!QFile::exists(filename))
         return false;
 

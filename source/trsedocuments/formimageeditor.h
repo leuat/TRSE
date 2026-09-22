@@ -133,7 +133,7 @@ public:
 
     void OpenSelectCharset();
     void OpenSelectRoom();
-    void Reload() override;
+	void Reload(bool force) override;
 
     bool eventFilter(QObject *ob, QEvent *e) override;
 
