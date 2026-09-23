@@ -1123,6 +1123,9 @@ void FormRasEditor::Save(QString filename)
     file.close();
     m_iniFile->Save();
     ui->txtEditor->m_textChanged = false;
+	const QFileInfo info(file);
+	m_lastSaved = info.lastModified();
+
 }
 
 bool FormRasEditor::Load(QString filename)
