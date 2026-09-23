@@ -854,6 +854,7 @@ DISTFILES += \
     resources/bin/bk2010-0.7.jar \
     resources/bin/rasm.exe \
     resources/bin/rasm_osx \
+    resources/bin/tripe/tripe_linux \
     resources/code/amiga/init_p61_player.s \
     resources/code/amiga/p61-play.i \
     resources/code/atari520st/end.s \

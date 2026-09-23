@@ -626,17 +626,25 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	if (m_projectIni->getdouble("use_tripe")==0)
 		return;
 
-
 	QString error="";
 	Util::CopyFile(file+".asm",file+"_tripe.asm");
 	QFile::remove(file+".asm");
 
 	auto sys = StringFromSystem(m_system).toLower();
 	auto params  = QStringList() << "-c"  <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
-	GenericAssemble(m_settingsIni->getString("tripe_location"),params,error,text);
+	QString tripe = m_settingsIni->getString("tripe_location");
+
+#ifdef __linux__
+	tripe = currentDir+"/tripe";
+	Util::CopyFile(":resources/bin/tripe/tripe_linux",tripe);
+	QFile(tripe).setPermissions(QFileDevice::ReadOther | QFileDevice::ExeOwner);
+#endif
+
+	GenericAssemble(tripe,params,error,text);
 	if (error.contains("error"))
 		m_buildSuccess = false;
 
+	QFile::remove(file);
 }
 
 bool AbstractSystem::CreateDiskInternal(QString currentDir, QString disk, QString filename, bool addPrg, QString& text, int track)

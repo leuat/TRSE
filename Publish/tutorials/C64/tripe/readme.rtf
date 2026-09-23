@@ -1,0 +1,33 @@
+<p>What is Tripe - and what will it be?
+
+<p>When finished, Tripe will basically be LLVM for 8/16 systems. This means that
+<ul>
+<li> any homebrew compiler needs to output the relatively simple .tripe intermediate language as a text file (semi-asm)
+<li> tripe will optimise this .trasm file for you, so the compiler can generate crappy code	
+<li> tripe then converts the .trasm to a binary .trp file (for future linking, with symbols etc)
+<li> tripe then converts the binary .trp file to an .asm file of the given architecture/system, think 6502/c64 or 6502/vic20 or 6809/coco3
+<li> tripe then optimises the native .asm 
+<li> (future, not implemented): TRSEs OrgAsm will be rewritten to plain C++ and be used to generate a final .prg/executable
+</ul>
+<p>
+Why is Tripe so fun? well, first of all - anyone can write a simple compiler for your favorite 
+programming language, it doesn't even have to be optimised. just output .tripe asm, and Tripe will do
+the rest for you. Sort of like LLVM. 
+<p>
+Currently, Tripe only supports 6502/c64 output, and the optimisations are still messy and crappy. 
+<p>	
+CPUs that will be targeted in the future: 6502, 6809, m68k, Z80/GB, 16 bit X86 & x64, pdp-11 etc etc
+	
+
+<p>In this project, when you build, the following happens (if you are on linux or have pre-built Tripe from source)
+<li> 1. TRSE outputs a file_tripe.asm that contains unoptimised .tripe instructions
+<li> 2. Tripe optimises the file and outputs to file_tripe_opt.asm
+<li> 3. Tripe compiles to a .trp binary
+<li> 4. Tripe compiles the .trp binary to a c64 .asm
+<li> 5. Tripe optimises the 6502 .asm file
+<li> 6. TRSE takes over and uses orgasm to assemble the .asm file as usual (this step will be included within Tripe in the future)
+
+
+
+
+

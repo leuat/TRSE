@@ -1,0 +1,131 @@
+program PlasmaProgram;
+@use "screen/screen"
+@use "system/memory"
+var
+/*
+	
+What is Tripe - and what will it be? 
+
+When finished, Tripe will basically be LLVM for 8/16 systems. This means that
+
+- any homebrew compiler needs to output the relatively simple .tripe intermediate language as a text file (semi-asm)
+- tripe will optimise this .trasm file for you, so the compiler can generate crappy code	
+- tripe then converts the .trasm to a binary .trp file (for future linking, with symbols etc)
+- tripe then converts the binary .trp file to an .asm file of the given architecture/system, think 6502/c64 or 6502/vic20 or 6809/coco3
+- tripe then optimises the native .asm 
+- (future, not implemented): TRSEs OrgAsm will be rewritten to plain C++ and be used to generate a final .prg/executable
+
+Why is Tripe so fun? well, first of all - anyone can write a simple compiler for your favorite 
+programming language, it doesn't even have to be optimised. just output .tripe asm, and Tripe will do
+the rest for you. Sort of like LLVM. 
+
+Currently, Tripe only supports 6502/c64 output, and the optimisations are still messy and crappy. 
+	
+CPUs that will be targeted in the future: 6502, 6809, m68k, Z80/GB, 16 bit X86 & x64, pdp-11 etc etc
+	
+	
+	
+
+*/
+	
+	
+	
+	// some plasma variables
+	val,c2x, c2y,ax, ay : byte;
+	i,x,y,c : byte;
+	colorP: ^byte; // same as "pointer" or "pointer of byte";	
+
+// charset will be placed at $2000 in bank 1	
+	const charsetLocation: address = $2000;
+ // look in the character set
+ 	const baseCharacter:byte = $68;
+// 	const baseCharacter:byte = $68-24;
+ 	
+	// Use custom charset
+	@export "resources/charset.flf" "resources/charset.bin" 256
+	charset: IncBin("resources/charset.bin",charsetLocation);
+	// nice colors
+	fadeTab : array [] of byte = (11,6,12,12,4,14,15,1,1,1,1,15,14,4,12,12,6,11,1,1); 
+	sin :array[256] of byte = buildsinetable(255);
+	
+
+	// mini sine table
+    siny : array[Screen::height] of byte = buildtable("i*1"); 
+	sinx : array[Screen::width] of byte; 
+
+	// Lookup table for division by 16
+	lookupDiv16 : array[256] of byte = buildtable("i/16");
+
+	ptr : ^byte;
+
+	const yStart:byte = 0;
+	const yEnd:byte = 24;
+	const xStart:byte = 1;
+	const xEnd:byte = 39;
+
+
+
+// Plasma procedure
+
+procedure Plasma();
+begin
+	c2x:=ax;
+	c2y:=ay;
+	// Set up y-sine table
+	for x:=0 to Screen::height do begin 
+		siny[x]:=  sin[c2x] + sin[c2y];
+		c2x:=c2x+4;
+		c2y:=c2y+9;
+	end;
+
+	ax:=ax+3;
+	ay:=ay-5;
+	// Set up x-sine table
+	for x:=0 to Screen::width do begin 
+		sinx[x] := sin[c2x] + sin[c2y];
+		c2x:=c2x+3;
+		c2y:=c2y+7;
+
+	end;
+
+	// Move cursor to (1,y) on $0400 on bank 1
+	ptr := #Screen::screen0 + Screen::tab40[yStart];
+	// moveto could also be replaced with : screenmemory:=$0400 + @y_start*40;
+	
+	colorP:=#Screen::color + Screen::tab40[yStart];
+	for y:=yStart to yEnd offpage do 
+	begin
+		val:=siny[y];
+		for i:=xStart to xEnd do 
+		begin
+			c:=lookupDiv16[ (sinx[i] +val) ];
+			ptr[i]:=c;
+			colorP[i] := fadeTab[ c ];
+		end;
+		// Increase screen memory pointer by 40 (next row)
+		ptr+=+Screen::width;
+		// Increase color pointer by 40 (next row)
+		colorP+=Screen::width;
+	end;
+end;
+
+
+begin
+	// Set color background
+	Screen::background:=black;
+	Screen::border:=black;
+	// Set charmap location at $2000
+	
+	Screen::SetCharsetLocation(#charsetLocation);
+	// Copy the 16 characters rom baseCharacter to 0
+	Memory::Copy(#charsetLocation +8*baseCharacter, #charsetLocation,8*16);
+	ax:=1;
+	ay:=5;
+	// Clear screen and color memory
+	Screen::Clear(#Screen::screen0, key_space);
+	// Main loop
+	while (true) do begin
+//		Screen::WaitForVerticalBlank();
+		Plasma();
+	end;
+end.

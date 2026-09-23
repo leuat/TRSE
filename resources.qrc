@@ -786,5 +786,6 @@
         <file>resources/images/ORIC.png</file>
         <file>resources/images/tutorials/cyanide.png</file>
         <file>resources/images/tutorials/meh.png</file>
+        <file>resources/bin/tripe/tripe_linux</file>
     </qresource>
 </RCC>
