@@ -40,6 +40,25 @@ void CodeGenTRIPE::Doublette(QString a, QSharedPointer<Node> b, QString cmd)
 
 }
 
+void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QString b, QString cmd)
+{
+	QString l = "";
+	int pop = 0;
+	if (a->isPure())
+		l = TripeValue(a);
+	else {
+		a->Accept(this);
+		l = m_curTemp.last();
+		pop++;
+	}
+
+	for (int i=0;i<pop;i++)
+		m_curTemp.pop();
+
+	as->Asm(cmd+tab+ l+tab+b);
+
+}
+
 void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString cmd)
 {
     QString l = "";
@@ -623,21 +642,20 @@ void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 
 void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 
-//    bool isPointer = node->m_left->isPointer(as);
-    QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
-    QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
-//    QString lbl = as->NewLabel("stringassign");
 
-/*    if (isPointer && node->m_left->hasArrayIndex()) {
-        right->Accept(this);
+	bool isPointer = node->m_left->isPointer(as);
+	QSharedPointer<NodeString> right = qSharedPointerDynamicCast<NodeString>(node->m_right);
+	QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
-        as->Asm("sta ("+ getValue(left)+"),y");
-        return;
+	QString str = DefineTempString(right);
+	//as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
+	//  as->Label(lbl);
 
-    }
-*/
-
-
+		   //    qDebug() << "IS POINTER " << isPointer;
+	if (isPointer || left->isStringList(as)) {
+		Doublette(left,"#"+str,"mov");
+//		StoreVariable(left);
+	}
 }
 /*QString CodeGenTRIPE::BinopTemp( QSharedPointer<Node> node)
 {
@@ -784,6 +802,7 @@ QString CodeGenTRIPE::getFunctionName(QSharedPointer<NodeProcedureDecl> node)
 
 
 
+
 void CodeGenTRIPE::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {
 }
@@ -791,6 +810,7 @@ void CodeGenTRIPE::AssignFromRegister(QSharedPointer<NodeAssign> node)
 void CodeGenTRIPE::AssignToRegister(QSharedPointer<NodeAssign> node)
 {
 }
+
 
 void CodeGenTRIPE::OptimizeBinaryClause(QSharedPointer<Node> node)
 {

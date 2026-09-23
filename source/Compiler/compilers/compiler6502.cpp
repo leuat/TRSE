@@ -7,7 +7,14 @@ void Compiler6502::InitAssemblerAnddispatcher(
     // Experimental tripe
   if (m_projectIni->getdouble("use_tripe") == 1.0) {
     m_codeGen = QSharedPointer<CodeGenTRIPE>(new CodeGenTRIPE());
+	// temp init
+	m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+	Init6502Assembler();
+	auto keep = m_assembler;
+
     m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
+	m_assembler->m_zeroPointers = keep->m_zeroPointers;
+	m_assembler->m_tempZeroPointers = keep->m_tempZeroPointers;
 	FactoryMethods::s_useTripe = true;
   } else {
     m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());

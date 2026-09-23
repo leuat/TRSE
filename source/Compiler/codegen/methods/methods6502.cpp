@@ -30,7 +30,6 @@ void Methods6502::PointToVera(Assembler* as, int address, bool initLow)
 
 
 void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
-    m_codeGen = dispatcher;
 
     if (!FactoryMethods::s_useTripe)
         m_codeGen = dispatcher;

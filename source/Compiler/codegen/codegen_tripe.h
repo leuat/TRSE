@@ -67,6 +67,7 @@ public:
 	QString getTempName(QString t);
 	QString getFunctionName(QSharedPointer<NodeProcedureDecl> node);
 
+	void Doublette(QSharedPointer<Node> a, QString b, QString cmd);
 	void Doublette(QString a,QSharedPointer<Node> b, QString cmd);
 	void Doublette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);
 //	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QSharedPointer<Node> c,QString cmd);
@@ -199,7 +200,6 @@ public:
     virtual void AssignFromRegister(QSharedPointer<NodeAssign> node) override;
 
     virtual void AssignToRegister(QSharedPointer<NodeAssign> node) override;
-
 
     QString getReturn() override;
     QString getReturnInterrupt() override { return "rti";}

@@ -1575,11 +1575,14 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
 	  as->Asm(".asm");
 	  assembler = p.get();
 	  assembler->m_symTab = as->m_symTab;
+	  assembler->m_zpStack = as->m_zpStack;
+	  assembler->m_tempZeroPointers = as->m_tempZeroPointers;
   }
   methods->Assemble(assembler, this);
   if (FactoryMethods::s_useTripe) {
 	  as->m_currentBlock->m_source.append(assembler->m_source);
 	  as->Asm(".endasm");
+	  as->m_tempVarsBlock->m_source.append(assembler->m_tempVarsBlock->m_source);
   }
 
 }
