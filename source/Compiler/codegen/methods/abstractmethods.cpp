@@ -2,13 +2,12 @@
 #include "source/Compiler/ast/nodenumber.h"
 #include "source/Compiler/ast/nodebinop.h"
 #include "source/Compiler/ast/nodeassign.h"
-
+#include "source/Compiler/codegen/methods/factorymethods.h"
 
 AbstractMethods::AbstractMethods()
 {
 
 }
-
 void AbstractMethods::IncDec(Assembler *as, QString cmd)
 {
 

@@ -30,9 +30,15 @@ void Methods6502::PointToVera(Assembler* as, int address, bool initLow)
 
 
 void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
-
-
     m_codeGen = dispatcher;
+
+    if (!FactoryMethods::s_useTripe)
+        m_codeGen = dispatcher;
+    else
+    if (m_codeGen == nullptr) {
+        m_codeGen = new CodeGen6502;
+        m_codeGen->setAssembler(as);
+    }
 /*    if (Command("Writeln")) {
         as->Writeln();
 
@@ -5554,8 +5560,8 @@ void Methods6502::RasterIRQ(Assembler *as)
     as->Comment("RasterIRQ : Hook a procedure");
 
     as->ClearTerm();
+
     m_node->m_params[1]->Accept(m_codeGen);
-    as->Term();
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4)
         as->Asm("sta $ff0b");
