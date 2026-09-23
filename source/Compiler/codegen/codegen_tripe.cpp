@@ -19,6 +19,27 @@ void CodeGenTRIPE::HandleGenericBinop(QSharedPointer<Node> node) {
 
 }
 
+void CodeGenTRIPE::Doublette(QString a, QSharedPointer<Node> b, QString cmd)
+{
+	QString l = a;
+	int pop = 0;
+
+	QString r = "";
+	if (b->isPure()) {
+		r = TripeValue(b);
+	}
+	else {
+		b->Accept(this);
+		r = m_curTemp.last();
+		pop++;
+	}
+	for (int i=0;i<pop;i++)
+		m_curTemp.pop();
+
+	as->Asm(cmd+tab+ l+tab+r);
+
+}
+
 void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString cmd)
 {
     QString l = "";
@@ -119,6 +140,25 @@ void CodeGenTRIPE::Triplette(QString l, QSharedPointer<Node> b, QString c, QStri
 	}
 
 	as->Asm(cmd+tab+ l+tab+r+tab+c);
+
+}
+
+void CodeGenTRIPE::ReturnValue(QSharedPointer<NodeProcedureDecl> node) {
+//	node->Accept(this);
+
+	//as->Asm("mov " + m_curTemp.pop() + tab + getFunctionName(node));
+	Doublette(getFunctionName(node), node->m_returnValue,"mov");
+}
+
+void CodeGenTRIPE::WriteCall(Assembler *as, QString call, QSharedPointer<NodeProcedure> node) {
+	/*if ((node->m_procedure->m_isFunction))
+		as->Asm(call + " " +as->jumpLabel(node->m_procedure->m_procName) + " " + getTempName(node->m_procedure->m_procName+"_ret"));
+	else*/
+	as->Asm("call " +as->jumpLabel(node->m_procedure->m_procName));
+	if (node->m_procedure->m_isFunction)
+		auto ret = getFunctionName(node->m_procedure);
+
+//	m_curTemp.pop();
 
 }
 
@@ -376,7 +416,7 @@ QString CodeGenTRIPE::getReturn() {
 }
 
 QString CodeGenTRIPE::getCallSubroutine() {
-    return "call";
+	return "call";
 }
 
 QString CodeGenTRIPE::ProcedureEndWithoutReturn() {
@@ -559,7 +599,9 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 
 void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 	as->Comment("VarNode StoreVariable");
-	auto val = m_curTemp.pop();
+	QString val = "nada";
+	if (m_curTemp.size()!=0)
+		val = m_curTemp.pop();
 	if (node->hasArrayIndex()) {
 		Triplette(node->getValue(as), node->m_expr,val,"store");
 		return;
@@ -701,6 +743,19 @@ QString CodeGenTRIPE::getIntType( QSharedPointer<Node> node) {
     return t;
 }
 
+QString CodeGenTRIPE::getIntType(QString type)
+{
+	type = type.toLower();
+	QString t = "uint8";
+	if (type=="integer")
+		t = "uint16";
+	else
+	if (type=="long")
+		t = "uint32";
+	return t;
+
+}
+
 QString CodeGenTRIPE::getTempName(QString t)
 {
     int i=1;
@@ -716,8 +771,16 @@ QString CodeGenTRIPE::getTempName(QString t)
 
 }
 
+QString CodeGenTRIPE::getFunctionName(QSharedPointer<NodeProcedureDecl> node)
+{
+	auto s = node->m_procName+ "_fret";
+	m_curTemp.push(s);
+	QString name = "decl"+tab+s+tab+getIntType(node->m_returnType->getValue(as))+":0";
+	if (!as->m_tempVars.contains(name))
+		as->m_tempVars.append(name);
+	return s;
 
-
+}
 
 
 

@@ -499,6 +499,10 @@ void AbstractCodeGen::LargeLoop(QSharedPointer<NodeForLoop> node,
   as->m_labelStack["forLoopDone"].pop();
   as->m_labelStack["forLoopNotDone"].pop();
 }
+
+void AbstractCodeGen::ReturnValue(QSharedPointer<NodeProcedureDecl> node) {
+	node->m_returnValue->Accept(this);
+}
 /*
  *
  * Used in the beginning of node assignment: if the variable
@@ -1031,9 +1035,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedureDecl> node) {
     }
 
     as->ClearTerm();
-    node->m_returnValue->Accept(this);
-    // Performs an action before returning a function value. Needed by the m68k
-    // codegen stack machine
+	as->Comment("Setting function return value");
+	ReturnValue(node);
 
     as->Term();
   }
@@ -1141,8 +1144,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeProcedure> node) {
   //      as->Comment("Return type:
   //      "+node->m_procedure->m_returnType->getValue(as) +" with forcetype "
   //      +TokenType::getType(node->getLoadType())) ;
-  as->Asm(getCallSubroutine() + " " +
-          as->jumpLabel(node->m_procedure->m_procName));
+  auto call = node->m_procedure->m_isFunction?getFunctionCallSubroutine():getCallSubroutine();
+  WriteCall(as, call, node);
 
   if (node->m_procedure->m_returnType != nullptr)
     if (node->m_procedure->m_returnType->m_op.m_type != node->getStoreType()) {
@@ -1603,6 +1606,10 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node) {
     num->Accept(this);
     num->m_val = s;
   }
+}
+
+void AbstractCodeGen::WriteCall(Assembler *as, QString call, QSharedPointer<NodeProcedure> node) {   as->Asm(call + " " +
+			as->jumpLabel(node->m_procedure->m_procName));
 }
 
 void AbstractCodeGen::LineNumber(int ln) {

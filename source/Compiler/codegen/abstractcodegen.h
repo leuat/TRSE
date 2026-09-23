@@ -126,8 +126,12 @@ public:
     virtual QString getIncbin() { return "incbin"; }
     // Returns the call/jsr subroutine instruction for the current CPU
     virtual QString getCallSubroutine() { return "jsr"; }
-    // Does the current system support splitting code into custom memory blocks?
-    virtual bool UseBlocks() { return false;}
+	// returns the function call instruction
+	virtual QString getFunctionCallSubroutine() { return getCallSubroutine(); }
+
+	virtual void WriteCall(Assembler* as, QString call, QSharedPointer<NodeProcedure> node);;
+	// Does the current system support splitting code into custom memory blocks?
+	virtual bool UseBlocks() { return false;}
     // Builds a single compare (a>b) and returns true (1) or false (0)
     virtual void BuildToCmp(QSharedPointer<Node> node) {}
 
@@ -235,6 +239,8 @@ public:
 
     // handles for loops that are offpage, using slower jumps for >=128 byte branches
     void LargeLoop(QSharedPointer<NodeForLoop> node, QSharedPointer<NodeVar> var, bool inclusive);
+	// Used for function return values, different for tripe since it has ano registers
+	virtual void ReturnValue(QSharedPointer<NodeProcedureDecl> node);
 
 
 

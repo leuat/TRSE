@@ -63,12 +63,17 @@ public:
     int block16bit=0;
 
     QString getIntType( QSharedPointer<Node> node);
-    QString getTempName(QString t);
+	QString getIntType( QString t);
+	QString getTempName(QString t);
+	QString getFunctionName(QSharedPointer<NodeProcedureDecl> node);
 
-    void Doublette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);
+	void Doublette(QString a,QSharedPointer<Node> b, QString cmd);
+	void Doublette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);
 //	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QSharedPointer<Node> c,QString cmd);
 	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString c,QString cmd);
 	void Triplette(QString a,QSharedPointer<Node> b, QString c,QString cmd);
+
+	void ReturnValue(QSharedPointer<NodeProcedureDecl> node) override;
 
 
     QString getJmp(bool isOffPage) override {
@@ -79,7 +84,9 @@ public:
 
     void HackPointer(QSharedPointer<Node> node);
 
+	QString getFunctionCallSubroutine() override { return "fcall"; }
 
+	void WriteCall(Assembler *as, QString call, QSharedPointer<NodeProcedure> node) override;
 
 
     /*
