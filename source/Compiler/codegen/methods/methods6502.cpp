@@ -5562,6 +5562,7 @@ void Methods6502::RasterIRQ(Assembler *as)
     as->ClearTerm();
 
     m_node->m_params[1]->Accept(m_codeGen);
+    as->Term();
 
     if (Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4)
         as->Asm("sta $ff0b");
