@@ -108,6 +108,8 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBlock> node) {
       n->Accept(this);
     }
     as->VarDeclEnds();
+	if (node->m_isMainBlock)
+		as->MainBlockEnds();
   }
   as->PushCounter();
 

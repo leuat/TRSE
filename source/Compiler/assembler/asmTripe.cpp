@@ -53,6 +53,10 @@ QString AsmTripe::intToHexString(int val)
 
 }
 
+void AsmTripe::MainBlockEnds() {
+	Write(".gcode",0);
+}
+
 
 void AsmTripe::Program(QString programName, QString vicConfig)
 {

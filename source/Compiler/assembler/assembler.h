@@ -242,7 +242,9 @@ public:
     virtual void PopZeroPointer() {}
     virtual void PopAllZeroPointers() {}
 
-    void VarDeclEnds() {
+	virtual void MainBlockEnds() {}
+
+	void VarDeclEnds() {
         if (m_varDeclEndsLineNumber == 0) // Only assign if not previously
             m_varDeclEndsLineNumber = m_source.count();
     }

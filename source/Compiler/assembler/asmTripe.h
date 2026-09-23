@@ -44,6 +44,7 @@ public:
 
     QString intToHexString(int val);
 
+	virtual void MainBlockEnds();
 
 
     void Program(QString name, QString vicParams) override;
