@@ -29,6 +29,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QProcess>
+#include <QDateTime>
 
 
 class SourceBuilder;

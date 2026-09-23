@@ -1015,6 +1015,7 @@ void FormImageEditor::Reload(bool force)
 {
 	if (force)
 		Load(m_currentFilename);
+
     m_work.m_currentImage->m_image->onFocus();
 
 }
