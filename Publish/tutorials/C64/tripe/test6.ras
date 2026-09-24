@@ -1,0 +1,160 @@
+program tutorial_14_horizontal_starfield;
+@use "screen/screen"
+var
+
+// number of stars
+	const noStars : byte = 25;
+	const useKernal : byte = 0;
+// Which character to use?
+	const charPos : byte = 64;
+// where to put char ROM data?
+	const charsetPos : address = $2000;
+	
+
+/*
+	This effect assumes 1 star per horizontal line, in total 25
+	you could theoretically add more stars and goto x,y location, but this will slow down the process considerably. I would rather recommend having 2 stars per line if you need more
+
+*/
+
+
+   	i,j,x,dx, time: byte = 0; 
+	// a star can have 8 values in a single char
+	charsetVals: array[8] of byte =(1,2,4,8,16,32,64,128);	
+	p : ^byte;	
+	star = record
+		x,dx,ddx,color : byte;
+	end;
+
+	stars : array[noStars] of star;
+
+	// random table
+	rands: array[256] of byte;
+	zp,cp:pointer;
+	starColors:array[] of byte=(11,1, 2, 10, 6, 14, 7, 14,1);//GREY, WHITE, RED, LIGHT_RED, BLUE, YELLOW, LIGHT_BLUE, WHITE);
+	
+	text: string = "EAT LOTS OF OATS";
+
+
+
+// Creates 8 characters with 1 dot in each char from @charPos
+procedure GenerateCharset();
+begin
+	zp:=#charsetPos + charPos*8;
+	for i:=0 to 8 do begin
+		for j:=0 to 8 do begin
+			zp[j] := 0;
+		end;
+		zp[4] := charsetVals[i];
+		zp+=8;
+	end;
+
+end;
+
+// initializes starfield
+procedure InitializeStarfield();
+begin
+	j:=42;
+	for i:=0 to noStars do begin
+		stars[i].x := rands[i]/2;  // 0-40
+		stars[i].dx := rands[j]&63; // 0-64 (will be divided by 8)
+		stars[i].color := starColors[j&7];  // 0-7
+		stars[i].ddx := rands[i]&7+1;  // 1-8
+		j+=11; // just some random shift
+	end;
+end;
+
+// Initialize random table
+procedure InitializeRand();
+begin
+	for i:=0 to 0 do begin
+		rands[i]:=random()/2;
+		if (rands[i]>80) then rands[i]-=80;
+	end;
+
+end;
+
+// Renders field & colors
+// this procedure can be seriously optimized, for example you don't need to write color memory (can be done while initializing), divide by 8 can be in a table, 
+// the charpos should be inverted and lose the +7, write in assembler etc
+procedure RenderStarfield();
+begin
+	p:=#Screen::screen0;
+	cp:=#Screen::color;
+	for i:=0 to noStars do begin
+		if i<>12 then begin // ignore stars at line 12
+			x:=stars[i].x;
+			dx:=stars[i].dx/8;
+			p[x]:=charPos+7-dx;
+			if x<>39 then
+				p[x+1]:=key_space
+			else
+				p[0]:=key_space;
+
+			cp[x]:=stars[i].color;
+
+		end;
+		p += Screen::width;
+		cp += Screen::width;
+	end;
+end;
+
+// Move the stars
+
+procedure UpdateStarfield();
+begin
+	for i:=0 to noStars do begin
+		dx:=stars[i].dx-stars[i].ddx;
+		if dx>127 then begin
+			stars[i].x-=1;
+			if stars[i].x>127 then begin	
+				stars[i].x:=39;
+				stars[i].ddx:=rands[time]&7+1;
+			end;
+			stars[i].dx:=63;
+		end
+		else 	
+		stars[i].dx:=dx;
+	end;
+
+end;
+
+
+procedure InitializeText();
+begin
+	Screen::PrintString(#text,12,12,#Screen::screen0);
+end;
+
+
+
+
+interrupt Raster1();
+begin
+	StartIRQ(useKernal);
+	time+=1;
+	RenderStarfield();	
+	UpdateStarfield();
+	closeIRQ();
+end;
+
+
+// Main routine
+begin
+	InitializeRand();
+	InitializeStarfield();
+	Screen::background:=black;
+	Screen::border:=black;
+	Screen::Clear(#Screen::screen0, key_space);
+	//VIC_DATA_LOC:=@charsetVicData;
+	
+	Screen::SetCharsetLocation(#charsetPos);
+	Screen::CopyCharsetFromRom(#Screen::ROMCharset_uppercase,#charsetPos);
+	
+	GenerateCharset();
+	InitializeText();
+
+	SetMemoryConfig(1,useKernal,0);
+	StartRasterChain(Raster1(),$00,useKernal);
+	Loop(); 
+
+end.

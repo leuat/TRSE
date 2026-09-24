@@ -86,6 +86,8 @@ public:
 
     void Connect() override;
 
+	bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos) override;
+
 };
 
 

@@ -62,9 +62,10 @@ public:
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
     int block16bit=0;
 
-    QString getIntType( QSharedPointer<Node> node);
+	TokenType::Type getType( QSharedPointer<Node> node);
+	QString getIntType( QSharedPointer<Node> node);
 	QString getIntType( QString t);
-	QString getTempName(QString t);
+	QString getTempName(TokenType::Type type);
 	QString getFunctionName(QSharedPointer<NodeProcedureDecl> node);
 
 	void Doublette(QSharedPointer<Node> a, QString b, QString cmd);

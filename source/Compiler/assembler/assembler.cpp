@@ -531,7 +531,7 @@ bool Assembler::DeclareRecord(QString name, QString type, int count, QStringList
 
             }
             else {
-                w = w+ "\t"+t + "\t0";
+				w = w+ "\t"+t + "\t0";
                 //if (s->m_type.toLower()=="integer")
                 //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
                 Write(w);

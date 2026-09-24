@@ -468,6 +468,137 @@ void AsmTripe::Connect()
 
 }
 
+bool AsmTripe::DeclareRecord(QString name, QString type, int count, QStringList data, QString pos)
+{
+	if (m_symTab->m_records.contains(type)) {
+		if (m_symTab->m_records[type]->m_isClass)
+			return false;
+
+
+
+
+			   // We have data!
+		QVector<QString> splitData;
+		if (data.count()!=0) {
+			int i=0;
+			QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+			auto cnt = st->m_orderedByDefinition.count();
+			splitData.resize(cnt);
+			for (int k=0;k<st->m_orderedByDefinition.count();k++) {
+				QString v = st->m_orderedByDefinition[k];
+				for (int k=0;k<count/cnt;k++) {
+					int pt = k*cnt+i; // Lookup in data
+					if (pt<data.count())
+						splitData[i]+=data[pt]+",";
+					else
+						splitData[i]+="$00,";
+
+
+				}
+				if (splitData[i].endsWith(","))
+					splitData[i].remove(splitData[i].length()-1,1);
+				i+=1;
+			}
+		}
+
+		if (pos!="") {
+			int p = Util::NumberFromStringHex(pos);
+			if (splitData.count()!=0)
+				ErrorHandler::e.Error("Cannot initialise record data for '"+name+"' when placed at a specific memory location ("+pos+")");
+
+			QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+			for (QString v : st->m_orderedByDefinition) {
+				QSharedPointer<Symbol> s = st->m_symbols[v];
+				//qDebug() << "WTF " <<s->m_name <<s->m_type;
+				// Build the name
+				QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
+				QString w = n+"";
+				//            QString t = byte;
+				//
+				//                  t= word;
+
+				w = w+ "\t EQU \t" + Util::numToHex(p);
+
+
+					   //if (s->m_type.toLower()=="integer")
+					   //    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+				if (s->m_type.toLower()=="string")
+					ErrorHandler::e.Error("Record types does not support strings (yet) for record : " + type);
+				Write(w);
+				int scale = 1;
+				if (s->m_type.toLower()=="integer")
+					scale=2;
+				p+=count*scale;
+
+			}
+
+
+			return true;
+		}
+		//          StartMemoryBlock(pos);
+
+			   //        ErrorHandler::e.Error("Record types not implemented yet: " + type);
+		QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+		int curData=0;
+		for (int k=0;k<st->m_orderedByDefinition.count();k++) {
+			QString v = st->m_orderedByDefinition[k];
+			auto s = st->m_symbols[v];
+			//            qDebug() << "WTF " <<s->m_name <<s->m_type;
+			// Build the name
+			QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
+			QString w = "\tdecl " + n;
+			QString t = byte;
+			//            if (Syntax::s.m_currentSystem->iseZ80())
+			//              Write(".align 4",0);
+
+			if (s->m_type.toLower()=="integer") {
+				t= word;
+			}
+			if (s->m_type.toLower()=="pointer")
+				t= ppointer;
+			if (s->m_type.toLower()=="long")
+				t= llong;
+
+
+
+			if (s->m_type.toLower()=="string")
+				ErrorHandler::e.Error("Record types does not support strings for record : " + type+", please use classes instead.");
+
+				   // Fill in data
+			if (curData<splitData.count()) {
+				auto v = splitData[curData];
+				if (v=="")
+					v="0";
+				Write(getLabelEnding(w)+"\t"+t+"\t"+v);
+
+			}
+			else {
+				w = w+ "\t"+t + ":0";
+				//if (s->m_type.toLower()=="integer")
+				//    ErrorHandler::e.Error("Record types does not support integer (yet) for record : " + type);
+				Write(w);
+				int scale = 1;
+
+					   // Pad with zeros
+				QString bytes = "";
+				for (int i=0;i<count-1;i++)
+					bytes+="0 ";
+				bytes.remove(bytes.length()-1,1);
+				qDebug() << "HERE "<< count << bytes;
+				if (count!=1)
+					Asm("."+t+" "+bytes);
+			}
+			//                Asm("org "+n+"+" +QString::number(count*scale));
+			curData++;
+		}
+		//    if (pos!="")
+		//      EndMemoryBlock();
+
+		return true;
+	}
+	return false;
+}
+
 
 void AsmTripe::PopTempVar()
 {

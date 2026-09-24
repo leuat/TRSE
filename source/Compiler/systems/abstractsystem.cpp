@@ -606,6 +606,8 @@ bool AbstractSystem::GenericAssemble(QString assembler, QStringList params, QStr
 	if (output.contains("error"))
 		m_buildSuccess = false;
 
+	output = output.replace("\n","<br>");
+
 	qDebug().noquote() << output;
 
 	int assembleTime = timer.elapsed()- time;
@@ -635,9 +637,11 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	QString tripe = m_settingsIni->getString("tripe_location");
 
 #ifdef __linux__
-	tripe = currentDir+"/tripe";
-	Util::CopyFile(":resources/bin/tripe/tripe_linux",tripe);
-	QFile(tripe).setPermissions(QFileDevice::ReadOther | QFileDevice::ExeOwner);
+	if (tripe=="") {
+		tripe = currentDir+"/tripe";
+		Util::CopyFile(":resources/bin/tripe/tripe_linux",tripe);
+		QFile(tripe).setPermissions(QFileDevice::ReadOther | QFileDevice::ExeOwner);
+	}
 #endif
 
 	GenericAssemble(tripe,params,error,text);
