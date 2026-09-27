@@ -67,6 +67,11 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
         l = TripeValue(a);
     else {
         a->Accept(this);
+		if (m_curTemp.size()==0) {
+			l = nada;
+			m_curTemp.append(nada);
+		}
+		else
 		l = m_curTemp.last();
 		pop++;
     }
@@ -80,11 +85,14 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
 		r = m_curTemp.last();
 		pop++;
     }
+	if (pop>m_curTemp.size())
+		ErrorHandler::e.Error("Compiler error in tripe : curTemp size is incorrect");
 	for (int i=0;i<pop;i++)
 		m_curTemp.pop();
 
-	as->Asm(cmd+tab+ l+tab+r);
-
+//	if (l!="nada" && r!="nada")
+		as->Asm(cmd+tab+ l+tab+r);
+	//else qDebug() << "Removing "<<cmd+tab+ l+tab+r;
 }
 /*
 void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> c, QString cmd)
@@ -456,6 +464,13 @@ QString CodeGenTRIPE::getInitProcedure() {
 
 void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) {
 
+
+	if (inclusive) {
+		if (step!=nullptr)
+			nodeB = NodeFactory::CreateBinop(nodeB->m_op,TokenType::PLUS,nodeB,step);
+		else
+			nodeB = NodeFactory::CreateBinop(nodeB->m_op,TokenType::PLUS,nodeB,NodeFactory::CreateNumber(nodeB->m_op,1));
+	}
     Doublette(nodeA->m_left,nodeB,"cmp");
  //   BuildToCmp()
 //    PrintCompare(nodeA->m_left, lblSuccess,lblFailed);
@@ -465,12 +480,6 @@ void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> node
 		as->Asm("bne "+loopNotDone);
 }
 
-
-
-
- //       if (node->m_loopCounter!=0)
-   //         ErrorHandler::e.Error("Error: Loop with step other than 1,-1 cannot have loopy/loopx flag");
-        // Is word
 
 
 
@@ -620,15 +629,14 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 
 void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 	as->Comment("VarNode StoreVariable");
-	QString val = "nada";
+	QString val = nada;
 	if (m_curTemp.size()!=0)
 		val = m_curTemp.pop();
-	if (node->hasArrayIndex()) {
+	if (node->hasArrayIndex() && node->m_expr != nullptr) {
 		Triplette(node->getValue(as), node->m_expr,val,"store");
 		return;
 	}
-
-	as->Asm("mov	 "+TripeValue(node) + " " +val);
+		as->Asm("mov	 "+TripeValue(node) + " " +val);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
 /*	as->Term();
@@ -654,11 +662,29 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 	//as->Label(str + "\t.dc \"" + right->m_op.m_value + "\",0");
 	//  as->Label(lbl);
 
+	qDebug() << "CodeGenTRIPE:: AssignString " <<str;
 		   //    qDebug() << "IS POINTER " << isPointer;
 	if (isPointer || left->isStringList(as)) {
 		Doublette(left,"#"+str,"mov");
 //		StoreVariable(left);
 	}
+	else {
+		auto r0 = getTempName(TokenType::BYTE);
+		auto idx = getTempName(TokenType::BYTE);
+		QString val = getValue(left);
+		QString lblCopy = as->NewLabel("stringassigncpy");
+		as->Asm("mov" + tab + idx + tab + "uint8:0x00");
+		as->Label(lblCopy);
+		as->Asm("load"+tab+str+tab+idx+tab+r0);
+		as->Asm("store"+tab+val+tab+idx+tab+r0);
+//		as->Asm("load"+tab+str+tab+idx+tab+r0);
+		as->Asm("add"+tab+idx+tab+idx+tab+"uint8:0x01");
+		as->Asm("cmp"+tab+"_nada"+tab+"uint8:0x00");
+		as->Asm("bne " + lblCopy);
+		m_curTemp.pop();
+		m_curTemp.pop();
+	}
+
 }
 /*QString CodeGenTRIPE::BinopTemp( QSharedPointer<Node> node)
 {

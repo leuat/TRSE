@@ -59,6 +59,8 @@ public:
 //    QHash<QString,QString> m_temporaryVariables;
     QVector<QString> m_temporaryVariables;
 
+	QString nada = "_nada";
+
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
     int block16bit=0;
 

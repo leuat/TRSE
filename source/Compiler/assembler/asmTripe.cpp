@@ -222,6 +222,10 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
     }
 
 
+	if (type.toLower()=="long")  {
+		t = "uint32";
+	}
+
     if (type.toLower()=="integer")  {
         t = word;
     }

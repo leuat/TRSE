@@ -1579,15 +1579,34 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
 	  assembler->m_symTab = as->m_symTab;
 	  assembler->m_zpStack = as->m_zpStack;
 	  assembler->m_tempZeroPointers = as->m_tempZeroPointers;
+
   }
   methods->Assemble(assembler, this);
+
+
+// Convert back
   if (FactoryMethods::s_useTripe) {
 	  as->m_currentBlock->m_source.append(assembler->m_source);
 	  as->Asm(".endasm");
 	  as->m_tempVarsBlock->m_source.append(assembler->m_tempVarsBlock->m_source);
+	  // damn strings
+	  for (auto t : assembler->m_tempVars) {
+		  if (t.contains("text")) {
+			  auto str = t.split(assembler->byte);
+			  QString val = str[1].split("\"")[1];
+			  auto block = as->m_currentBlock;
+			  as->m_currentBlock= as->m_tempVarsBlock;
+			  as->DeclareString(str[0], QStringList() <<val,QStringList());
+			  as->m_currentBlock = block;
+
+		  }
+		  else // hope this works
+		  as->m_tempVars << assembler->m_tempVars;
+	  }
   }
 
 }
+
 
 void AbstractCodeGen::dispatch(QSharedPointer<NodeUnaryOp> node) {
   node->DispatchConstructor(as, this);
@@ -1700,6 +1719,7 @@ QString AbstractCodeGen::DefineTempString(QSharedPointer<Node> node) {
 
   return strName;
 }
+
 
 void AbstractCodeGen::dispatch(QSharedPointer<NodeCase> node) {
   node->DispatchConstructor(as, this);

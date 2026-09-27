@@ -3,7 +3,7 @@ program tutorial_14_horizontal_starfield;
 var
 
 // number of stars
-	const noStars : byte = 25;
+	const noStars : byte = 24;
 	const useKernal : byte = 0;
 // Which character to use?
 	const charPos : byte = 64;
@@ -29,12 +29,15 @@ var
 	stars : array[noStars] of star;
 
 	// random table
-	rands: array[256] of byte;
+	rands: array[256] of byte = buildtable("Math.random()*1271235");
 	zp,cp:pointer;
 	starColors:array[] of byte=(11,1, 2, 10, 6, 14, 7, 14,1);//GREY, WHITE, RED, LIGHT_RED, BLUE, YELLOW, LIGHT_BLUE, WHITE);
 	
 	text: string = "EAT LOTS OF OATS";
 
+	rnd : array[256] of byte = buildtable("Math.random()*1271235");
+	@export "resources/rom.flf" "resources/rom.bin" 256
+	charset : incbin("resources/rom.bin",$2000);
 
 
 // Creates 8 characters with 1 dot in each char from @charPos
@@ -55,9 +58,9 @@ end;
 procedure InitializeStarfield();
 begin
 	j:=42;
-	for i:=0 to noStars do begin
+	for i:=0 to noStars offpage do begin
 		stars[i].x := rands[i]/2;  // 0-40
-		stars[i].dx := rands[j]&63; // 0-64 (will be divided by 8)
+		stars[i].dx := 0;//rands[j]&63; // 0-64 (will be divided by 8)
 		stars[i].color := starColors[j&7];  // 0-7
 		stars[i].ddx := rands[i]&7+1;  // 1-8
 		j+=11; // just some random shift
@@ -68,7 +71,7 @@ end;
 procedure InitializeRand();
 begin
 	for i:=0 to 0 do begin
-		rands[i]:=random()/2;
+		rands[i]:=rnd[i];
 		if (rands[i]>80) then rands[i]-=80;
 	end;
 
@@ -81,8 +84,9 @@ procedure RenderStarfield();
 begin
 	p:=#Screen::screen0;
 	cp:=#Screen::color;
-	for i:=0 to noStars do begin
-		if i<>12 then begin // ignore stars at line 12
+	for i:=0 to noStars offpage do begin
+		if i<>12 then 
+		begin // ignore stars at line 12
 			x:=stars[i].x;
 			dx:=stars[i].dx/8;
 			p[x]:=charPos+7-dx;
@@ -93,6 +97,10 @@ begin
 
 			cp[x]:=stars[i].color;
 
+		end
+		else
+		begin
+			p[20] := 0;
 		end;
 		p += Screen::width;
 		cp += Screen::width;
@@ -103,9 +111,9 @@ end;
 
 procedure UpdateStarfield();
 begin
-	for i:=0 to noStars do begin
+	for i:=0 to noStars offpage do begin
 		dx:=stars[i].dx-stars[i].ddx;
-		if dx>127 then begin
+		if dx>64 then begin
 			stars[i].x-=1;
 			if stars[i].x>127 then begin	
 				stars[i].x:=39;
@@ -148,7 +156,7 @@ begin
 	//VIC_DATA_LOC:=@charsetVicData;
 	
 	Screen::SetCharsetLocation(#charsetPos);
-	Screen::CopyCharsetFromRom(#Screen::ROMCharset_uppercase,#charsetPos);
+//	Screen::CopyCharsetFromRom(#Screen::ROMCharset_uppercase,#charsetPos);
 	
 	GenerateCharset();
 	InitializeText();
