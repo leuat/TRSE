@@ -135,6 +135,11 @@ void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
 		l = TripeValue(a);
 	else {
 		a->Accept(this);
+		if (m_curTemp.size()==0) {
+			l = nada;
+			m_curTemp.append(nada);
+		}
+		else
 		l = m_curTemp.last();
 		pop++;
 	}
@@ -145,7 +150,12 @@ void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
 	}
 	else {
 		b->Accept(this);
-		r = m_curTemp.last();
+		if (m_curTemp.size()==0) {
+			r = nada;
+			m_curTemp.append(nada);
+		}
+		else
+			r = m_curTemp.last();
 		pop++;
 	}
 	for (int i=0;i<pop;i++)
@@ -361,7 +371,6 @@ QString CodeGenTRIPE::getIncbin() {
 
 void CodeGenTRIPE::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, QString lblFailed)
 {
-
     QString bcs ="bcs ";
     QString bcc ="bcc ";
     if (node->isSigned(as)) {
@@ -389,11 +398,15 @@ void CodeGenTRIPE::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, Q
     if (node->m_op.m_type==TokenType::LESS)
         as->Asm(bcs + lblFailed);
 
+	qDebug() << "HERE "<< TokenType::getType(node->m_op.m_type);
+
+
 }
 void CodeGenTRIPE::BuildToCmp(QSharedPointer<Node> node)
 {
 	node->DispatchConstructor(as,this);
-
+	qDebug()<< "Should never be called";
+	exit(1);
 	//QString v = getTempName("t_"+getIntType(node)+"_");
 /*	if (node->m_left->isWord(as) && !node->m_right->isWord(as))
 		node->m_right->setLoadType(TokenType::INTEGER);
@@ -432,10 +445,22 @@ void CodeGenTRIPE::BuildConditional(QSharedPointer<Node> node, QString lblSucces
     as->Comment("Binary clause Simplified: " + node->m_op.getType());
     //    as->Asm("pha"); // Push that baby
 
-    BuildToCmp(node);
+	QString cmd = "jneq";
+	if (node->m_op.m_type==TokenType::NOTEQUALS)
+		cmd = "jeq";
+	if (node->m_op.m_type==TokenType::GREATER)
+		cmd = "jlt";
+	if (node->m_op.m_type==TokenType::LESS)
+		cmd = "jgt";
 
-    PrintCompare(node, lblSuccess,lblFailed);
+//	Triplette( node->m_left, node->m_right,lblSuccess,cmd);
+	Triplette( node->m_left, node->m_right,lblFailed,cmd);
 
+
+/*    BuildToCmp(node);
+
+	PrintCompare(node, lblSuccess,lblFailed);
+*/
 
 
 }
@@ -471,13 +496,21 @@ void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> node
 		else
 			nodeB = NodeFactory::CreateBinop(nodeB->m_op,TokenType::PLUS,nodeB,NodeFactory::CreateNumber(nodeB->m_op,1));
 	}
-    Doublette(nodeA->m_left,nodeB,"cmp");
+	QString cmd = "jeq";
+	QString lbl  = loopDone;
+	if (!isLarge) {
+		cmd = "jneq";
+		lbl = loopNotDone;
+	}
+	Triplette(nodeA->m_left,nodeB,lbl,cmd);
  //   BuildToCmp()
 //    PrintCompare(nodeA->m_left, lblSuccess,lblFailed);
+	/*
 	if (isLarge)
 		as->Asm("beq "+loopDone);
 	else
 		as->Asm("bne "+loopNotDone);
+*/
 }
 
 
@@ -679,8 +712,7 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 		as->Asm("store"+tab+val+tab+idx+tab+r0);
 //		as->Asm("load"+tab+str+tab+idx+tab+r0);
 		as->Asm("add"+tab+idx+tab+idx+tab+"uint8:0x01");
-		as->Asm("cmp"+tab+"_nada"+tab+"uint8:0x00");
-		as->Asm("bne " + lblCopy);
+		as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
 		m_curTemp.pop();
 		m_curTemp.pop();
 	}
@@ -931,8 +963,8 @@ void CodeGenTRIPE::CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<No
 
 void CodeGenTRIPE::CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage)
 {
-    Doublette(nodeA,nodeB,"cmp");
-    as->Asm("bne " +lblJump);
+	Triplette(nodeA,nodeB,lblJump, "jneq");
+ //   as->Asm("bne " +lblJump);
     return;
 }
 
