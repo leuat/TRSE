@@ -449,9 +449,13 @@ void CodeGenTRIPE::BuildConditional(QSharedPointer<Node> node, QString lblSucces
 	if (node->m_op.m_type==TokenType::NOTEQUALS)
 		cmd = "jeq";
 	if (node->m_op.m_type==TokenType::GREATER)
-		cmd = "jlt";
-	if (node->m_op.m_type==TokenType::LESS)
 		cmd = "jgt";
+	if (node->m_op.m_type==TokenType::GREATEREQUAL)
+		cmd = "jgte";
+	if (node->m_op.m_type==TokenType::LESS)
+		cmd = "jlt";
+	if (node->m_op.m_type==TokenType::LESSEQUAL)
+		cmd = "jlte";
 
 //	Triplette( node->m_left, node->m_right,lblSuccess,cmd);
 	Triplette( node->m_left, node->m_right,lblFailed,cmd);
