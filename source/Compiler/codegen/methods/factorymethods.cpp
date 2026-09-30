@@ -12,7 +12,6 @@
 #include "methodsz80.h"
 #include "methodstripe.h"
 
-bool FactoryMethods::s_useTripe = false;
 
 FactoryMethods::FactoryMethods()
 {

@@ -88,7 +88,6 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system,
   Syntax::s.m_currentSystem = system;
 
   //    Syntax::s.m_currentSystem->DefaultValues();
-  FactoryMethods::s_useTripe = false;
 
   try {
     // Set up assembler and dispatcher for the current system

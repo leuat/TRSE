@@ -9,8 +9,6 @@ class FactoryMethods {
 public:
   FactoryMethods();
 
-  static bool s_useTripe;
-
   static QSharedPointer<AbstractMethods>
   CreateMethods(AbstractSystem::System s);
 };

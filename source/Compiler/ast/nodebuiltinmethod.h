@@ -62,6 +62,8 @@ public:
     ~NodeBuiltinMethod() {
 
     }
+	bool isPure() override;
+
     void ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) override;
 
     void parseConstants(QSharedPointer<SymbolTable>  symTab) override {

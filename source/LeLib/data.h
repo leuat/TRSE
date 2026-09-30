@@ -51,6 +51,7 @@ public:
     QString cpuUnitPath = "cpu_specific";
     QString currentDoc = "";
     int genLabel = 0;
+	bool useTripe = false;
     bool redrawOutput=false;
     bool redrawInput=false;
     bool forceRedraw = false;

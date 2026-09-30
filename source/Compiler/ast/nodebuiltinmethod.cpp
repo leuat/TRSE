@@ -109,6 +109,10 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
     }
 }
 
+bool NodeBuiltinMethod::isPure() {
+	return !Data::data.useTripe;
+}
+
 void NodeBuiltinMethod::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) {
     int i=0;
     for (auto p:m_params) {

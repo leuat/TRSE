@@ -15,9 +15,10 @@ void Compiler6502::InitAssemblerAnddispatcher(
     m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
 	m_assembler->m_zeroPointers = keep->m_zeroPointers;
 	m_assembler->m_tempZeroPointers = keep->m_tempZeroPointers;
-	FactoryMethods::s_useTripe = true;
+	Data::data.useTripe = true;
   } else {
-    m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
+	Data::data.useTripe = false;
+	m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
     m_assembler = QSharedPointer<Asm6502>(new Asm6502());
     m_assembler->m_isOrgasm =
         m_ini->getString("assembler").toLower() == "orgasm";

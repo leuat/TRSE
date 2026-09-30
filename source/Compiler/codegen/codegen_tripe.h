@@ -70,6 +70,8 @@ public:
 	QString getTempName(TokenType::Type type);
 	QString getFunctionName(QSharedPointer<NodeProcedureDecl> node);
 
+	QString getParamValue(QSharedPointer<Node> node, int& pop);
+
 	void Doublette(QSharedPointer<Node> a, QString b, QString cmd);
 	void Doublette(QString a,QSharedPointer<Node> b, QString cmd);
 	void Doublette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString cmd);

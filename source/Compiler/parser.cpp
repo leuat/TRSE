@@ -489,11 +489,11 @@ void Parser::InitSystemPreprocessors() {
     m_preprocessorDefines["SUPPORTS_FORI"] =
         QString::number((int)Syntax::s.m_currentSystem->m_supportsInclusiveFor);
     m_preprocessorDefines["SUPPORTS_LONG"] = QString::number(
-        (int)Syntax::s.m_currentSystem->m_allowedBaseTypes.contains("LONG"));
+        (int)Syntax::s.m_currentSystem->m_allowedBaseTypes.contains("LONG") && !Data::data.useTripe);
     m_preprocessorDefines["SUPPORTS_CLASSES"] =
-        QString::number((int)Syntax::s.m_currentSystem->m_allowClasses);
+        QString::number((int)Syntax::s.m_currentSystem->m_allowClasses && !Data::data.useTripe);
 
-    Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
+   Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 }
 
 void Parser::InitSystemSymbols() {

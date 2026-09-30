@@ -159,7 +159,7 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
 		for (int i=0;i<count;i++)
 			data.append("0");
 	}
-
+		//qDebug() << data;
         QString s="";
 //		s="\tdecl\t" + getLabelEnding(name) + "\t"+t+" ";
 		s=tab+"decl"+tab+getLabelEnding(name) + tab+t+":" + data[0];
@@ -252,13 +252,19 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
 
 void AsmTripe::DeclareString(QString name, QStringList initval, QStringList flags)
 {
+/*
+	Label(name);
+	qDebug() << initval;
+	Write(tab + String(initval,!flags.contains("no_term")));
+	m_term="";*/
+
 	QStringList data;
 	for (auto s: initval)
 		for (auto c : s)
 			data.append(Util::numToHex0(c.toLatin1()));
 	data.push_back("0");
 	DeclareArray(name,"byte",data.size(),data,"");
-    m_term="";
+	m_term="";
 }
 
 void AsmTripe::DeclareCString(QString name, QStringList initval, QStringList flags)
@@ -330,12 +336,7 @@ QString AsmTripe::String(QStringList lst, bool term)
 {
 
     QString res;
-    QString mark = "dc.b";
-    if (Syntax::s.m_currentSystem->CL65Syntax()) {
-        mark = ".asciiz";
-        term = false;
-    }
-
+	QString mark = ".uint8";
     for (QString s:lst) {
         bool ok=false;
         uchar val = s.toInt(&ok);

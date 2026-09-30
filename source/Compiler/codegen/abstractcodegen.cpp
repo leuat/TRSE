@@ -1572,7 +1572,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
 
   auto assembler = as;
   auto p = FactoryAssembler::create(Syntax::s.m_currentSystem->m_processor);
-  if (FactoryMethods::s_useTripe) {
+  if (Data::data.useTripe) {
 	  as->Term();
 	  as->Asm(".asm");
 	  assembler = p.get();
@@ -1585,7 +1585,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
 
 
 // Convert back
-  if (FactoryMethods::s_useTripe) {
+  if (Data::data.useTripe) {
 	  as->m_currentBlock->m_source.append(assembler->m_source);
 	  as->Asm(".endasm");
 	  as->m_tempVarsBlock->m_source.append(assembler->m_tempVarsBlock->m_source);
