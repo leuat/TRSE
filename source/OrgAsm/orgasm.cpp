@@ -485,7 +485,7 @@ bool Orgasm::Assemble(QString filename, QString outFile)
 
     if (m_header==HEADER_DECB && m_success) {
         int size = m_data.size();
-        m_data.insert(0,(uchar)0);
+        m_data.insert(0,(char)0);
         m_data.insert(1,(size>>8)&0xFF);
         m_data.insert(2,(size)&0xFF);
         m_data.insert(3,(m_startAddress>>8)&0xFF);
@@ -903,7 +903,7 @@ void Orgasm::ProcessAlignData(OrgasmLine &ol)
         throw OrgasmError("Invalid align parameter, must be >0",ol);
 
     while (m_pCounter%val!=0) {
-        m_data.append((uchar)0x00);
+        m_data.append((char)0x00);
         m_pCounter+=1;
     }
 }

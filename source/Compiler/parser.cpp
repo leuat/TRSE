@@ -21,6 +21,7 @@
  */
 
 #include "parser.h"
+#include <QRegularExpression>
 
 QStringList Parser::s_usedTRUs;
 QStringList Parser::s_usedTRUNames;
@@ -100,6 +101,22 @@ QStringList Parser::getFlags() {
         }
     }
     return flags;
+}
+
+// Qt 5.6's JS engine is ES5 only and does not understand 0b binary integer literals
+// (used by e.g. BuildTable("0b1010")). Rewrite them to decimal there.
+static QString JsCompat(QString expr) {
+#ifdef TRSE_QT56
+    QRegularExpression re("\\b0[bB]([01]+)\\b");
+    QRegularExpressionMatch m;
+    int from = 0;
+    while ((m = re.match(expr, from)).hasMatch()) {
+        QString dec = QString::number(m.captured(1).toULongLong(nullptr, 2));
+        expr.replace(m.capturedStart(), m.capturedLength(), dec);
+        from = m.capturedStart() + dec.length();
+    }
+#endif
+    return expr;
 }
 
 Parser::Parser() {}
@@ -5440,7 +5457,7 @@ QStringList Parser::BuildTable(int cnt, TokenType::Type type) {
     }
 
     for (int i = 0; i < cnt; i++) {
-        QString str = sentence;
+        QString str = JsCompat(sentence);
         QJSValue fun = m_jsEngine.evaluate("(function(i) { " + consts + ";return " +
                                            str + "; })");
         //        QJSValue fun = m_jsEngine.evaluate("(function(i) { return "+str+";
@@ -5545,7 +5562,7 @@ QStringList Parser::BuildTable2D(int cnt, TokenType::Type type) {
 
     for (int j = 0; j < y; j++)
         for (int i = 0; i < x; i++) {
-            QString str = sentence;
+            QString str = JsCompat(sentence);
             //        str = str.replace("i",QString::number(i));
             //        QJSValue ret = m_jsEngine.evaluate(str);
             QJSValue fun = m_jsEngine.evaluate("(function(i,j) { " + consts +

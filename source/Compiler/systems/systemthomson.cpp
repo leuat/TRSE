@@ -163,7 +163,7 @@ void SystemThomson::CreatekCart(QString filename)
 {
     QByteArray ba = Util::loadBinaryFile(filename+".bin");
     while (ba.size()<0x4000)
-        ba.append((uchar)0);
+        ba.append((char)0);
     ba[0x3fe] = 0x4; // terminate ascii
     ba[ 0x3fe0 +1 ] = QChar('T').toLatin1(); // terminate ascii
     ba[ 0x3fe0 +2 ] = QChar('R').toLatin1(); // terminate ascii
