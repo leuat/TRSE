@@ -59,7 +59,13 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
         adv = true;
 */
 //    TransformVariable("move"+endtype,d0 + "     ; BOP move",d1);
-    TransformVariable("move"+getEndType(node->m_left),d0 + "     ; BOP move",d1);
+    // pointer/long + 16 bit integer interaction fix: keep add/sub 32 bit
+    bool wideAddSub = (node->m_op.m_type==TokenType::PLUS || node->m_op.m_type==TokenType::MINUS) &&
+            (node->isPointer(as) || node->isLong(as));
+    QString leftMove = getEndType(node->m_left);
+    if (wideAddSub && qSharedPointerDynamicCast<NodeBinOP>(node->m_left)!=nullptr)
+        leftMove = ".l"; // sub-expression result in register: keep all 32 bits
+    TransformVariable("move"+leftMove,d0 + "     ; BOP move",d1);
 
 
 
@@ -84,6 +90,12 @@ void CodeGen68k::dispatch(QSharedPointer<NodeBinOP>node) {
 
     else {
         op=op + getEndType( node->m_left, node->m_right);//+m_lastSize;//+".l";
+        if (wideAddSub) {
+            op = op.split(".")[0] + ".l";
+            // zero-extend a narrower right operand (advanced path) before add.l/sub.l
+            if (!node->m_right->isPureNumeric() && getEndType(node->m_right)!=".l")
+                adv = true;
+        }
     }
 
 
