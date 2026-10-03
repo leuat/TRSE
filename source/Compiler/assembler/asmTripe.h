@@ -74,6 +74,8 @@ public:
  //   void Poke(bool start) override;
  //   void Peek(bool start) override;
 
+	bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos) override;
+
 
     QString GetOrg(int pos) override;
     virtual QString GetOrg() override;

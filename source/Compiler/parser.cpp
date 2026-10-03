@@ -249,14 +249,16 @@ void Parser::InitBuiltinFunctions() {
     InitBuiltinFunction(QStringList()<< "/", "init16x8div");
     */
         //          qDebug() << Node::flags.keys();
-        if (Node::flags.contains("mul8"))
-            InitBuiltinFunction(QStringList() << "", "initeightbitmul");
-        if (Node::flags.contains("mul16"))
-            InitBuiltinFunction(QStringList() << "", "init16x8mul");
-        if (Node::flags.contains("div16"))
-            InitBuiltinFunction(QStringList() << "", "init16x8div");
-        if (Node::flags.contains("div8"))
-            InitBuiltinFunction(QStringList() << "", "init8x8div");
+        if (!Data::data.useTripe) {
+            if (Node::flags.contains("mul8"))
+                InitBuiltinFunction(QStringList() << "", "initeightbitmul");
+            if (Node::flags.contains("mul16"))
+                InitBuiltinFunction(QStringList() << "", "init16x8mul");
+            if (Node::flags.contains("div16"))
+                InitBuiltinFunction(QStringList() << "", "init16x8div");
+            if (Node::flags.contains("div8"))
+                InitBuiltinFunction(QStringList() << "", "init8x8div");
+        }
 
         if (Syntax::s.m_currentSystem->m_system == AbstractSystem::C64 ||
             Syntax::s.m_currentSystem->m_system == AbstractSystem::C128) {
@@ -464,8 +466,10 @@ void Parser::InitBuiltinFunction(QStringList methodName,
                 Token(TokenType::PROCEDURE, builtinFunctionName),
                 builtinFunctionName));
             m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
-            if (initJump != "")
-                m_initJumps << "\tjsr " + initJump;
+
+            if (!Data::data.useTripe)
+                if (initJump != "")
+                    m_initJumps << "\tjsr " + initJump;
             return;
         }
 }
@@ -491,7 +495,7 @@ void Parser::InitSystemPreprocessors() {
     m_preprocessorDefines["SUPPORTS_LONG"] = QString::number(
         (int)Syntax::s.m_currentSystem->m_allowedBaseTypes.contains("LONG") && !Data::data.useTripe);
     m_preprocessorDefines["SUPPORTS_CLASSES"] =
-        QString::number((int)Syntax::s.m_currentSystem->m_allowClasses && !Data::data.useTripe);
+        QString::number((int)Syntax::s.m_currentSystem->m_allowClasses/* && !Data::data.useTripe*/);
 
    Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 }

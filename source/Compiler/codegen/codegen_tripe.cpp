@@ -61,7 +61,10 @@ void CodeGenTRIPE::Doublette(QString a, QSharedPointer<Node> b, QString cmd)
 	for (int i=0;i<pop;i++)
 		m_curTemp.pop();
 
+	if (l==r)
+		r = nada;
 	as->Asm(cmd+tab+ l+tab+r);
+	as->Term();
 
 }
 
@@ -74,6 +77,7 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QString b, QString cmd)
 		m_curTemp.pop();
 
 	as->Asm(cmd+tab+ l+tab+b);
+	as->Term();
 
 }
 
@@ -84,9 +88,11 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
 	QString r = getParamValue(b,pop);;
 
 	for (int i=0;i<pop;i++)
-		m_curTemp.pop();
+		if (m_curTemp.size()!=0)
+			m_curTemp.pop();
 
 	as->Asm(cmd+tab+ l+tab+r);
+	as->Term();
 }
 void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString c, QString cmd)
 {
@@ -99,6 +105,7 @@ void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
 		m_curTemp.pop();
 
 	as->Asm(cmd+tab+ l+tab+r+tab+c);
+	as->Term();
 
 }
 
@@ -111,6 +118,7 @@ void CodeGenTRIPE::Triplette(QString l, QSharedPointer<Node> b, QString c, QStri
 		m_curTemp.pop();
 
 	as->Asm(cmd+tab+ l+tab+r+tab+c);
+	as->Term();
 
 }
 
@@ -119,6 +127,8 @@ void CodeGenTRIPE::ReturnValue(QSharedPointer<NodeProcedureDecl> node) {
 
 	//as->Asm("mov " + m_curTemp.pop() + tab + getFunctionName(node));
 	Doublette(getFunctionName(node), node->m_returnValue,"mov");
+if (m_curTemp.size()!=0)
+	m_curTemp.pop();
 }
 
 void CodeGenTRIPE::WriteCall(Assembler *as, QString call, QSharedPointer<NodeProcedure> node) {
@@ -151,7 +161,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
         node->m_right->setLoadType(TokenType::INTEGER);
     as->ClearTerm();
     as->BinOP(node->m_op.m_type,true);
-    QString cmd = as->m_term + "\t"+v;
+	QString cmd = as->m_term + tab+v;
     as->ClearTerm();
 
 //    as->Asm(s+"\t"+ v+"\t"+ l+"\t"+r);
@@ -173,7 +183,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeNumber>node)
 {
 	node->DispatchConstructor(as,this);
 
-	as->Asm("mov "+getTempName(TokenType::BYTE) + " " +TripeValue(node));
+	as->Asm("mov"+tab+getTempName(TokenType::BYTE) + tab +TripeValue(node));
 }
 /*
  *
@@ -337,7 +347,7 @@ void CodeGenTRIPE::PrintCompare(QSharedPointer<Node> node, QString lblSuccess, Q
     if (node->m_op.m_type==TokenType::LESS)
         as->Asm(bcs + lblFailed);
 
-	qDebug() << "HERE "<< TokenType::getType(node->m_op.m_type);
+//	qDebug() << "HERE "<< TokenType::getType(node->m_op.m_type);
 
 
 }
@@ -454,7 +464,7 @@ void CodeGenTRIPE::Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> node
 
 void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
 	if (node->m_expr== nullptr) {
-		as->Asm("mov "+getTempName(TokenType::INTEGER)+ " " +TripeValue(node));
+		as->Asm("mov"+tab+getTempName(TokenType::INTEGER)+ tab +TripeValue(node));
 		return;
 	}
 	as->Comment("LoadPointer");
@@ -562,7 +572,7 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeVar> node) {
 		}
     }
 
-	as->Asm("mov "+getTempName(node->getType(as)) + " " + TripeValue(node));
+	as->Asm("mov"+tab+getTempName(node->getType(as)) + tab + TripeValue(node));
 
 
 //    ErrorHandler::e.Error(TokenType::getType(t) + " assignment not supported yet for exp: " + getValue(node));
@@ -604,7 +614,7 @@ void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 		Triplette(node->getValue(as), node->m_expr,val,"store");
 		return;
 	}
-		as->Asm("mov	 "+TripeValue(node) + " " +val);
+		as->Asm("mov"+tab+TripeValue(node) + tab +val);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
 /*	as->Term();
@@ -628,9 +638,25 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 
 	QString str = DefineTempString(right);
 
-	if (isPointer || left->isStringList(as)) {
-		Doublette(left,"#"+str,"mov");
-//		StoreVariable(left);
+	if ((isPointer || left->isStringList(as)) && left->m_expr!=nullptr) {
+		auto r0 = getTempName(TokenType::BYTE);
+		auto idx = getTempName(TokenType::BYTE);
+		auto ptr = getTempName(TokenType::POINTER);
+		QString val = ptr;
+//		Triplette(ptr, left->m_expr, left, "load");
+		Triplette(left->getValue(as), left->m_expr, ptr,"load");
+
+		QString lblCopy = as->NewLabel("stringassigncpy");
+		as->Asm("mov" + tab + idx + tab + "uint8:0x00");
+		as->Label(lblCopy);
+		as->Asm("load"+tab+str+tab+idx+tab+r0);
+		as->Asm("store"+tab+val+tab+idx+tab+r0);
+		//		as->Asm("load"+tab+str+tab+idx+tab+r0);
+		as->Asm("add"+tab+idx+tab+idx+tab+"uint8:0x01");
+		as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
+		m_curTemp.pop();
+		m_curTemp.pop();
+		m_curTemp.pop();
 	}
 	else {
 		auto r0 = getTempName(TokenType::BYTE);
@@ -662,7 +688,7 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
         if (node->m_right->isPure()) {
 //			as->Comment(" Is simple assign integer");
 
-			as->Asm("mov "+TripeValue(node->m_left)+" "+TripeValue(node->m_right));
+			as->Asm("mov"+tab+TripeValue(node->m_left)+tab+TripeValue(node->m_right));
 
 			return true;
         }
@@ -676,7 +702,7 @@ bool CodeGenTRIPE::IsSimpleAssignInteger(QSharedPointer<NodeAssign> node) {
 			if (m_curTemp.size()!=0) {
 				tempVar = m_curTemp.pop();
 
-				as->Asm("mov "+TripeValue(node->m_left)+" "+tempVar);
+				as->Asm("mov"+tab+TripeValue(node->m_left)+tab+tempVar);
 			}
 			return true;
 
@@ -784,6 +810,10 @@ QString CodeGenTRIPE::getTempName(TokenType::Type type)
 	if (type==TokenType::INTEGER) {
 		t = "16";
 		stype = "uint16";
+	}
+	if (type==TokenType::POINTER) {
+		t = "p8";
+		stype = "ptr8";
 	}
 	t+="_";
 	QString s = "_r"+t+QString::number(i);

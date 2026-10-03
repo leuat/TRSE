@@ -259,9 +259,8 @@ void AsmTripe::DeclareString(QString name, QStringList initval, QStringList flag
 	m_term="";*/
 
 	QStringList data;
-	for (auto s: initval)
-		for (auto c : s)
-			data.append(Util::numToHex0(c.toLatin1()));
+//	qDebug() << name << initval;
+		data.append(Util::QStringToDataList(initval));
 	data.push_back("0");
 	DeclareArray(name,"byte",data.size(),data,"");
 	m_term="";
@@ -403,6 +402,38 @@ void AsmTripe::BinOP(TokenType::Type t,  bool clearFlag)
 	if (t == TokenType::SHR) {
 		m_term = "shr ";
 	}
+
+}
+
+bool AsmTripe::DeclareClass(QString name, QString type, int count, QStringList data, QString pos)
+{
+	if (m_symTab->m_records.contains(type)) {
+		if (!m_symTab->m_records[type]->m_isClass)
+			return false;
+
+		QSharedPointer<SymbolTable>  st = m_symTab->m_records[type];
+		if (Syntax::s.m_currentSystem->CL65Syntax()) {
+			if (Syntax::s.m_currentSystem->useZByte) {
+				Asm(name+"\t=\t"+ Util::numToHex(m_zbyte));
+				//               Write(name +"\t=\t"+Util::numToHex(m_zbyte));
+				m_zbyte+=st->getSize()*count;
+			}
+			else {
+
+				Label(name);
+				Asm(".res "+name+"+" +QString::number(st->getSize()*count)+"-*");
+			}
+
+		}
+		else {
+//			Label(name);
+			DeclareArray(name,byte,st->getSize()*count,QStringList(),"");
+//			Asm(GetOrg()+name+"+" +QString::number(st->getSize()*count));
+		}
+
+		return true;
+	}
+	return false;
 
 }/*
 
