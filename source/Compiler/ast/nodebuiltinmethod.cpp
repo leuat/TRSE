@@ -110,7 +110,12 @@ void NodeBuiltinMethod::VerifyParams(Assembler* as)
 }
 
 bool NodeBuiltinMethod::isPure() {
-	return !Data::data.useTripe;
+	if (Data::data.useTripe)
+		return false;
+	// Outside tripe a builtin method is only "pure" in the cases isPureVariable() accepts
+	// (e.g. hi/lo of a pure variable). Returning true for every call made assignments such as
+	// 'ptr := AddressTable(..)' or 'a := keypressed(..)' emit instructions without operands.
+	return Node::isPure();
 }
 
 void NodeBuiltinMethod::ReplaceVariable(Assembler *as, QString name, QSharedPointer<Node> node) {
