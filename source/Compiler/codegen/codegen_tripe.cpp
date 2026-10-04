@@ -131,6 +131,42 @@ if (m_curTemp.size()!=0)
 	m_curTemp.pop();
 }
 
+void CodeGenTRIPE::IncSid(QSharedPointer<NodeVarDecl> node) {
+
+	// Init address or load address? hmmm
+
+	if (Syntax::s.m_currentSystem->m_system==AbstractSystem::NES) {
+
+		if (node->sid.m_loadAddress!=0x8000 && Syntax::s.m_currentSystem->m_programStartAddress!=0x8000) {
+			QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$8000"));
+			app->Append("org $8000",1);
+			app->Append("NSFfiller dc.b 0",0);
+			as->m_appendix.append(app);
+		}
+	}
+	//    qDebug() << Util::numToHex(node->sid.m_loadAddress)<<Util::numToHex(node->sid.m_initAddress)<<Util::numToHex(node->sid.m_playAddress);
+	QString pos = QString::number(node->sid.m_loadAddress,16);
+	QSharedPointer<Appendix> app = QSharedPointer<Appendix>(new Appendix("$"+pos));
+	//    qDebug() << "INCSID dispatcher"<< pos;
+
+	app->Append(as->GetOrg(node->sid.m_loadAddress),1);
+	//        as->Appendix(getValue(v),0);
+	app->Append(getIncbin()+"\t\"" + as->m_projectDir + node->sid.m_outFile + "\"",1);
+
+	as->m_appendix.append(app);
+
+	int size=0;
+	QFile f(as->m_projectDir + node->sid.m_outFile);
+	if (f.open(QIODevice::ReadOnly)){
+		size = f.size();  //when file does open.
+		f.close();
+	}
+	node->m_fileSize = size;
+
+		   //    qDebug() << "LOAD ADDRESS **** " << Util::numToHex(node->sid.m_loadAddress);
+	as->blocks.append(QSharedPointer<MemoryBlock>(new MemoryBlock(node->sid.m_loadAddress,node->sid.m_loadAddress+size, MemoryBlock::MUSIC, node->sid.m_fileName)));
+}
+
 void CodeGenTRIPE::WriteCall(Assembler *as, QString call, QSharedPointer<NodeProcedure> node) {
 	/*if ((node->m_procedure->m_isFunction))
 		as->Asm(call + " " +as->jumpLabel(node->m_procedure->m_procName) + " " + getTempName(node->m_procedure->m_procName+"_ret"));
@@ -250,6 +286,7 @@ void CodeGenTRIPE::DeclarePointer(QSharedPointer<NodeVarDecl> node) {
 
     }
 
+
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node->m_varNode);
 //    as->Asm(".data uint64: "+initVal);
 	QSharedPointer<Symbol> s = as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
@@ -298,7 +335,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeVarDecl> node)
     //    qDebug() << "" <<as->m_currentBlock;
     AbstractCodeGen::dispatch(node);
     if (t->m_op.m_type==TokenType::INCSID || t->m_op.m_type==TokenType::INCNSF) {
-//        IncSid(node);
+		IncSid(node);
         return;
     }
     //  qDebug() << as->m_currentBlock;
@@ -494,7 +531,7 @@ void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
 
 void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 {
-	as->Comment("::dispatch <NodeVar>");
+//	as->Comment("::dispatch <NodeVar>");
 	LoadVariable(node);
 
 }
@@ -503,7 +540,7 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 
 
 void CodeGenTRIPE::LoadByteArray(QSharedPointer<NodeVar> node) {
-	as->Comment("::LoadByteArray");
+	//as->Comment("::LoadByteArray");
 
 	TokenType::Type type = node->isWord(as)?TokenType::INTEGER:TokenType::BYTE;
 	Triplette(node->getValue(as), node->m_expr,getTempName(type),"load");
@@ -511,7 +548,7 @@ void CodeGenTRIPE::LoadByteArray(QSharedPointer<NodeVar> node) {
 
 void CodeGenTRIPE::LoadVariable(QSharedPointer<Node> node)
 {
-	as->Comment("::LoadVariable_2");
+	//as->Comment("::LoadVariable_2");
 
     QSharedPointer<NodeVar> v = qSharedPointerDynamicCast<NodeVar>(node);
     if (v!=nullptr) {
@@ -584,7 +621,7 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeNumber>node)
 {
    as->ClearTerm();
 //   qDebug() << "OAD NUMBER";
-   as->Comment("::LoadVariable<NodeNumber>");
+   //as->Comment("::LoadVariable<NodeNumber>");
    if (node->isReference()) {
        as->ClearTerm();
        as->Asm("lda "+node->getValue8bit(as,false));

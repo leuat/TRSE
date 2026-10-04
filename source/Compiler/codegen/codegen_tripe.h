@@ -92,6 +92,9 @@ public:
 
 	QString getFunctionCallSubroutine() override { return "fcall"; }
 
+	void IncSid(QSharedPointer<NodeVarDecl> node);
+
+
 	void WriteCall(Assembler *as, QString call, QSharedPointer<NodeProcedure> node) override;
 
 

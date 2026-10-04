@@ -217,8 +217,8 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
          return;
 
     if (type.toLower()=="const") {
-        Write(name + " = " + initval);
-        return;
+		Write(tab+"decl"+tab+  name +tab + "address" + ":"+initval);
+		return;
     }
 
 
@@ -233,8 +233,10 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
         t = byte;
 
     }
+
     if (Syntax::s.m_currentSystem->useZByte) {
-		Write(name +tab+"="+tab+Util::numToHex0(m_zbyte));
+		Write(tab+"decl"+tab+  name +tab + "address" + ":"+Util::numToHex0(m_zbyte));
+//		Write(name +tab+"="+tab+Util::numToHex0(m_zbyte));
         m_zbyte++;
         if (t==word)
             m_zbyte++;
@@ -473,6 +475,8 @@ void AsmTripe::Label(QString s)
 void AsmTripe::Connect()
 {
     Assembler::Connect();
+
+
     for (QString& l: m_source) {
         l.replace("StartBlock","; .label StartBlock");
     }
@@ -486,6 +490,16 @@ void AsmTripe::Connect()
             l = l.remove(l.length()-1,1);
     }
 	QStringList n;
+
+	for (auto& c: m_symTab->m_constants.keys()) {
+		auto t = m_symTab->m_constants[c]->m_type;
+		if (t=="ADDRESS") t = "address";
+		if (t=="BYTE") t = "uint8";
+		if (t=="INTEGER") t = "uint16";
+//		n.append("const"+tab+c+ tab + t+":"+m_symTab->m_constants[c]->m_name);
+	}
+
+
 	for (QString& l: m_source) {
 
 		bool ok = true;
@@ -620,7 +634,7 @@ bool AsmTripe::DeclareRecord(QString name, QString type, int count, QStringList 
 				for (int i=0;i<count-1;i++)
 					bytes+="0 ";
 				bytes.remove(bytes.length()-1,1);
-				qDebug() << "HERE "<< count << bytes;
+				//qDebug() << "HERE "<< count << bytes;
 				if (count!=1)
 					Asm("."+t+" "+bytes);
 			}

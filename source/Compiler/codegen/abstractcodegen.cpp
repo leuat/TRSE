@@ -1579,6 +1579,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
 	  assembler->m_symTab = as->m_symTab;
 	  assembler->m_zpStack = as->m_zpStack;
 	  assembler->m_tempZeroPointers = as->m_tempZeroPointers;
+	  assembler->m_replaceValues = as->m_replaceValues;
 
   }
   methods->Assemble(assembler, this);
