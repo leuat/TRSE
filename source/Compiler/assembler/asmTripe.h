@@ -82,6 +82,7 @@ public:
 
     virtual int CodeSizeEstimator(QStringList& lines) override  { return 0;}
 
+	bool isTripe() override {return true;}
 
     void Label(QString s) override;
 

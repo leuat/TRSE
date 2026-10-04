@@ -137,7 +137,6 @@ public:
 
 
     QSharedPointer<PostOptimiser> m_optimiser = nullptr;
-
     bool m_disableComments = false;
     bool m_countCycles = false;
     int m_noBanks = 0;
@@ -145,6 +144,7 @@ public:
 
     QVector<int> m_removeLines;
 
+	virtual bool isTripe() {return false;}
 
     void StartExistingBlock(QSharedPointer<Appendix> block);
     void EndCurrentBlock();

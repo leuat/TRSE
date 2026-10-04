@@ -31,6 +31,7 @@ void Methods6502::PointToVera(Assembler* as, int address, bool initLow)
 
 void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
 
+    if (m_org==nullptr) m_org =  as;
     if (!Data::data.useTripe)
         m_codeGen = dispatcher;
     else
@@ -1500,8 +1501,18 @@ void Methods6502::DefineScreen(Assembler *as)
     if (m_node->m_isInitialized["initscreen"])
         return;
 
-    as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
-    as->Label("colormemory =  "+as->m_zeropageColorMemory);
+    if (Data::data.useTripe) {
+        auto t = "\tdecl\tscreenmemory\t ptr8:"+as->m_zeropageScreenMemory;
+//        if (!as->m_tempVars.contains(t)) {
+            as->m_tempVarsBlock->Append(t,0);
+            as->m_tempVarsBlock->Append("\tdecl\tcolormemory\t ptr8:"+as->m_zeropageColorMemory,0);
+  //      }
+    }
+    else
+    {
+        as->Label("screenmemory =  "+as->m_zeropageScreenMemory);
+        as->Label("colormemory =  "+as->m_zeropageColorMemory);
+    }
 
     m_node->m_isInitialized["initscreen"]=true;
 }
@@ -3062,6 +3073,7 @@ void Methods6502::LoHi(Assembler *as, int type)
             as->Asm("lda #" + Util::numToHex((m_node->m_params[0]->getValueAsInt(as)>>8)&0xFF));*/
         return;
     }
+
     if (m_node->m_params[0]->getType(as)==TokenType::BYTE) {
         if (type==0)
             as->Asm("lda " + m_node->m_params[0]->getValue(as));
@@ -7131,13 +7143,16 @@ void Methods6502::InitJoystick(Assembler *as)
 
     if (as->m_internalZP.count()==0)
         return;
-
-//    as->Asm("jmp callJoystick");
-    as->Write("joystickup: .byte 0");
-    as->Write("joystickdown: .byte 0");
-    as->Write("joystickleft: .byte 0");
-    as->Write("joystickright: .byte 0");
-    as->Write("joystickbutton: .byte 0");
+    auto cb = m_org->m_currentBlock;
+    if (Data::data.useTripe)
+        m_org->m_currentBlock= m_org->m_tempVarsBlock;
+    m_org->DeclareVariable("joystickup","byte","0","");
+    m_org->DeclareVariable("joystickdown","byte","0","");
+    m_org->DeclareVariable("joystickleft","byte","0","");
+    m_org->DeclareVariable("joystickright","byte","0","");
+    m_org->DeclareVariable("joystickbutton","byte","0","");
+    if (Data::data.useTripe)
+        m_org->m_currentBlock= cb;
     as->Label("callJoystick");
 /*
     as->Asm("lda $dc00 ;read joystick port 2");

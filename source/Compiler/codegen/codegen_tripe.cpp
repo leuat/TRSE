@@ -21,12 +21,28 @@ void CodeGenTRIPE::HandleGenericBinop(QSharedPointer<Node> node) {
 
 QString CodeGenTRIPE::getParamValue(QSharedPointer<Node> node, int& pop) {
 	QString r="";
-	if (node->isPure()) {
+	if (node->isPure() && qSharedPointerDynamicCast<NodeBuiltinMethod>(node)==nullptr) {
 		r = TripeValue(node);
 	}
 	else {
+
+		auto method = qSharedPointerDynamicCast<NodeBuiltinMethod>(node);
+		// override hi and lo dammit
+/*		if (method!=nullptr) {
+			qDebug() << method->m_procName;
+			if (method->m_procName=="lo" && method->m_params[0]->isPureNumeric())
+				return Util::numToHex0(method->m_params[0]->getValueAsInt(as)&0xff);
+			if (method->m_procName=="hi" && method->m_params[0]->isPureNumeric()) {
+				qDebug() << "HERE";
+				return Util::numToHex0((method->m_params[0]->getValueAsInt(as)>>8)&0xff);
+			}
+		}
+*/
+
+
 		node->Accept(this);
 		as->Term();
+
 		if (m_curTemp.size()==0) {
 			r = nada;
 			m_curTemp.append(nada);
@@ -34,11 +50,12 @@ QString CodeGenTRIPE::getParamValue(QSharedPointer<Node> node, int& pop) {
 		else
 			r = m_curTemp.last();
 
-		auto method = qSharedPointerDynamicCast<NodeBuiltinMethod>(node);
 		if (method!=nullptr) {
 			// OOps! need to store
 			// Stuff with a return type.
-			if (method->m_procName=="lo" || method->m_procName=="hi") {
+			QStringList retMethods = {"lo", "hi", "mod","random","atan","sqrt", "abs"};
+
+			if (retMethods.contains(method->m_procName)) {
 				if (r!=nada)
 					as->Asm("mov "+r+tab+nada + " ; builtinmethod");
 
@@ -76,7 +93,8 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QString b, QString cmd)
 	for (int i=0;i<pop;i++)
 		m_curTemp.pop();
 
-	as->Asm(cmd+tab+ l+tab+b);
+	if (!(cmd=="mov" && l==nada))
+		as->Asm(cmd+tab+ l+tab+b);
 	as->Term();
 
 }
@@ -188,19 +206,21 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
 
 	auto t = getType(node);
 
-//	if (node->m_op.m_type==TokenType::MUL)
-	//	t = TokenType::INTEGER;
+	if (node->m_left->getStoreType()==TokenType::INTEGER)
+		t = TokenType::INTEGER;
+
+	if (node->m_left->isWord(as) && !node->m_right->isWord(as)) {
+		node->m_right->setLoadType(TokenType::INTEGER);
+	}
 
 	QString v = getTempName(t);
 //	as->Comment("BINOP with tmp " +v + " " + QString::number(m_curTemp.count()));
-    if (node->m_left->isWord(as) && !node->m_right->isWord(as))
-        node->m_right->setLoadType(TokenType::INTEGER);
     as->ClearTerm();
     as->BinOP(node->m_op.m_type,true);
 	QString cmd = as->m_term + tab+v;
     as->ClearTerm();
 
-//    as->Asm(s+"\t"+ v+"\t"+ l+"\t"+r);
+
 	Doublette( node->m_left, node->m_right,cmd);
    // return v;
 
@@ -218,7 +238,6 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeBinOP>node)
 void CodeGenTRIPE::dispatch(QSharedPointer<NodeNumber>node)
 {
 	node->DispatchConstructor(as,this);
-
 	as->Asm("mov"+tab+getTempName(TokenType::BYTE) + tab +TripeValue(node));
 }
 /*
@@ -531,7 +550,6 @@ void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
 
 void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 {
-//	as->Comment("::dispatch <NodeVar>");
 	LoadVariable(node);
 
 }
@@ -651,7 +669,8 @@ void CodeGenTRIPE::StoreVariable(QSharedPointer<NodeVar> node) {
 		Triplette(node->getValue(as), node->m_expr,val,"store");
 		return;
 	}
-		as->Asm("mov"+tab+TripeValue(node) + tab +val);
+	Doublette(node, val, "mov");
+//	as->Asm("mov"+tab+TripeValue(node) + tab +val);
     //          ErrorHandler::e.Error("Could not find variable '" +value +"' for storing.", m_op.m_lineNumber);
 
 /*	as->Term();
@@ -765,9 +784,13 @@ bool CodeGenTRIPE::AssignPointer(QSharedPointer<NodeAssign> node) {
 			// a[expr]:=b;
 			//as->Comment("pop, assign pointer ");
 			node->m_right->Accept(this);
-			auto val = m_curTemp.last();
+			auto val = nada;
+			if (m_curTemp.size()!=0)
+				val = m_curTemp.last();
+
 			Triplette(var->getValue(as),var->m_expr, val,"store");
-			m_curTemp.pop();
+			if (m_curTemp.size()!=0)
+				m_curTemp.pop();
 			/*
 			QString expr = TripeValue(var->m_expr);
 			if (!var->m_expr->isPure()) {
@@ -811,7 +834,7 @@ QString CodeGenTRIPE::resolveTemporaryClassPointer(QString name, int mul, int& r
 }
 
 TokenType::Type CodeGenTRIPE::getType( QSharedPointer<Node> node) {
-    if (node->isWord(as))
+	if (node->isWord(as))
 		return TokenType::INTEGER;
     if (node->isLong(as))
 		return TokenType::LONG;

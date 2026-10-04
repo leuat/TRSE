@@ -15,6 +15,7 @@ public:
 	AbstractCodeGen* m_codeGen = nullptr;
     QSharedPointer<NodeBuiltinMethod> m_node = nullptr;
     virtual void Assemble(Assembler *as, AbstractCodeGen *dispatcher) = 0;
+	Assembler* m_org = nullptr;
 
     virtual bool Command(QString name) = 0;
 

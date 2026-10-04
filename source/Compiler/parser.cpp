@@ -466,10 +466,11 @@ void Parser::InitBuiltinFunction(QStringList methodName,
                 Token(TokenType::PROCEDURE, builtinFunctionName),
                 builtinFunctionName));
             m_ignoreBuiltinFunctionTPU.append(builtinFunctionName);
-
-            if (!Data::data.useTripe)
+                QString call = "jsr";
+                if (Data::data.useTripe)
+                    call = "call";
                 if (initJump != "")
-                    m_initJumps << "\tjsr " + initJump;
+                    m_initJumps << "\t"+call + "\t" + initJump;
             return;
         }
 }

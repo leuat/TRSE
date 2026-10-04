@@ -1567,28 +1567,32 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
   QSharedPointer<AbstractMethods> methods =
       FactoryMethods::CreateMethods(system);
   methods->m_node = node;
-  //    qDebug() << "BALLE"<<methods << Syntax::s.m_currentSystem->m_system <<
-  //    qSharedPointerDynamicCast<Methods6502>(methods);
 
   auto assembler = as;
   auto p = FactoryAssembler::create(Syntax::s.m_currentSystem->m_processor);
   if (Data::data.useTripe) {
 	  as->Term();
-	  as->Asm(".asm");
+	  if (as->isTripe())
+		  as->Asm(".asm");
+
 	  assembler = p.get();
 	  assembler->m_symTab = as->m_symTab;
 	  assembler->m_zpStack = as->m_zpStack;
 	  assembler->m_tempZeroPointers = as->m_tempZeroPointers;
 	  assembler->m_replaceValues = as->m_replaceValues;
+	  methods->m_org = as;
 
   }
   methods->Assemble(assembler, this);
 
-
 // Convert back
   if (Data::data.useTripe) {
-	  as->m_currentBlock->m_source.append(assembler->m_source);
-	  as->Asm(".endasm");
+	  if (as->m_currentBlock!=nullptr)
+		  as->m_currentBlock->m_source.append(assembler->m_source);
+	  else
+		  as->m_source.append(assembler->m_source);
+	  if (as->isTripe())
+		  as->Asm(".endasm");
 	  as->m_tempVarsBlock->m_source.append(assembler->m_tempVarsBlock->m_source);
 	  // damn strings
 	  for (auto t : assembler->m_tempVars) {

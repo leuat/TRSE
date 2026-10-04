@@ -74,6 +74,8 @@ QString Util::BinopString(QString a) {
     QString pb = "";
     QString str = "0123456789$#%abcdefABCDEF <>";
     a=a.simplified().trimmed();
+	a = a.replace("0x","$");
+
 
     if (a.contains("'")) {
         for (QChar c:str)
@@ -149,7 +151,6 @@ QString Util::BinopString(QString a) {
 bool Util::NumberFromStringHex(QString s, long &num) {
     bool ok = true;
     s=s.trimmed();
-
     long val = 0;
 
     int type = 0;
