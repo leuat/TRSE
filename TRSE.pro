@@ -118,6 +118,10 @@ winxp {
     QMAKE_CFLAGS += -std=gnu99
     CONFIG += resources_big
     DEFINES += TRSE_QT56
+    # Qt 5.6's bundled PCRE matches recursively (one stack frame per repetition), so the comment
+    # stripping regex in Parser::InitBuiltinFunction overflows the default 2 MB stack on units with
+    # long block comments (SNES, TIM, TRS80COCO). Reserve 32 MB; only touched pages get committed.
+    QMAKE_LFLAGS += -Wl,--stack,33554432
     # 32-bit MinGW 4.9 build of Lua 5.3.5, made as described in README.md ("Lua issues");
     # the stock liblua.a is not usable here. Override with LUA_XP_LIB=... on the qmake command line.
     isEmpty(LUA_XP_LIB): LUA_XP_LIB = $$PWD/libs/lua/liblua_xp.a
