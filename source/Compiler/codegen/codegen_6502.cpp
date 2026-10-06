@@ -31,7 +31,9 @@ void CodeGen6502::EightBitDiv(QSharedPointer<Node> node) {
     as->Asm("sta div8x8_c");
 
     as->Term();
-    as->Asm(getCallSubroutine()+" div8x8_procedure");
+	QString div8 = Data::data.useTripe?"div_8bit":"div8x8_procedure";
+
+	as->Asm(getCallSubroutine()+" " + div8);
 
 }
 
@@ -54,7 +56,8 @@ void CodeGen6502::EightBitMul(QSharedPointer<Node> node) {
 
     as->Term();
 
-    as->Asm(getCallSubroutine()+" multiply_eightbit");
+	QString mul8 = Data::data.useTripe?"mul_8bit":"multiply_eightbit";
+	as->Asm(getCallSubroutine()+" " +mul8);
     as->Asm("txa"); // result in a
     as->Asm("ldy #0 ; ::EightbitMul");
 
@@ -600,7 +603,8 @@ void CodeGen6502::Mul16x8(QSharedPointer<Node> node) {
     LoadVariable(node->m_right);
     as->Term();
     as->Asm("sta mul16x8_num2");
-    as->Asm(getCallSubroutine()+" mul16x8_procedure");
+	QString mul16 = Data::data.useTripe?"mul_16bit":"mul16x8_procedure";
+	as->Asm(getCallSubroutine()+" " + mul16);
     //  Enable16bit();
 
 }
@@ -618,7 +622,9 @@ void CodeGen6502::Div16x8(QSharedPointer<Node> node) {
     as->Term();
     as->Asm("sta initdiv16x8_divisor");
     as->Asm("sty initdiv16x8_divisor+1");
-    as->Asm(getCallSubroutine()+" divide16x8");
+	QString div16 = Data::data.useTripe?"div_16bit":"divide16x8";
+
+	as->Asm(getCallSubroutine()+" "+ div16);
     as->Asm("lda initdiv16x8_dividend");
     as->Asm("ldy initdiv16x8_dividend+1");
 

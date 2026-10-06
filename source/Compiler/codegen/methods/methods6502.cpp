@@ -32,6 +32,7 @@ void Methods6502::PointToVera(Assembler* as, int address, bool initLow)
 void Methods6502::Assemble(Assembler *as, AbstractCodeGen* dispatcher) {
 
     if (m_org==nullptr) m_org =  as;
+
     if (!Data::data.useTripe)
         m_codeGen = dispatcher;
     else
@@ -2872,8 +2873,14 @@ QString Methods6502::checkAndInitStringParameter(Assembler *as, int n)
 
     if (str!=nullptr) {
         QString name= as->NewLabel("new_string_define");
-
-        as->m_tempVars<< name + as->String(str->m_val,true);
+        if (Data::data.useTripe) {
+            auto cb = m_org->m_currentBlock;
+            m_org->m_currentBlock = m_org->m_tempVarsBlock;
+            m_org->DeclareString(name,str->m_val,QStringList());
+            m_org->m_currentBlock = cb;
+        }
+        else
+            as->m_tempVars<< name + as->String(str->m_val,true);
     //        as->Label(varName + as->String(str->m_val));
         as->m_term="";
         as->PopLabel("new_string_define");

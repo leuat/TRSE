@@ -28,16 +28,19 @@ QString CodeGenTRIPE::getParamValue(QSharedPointer<Node> node, int& pop) {
 
 		auto method = qSharedPointerDynamicCast<NodeBuiltinMethod>(node);
 		// override hi and lo dammit
-/*		if (method!=nullptr) {
-			qDebug() << method->m_procName;
+		if (method!=nullptr) {
+//			qDebug() << method->m_procName;
 			if (method->m_procName=="lo" && method->m_params[0]->isPureNumeric())
 				return Util::numToHex0(method->m_params[0]->getValueAsInt(as)&0xff);
 			if (method->m_procName=="hi" && method->m_params[0]->isPureNumeric()) {
-				qDebug() << "HERE";
 				return Util::numToHex0((method->m_params[0]->getValueAsInt(as)>>8)&0xff);
 			}
+			if (method->m_procName=="lo" && method->m_params[0]->isPureVariable())
+				return "<"+method->m_params[0]->getValue(as);
+			if (method->m_procName=="hi" && method->m_params[0]->isPureVariable())
+				return ">"+method->m_params[0]->getValue(as);
 		}
-*/
+
 
 
 		node->Accept(this);
@@ -432,6 +435,17 @@ QString CodeGenTRIPE::TripeNumber(QSharedPointer<Node> node)
 
 QString CodeGenTRIPE::TripeValue(QSharedPointer<Node> node)
 {
+
+/*	auto method = qSharedPointerDynamicCast<NodeBuiltinMethod>(node);
+	if (method!=nullptr) {
+		//		qDebug() <<method->m_procName;
+		if (method->m_procName.toLower()=="ll") {
+			// ugh old built-in methods suck
+			qDebug() << "CODEGEN TRIPE HERE";
+		}
+	}
+*/
+
     if (node->isPureNumeric())
         return TripeNumber(node);
 	QString s = "";
@@ -653,10 +667,13 @@ void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeNumber>node)
 
 void CodeGenTRIPE::LoadVariable(QSharedPointer<NodeProcedure> node)
 {
-    as->Asm("lda #<"+node->m_procedure->m_procName);
+/*    as->Asm("lda #<"+node->m_procedure->m_procName);
     //Disable16bit();
     as->Asm("ldy #>"+node->m_procedure->m_procName);
     //Enable16bit();
+	*/
+//	Doublette(getTempName(TokenType::INTEGER), node->m_procedure->m_procName,"mov");
+	as->Asm("mov"+tab+getTempName(TokenType::INTEGER)+tab+"#"+node->m_procedure->m_procName);
 }
 
 
@@ -693,6 +710,14 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 	QSharedPointer<NodeVar> left = qSharedPointerDynamicCast<NodeVar>(node->m_left);
 
 	QString str = DefineTempString(right);
+
+	if ((isPointer || left->isStringList(as)) && left->m_expr==nullptr) {
+		auto ptr = left->getValue(as);
+
+		as->Asm("mov" + tab + ptr + tab + "#"+str);
+//		m_curTemp.pop();
+		return;
+	}
 
 	if ((isPointer || left->isStringList(as)) && left->m_expr!=nullptr) {
 		auto r0 = getTempName(TokenType::BYTE);

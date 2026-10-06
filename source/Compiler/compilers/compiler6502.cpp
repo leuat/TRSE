@@ -5,7 +5,7 @@
 void Compiler6502::InitAssemblerAnddispatcher(
     QSharedPointer<AbstractSystem> system) {
     // Experimental tripe
-  if (m_projectIni->getdouble("use_tripe") == 1.0) {
+  if (Data::data.useTripe) {
     m_codeGen = QSharedPointer<CodeGenTRIPE>(new CodeGenTRIPE());
 	// temp init
 	m_assembler = QSharedPointer<Asm6502>(new Asm6502());
@@ -15,9 +15,7 @@ void Compiler6502::InitAssemblerAnddispatcher(
     m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
 	m_assembler->m_zeroPointers = keep->m_zeroPointers;
 	m_assembler->m_tempZeroPointers = keep->m_tempZeroPointers;
-	Data::data.useTripe = true;
   } else {
-	Data::data.useTripe = false;
 	m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
     m_assembler = QSharedPointer<Asm6502>(new Asm6502());
     m_assembler->m_isOrgasm =
@@ -155,13 +153,27 @@ void Compiler6502::Init6502Assembler() {
             m_projectIni->getString("override_target_settings_org"));
     Syntax::s.m_currentSystem->m_stripPrg =
         m_projectIni->getdouble("override_target_settings_prg") == 1;
+
+
+
     if (Syntax::s.m_ignoreSys)
       Syntax::s.m_currentSystem->m_startAddress =
           Syntax::s.m_currentSystem->m_programStartAddress;
+
+
   } else {
     Syntax::s.m_currentSystem->DefaultValues();
     Syntax::s.m_ignoreSys = Syntax::s.m_currentSystem->m_ignoreSys;
   }
+
+  if (Data::data.useTripe) {
+	  // Tripe creates stub on its own
+	  Syntax::s.m_ignoreSys = true;
+	  Syntax::s.m_currentSystem->m_ignoreSys = true;
+	  Syntax::s.m_currentSystem->m_startAddress =
+		  Syntax::s.m_currentSystem->m_programStartAddress;
+  }
+
   if (Syntax::s.m_currentSystem->m_system == AbstractSystem::NES) {
     Syntax::s.m_currentSystem->m_programStartAddress =
         Util::NumberFromStringHex(m_projectIni->getString("nes_code_start"));

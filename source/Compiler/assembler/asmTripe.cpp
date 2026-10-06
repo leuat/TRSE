@@ -139,7 +139,8 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
         t = byte;
 
      if (data.count()==0 && pos!="") {
-         Write(name + " = " + pos);
+//         Write(name + " = " + pos);
+		 Write("decl"+tab+name+tab+"address:"+pos);
          return;
      }
 
@@ -217,7 +218,7 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
          return;
 
     if (type.toLower()=="const") {
-		Write(tab+"decl"+tab+  name +tab + "address" + ":"+initval);
+		Write(tab+"decl"+tab+  name +tab + "address" + ":"+initval.replace("$","0x"));
 		return;
     }
 
@@ -478,10 +479,10 @@ void AsmTripe::Connect()
 
 
     for (QString& l: m_source) {
-        l.replace("StartBlock","; .label StartBlock");
+		l.replace("StartBlock",".label StartBlock");
     }
     for (QString& l: m_source)
-        l.replace("EndBlock","; .label EndBlock");
+		l.replace("EndBlock",".label EndBlock");
   //  for (QString& l: m_source)
     //    l.replace("processor",".processor");
     for (QString& l: m_source) {
@@ -561,13 +562,14 @@ bool AsmTripe::DeclareRecord(QString name, QString type, int count, QStringList 
 				QSharedPointer<Symbol> s = st->m_symbols[v];
 				//qDebug() << "WTF " <<s->m_name <<s->m_type;
 				// Build the name
+				QString type = "address";
+				if (s->m_type.toLower()=="integer")
+					type ="address";
 				QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
-				QString w = n+"";
+				QString w = "decl" +tab+n+tab+type+":"+Util::numToHex(p);;
 				//            QString t = byte;
 				//
 				//                  t= word;
-
-				w = w+ "\t EQU \t" + Util::numToHex(p);
 
 
 					   //if (s->m_type.toLower()=="integer")
