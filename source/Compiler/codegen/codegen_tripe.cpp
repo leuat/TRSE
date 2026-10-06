@@ -25,6 +25,10 @@ bool CodeGenTRIPE::overrideBuiltinMethod(QSharedPointer<NodeBuiltinMethod> node)
 		Triplette(node->m_params[0], node->m_params[1], node->m_params[2],"store");
 		return  true;
 	}
+	if (node->m_procName.toLower()=="peek") {
+		Triplette(node->m_params[0], node->m_params[1], getTempName(TokenType::BYTE),"load");
+		return  true;
+	}
 	return false;
 }
 

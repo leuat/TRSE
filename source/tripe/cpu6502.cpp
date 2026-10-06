@@ -12,7 +12,10 @@ namespace tripe {
 
 CPU6502::CPU6502() : AbstractCPU() {
     //    AbstractCPU();
-    Init(Data::s_opcodes);
+    Init(Data::d.opcodes);
+    m_ptrZp = Data::d.ptrZp;
+    m_whZp = Data::d.whZp;
+    m_regZp = Data::d.regZp;
     m_symtab.clear();
     m_hexprefix = "$";
     m_typeTripeToNative["uint8"] = "dc.b";
@@ -43,19 +46,28 @@ CPU6502::CPU6502() : AbstractCPU() {
     //    m_typeTripeToNative["bcc"] = "bcc";
     //    m_typeTripeToNative["bcs"] = "bcs";
 
-    m_code["mul8"] = string((char *)resources_6502_mul8_asm);
-    m_code["div8"] = string((char *)resources_6502_div8_asm);
-    m_code["mul16"] = string((char *)resources_6502_mul16_asm);
-    m_code["div16"] = string((char *)resources_6502_div16_asm);
-    //    addCode("mul8");
-    //    addCode("mul16");
+    m_code["mul8"] = insertWhZp(string((char *)resources_6502_mul8_asm));
+    m_code["div8"] = insertWhZp(string((char *)resources_6502_div8_asm));
+    m_code["mul16"] = insertWhZp(string((char *)resources_6502_mul16_asm));
+    m_code["div16"] = insertWhZp(string((char *)resources_6502_div16_asm));
+}
+
+string CPU6502::insertWhZp(string s) {
+    // replace a couple of zps
+    int startZp = m_whZp;
+    for (int i = 0; i < 16; i++) {
+        string zp = "$" + Util::toHex(startZp++);
+        s = Util::ReplaceString(s, "@ZP" + std::to_string(i), zp);
+    }
+
+    return s;
 }
 
 void CPU6502::InsertTempValues(vector<string> &lst, int pos) {
     for (auto s : m_registersUsed) {
-        lst.insert(lst.begin() + pos, s + " = $" + Util::toHex(m_tmpZp));
+        lst.insert(lst.begin() + pos, s + " = $" + Util::toHex(m_regZp));
         pos += 1;
-        m_tmpZp += m_symtab[s] == "uint8" ? 1 : 2;
+        m_regZp += m_symtab[s] == "uint8" ? 1 : 2;
     }
 }
 
@@ -198,8 +210,8 @@ void CPU6502::Declare(int &pos) {
         Asm(name.str + "\t=\t" + "0x" + value.str);
 
     } else if (m_symtab[name.str].starts_with("ptr")) {
-        Asm(name.str + "\t=\t" + to_string(m_curZp));
-        m_curZp += 2;
+        Asm(name.str + "\t=\t" + to_string(m_ptrZp));
+        m_ptrZp += 2;
 
     } else {
         Label(name.str, m_typeTripeToNative[m_opcodeToAsm[value.type]] + "\t" +

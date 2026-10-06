@@ -18,7 +18,7 @@ class Opcodes : public AbstractCPU {
     static const int DATATYPE_STRING = 1;
     static const int DATATYPE_NUMBER = 0;
 
-    Opcodes() { Init(Data::s_opcodes); }
+    Opcodes() { Init(Data::d.opcodes); }
 };
 } // namespace tripe
 

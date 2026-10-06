@@ -638,9 +638,22 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	auto sys = StringFromSystem(m_system).toLower();
 	auto params  = QStringList() << "nada" <<"-c"  <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
 
+	if (m_processor == MOS6502) {
+		if (m_projectIni->contains("zeropages")) {
+			QString val = m_projectIni->getStringList("zeropages")[0];
+			params<<"-ptr_zp" << Util::numToHex0(Util::NumberFromStringHex(val));
+		}
+		if (m_projectIni->contains("temp_zeropages")) {
+			QString val = m_projectIni->getStringList("temp_zeropages")[0];
+			params<<"-reg_zp" << Util::numToHex0(Util::NumberFromStringHex(val));
+		}
+		if (m_projectIni->contains("zeropage_internal1")) {
+			QString val = m_projectIni->getString("zeropage_internal1");
+			params<<"-wh_zp" << Util::numToHex0(Util::NumberFromStringHex(val));
+		}
 
-//	GenericAssemble(tripe,params,error,text);
-	//*/
+	}
+
 	tripe::Tripe tripe(params.size(), Util::StringListToChar(params));
 	tripe.setInternal(true);
 	tripe.Execute();
@@ -654,7 +667,7 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 
 	}
 	else {
-		text+="<br><font color=\"#A040FF\">Tripe</font>: Optimized "+QString::number(tripe.m_optTripe)+" lines of tripe and "+QString::number(tripe.m_optAsm) + " lines of asm.<br>";
+		text+="<br><font color=\"#A040FF\">Tripe</font>: Optimized "+QString::number(tripe.m_optTripe)+" lines of tripe and "+QString::number(tripe.m_optAsm) + " lines of asm in "+QString::number(tripe.m_timeMs/1000.0) +"ms.<br>";
 	}
 
 	QFile::remove(file);

@@ -13,7 +13,8 @@ namespace tripe {
 
 class Tripe {
   public:
-    vector<string> m_requireNextParam = {"i", "o", "arch", "sys"};
+    vector<string> m_requireNextParam = {"i",      "o",      "arch", "sys",
+                                         "ptr_zp", "reg_zp", "wh_zp"};
     vector<string> m_supportedArchitectures = {"mos6502", "tripe2trasm",
                                                "trasm2tripe", "amd64", "tropt"};
     vector<string> m_supportedSystems = {"c64", "vic20"};
@@ -23,6 +24,7 @@ class Tripe {
     void Execute();
     int m_optAsm = 0;
     int m_optTripe = 0;
+    int m_timeMs = 0;
 
   private:
     map<string, string> m_args;

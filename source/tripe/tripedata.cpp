@@ -3,7 +3,6 @@
 using namespace tripe;
 namespace tripe {
 
-std::string Data::s_opcodes = "";
-bool Data::s_isInternal = false;
+Data Data::d;
 
 } // namespace tripe

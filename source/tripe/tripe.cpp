@@ -2,13 +2,14 @@
 #include "error.h"
 #include "tripeparser.h"
 #include "tripeutil.h"
+#include <chrono>
 #include <filesystem>
 #include <map>
 
 using namespace tripe;
 namespace tripe {
 
-void Tripe::setInternal(bool b) { Data::s_isInternal = b; }
+void Tripe::setInternal(bool b) { Data::d.isInternal = b; }
 
 Tripe::Tripe(int argc, char *argv[]) {
     for (int i = 1; i < argc; i++) {
@@ -58,6 +59,14 @@ void Tripe::Execute() {
     if (sys != "")
         params["sys"] = sys;
 
+    if (m_args.contains("ptr_zp"))
+        Data::d.ptrZp = Util::fromNumber(m_args["ptr_zp"]);
+    if (m_args.contains("reg_zp"))
+        Data::d.regZp = Util::fromNumber(m_args["reg_zp"]);
+    if (m_args.contains("wh_zp"))
+        Data::d.whZp = Util::fromNumber(m_args["wh_zp"]);
+
+    auto start = chrono::system_clock::now();
     try {
 
         if (m_args.contains("c")) {
@@ -79,13 +88,17 @@ void Tripe::Execute() {
         }
         m_optAsm = p.m_noAsmLinesOpt;
         m_optTripe = p.m_noTripeLinesOpt;
-        if (!Data::s_isInternal)
+        if (!Data::d.isInternal)
             cout << "ok." << endl;
     } catch (string error) {
-        if (!Data::s_isInternal) {
+        if (!Data::d.isInternal) {
             cout << error << endl;
             exit(1);
         }
     }
+    auto stop = std::chrono::high_resolution_clock::now();
+    m_timeMs =
+        std::chrono::duration_cast<std::chrono::milliseconds>(stop - start)
+            .count();
 }
 } // namespace tripe

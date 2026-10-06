@@ -13,8 +13,9 @@ namespace tripe {
 
 class CPU6502 : public AbstractCPU {
   public:
-    int m_curZp = 10;
-    int m_tmpZp = 0x80;
+    int m_ptrZp = 10;
+    int m_regZp = 0x80;
+    int m_whZp = 0x40;
     CPU6502();
 
     //    string ParseFromBinary(vector<uint8_t>& m_data, int& pos) override;
@@ -32,6 +33,8 @@ class CPU6502 : public AbstractCPU {
     void Branch(int &pos, int opcode) override;
 
     int estimateCodeSize(const string &s) override;
+
+    string insertWhZp(string s);
 
     //    void Beq(int &pos, string cmd) override;
 
