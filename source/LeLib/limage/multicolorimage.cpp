@@ -970,6 +970,8 @@ void MultiColorImage::VBMExport(QFile &file, int start, int end, int height, int
                     // VIC20 and Multicolor mode - swap bit
                     if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7 )
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
+                    else if (isMulticolor == 2)
+                        data.append( PixelChar::reversePairs(pc.p[i]));
                     else
                         data.append( PixelChar::reverse(pc.p[i]));
                 }
@@ -1038,6 +1040,8 @@ void MultiColorImage::VBMExportChunk(QFile &file, int start, int width, int heig
                     // VIC20 and Multicolor mode - swap bit
                     if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
+                    else if (isMulticolor == 2)
+                        data.append( PixelChar::reversePairs(pc.p[i]));
                     else
                         data.append( PixelChar::reverse(pc.p[i]));
                 }
@@ -1089,6 +1093,8 @@ void MultiColorImage::VBMExportPixel(QFile &file, int start, int width, int heig
                     // VIC20 and Multicolor mode - swap bit
                     if (m_colorList.m_type == LColorList::VIC20 && isMulticolor == 1 && pc.c[3] > 7)
                         data.append( PixelChar::reverse(PixelChar::VIC20Swap(pc.p[i])));
+                    else if (isMulticolor == 2)
+                        data.append( PixelChar::reversePairs(pc.p[i]));
                     else
                         data.append( PixelChar::reverse(pc.p[i]));
                 }

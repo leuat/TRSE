@@ -63,6 +63,10 @@ public:
        b = (b & 0xAA) >> 1 | (b & 0x55) << 1;
        return b;
     }
+
+    static unsigned char reversePairs(unsigned char b) {
+        return (b & 0x03) << 6 | (b & 0x0C) << 2 | (b & 0x30) >> 2 | (b & 0xC0) >> 6;
+    }
 };
 
 
