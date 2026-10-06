@@ -4,8 +4,8 @@
 #
 #-------------------------------------------------
 
-# Since ~2022, been using c++17
-CONFIG += c++17
+# Since ~2026, been using c++20
+CONFIG += c++20
 
 QT += core gui opengl qml
 QT += widgets
@@ -31,6 +31,7 @@ DEFINES += USE_LUA
 DEFINES +=USE_OMP
 # lua include path
 INCLUDEPATH +=$$PWD/libs/lua/include
+INCLUDEPATH +=$$PWD/source/tripe/
 
 # set temporary directory for qt generated files
 OBJECTS_DIR = ./tmp/obj
@@ -345,6 +346,18 @@ SOURCES += source/main.cpp\
     source/mynth/ma_context.cpp \
     source/misc/toolbox.cpp \
     source/misc/toolboxitem.cpp \
+    source/tripe/abstractcpu.cpp \
+    source/tripe/cpu6502.cpp \
+    source/tripe/tripedata.cpp \
+    source/tripe/error.cpp \
+    source/tripe/opcodes.cpp \
+    source/tripe/opts/phopt.cpp \
+    source/tripe/opts/phopt6502.cpp \
+    source/tripe/opts/tropt.cpp \
+    source/tripe/tripeparser.cpp \
+    source/tripe/stubs.cpp \
+    source/tripe/tripe.cpp \
+    source/tripe/tripeutil.cpp \
     source/trsedocuments/dialogcustomwarning.cpp \
     source/trsedocuments/formhexedit.cpp \
     source/trsedocuments/formrtf.cpp \
@@ -677,6 +690,23 @@ HEADERS  += source/mainwindow.h \
     source/mynth/mynthesizer.h \
     source/misc/toolbox.h \
     source/misc/toolboxitem.h \
+    source/tripe/abstractcpu.h \
+    source/tripe/cpu6502.h \
+    source/tripe/tripedata.h \
+    source/tripe/error.h \
+    source/tripe/opcodes.h \
+    source/tripe/opts/phopt.h \
+    source/tripe/opts/phopt6502.h \
+    source/tripe/opts/tropt.h \
+    source/tripe/tripeparser.h \
+    source/tripe/resources/div16_6502.h \
+    source/tripe/resources/div8_6502.h \
+    source/tripe/resources/mul16_6502.h \
+    source/tripe/resources/mul8_6502.h \
+    source/tripe/resources/opcodes_data.h \
+    source/tripe/stubs.h \
+    source/tripe/tripe.h \
+    source/tripe/tripeutil.h \
     source/trsedocuments/dialogcustomwarning.h \
     source/trsedocuments/formhexedit.h \
     source/trsedocuments/formrtf.h \

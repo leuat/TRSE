@@ -90,9 +90,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-1240</y>
-                 <width>919</width>
-                 <height>1658</height>
+                 <y>0</y>
+                 <width>926</width>
+                 <height>1497</height>
                 </rect>
                </property>
                <layout class="QGridLayout" name="gridLayout_17">
@@ -1328,8 +1328,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>968</width>
-              <height>231</height>
+              <width>972</width>
+              <height>234</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1379,18 +1379,7 @@
                <property name="title">
                 <string>Tripe settings (experimental)</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_16">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_27">
-                  <property name="text">
-                   <string>Tripe location:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="leTripeLoc"/>
-                </item>
-               </layout>
+               <layout class="QGridLayout" name="gridLayout_16"/>
               </widget>
              </item>
             </layout>
@@ -1427,8 +1416,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>949</width>
-              <height>1240</height>
+              <width>954</width>
+              <height>1127</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1923,8 +1912,8 @@ Use Pasmo if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>949</width>
-              <height>866</height>
+              <width>954</width>
+              <height>786</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_26">
@@ -2246,8 +2235,8 @@ Use Pasmo if something goes wrong</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>949</width>
-              <height>982</height>
+              <width>954</width>
+              <height>891</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_30">

@@ -1,0 +1,44 @@
+#include "data.h"
+
+std::string s_opcodes = "
+#opcodes
+
+    uint8,
+            0xF8, uint16, 0xF9, uint32, 0xFA, uint64, 0xFB,
+
+            .tripe, 0x01, ival.code, 0x02, ival : p.data, 0x3, ival decl, 0x4,
+            p : ival declptr,
+            0x5,
+            p : ival.processor,
+            0x6,
+            p.uint8,
+            0xF0,
+            datastream.uint16,
+            0xF1,
+            datastream.end,
+            0x0F,
+            0
+
+                    .label,
+            08,
+            p
+
+                return,
+            0x10,
+            0 mov,
+            0x11,
+            p : p store_p,
+            0x12,
+            p : p : p load_p,
+            0x13,
+            p : p : p
+
+                        add,
+            0x20,
+            p : p : p
+
+                        jump,
+            0x30,
+            p
+
+                    ";

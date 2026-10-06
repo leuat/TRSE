@@ -159,7 +159,6 @@ void DialogTRSESettings::FillFromIni()
     ui->cmbThemeFjong->setCurrentText(m_ini->getString("theme_fjong").split(".")[0]);
 
 
-    ui->leTripeLoc->setText(m_ini->getString("tripe_location"));
 
     ui->leFontSize->setText(QString::number((int)m_ini->getdouble("font_size")));
     ui->leFontScale->setText(QString::number(m_ini->getdouble("font_size_scale")));
@@ -316,7 +315,6 @@ void DialogTRSESettings::FillToIni()
     m_ini->setFloat("custom_keyword_bold",ui->chkBold_2->isChecked());
     m_ini->setFloat("custom_keyword_italic",ui->chkItalic_2->isChecked());
 
-    m_ini->setString("tripe_location",ui->leTripeLoc->text());
 
 
 }

@@ -11,6 +11,9 @@
 #include "source/LeLib/util/cc1541.h"
 #include "source/LeLib/limage/limageio.h"
 #include "source/LeLib/util/dirartd64.h"
+#include "source/tripe/tripe.h"
+#include "source/tripe/tripedata.h"
+#include "source/tripe/error.h"
 
 extern "C" {
 	#include "source/LeLib/util/zx0/zx0.h"
@@ -633,20 +636,25 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	QFile::remove(file+".asm");
 
 	auto sys = StringFromSystem(m_system).toLower();
-	auto params  = QStringList() << "-c"  <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
-	QString tripe = m_settingsIni->getString("tripe_location");
+	auto params  = QStringList() << "nada" <<"-c"  <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
 
-#ifdef __linux__
-	if (tripe=="") {
-		tripe = currentDir+"/tripe";
-		Util::CopyFile(":resources/bin/tripe/tripe_linux",tripe);
-		QFile(tripe).setPermissions(QFileDevice::ReadOther | QFileDevice::ExeOwner);
-	}
-#endif
 
-	GenericAssemble(tripe,params,error,text);
-	if (error.contains("error"))
+//	GenericAssemble(tripe,params,error,text);
+	//*/
+	tripe::Tripe tripe(params.size(), Util::StringListToChar(params));
+	tripe.setInternal(true);
+	tripe.Execute();
+
+	if (tripe::Error::s_error!="")
 		m_buildSuccess = false;
+
+	if (!m_buildSuccess) {
+		text+=tripe::Error::s_error;
+
+	}
+	else {
+		text+="<br><font color=\"#A040FF\">Tripe</font>: Optimized "+QString::number(tripe.m_optTripe)+" lines of tripe and "+QString::number(tripe.m_optAsm) + " lines of asm.<br>";
+	}
 
 	QFile::remove(file);
 }
