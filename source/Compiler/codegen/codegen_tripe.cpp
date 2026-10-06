@@ -19,6 +19,16 @@ void CodeGenTRIPE::HandleGenericBinop(QSharedPointer<Node> node) {
 
 }
 
+bool CodeGenTRIPE::overrideBuiltinMethod(QSharedPointer<NodeBuiltinMethod> node)
+{
+	if (node->m_procName.toLower()=="poke") {
+		Triplette(node->m_params[0], node->m_params[1], node->m_params[2],"store");
+		return  true;
+	}
+	return false;
+}
+
+
 QString CodeGenTRIPE::getParamValue(QSharedPointer<Node> node, int& pop) {
 	QString r="";
 	if (node->isPure() && qSharedPointerDynamicCast<NodeBuiltinMethod>(node)==nullptr) {
@@ -39,6 +49,8 @@ QString CodeGenTRIPE::getParamValue(QSharedPointer<Node> node, int& pop) {
 				return "<"+method->m_params[0]->getValue(as);
 			if (method->m_procName=="hi" && method->m_params[0]->isPureVariable())
 				return ">"+method->m_params[0]->getValue(as);
+
+
 		}
 
 
@@ -126,6 +138,22 @@ void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSt
 		m_curTemp.pop();
 
 	as->Asm(cmd+tab+ l+tab+r+tab+c);
+	as->Term();
+
+}
+
+void CodeGenTRIPE::Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> c, QString cmd)
+{
+	int pop=0;
+
+	QString l = getParamValue(a,pop);
+	QString r = getParamValue(b,pop);;
+	QString r2 = getParamValue(c,pop);;
+
+	for (int i=0;i<pop;i++)
+		m_curTemp.pop();
+
+	as->Asm(cmd+tab+ l+tab+r+tab+r2);
 	as->Term();
 
 }

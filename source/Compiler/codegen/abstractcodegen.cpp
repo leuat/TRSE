@@ -1568,6 +1568,9 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
       FactoryMethods::CreateMethods(system);
   methods->m_node = node;
 
+  if (overrideBuiltinMethod(node))
+	  return;
+
   auto assembler = as;
   auto p = FactoryAssembler::create(Syntax::s.m_currentSystem->m_processor);
   if (Data::data.useTripe) {

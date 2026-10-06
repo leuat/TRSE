@@ -342,7 +342,7 @@ public:
      */
     void LineNumber(int ln);
 
-
+	virtual bool overrideBuiltinMethod(QSharedPointer<NodeBuiltinMethod> m) { return false;}
 
     /*
      * The following two methods are used in BuildConditional, and will

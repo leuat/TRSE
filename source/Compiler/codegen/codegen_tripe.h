@@ -78,6 +78,7 @@ public:
 //	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QSharedPointer<Node> c,QString cmd);
 	void Triplette(QSharedPointer<Node> a,QSharedPointer<Node> b, QString c,QString cmd);
 	void Triplette(QString a,QSharedPointer<Node> b, QString c,QString cmd);
+	void Triplette(QSharedPointer<Node> a, QSharedPointer<Node> b, QSharedPointer<Node> c, QString cmd);
 
 	void ReturnValue(QSharedPointer<NodeProcedureDecl> node) override;
 
@@ -180,6 +181,8 @@ public:
     void LoadVariable(QSharedPointer<NodeNumber> node) override;
     void LoadVariable(QSharedPointer<NodeProcedure> node) override;
 
+
+	bool overrideBuiltinMethod(QSharedPointer<NodeBuiltinMethod> m) override;
 
     /*
      *
