@@ -649,7 +649,7 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 		m_buildSuccess = false;
 
 	if (!m_buildSuccess) {
-		text+=tripe::Error::s_error;
+		text+=QString::fromStdString(tripe::Error::s_error);
 
 	}
 	else {
