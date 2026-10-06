@@ -5786,8 +5786,8 @@ void Parser::HandlePixelLab(){
     QString rawParams = m_currentToken.m_value;
     Eat(TokenType::STRING);
     QProcess p;
-    QStringList params = dstFile.trimmed().simplified().split(" ") + rawParams.trimmed().simplified().split(" ");
-    qDebug() << params;
+    QStringList params = QStringList() << "--project" <<projFile << "--out-dir" <<dstFile.trimmed().simplified().split(" ") + rawParams.trimmed().simplified().split(" ");
+
     p.startDetached(m_settingsIni->getString("image_editor_loc"),params);
 }
 
