@@ -58,26 +58,34 @@ void Tripe::Execute() {
     if (sys != "")
         params["sys"] = sys;
 
-    if (m_args.contains("c")) {
-        // Do all in a row
-        auto optTripe = Util::insertInFilename(inFile, "_opt");
-        auto binTripe = Util::getFilenameAlone(inFile) + ".trp";
-        cout << optTripe << endl;
-        Util::save_text(optTripe, p.TripeOptimise(inFile));
-        Util::save_binary(binTripe, p.ParseText(optTripe));
-        Util::save_text(outFile, p.ParseBinary(binTripe, arch, params));
+    try {
 
-    } else {
-        if (arch == "trasm2tripe") {
-            Util::save_binary(outFile, p.ParseText(inFile));
-        } else if (arch == "tropt")
-            Util::save_text(outFile, p.TripeOptimise(inFile));
-        else
-            Util::save_text(outFile, p.ParseBinary(inFile, arch, params));
+        if (m_args.contains("c")) {
+            // Do all in a row
+            auto optTripe = Util::insertInFilename(inFile, "_opt");
+            auto binTripe = Util::getFilenameAlone(inFile) + ".trp";
+            cout << optTripe << endl;
+            Util::save_text(optTripe, p.TripeOptimise(inFile));
+            Util::save_binary(binTripe, p.ParseText(optTripe));
+            Util::save_text(outFile, p.ParseBinary(binTripe, arch, params));
+
+        } else {
+            if (arch == "trasm2tripe") {
+                Util::save_binary(outFile, p.ParseText(inFile));
+            } else if (arch == "tropt")
+                Util::save_text(outFile, p.TripeOptimise(inFile));
+            else
+                Util::save_text(outFile, p.ParseBinary(inFile, arch, params));
+        }
+        m_optAsm = p.m_noAsmLinesOpt;
+        m_optTripe = p.m_noTripeLinesOpt;
+        if (!Data::s_isInternal)
+            cout << "ok." << endl;
+    } catch (string error) {
+        if (!Data::s_isInternal) {
+            cout << error << endl;
+            exit(1);
+        }
     }
-    m_optAsm = p.m_noAsmLinesOpt;
-    m_optTripe = p.m_noTripeLinesOpt;
-    if (!Data::s_isInternal)
-        cout << "ok." << endl;
 }
 } // namespace tripe

@@ -139,8 +139,9 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
         t = byte;
 
      if (data.count()==0 && pos!="") {
-//         Write(name + " = " + pos);
-		 Write("decl"+tab+name+tab+"address:"+pos);
+		 QString t = "8";
+		 if (type.toLower()=="INTEGER") t = "16";
+		 Write("decl"+tab+name+tab+"address"+t+":"+pos);
          return;
      }
 
@@ -218,7 +219,8 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
          return;
 
     if (type.toLower()=="const") {
-		Write(tab+"decl"+tab+  name +tab + "address" + ":"+initval.replace("$","0x"));
+
+		Write(tab+"decl"+tab+  name +tab + getAddressTypeFromName(name) + ":"+initval.replace("$","0x"));
 		return;
     }
 
@@ -236,7 +238,7 @@ void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QStr
     }
 
     if (Syntax::s.m_currentSystem->useZByte) {
-		Write(tab+"decl"+tab+  name +tab + "address" + ":"+Util::numToHex0(m_zbyte));
+		Write(tab+"decl"+tab+  name +tab + getAddressType(t) + ":"+Util::numToHex0(m_zbyte));
 //		Write(name +tab+"="+tab+Util::numToHex0(m_zbyte));
         m_zbyte++;
         if (t==word)
@@ -438,7 +440,24 @@ bool AsmTripe::DeclareClass(QString name, QString type, int count, QStringList d
 	}
 	return false;
 
-}/*
+}
+
+QString AsmTripe::getAddressTypeFromName(QString name)
+{
+	if (m_symTab->Lookup(name,0)->getTokenType()==TokenType::INTEGER)
+		return "address16";
+	if (m_symTab->Lookup(name,0)->getTokenType()==TokenType::LONG)
+		return "address32";
+
+	return "address8";
+}
+ QString AsmTripe::getAddressType(QString name)
+ {
+	name = name.replace("uint", "address");
+	 return name;
+	}
+
+ /*
 
 
 void AsmTripe::Poke(bool start)
@@ -562,9 +581,9 @@ bool AsmTripe::DeclareRecord(QString name, QString type, int count, QStringList 
 				QSharedPointer<Symbol> s = st->m_symbols[v];
 				//qDebug() << "WTF " <<s->m_name <<s->m_type;
 				// Build the name
-				QString type = "address";
+				QString type ="address8";
 				if (s->m_type.toLower()=="integer")
-					type ="address";
+					type ="address16";
 				QString n = getLabelEnding(name + "_" + st->m_name+"_"+s->m_name);
 				QString w = "decl" +tab+n+tab+type+":"+Util::numToHex(p);;
 				//            QString t = byte;

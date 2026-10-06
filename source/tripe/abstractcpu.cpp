@@ -15,7 +15,8 @@ AbstractCPU::AbstractCPU() {
 
 bool AbstractCPU::is16bit(const Param &val) {
     return (m_symtab[val.str] == "uint16" ||
-            m_symtab[val.str].starts_with("ptr")) ||
+            m_symtab[val.str].starts_with("ptr") ||
+            m_symtab[val.str].starts_with("address16")) ||
            m_opcodeToAsm[val.type] == "uint16";
 }
 

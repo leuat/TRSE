@@ -650,6 +650,7 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 
 	if (!m_buildSuccess) {
 		text+=QString::fromStdString(tripe::Error::s_error);
+		text = text.replace("\n","<br>");
 
 	}
 	else {

@@ -59,7 +59,8 @@ class Param {
         if (type == 1) {
             if (isRef())
                 return "#>" + clean();
-            else if (typeName == "uint16" || typeName.starts_with("ptr"))
+            else if (typeName == "uint16" || typeName.starts_with("ptr") ||
+                     typeName == "address16")
                 //                   str.starts_with("screen"))
                 return str + "+1";
             else {

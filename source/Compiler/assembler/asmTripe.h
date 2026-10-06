@@ -76,6 +76,9 @@ public:
 
 	bool DeclareClass(QString name, QString type, int count, QStringList data, QString pos) override;
 
+	QString getAddressTypeFromName(QString name);
+	QString getAddressType(QString name);
+
 
     QString GetOrg(int pos) override;
     virtual QString GetOrg() override;

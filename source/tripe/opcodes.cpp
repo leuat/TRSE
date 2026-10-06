@@ -8,11 +8,14 @@ namespace tripe {
 
 void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
     if (!m_asmToOpcode.contains(line[0]))
-        Error::RaiseError("Error parsing line with opcode: " + line[0]);
+        Error::RaiseError(
+            "Opcodes::ParseToBinary : Error parsing line with opcode: " +
+            line[0]);
 
     uint8_t opcode = m_asmToOpcode[line[0]];
     if (opcode == 0) {
-        Error::RaiseError("Incorrect opcode on line : " + line[0]);
+        Error::RaiseError(
+            "Opcodes::ParseToBinary : Incorrect opcode on line : " + line[0]);
     }
     vector<string> &p = m_opcodeToParams[opcode];
     bool isFirstParam = true;

@@ -194,7 +194,7 @@ void CPU6502::Declare(int &pos) {
         m_symtab[name.str] = m_opcodeToAsm[value.type];
         return;
     }
-    if (m_opcodeToAsm[value.type] == "address") {
+    if (m_opcodeToAsm[value.type].starts_with("address")) {
         Asm(name.str + "\t=\t" + "0x" + value.str);
 
     } else if (m_symtab[name.str].starts_with("ptr")) {
