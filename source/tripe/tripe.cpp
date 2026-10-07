@@ -73,7 +73,6 @@ void Tripe::Execute() {
             // Do all in a row
             auto optTripe = Util::insertInFilename(inFile, "_opt");
             auto binTripe = Util::getFilenameAlone(inFile) + ".trp";
-            cout << optTripe << endl;
             Util::save_text(optTripe, p.TripeOptimise(inFile));
             Util::save_binary(binTripe, p.ParseText(optTripe));
             Util::save_text(outFile, p.ParseBinary(binTripe, arch, params));

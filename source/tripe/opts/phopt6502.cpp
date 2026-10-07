@@ -6,6 +6,7 @@ namespace tripe {
 vector<string> Phopt6502::optimize(vector<string> in) {
 
     m_src = in;
+    //    return m_src;
     Opt(LDASTA, 2);
     Opt(LDASTA2, 3);
     Opt(LDALDXLDA, 3);
@@ -13,6 +14,7 @@ vector<string> Phopt6502::optimize(vector<string> in) {
     Opt(BOP2, 3);
     ldX("y");
     ldX("x");
+    ldA();
     return m_src;
 }
 
@@ -35,23 +37,82 @@ void Phopt6502::ldX(string cmd) {
             auto op1 = Util::toLower(line1[0]);
             if (line1[0] == ".gcode")
                 remove = true;
+
+            if (cmd == "ldx") {
+                //                cout << line1[0] << " : " << curVal << endl;
+            }
+
             if (curVal != "")
                 if (op1.find(":") != std::string::npos || op1 == tax ||
-                    op1 == "jmp" || op1 == "bne" || op1 == "beq" ||
+                    /*op1 == "jmp" || */ op1 == "bne" || op1 == "beq" ||
                     op1 == dex || op1 == inx || op1 == "jsr") {
                     //		cout << "Reset "<<curVal<< " "
                     //<< op1<<endl;
                     curVal = "";
+                    // cout << "RESET " << endl;
                     //				src.push_back(";
-                    // reset "+cmd + "  " + op1);
+                    //  reset "+cmd + "  " + op1);
                 }
 
             if (op1 == cmd) {
                 if (curVal != line1[1]) {
                     curVal = line1[1];
                 } else {
+                    /*
+                                        cout << " *** OPT  '" << m_src[i] << "'
+                       l0: '" << op1
+                                             << "' l1: '" << line1[1] << "'
+                       curval:" << curVal
+                                             << endl;
+                                             */
+
                     src.push_back(" ; opt5 " + l1);
                     remove = true;
+                    s_optLines += 1;
+
+                    // src.push_back(" "+cmd+" "+curVal);
+                }
+            }
+        }
+        if (!remove)
+            src.push_back(m_src[i]);
+    }
+
+    m_src = src;
+}
+
+void Phopt6502::ldA() {
+    string curVal = "";
+    bool isDone = false;
+    vector<string> src{};
+
+    m_curLine = 0;
+    for (int i = 0; i < m_src.size(); i++) {
+
+        bool remove = false;
+        string l1 = "";
+        auto line1 = getLine(i);
+
+        if (line1.size() != 0) {
+            auto op1 = Util::toLower(line1[0]);
+            if (curVal != "")
+
+                if (op1.find(":") != std::string::npos ||
+                    contains(m_aChangingOps, op1) || line1.size() == 1) {
+                    curVal = "";
+                }
+            if (op1 == "lda" && (line1[1].find(",") == string::npos)) {
+                //                cout << m_src[i] << ":" << line1[0] << " " <<
+                //                curVal << ":"
+                //                   << line1[1] << endl;
+                if (curVal == "") {
+                    curVal = line1[1];
+                } else if (curVal != line1[1]) {
+                    curVal = line1[1];
+                } else {
+                    src.push_back(" ; optlda1, remove:" + m_src[i]);
+                    remove = true;
+                    //  cout << "************************ LDA REMOVAL " << endl;
                     s_optLines += 1;
 
                     // src.push_back(" "+cmd+" "+curVal);

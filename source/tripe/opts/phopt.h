@@ -66,6 +66,7 @@ std::vector<std::string> &elems);
 
         s = Util::trim(s);
         s = Util::ReplaceString(s, "\t", " "); // replace all 'x' to 'y'
+        s = Util::ReplaceString(s, "  ", " "); // replace all 'x' to 'y'
         //  			s = Util::ReplaceString(s, "  ",
         //  " "); // replace all 'x' to 'y'
 
