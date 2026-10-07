@@ -61,13 +61,26 @@ void AbstractCPU::Init(string opcodes) {
 Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
     string s = "";
     int type = 0;
+    int flag = 0;
     uint8_t v = data[pos];
     string typeName = "";
     if (m_opcodeToAsm.contains(v) && v > 0xF0) {
         // We have a const type int64 etc
         pos += 1;
-        s += Util::ival2string(data, pos, m_opcodeToAsm[v]);
-        pos += Util::getIntLen(m_opcodeToAsm[v]);
+        flag = data[pos++];
+        if (flag == Opcodes::DATATYPE_STRING) {
+            while (data[pos] != 0) {
+                s += data[pos++];
+            }
+            pos++;
+            //             cout << "Found string: " << s << "   : "
+            //                << std::to_string(data[pos]) << endl;
+
+        } else {
+
+            s += Util::ival2string(data, pos, m_opcodeToAsm[v]);
+            pos += Util::getIntLen(m_opcodeToAsm[v]);
+        }
         type = v;
         typeName = m_opcodeToAsm[type];
     } else // Some text
@@ -87,7 +100,7 @@ Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
         if (ok)
             m_registersUsed.push_back(s);
     }
-    return Param(s, type, typeName);
+    return Param(s, type, typeName, flag);
 }
 
 bool AbstractCPU::isBinaryOpOpcode(int code) {
@@ -138,8 +151,10 @@ string AbstractCPU::ParseFromBinary(int &pos) {
     auto data = m_data;
     uint8_t opcode = data[pos];
     if (opcode == 0) {
-        std::cout << "error : illegal opcode 0" << std::endl;
+        std::cout << "error parsing binary tripe : illegal opcode 0 at pos "
+                  << Util::toHex(pos) << std::endl;
         exit(1);
+        return m_line;
     }
 
     int type = 0;
@@ -162,11 +177,14 @@ string AbstractCPU::ParseFromBinary(int &pos) {
 
             uint8_t flag = data[pos++];
             if (flag == Opcodes::DATATYPE_NUMBER) {
-                int val = data[pos];
-                //                cout << val;
+                int val = 0;
                 if (opcode == m_asmToOpcode[".uint16"]) {
-                    val |= data[++pos] << 8;
-                }
+                    val = data[pos] << 8;
+                    //                cout << val;
+                    val |= data[++pos];
+                } else
+                    val = data[pos];
+
                 pos++;
                 m_line += m_hexprefix + Util::toHex(val);
             }

@@ -1,12 +1,12 @@
 #include "cpu6502.h"
 #include "error.h"
+#include "opcodes.h"
 #include "resources/div16_6502.h"
 #include "resources/div8_6502.h"
 #include "resources/mul16_6502.h"
 #include "resources/mul8_6502.h"
 #include "tripedata.h"
 #include <algorithm>
-
 using namespace tripe;
 namespace tripe {
 
@@ -157,7 +157,7 @@ void CPU6502::LoadStore(int &pos, int opcode) {
         else
             Asm("sta " + res.str + "," + y);
 
-        if (type == "uint16") {
+        if (type == "uint16" || type == "ptr16") {
             Asm("lda " + val.hi());
             if (y == "y") {
                 Asm("iny");
@@ -165,7 +165,7 @@ void CPU6502::LoadStore(int &pos, int opcode) {
             } else
                 Asm("sta " + res.str + "+1," + y);
 
-            Asm("sta " + val.prefix() + "+1");
+            // Asm("sta " + val.prefix() + "+1");
         }
     }
     if (opcode == m_asmToOpcode["load"]) {
@@ -207,12 +207,20 @@ void CPU6502::Const(int &pos) {
 void CPU6502::Declare(int &pos) {
     auto name = getNextParam(m_data, pos);
     auto value = getNextParam(m_data, pos);
+    /*
+    cout << name.str << " '" << value.str
+         << "'   is_string: " << std::to_string(value.flag) << " at pos "
+         << Util::toHex(pos) << endl;*/
+    bool isString = value.flag == Opcodes::DATATYPE_STRING;
+    string hex = "$";
+    if (isString)
+        hex = "";
     if (isRegister(name.str)) {
         m_symtab[name.str] = m_opcodeToAsm[value.type];
         return;
     }
     if (m_opcodeToAsm[value.type].starts_with("address")) {
-        Asm(name.str + "\t=\t" + "0x" + value.str);
+        Asm(name.str + "\t=\t" + hex + value.str);
 
     } else if (m_symtab[name.str].starts_with("ptr")) {
         Asm(name.str + "\t=\t" + to_string(m_ptrZp));
@@ -220,7 +228,7 @@ void CPU6502::Declare(int &pos) {
 
     } else {
         Label(name.str, m_typeTripeToNative[m_opcodeToAsm[value.type]] + "\t" +
-                            "$" + value.str);
+                            hex + value.str);
     }
     m_symtab[name.str] = m_opcodeToAsm[value.type];
 }

@@ -39,50 +39,14 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
 
         if (i >= line.size())
             Error::RaiseError("Incorrect number of parameters");
-
         if (s == "datastream") {
             string type = line[0];
             uint16_t cnt = 0;
             vector<uint8_t> d;
             stringstream ss;
-            bool is16bit = (type == ".uint16");
             while (i < line.size()) {
-                auto val = Util::trim(line[i]);
-                bool isHex = false;
-                if (val.starts_with("0x")) {
-                    isHex = true;
-                }
-                uint8_t flag = DATATYPE_NUMBER;
-                if (val != "") {
-                    int ival = 0;
-                    ss.clear();
-                    if (isHex)
-                        ss << std::hex << val;
-                    else
-                        ss << std::dec << val;
-                    ss >> ival;
-                    if (ss.fail()) {
-                        flag = DATATYPE_STRING;
-                        //                        cout << " FAIL '" << val << "'
-                        //                        " << ival << endl;
-                    }
-                    // else
-                    //     cout << "OK '" << val << "'  " << ival << endl;
-                    d.push_back(flag);
-                    if (flag == DATATYPE_NUMBER) {
-                        d.push_back(ival & 0xFF);
-                        if (is16bit)
-                            d.push_back((ival >> 8) & 0xFF);
-                    } else {
-                        // String
-                        for (auto c : val) {
-                            d.push_back((uint8_t)c);
-                        }
-                        d.push_back((uint8_t)0);
-                    }
-
-                    cnt++;
-                }
+                getIntOrString(line[i], type, d);
+                cnt++;
                 i++;
             }
             if (cnt >= 256)
@@ -107,30 +71,30 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
             } else {
 
                 Util::split(line[i], ':', v);
+
+                auto a = v[0];
+                a = Util::trim(a);
                 if (v.size() == 1)
-                    v.push_back("0"); // default value 0
+                    v.push_back("0");
                 if (v.size() != 2)
                     Error::RaiseError(
                         "ival type must be of format uint8:[number]");
-
-                auto a = v[0];
-
-                //              replace( a.begin(), a.end(), '*', ' ');
-                a = Util::trim(a);
-                //                cout << a << " " << v[0] << " " << v[1] <<
-                //                endl;
                 if (!m_asmToOpcode.contains(a))
                     Error::RaiseError("Unknown type: " + a);
 
-                d = Util::ival2int8(v[1], v[0]);
+                //   cout << line[i] << " v :'" << v[1] << "'" << endl;
+                /*                d = Util::ival2int8(v[1], v[0]);
+                                d.insert(d.begin(), 0);*/
+                getIntOrString(v[1], v[0], d);
                 d.insert(d.begin(), m_asmToOpcode[a]);
             }
-            for (auto b : d) {
-                data.push_back(b);
-            }
+        }
+        for (auto b : d) {
+            data.push_back(b);
         }
     }
 }
+
 string Opcodes::ParseFromBinary(int &pos) {
     return "";
     /*
