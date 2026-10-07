@@ -33,6 +33,7 @@ class Param {
         type = t;
         typeName = tn;
         std::istringstream(str) >> hex >> ival;
+        str = Util::ReplaceString(str, "0x", "$");
         if (str.starts_with("<")) {
             type = 1;
             typeName = "uint8";
@@ -45,6 +46,13 @@ class Param {
             str = clean();
             str += "+1";
         }
+    }
+    bool isPureNumber() {
+        if (str.starts_with("0x") || str.starts_with("$"))
+            return true;
+        if (std::isdigit(str[0]))
+            return true;
+        return false;
     }
     string lo() {
         if (type == 1) {
@@ -112,6 +120,7 @@ class AbstractCPU {
 
     map<string, string> m_code;
     vector<string> m_usedCode;
+    map<string, string> m_symtab;
 
     AbstractCPU();
 
@@ -182,7 +191,6 @@ class AbstractCPU {
     vector<string> m_similarBinops, m_branchOpcodes;
     vector<string> m_singleParamOpcodes;
     vector<string> m_registers;
-    map<string, string> m_symtab;
 
     string m_nada = "_nada";
 

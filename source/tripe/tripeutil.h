@@ -32,6 +32,16 @@ class Util {
     static string insertInFilename(string fn, string val);
     static string getFilenameAlone(string fn);
 
+    static bool isPureNumber(string str) {
+        if (str.starts_with("#"))
+            str = str.erase(0, 1);
+        if (str.starts_with("0x") || str.starts_with("$"))
+            return true;
+        if (std::isdigit(str[0]))
+            return true;
+        return false;
+    }
+
     static string toLower(string str) {
         transform(str.begin(), str.end(), str.begin(), ::tolower);
         return str;

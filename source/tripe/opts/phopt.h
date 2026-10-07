@@ -2,6 +2,7 @@
 #define PHOPT_P
 
 #include "tripeutil.h"
+#include <map>
 #include <string>
 #include <vector>
 
@@ -15,6 +16,7 @@ class Phopt {
     int m_curLine = 0;
     string tab = "\t";
     static int s_optLines;
+    map<string, string> m_symTab;
     /*
 static string trim(const std::string &s);
 static std::vector<std::string> &split(const std::string &s, char delim,
@@ -52,6 +54,9 @@ std::vector<std::string> &elems);
         }
         //	cout << s <<  "  : " <<(char)(s[0])<<endl;
         vector<string> lst;
+        lst = Util::split(s, ';', lst);
+        s = lst[0];
+        lst.clear();
         return Util::split(s, ' ', lst);
     }
 
@@ -62,6 +67,12 @@ std::vector<std::string> &elems);
             return vector<string>();
         }
         s = m_src[l];
+        if (s.starts_with(";") || s == "") {
+            return vector<string>();
+        }
+        if (!s.starts_with("\t") && !s.starts_with(" "))
+            return vector<string>{"is_label"};
+
         //			if (s=="") continue;
 
         s = Util::trim(s);
@@ -71,9 +82,7 @@ std::vector<std::string> &elems);
         //  " "); // replace all 'x' to 'y'
 
         //			s = Util::trim(s);
-        if (s.starts_with(";") || s == "") {
-            return vector<string>();
-        }
+
         vector<string> lst;
         return Util::split(s, ' ', lst);
     }

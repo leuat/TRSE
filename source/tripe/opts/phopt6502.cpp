@@ -12,6 +12,7 @@ vector<string> Phopt6502::optimize(vector<string> in) {
     Opt(LDALDXLDA, 3);
     Opt(BOP1, 6);
     Opt(BOP2, 3);
+    Opt(INCDEC, 4);
     ldX("y");
     ldX("x");
     ldA();
@@ -25,6 +26,7 @@ void Phopt6502::ldX(string cmd) {
     string tax = "ta" + cmd;
     string inx = "in" + cmd;
     string dex = "de" + cmd;
+    string xy = cmd;
     cmd = "ld" + cmd;
     m_curLine = 0;
     for (int i = 0; i < m_src.size(); i++) {
@@ -45,7 +47,8 @@ void Phopt6502::ldX(string cmd) {
             if (curVal != "")
                 if (op1.find(":") != std::string::npos || op1 == tax ||
                     /*op1 == "jmp" || */ op1 == "bne" || op1 == "beq" ||
-                    op1 == dex || op1 == inx || op1 == "jsr") {
+                    op1 == dex || op1 == inx || op1 == "jsr" ||
+                    op1 == "is_label") {
                     //		cout << "Reset "<<curVal<< " "
                     //<< op1<<endl;
                     curVal = "";
@@ -72,7 +75,30 @@ void Phopt6502::ldX(string cmd) {
 
                     // src.push_back(" "+cmd+" "+curVal);
                 }
-            }
+
+            } else
+                // replace "sta arr,x" with "sta arr+x" when x is a const
+                if (line1.size() == 2)
+                    if (curVal != "" && Util::isPureNumber(curVal))
+                        if (op1 == "sta" || op1 == "lda" || op1 == "adc" ||
+                            op1 == "sbc" || op1 == "ora" || op1 == "eor" ||
+                            op1 == "asl" || op1 == "lsr" || op1 == "ror" ||
+                            op1 == "rol") {
+
+                            if (line1[1].find("(") == string::npos) {
+                                vector<string> lst;
+                                lst = Util::split(line1[1], ',', lst);
+                                if (lst.size() == 2 && lst[1] == xy) {
+
+                                    src.push_back(tab + op1 + tab + lst[0] +
+                                                  "+" + curVal);
+                                    src.push_back("; opt6 :" + line1[0] + " " +
+                                                  line1[1]);
+                                    remove = true;
+                                    s_optLines += 1;
+                                }
+                            }
+                        }
         }
         if (!remove)
             src.push_back(m_src[i]);
@@ -97,11 +123,13 @@ void Phopt6502::ldA() {
             auto op1 = Util::toLower(line1[0]);
             if (curVal != "")
 
-                if (op1.find(":") != std::string::npos ||
-                    contains(m_aChangingOps, op1) || line1.size() == 1) {
+                if (op1 == "is_label" || op1.find(":") != std::string::npos ||
+                    contains(m_aChangingOps, op1) || line1.size() == 1 ||
+                    line1[1].find(",") != string::npos) {
                     curVal = "";
                 }
-            if (op1 == "lda" && (line1[1].find(",") == string::npos)) {
+
+            if (op1 == "lda" /* && (line1[1].find(",") == string::npos)*/) {
                 //                cout << m_src[i] << ":" << line1[0] << " " <<
                 //                curVal << ":"
                 //                   << line1[1] << endl;
@@ -163,6 +191,34 @@ void Phopt6502::ldaldxlda(vector<vector<string>> &line, vector<string> &l,
             }
         }
     }
+}
+void Phopt6502::incdec(vector<vector<string>> &line, vector<string> &l,
+                       int &cur, vector<string> &src) {
+
+    /*
+        lda sfx_sfxType_sfxType_timer,x
+        sec
+        sbc #$1
+        sta sfx_sfxType_sfxType_timer,x
+    */
+    if (line[0].size() == 2 && line[2].size() == 2 && line[3].size() == 2)
+        if (line[0][0] == "lda" && line[3][0] == "sta" &&
+            line[0][1] == line[3][1]) {
+            if (line[2][0] == "sbc" &&
+                (line[2][1] == "#1" || line[2][1] == "#$1") &&
+                !is16bit(line[0][1])) {
+                cur = m_curLine;
+                src.push_back(tab + "dec" + tab + line[0][1] + ";incdec opt");
+                s_optLines += 4;
+            }
+            if (line[2][0] == "adc" &&
+                (line[2][1] == "#1" || line[2][1] == "#$1") &&
+                !is16bit(line[0][1])) {
+                cur = m_curLine;
+                src.push_back(tab + "inc" + tab + line[0][1] + ";incdec opt");
+                s_optLines += 4;
+            }
+        }
 }
 
 void Phopt6502::ldasta2(vector<vector<string>> &line, vector<string> &l,
@@ -422,12 +478,14 @@ void Phopt6502::Opt(Type type, int noLinesToCheck) {
             ldasta2(line, l, cur, src);
         else if (type == LDALDXLDA)
             ldaldxlda(line, l, cur, src);
+        else if (type == INCDEC)
+            incdec(line, l, cur, src);
         else if (type == BOP1)
             Bop1(line, l, cur, src);
         else if (type == BOP2)
             Bop2(line, l, cur, src);
         else {
-            cout << "ERROR " << endl;
+            cout << "Phopt6502 " << endl;
             exit(1);
         }
 

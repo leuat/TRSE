@@ -97,6 +97,7 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch,
     if (arch == "mos6502")
         phOpt = new Phopt6502();
 
+    phOpt->m_symTab = cpu->m_symtab;
     Phopt::s_optLines = 0;
     for (int i = 0; i < 4; i++)
         m_src = phOpt->optimize(m_src);

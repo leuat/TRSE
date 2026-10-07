@@ -143,7 +143,12 @@ void CPU6502::LoadStore(int &pos, int opcode) {
     if (opcode == m_asmToOpcode["store"]) {
         // store_p ptr idx val
         auto type = m_symtab[res.str];
-        string y = loadIndex(s, idx.prefix(), type);
+        string y = "y";
+        /*        if (idx.isPureNumber()) {
+                    cout << idx.str << " is pure number " << endl;
+                }*/
+        y = loadIndex(s, idx.prefix(), type);
+
         if (val.lo() != m_nada)
             Asm("lda " + val.lo());
 
