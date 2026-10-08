@@ -43,6 +43,7 @@ class Phopt6502 : public Phopt {
                    vector<string> &src);
     void ldX(string cmd);
     void ldA();
+    void cmp();
     void Opt(Type type, int noLinesToCheck);
 };
 } // namespace tripe

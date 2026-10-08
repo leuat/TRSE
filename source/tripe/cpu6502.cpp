@@ -469,6 +469,20 @@ void CPU6502::Mov(int &pos) {
     }
 }
 
+bool CPU6502::printCmp(const string &val) {
+    if (!(val == "#0" || val == "#$0" || val == "#$00" || val == "#00"))
+        return true;
+
+    vector<string> l;
+    l = Util::split(Util::trim(m_prevLine), ' ', l);
+    const vector<string> valid{
+        /*"sta", */ "lda", "adc", "sbc", "ora", "eor", "and"};
+    cout << "'" << l[0] << "'" << !contains(valid, l[0]) << "  : " << m_prevLine
+         << endl;
+
+    return !contains(valid, l[0]);
+}
+
 void CPU6502::Branch(int &pos, int opcode) {
     auto a = getNextParam(m_data, pos);
     auto b = getNextParam(m_data, pos);
@@ -493,6 +507,7 @@ void CPU6502::Branch(int &pos, int opcode) {
         if (a.str != m_nada)
             Asm("lda " + a.prefix());
 
+        //        if (printCmp(b.prefix()))
         Asm("cmp " + b.prefix());
 
         if (opcode == m_asmToOpcode["jeq"])

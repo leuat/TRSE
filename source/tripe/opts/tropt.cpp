@@ -157,12 +157,39 @@ void Tropt::load2() {
         auto l1 = getLine(i + 1);
         auto cur = m_cur[i];
         if (l0.size() == 3 && l1.size() == 4)
-            if ((l1[0] == "load_p" || l1[0] == "load") && l0[0] == "mov") {
+            if ((l1[0] == "store" || l1[0] == "load") && l0[0] == "mov") {
                 if (l0[1] == l1[2] && isTemp(l0[1])) {
 
                     // Perform replace
+                    cout << "YE" << endl;
                     cur = t + l1[0] + t + l1[1] + t + l0[2] + t + l1[3];
                     //					cout
+                    //<< "replace with : " << cur << endl <<endl;
+                    m_noLines++;
+                    i += 1;
+                }
+            }
+        n.push_back(cur);
+    }
+
+    m_cur = n;
+    n.clear();
+    //    mov     _r8_1   uint8:0x14
+    //   store   barr    i   _r8_1
+
+    for (int i = 0; i < m_cur.size(); i++) {
+        auto l0 = getLine(i);
+        auto l1 = getLine(i + 1);
+        auto cur = m_cur[i];
+        if (l0.size() == 3 && l1.size() == 4)
+            if ((l1[0] == "store") && l0[0] == "mov") {
+                if (l0[1] == l1[3] && isTemp(l0[1])) {
+
+                    // Perform replace
+                    // cout << "YE" << endl;
+                    cur = t + l1[0] + t + l1[1] + t + l1[2] + t + l0[2] +
+                          " ; opt15";
+                    //                  cout
                     //<< "replace with : " << cur << endl <<endl;
                     m_noLines++;
                     i += 1;
@@ -178,8 +205,6 @@ void Tropt::load2() {
 void Tropt::cleanupAsm() {
 
     vector<string> n;
-    //  mov t_uint8_idx2    uint8:0x00
-    //  load_p Screen_p1 t_uint8_idx2 t_uint8_ret1
 
     for (int i = 0; i < m_cur.size(); i++) {
         auto l0 = getLine(i);
@@ -208,8 +233,6 @@ void Tropt::constIndex() {
     */
 
     vector<string> n;
-    //  mov t_uint8_idx2    uint8:0x00
-    //  load_p Screen_p1 t_uint8_idx2 t_uint8_ret1
 
     for (int i = 0; i < m_cur.size(); i++) {
         auto l0 = getLine(i);

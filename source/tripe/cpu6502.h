@@ -38,6 +38,7 @@ class CPU6502 : public AbstractCPU {
     int estimateCodeSize(const string &s) override;
 
     string insertWhZp(string s);
+    bool printCmp(const string &val);
 
     //    void Beq(int &pos, string cmd) override;
 

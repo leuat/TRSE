@@ -164,6 +164,8 @@ void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
         for (auto p : sp)
             //            if (p != "" && !p.ends_with("nada"))
             m_src.push_back(p);
+        if (sp.size() >= 2)
+            op->m_prevLine = sp[1];
 
         if (m_src.size() != 0)
             if (m_src.back().find(".", 0) == 0) {

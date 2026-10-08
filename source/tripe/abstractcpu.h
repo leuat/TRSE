@@ -159,6 +159,7 @@ class AbstractCPU {
     int m_curBranch = 0;
     int m_pass = 0;
     int m_curLine;
+    string m_prevLine = "";
 
   protected:
     string m_opcodeFile = "";

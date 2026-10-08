@@ -16,6 +16,7 @@ vector<string> Phopt6502::optimize(vector<string> in) {
     ldX("y");
     ldX("x");
     ldA();
+    cmp();
     return m_src;
 }
 
@@ -100,6 +101,53 @@ void Phopt6502::ldX(string cmd) {
                                 }
                             }
                         }
+        }
+        if (!remove)
+            src.push_back(m_src[i]);
+    }
+
+    m_src = src;
+}
+
+void Phopt6502::cmp() {
+    string curVal = "";
+    bool isDone = false;
+    vector<string> src{};
+    for (int i = 0; i < m_src.size(); i++) {
+
+        bool remove = false;
+        string l1 = "";
+        auto line1 = getLine(i);
+
+        if (line1.size() == 2) {
+            auto op1 = Util::toLower(line1[0]);
+
+            if (op1 == "cmp" && (line1[1] == "#0" || line1[1] == "#$0") &&
+                m_src[i].find(";keep") == string::npos) {
+                bool found = false;
+                int j = i + 1;
+                string prev = "";
+                while (!found && j >= 0 && j < m_src.size()) {
+                    string t = Util::trim(m_src[j++]);
+                    if (!t.starts_with(";")) {
+                        vector<string> lst;
+                        lst = Util::split(t, ' ', lst);
+                        if (lst.size() >= 1) {
+                            prev = lst[0];
+                            found = true;
+                        }
+                    }
+                }
+                const vector<string> valid{
+                    "beq",
+                    "bne",
+                };
+                if (contains(valid, prev)) {
+                    src.push_back("\t;cmpopt " + m_src[i]);
+                    remove = true;
+                    s_optLines += 1;
+                }
+            }
         }
         if (!remove)
             src.push_back(m_src[i]);
