@@ -22,6 +22,7 @@ class CPU6502 : public AbstractCPU {
     void InsertTempValues(vector<string> &lst, int pos) override;
     string loadIndex(string &s, string idx, string type);
     vector<string> stub(map<string, string> params) override;
+    map<string, string> m_zpUsed;
 
     void LoadStore(int &pos, int opcode) override;
     void Declare(int &pos) override;
@@ -31,6 +32,8 @@ class CPU6502 : public AbstractCPU {
     void Binop(int &pos, int opcode) override;
     void Mov(int &pos) override;
     void Branch(int &pos, int opcode) override;
+
+    void verifyZp(string name, string val);
 
     int estimateCodeSize(const string &s) override;
 

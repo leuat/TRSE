@@ -52,6 +52,17 @@ CPU6502::CPU6502() : AbstractCPU() {
     m_code["div16"] = insertWhZp(string((char *)resources_6502_div16_asm));
 }
 
+void CPU6502::verifyZp(string name, string val) {
+    if (m_zpUsed.contains(val) && m_zpUsed[val] == name)
+        return;
+    if (m_zpUsed.contains(val)) {
+        cout << "Warning : '" << name << "' at address " << val
+             << " already used by '" << m_zpUsed[val] << "'" << endl;
+        return;
+    }
+    m_zpUsed[val] = name;
+}
+
 string CPU6502::insertWhZp(string s) {
     // replace a couple of zps
     int startZp = m_whZp;
@@ -65,7 +76,8 @@ string CPU6502::insertWhZp(string s) {
 
 void CPU6502::InsertTempValues(vector<string> &lst, int pos) {
     for (auto s : m_registersUsed) {
-        lst.insert(lst.begin() + pos, s + " = $" + Util::toHex(m_regZp));
+        lst.insert(lst.begin() + pos, s + " = " + "$" + Util::toHex(m_regZp));
+        verifyZp(s, "$" + Util::toHex(m_regZp));
         pos += 1;
         m_regZp += m_symtab[s] == "uint8" ? 1 : 2;
     }
@@ -221,9 +233,11 @@ void CPU6502::Declare(int &pos) {
     }
     if (m_opcodeToAsm[value.type].starts_with("address")) {
         Asm(name.str + "\t=\t" + hex + value.str);
+        verifyZp(name.str, hex + value.str);
 
     } else if (m_symtab[name.str].starts_with("ptr")) {
-        Asm(name.str + "\t=\t" + to_string(m_ptrZp));
+        Asm(name.str + "\t=\t" + hex + Util::toHex(m_ptrZp));
+        verifyZp(name.str, hex + Util::toHex(m_ptrZp));
         m_ptrZp += 2;
 
     } else {

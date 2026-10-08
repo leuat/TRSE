@@ -89,9 +89,10 @@ void Phopt6502::ldX(string cmd) {
                                 vector<string> lst;
                                 lst = Util::split(line1[1], ',', lst);
                                 if (lst.size() == 2 && lst[1] == xy) {
-
+                                    string add =
+                                        Util::ReplaceString(curVal, "#", "");
                                     src.push_back(tab + op1 + tab + lst[0] +
-                                                  "+" + curVal);
+                                                  "+" + add);
                                     src.push_back("; opt6 :" + line1[0] + " " +
                                                   line1[1]);
                                     remove = true;
@@ -118,7 +119,14 @@ void Phopt6502::ldA() {
         bool remove = false;
         string l1 = "";
         auto line1 = getLine(i);
-
+        if (line1.size() >= 3) {
+            // oops, we have +x stuff
+            /*            for (auto c : line1)
+                            cout << "'" << c << "' ";
+                        cout << endl;*/
+            for (int i = 3; i < line1.size(); i++)
+                line1[1] += " " + line1[i];
+        }
         if (line1.size() != 0) {
             auto op1 = Util::toLower(line1[0]);
             if (curVal != "")
@@ -138,10 +146,13 @@ void Phopt6502::ldA() {
                 } else if (curVal != line1[1]) {
                     curVal = line1[1];
                 } else {
-                    src.push_back(" ; optlda1, remove:" + m_src[i]);
-                    remove = true;
-                    //  cout << "************************ LDA REMOVAL " << endl;
-                    s_optLines += 1;
+                    if (m_src[i].find(";keep") == string::npos) {
+                        src.push_back(" ; optlda1, remove:" + m_src[i]);
+                        remove = true;
+                        //  cout << "************************ LDA REMOVAL " <<
+                        //  endl;
+                        s_optLines += 1;
+                    }
 
                     // src.push_back(" "+cmd+" "+curVal);
                 }
@@ -280,34 +291,37 @@ becomes
             char cmd = op2.at(2);
             //              cout
             //<< cmd << endl;
-            if ((line2[1] == line1[1]) && !line2[1].starts_with("$")) {
-                if (cmd == 'a') {
-                    if (isTemp(line1[1])) {
-                        cur = m_curLine;
-                        src.push_back("; stalda opt 1");
-                        s_optLines += 2;
+            if (line2[1] != "")
+                if ((line2[1] == line1[1]) && !line2[1].starts_with("$")) {
+                    if (cmd == 'a' &&
+                        m_src[m_curLine].find(";keep") == string::npos) {
+                        if (isTemp(line1[1])) {
+                            cur = m_curLine;
+                            src.push_back("; stalda opt 1");
+                            s_optLines += 2;
 
+                        } else {
+                            // cout << line1[1] << ": " << line2[1] << endl;
+                            src.push_back(l1);
+                            src.push_back("; stalda opt 2");
+                            cur = m_curLine;
+                            s_optLines += 1;
+                        }
                     } else {
-                        src.push_back(l1);
-                        src.push_back("; stalda opt 2");
-                        cur = m_curLine;
+                        src.push_back("; stalda opt3 ");
+                        if (cmd == 'x')
+                            src.push_back("\ttax");
+                        else
+                            src.push_back("\ttay");
                         s_optLines += 1;
-                    }
-                } else {
-                    src.push_back("; stalda opt3 ");
-                    if (cmd == 'x')
-                        src.push_back("\ttax");
-                    else
-                        src.push_back("\ttay");
-                    s_optLines += 1;
 
-                    cur = m_curLine;
-                    if (!isTemp(line1[1])) {
-                        src.push_back(l1);
-                    } else
-                        s_optLines += 1;
+                        cur = m_curLine;
+                        if (!isTemp(line1[1])) {
+                            src.push_back(l1);
+                        } else
+                            s_optLines += 1;
+                    }
                 }
-            }
         }
     }
 }
@@ -353,7 +367,8 @@ void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur,
 
     // perform opt
     string cmd = line[2][0];
-    if (!(cmd == "sbc" || cmd == "adc" || cmd == "or" || cmd == "and" ||
+
+    if (!(/*cmd == "sbc" || */ cmd == "adc" || cmd == "or" || cmd == "and" ||
           cmd == "xor"))
         return;
     /*
