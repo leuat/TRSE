@@ -35,6 +35,15 @@ bool CodeGenTRIPE::overrideBuiltinMethod(QSharedPointer<NodeBuiltinMethod> node)
 
 QString CodeGenTRIPE::getParamValue(QSharedPointer<Node> node, int& pop) {
 	QString r="";
+	if (m_inlineParameters.contains(node->getValue(as))) {
+//		qDebug()<< "INLINE node override : "<< node->getValue(as);
+		m_inlineParameters[node->getValue(as)]->Accept(this);
+		QString ret = nada;
+		if (m_curTemp.size()!=0)
+			ret =  m_curTemp.pop();
+		return ret;
+	}
+
 	if (node->isPure() && qSharedPointerDynamicCast<NodeBuiltinMethod>(node)==nullptr) {
 		r = TripeValue(node);
 	}
@@ -596,6 +605,7 @@ void CodeGenTRIPE::LoadPointer(QSharedPointer<NodeVar> node) {
 
 void CodeGenTRIPE::dispatch(QSharedPointer<NodeVar> node)
 {
+
 	LoadVariable(node);
 
 }

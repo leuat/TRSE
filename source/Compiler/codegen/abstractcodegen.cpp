@@ -1183,11 +1183,12 @@ void AbstractCodeGen::InlineProcedure(QSharedPointer<NodeProcedure> p) {
       if (p->m_parameters[cur]->isPureNumeric())
         val = val.replace("#", "");
 
-      p->m_procedure->m_block->ReplaceInlineAssemblerVariables(
+	  p->m_procedure->m_block->ReplaceInlineAssemblerVariables(
           as, "[" + var->value + "]", val);
 
+
     } else {
-      QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(
+	  QSharedPointer<NodeAssign> na = QSharedPointer<NodeAssign>(new NodeAssign(
           nv->m_varNode, p->m_parameters[cur]->m_op, p->m_parameters[cur]));
       na->Accept(this);
     }
@@ -1573,6 +1574,13 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
 
   auto assembler = as;
   auto p = FactoryAssembler::create(Syntax::s.m_currentSystem->m_processor);
+  auto p6520 = qSharedPointerDynamicCast<Asm6502>(p);
+  if (p) {
+	  p->InitZeroPointers(m_projectIni->getStringList("zeropages"),
+									m_projectIni->getStringList("temp_zeropages"),
+									m_projectIni->getStringList("var_zeropages"));
+
+  }
   if (Data::data.useTripe) {
 	  as->Term();
 	  if (as->isTripe())

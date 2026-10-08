@@ -244,6 +244,8 @@ public:
 
 	virtual void MainBlockEnds() {}
 
+	virtual QString ConvertTempVar(QString org) { return org;}
+
 	void VarDeclEnds() {
         if (m_varDeclEndsLineNumber == 0) // Only assign if not previously
             m_varDeclEndsLineNumber = m_source.count();

@@ -79,7 +79,7 @@ public:
 	QString getAddressTypeFromName(QString name);
 	QString getAddressType(QString name);
 
-
+	QString ConvertTempVar(QString orgs) override;
     QString GetOrg(int pos) override;
     virtual QString GetOrg() override;
 

@@ -102,6 +102,7 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system,
         m_ini->getdouble("display_addresses") != 1.0) {
       m_codeGen->dontOutputLineNumbers();
     }
+	m_codeGen->m_projectIni = m_projectIni.get();
 
   } catch (const FatalErrorException &e) {
     HandleError(e, "Error during pre-build");

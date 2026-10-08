@@ -165,6 +165,7 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
         QString s="";
 //		s="\tdecl\t" + getLabelEnding(name) + "\t"+t+" ";
 		s=tab+"decl"+tab+getLabelEnding(name) + tab+t+":" + data[0];
+//		qDebug() << name << data[0];
 		s=s+"\n";
 		s=s + tab+"." +t + " ";
 
@@ -174,7 +175,7 @@ void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList d
                 s=s+"\n";
 				s=s + tab+"." +t + " ";
             }
-            else if (i!=data.count()-1) s=s+" ";
+			else if (i!=data.count()-1) s=s+" ";
 
         }
         QStringList lst = s.split("\n");
@@ -456,6 +457,13 @@ QString AsmTripe::getAddressTypeFromName(QString name)
 	name = name.replace("uint", "address");
 	 return name;
 	}
+
+ QString AsmTripe::ConvertTempVar(QString orgs)
+ {
+		QString ret = orgs;
+	 qDebug() << "HERE "<<ret;
+	 return ret;
+ }
 
  /*
 

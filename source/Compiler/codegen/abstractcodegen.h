@@ -61,7 +61,7 @@ protected:
     bool m_isCurrentlyWithinInline = false;
     QString m_useNext="";
 public:
-
+	CIniFile* m_projectIni = nullptr;
     inline void dontOutputLineNumbers(){m_outputLineNumbers=false;}
     inline void outputLineNumbers(){m_outputLineNumbers=true;}
     inline void useThisNext(QString s){m_useNext=s;}
