@@ -422,8 +422,8 @@ void CPU6502::Binop(int &pos, int opcode) {
     if (ab16bit) {
 
         //          Error::RaiseError("Add / sub doesn't work with 16 bit yet");
-        Asm("lda " + a.hi());
-        Asm(op + " " + b.hi());
+        Asm("lda " + a.lhi());
+        Asm(op + " " + b.lhi());
         //
         Asm("sta " + res.prefix() + "+1");
     }
