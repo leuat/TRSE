@@ -215,7 +215,7 @@ string Util::getFilenameAlone(string fn) {
 int Util::fromNumber(string s) {
     stringstream st(s);
     uint64_t val;
-    if (s.find("0x", 0) == 0)
+    if (s.find("0x", 0) == 0 || s.find("$", 0) == 0)
         st >> hex >> val;
     else
         st >> val;

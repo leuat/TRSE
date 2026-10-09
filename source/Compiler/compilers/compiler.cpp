@@ -35,6 +35,7 @@ Compiler::~Compiler() {}
 
 void Compiler::Parse(QString text, QStringList lst, QString fname) {
 	Data::data.useTripe = m_projectIni->getdouble("use_tripe") == 1.0;
+	Data::data.useTripeOrgAsm = m_projectIni->getdouble("use_tripe_orgasm") == 1.0;
 
   m_parser.m_currentFileShort = fname;
   m_lexer = QSharedPointer<Lexer>(

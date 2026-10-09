@@ -636,8 +636,12 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	QFile::remove(file+".asm");
 
 	auto sys = StringFromSystem(m_system).toLower();
-	auto params  = QStringList() << "nada" <<"-c"  <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
 
+	auto params  = QStringList() << "nada" <<"-c" <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
+	if (Data::data.useTripeOrgAsm) {
+		params<<"-a"; // assemble with Tripe
+		text+="<br>Assembling with <font color=\"#A040FF\">Tripe...</font>";
+	}
 	if (m_processor == MOS6502) {
 		if (m_projectIni->contains("zeropages")) {
 			QString val = m_projectIni->getStringList("zeropages")[0];
@@ -653,10 +657,14 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 		}
 
 	}
-
+//	qDebug() << params;
 	tripe::Tripe tripe(params.size(), Util::StringListToChar(params));
 	tripe.setInternal(true);
 	tripe.Execute();
+
+	Util::CopyFile(file+".bin",file+".prg");
+	QFile::remove(file+".bin");
+
 
 	if (tripe::Error::s_error!="")
 		m_buildSuccess = false;

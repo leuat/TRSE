@@ -348,9 +348,11 @@ SOURCES += source/main.cpp\
     source/misc/toolboxitem.cpp \
     source/tripe/abstractcpu.cpp \
     source/tripe/cpu6502.cpp \
+    source/tripe/tinyexpr.c \
     source/tripe/tripedata.cpp \
     source/tripe/error.cpp \
     source/tripe/opcodes.cpp \
+    source/tripe/lorgasm.cpp \
     source/tripe/opts/phopt.cpp \
     source/tripe/opts/phopt6502.cpp \
     source/tripe/opts/tropt.cpp \
@@ -692,9 +694,11 @@ HEADERS  += source/mainwindow.h \
     source/misc/toolboxitem.h \
     source/tripe/abstractcpu.h \
     source/tripe/cpu6502.h \
+    source/tripe/tinyexpr.h \
     source/tripe/tripedata.h \
     source/tripe/error.h \
     source/tripe/opcodes.h \
+    source/tripe/lorgasm.h \
     source/tripe/opts/phopt.h \
     source/tripe/opts/phopt6502.h \
     source/tripe/opts/tropt.h \

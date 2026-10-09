@@ -75,7 +75,8 @@ void DialogProjectSettings::FillFromIni()
     ui->cmbSystem->setCurrentText(m_ini->getString("system"));
     ui->cmbQuemu->setCurrentText(m_ini->getString("qemu"));
     ui->cmbUseTripe->setCurrentText(m_ini->getdouble("use_tripe")?"Yes":"No");
-    //    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
+	ui->cmbUseTripeOrgasm->setCurrentText(m_ini->getdouble("use_tripe_orgasm")?"Yes":"No");
+	//    on_cmbSystem_currentIndexChanged(ui->cmbSystem)
     UpdateSystem();
 
     ui->cmbOutputType->setCurrentText(m_ini->getString("output_type"));
@@ -284,6 +285,9 @@ void DialogProjectSettings::FillToIni()
 
     m_ini->setFloat("use_tripe",(ui->cmbUseTripe->currentText()=="Yes")?1:0);
     ui->cmbUseTripe->setCurrentText(m_ini->getdouble("use_tripe")?"Yes":"No");
+
+	m_ini->setFloat("use_tripe_orgasm",(ui->cmbUseTripeOrgasm->currentText()=="Yes")?1:0);
+	ui->cmbUseTripeOrgasm->setCurrentText(m_ini->getdouble("use_tripe_orgasm")?"Yes":"No");
 
 
     m_ini->setString("amstradcpc_options", ui->leAmstradCPCOptions->text());

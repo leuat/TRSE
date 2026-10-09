@@ -19,7 +19,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -60,288 +60,11 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>979</width>
+              <height>481</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_20">
-             <item row="0" column="0">
-              <layout class="QGridLayout" name="gridLayout_17">
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_35">
-                 <property name="text">
-                  <string>QEMU project (X86 only)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="cmbSystem">
-                 <item>
-                  <property name="text">
-                   <string>C64</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>PLUS4</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>C128</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>VIC20</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>NES</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AMIGA</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>PET</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>X86</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>MEGA65</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>SPECTRUM</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>OK64</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AMSTRADCPC</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>GAMEBOY</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>TIKI100</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ATARI520ST</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ATARI2600</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>COLECO</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>X16</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>BBCM</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ATARI800</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>MSX</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>APPLEII</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ORIC</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>SNES</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>M1ARM</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>CUSTOM</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>VZ200</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>ACORN</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>JDH8</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>POKEMONMINI</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>TRS80</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>TVC</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>TRS80COCO</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>WONDERSWAN</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>TIM</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>VECTREX</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>THOMSON</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>CHIP8</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>PCW</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>BK0010</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>DRAGON</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>FOENIX</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>AGON</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>PRIMO</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="cmbQuemu">
-                 <item>
-                  <property name="text">
-                   <string>No</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>qemu-system-i386</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label">
-                 <property name="text">
-                  <string>System:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_44">
-                 <property name="text">
-                  <string>Use Tripe (experimental development, ask Leuat)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="cmbUseTripe">
-                 <item>
-                  <property name="text">
-                   <string>No</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Yes</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-              </layout>
-             </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_5">
                <property name="title">
@@ -607,7 +330,7 @@
                       <x>10</x>
                       <y>10</y>
                       <width>781</width>
-                      <height>132</height>
+                      <height>138</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_10" columnstretch="1,1">
@@ -983,7 +706,7 @@
                     <item row="4" column="0">
                      <spacer name="verticalSpacer_4">
                       <property name="orientation">
-                       <enum>Qt::Vertical</enum>
+                       <enum>Qt::Orientation::Vertical</enum>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
@@ -1042,7 +765,7 @@
                       <x>30</x>
                       <y>10</y>
                       <width>751</width>
-                      <height>194</height>
+                      <height>208</height>
                      </rect>
                     </property>
                     <layout class="QGridLayout" name="gridLayout_18">
@@ -1257,7 +980,7 @@
                 <item row="1" column="0">
                  <spacer name="verticalSpacer_5">
                   <property name="orientation">
-                   <enum>Qt::Vertical</enum>
+                   <enum>Qt::Orientation::Vertical</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
@@ -1269,6 +992,304 @@
                 </item>
                </layout>
               </widget>
+             </item>
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_17">
+               <item row="2" column="1">
+                <widget class="QComboBox" name="cmbUseTripe">
+                 <item>
+                  <property name="text">
+                   <string>No</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Yes</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="cmbSystem">
+                 <item>
+                  <property name="text">
+                   <string>C64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PLUS4</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>C128</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VIC20</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>NES</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AMIGA</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PET</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>X86</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MEGA65</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SPECTRUM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>OK64</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AMSTRADCPC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>GAMEBOY</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TIKI100</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ATARI520ST</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ATARI2600</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>COLECO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>X16</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>BBCM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ATARI800</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>MSX</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>APPLEII</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ORIC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>SNES</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>M1ARM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CUSTOM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VZ200</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>ACORN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>JDH8</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>POKEMONMINI</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TRS80</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TVC</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TRS80COCO</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>WONDERSWAN</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>TIM</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>VECTREX</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>THOMSON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CHIP8</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PCW</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>BK0010</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>DRAGON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>FOENIX</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>AGON</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>PRIMO</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="cmbQuemu">
+                 <item>
+                  <property name="text">
+                   <string>No</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>qemu-system-i386</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>System:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_35">
+                 <property name="text">
+                  <string>QEMU project (X86 only)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_44">
+                 <property name="text">
+                  <string>Use Tripe (experimental development, ask Leuat)</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_51">
+                 <property name="text">
+                  <string>Use Tripe's OrgAsm</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="cmbUseTripeOrgasm">
+                 <item>
+                  <property name="text">
+                   <string>No</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Yes</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -1291,8 +1312,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>979</width>
+              <height>481</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_23">
@@ -1317,7 +1338,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;Variables declared within a procedure will be regarded as &amp;quot;local&amp;quot;, and will internally be named &amp;quot;procedurename_variablename&amp;quot;. They are *not* defined on the stack, and are global just as every other variable in TRSE (with the exception of function parameters tagged with the &amp;quot;stack&amp;quot; modifier)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                 </widget>
@@ -1341,7 +1362,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item row="1" column="0">
               <spacer name="verticalSpacer_2">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -1372,8 +1393,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>1126</width>
+              <height>463</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_24">
@@ -1467,7 +1488,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <item row="4" column="0">
               <spacer name="verticalSpacer">
                <property name="orientation">
-                <enum>Qt::Vertical</enum>
+                <enum>Qt::Orientation::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
@@ -1502,7 +1523,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                   <item row="0" column="2">
                    <spacer name="horizontalSpacer_2">
                     <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
+                     <enum>Qt::Orientation::Horizontal</enum>
                     </property>
                     <property name="sizeHint" stdset="0">
                      <size>
@@ -1580,8 +1601,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>623</height>
+              <width>961</width>
+              <height>656</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_27">
@@ -1600,7 +1621,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;The Zeropage address range ($0-$FF)&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt; is the workhorse of the 6502, providing the coder with something that acts as pointers. Due to this fact, most flexible projects must use zeropages in one way of another. In TRSE, zeropages are assigned whenever you create a &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;pointer, &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;and lets you perform actions such as:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-style:italic;&quot;&gt;var &lt;/span&gt;&lt;/p&gt;
@@ -1831,7 +1852,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
                 <item row="2" column="0">
                  <spacer name="verticalSpacer_3">
                   <property name="orientation">
-                   <enum>Qt::Vertical</enum>
+                   <enum>Qt::Orientation::Vertical</enum>
                   </property>
                   <property name="sizeHint" stdset="0">
                    <size>
@@ -1865,8 +1886,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>979</width>
+              <height>481</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_29">
@@ -1970,8 +1991,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>979</width>
+              <height>481</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_31">
@@ -2044,7 +2065,7 @@ p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
 li.unchecked::marker { content: &quot;\2610&quot;; }
 li.checked::marker { content: &quot;\2612&quot;; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;Introduction&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Noto Sans'; font-size:9pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt;Without an optimizer, the TRSE compiler would have been awfully bloated. In order to accomodate for every possible binary operation or assignment, even a single operation such as &lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt; font-style:italic;&quot;&gt;array[i]:=0;&lt;/span&gt;&lt;span style=&quot; font-family:'Noto Sans'; font-size:9pt;&quot;&gt; would produce a horrendous amount of garbage assembly code. But it would still work, albeit slowly. &lt;/span&gt;&lt;/p&gt;
@@ -2120,8 +2141,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>957</width>
-              <height>475</height>
+              <width>979</width>
+              <height>481</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_32">

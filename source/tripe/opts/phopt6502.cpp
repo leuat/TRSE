@@ -138,11 +138,7 @@ void Phopt6502::cmp() {
                         }
                     }
                 }
-                const vector<string> valid{
-                    "beq",
-                    "bne",
-                };
-                if (contains(valid, prev)) {
+                if (prev == "beq" || prev == "bne") {
                     src.push_back("\t;cmpopt " + m_src[i]);
                     remove = true;
                     s_optLines += 1;

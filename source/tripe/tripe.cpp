@@ -1,5 +1,6 @@
 #include "tripe.h"
 #include "error.h"
+#include "lorgasm.h"
 #include "tripeparser.h"
 #include "tripeutil.h"
 #include <chrono>
@@ -73,9 +74,14 @@ void Tripe::Execute() {
             // Do all in a row
             auto optTripe = Util::insertInFilename(inFile, "_opt");
             auto binTripe = Util::getFilenameAlone(inFile) + ".trp";
+            auto assembledFile = Util::getFilenameAlone(outFile) + ".bin";
             Util::save_text(optTripe, p.TripeOptimise(inFile));
             Util::save_binary(binTripe, p.ParseText(optTripe));
             Util::save_text(outFile, p.ParseBinary(binTripe, arch, params));
+            if (m_args.contains("a")) {
+                OrgAsm orgasm(arch);
+                orgasm.Assemble(outFile, assembledFile);
+            }
 
         } else {
             if (arch == "trasm2tripe") {

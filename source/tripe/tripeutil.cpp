@@ -27,6 +27,31 @@ std::vector<std::string> &Util::split(const std::string &s, char delim,
     return elems;
 }
 
+std::vector<std::string> Util::split(const std::string &s, char delim) {
+    vector<string> elems;
+    std::stringstream ss(s);
+    std::string item;
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
+std::vector<std::string> Util::clean_split(string s, char delim) {
+    std::string item;
+    s = trim(s);
+    s = ReplaceString(s, "\t", " ");
+    s = ReplaceString(s, "  ", " ");
+    vector<string> lst, elems;
+    lst = split(s, ';', lst);
+    s = lst[0];
+    std::stringstream ss(s);
+    while (std::getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
+}
+
 vector<string> Util::read_text_code_file(string f, bool trim) {
     vector<string> m_src;
     ifstream inp(f);
@@ -213,12 +238,23 @@ string Util::getFilenameAlone(string fn) {
 }
 
 int Util::fromNumber(string s) {
-    stringstream st(s);
     uint64_t val;
-    if (s.find("0x", 0) == 0)
-        st >> hex >> val;
-    else
-        st >> val;
+    bool hex = false;
+    s = Util::ReplaceString(s, "$", "0x");
+    s = Util::ReplaceString(s, "#", "");
+    s = trim(s);
+    int base = 10;
+    if (s.starts_with("0x")) {
+        s = Util::ReplaceString(s, "0x", "");
+        base = 16;
+    }
+    if (s.starts_with("%")) {
+        s = Util::ReplaceString(s, "%", "");
+        base = 2;
+    }
+
+    val = stoi(s, 0, base);
+
     return val;
 }
 } // namespace tripe

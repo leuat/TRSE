@@ -21,6 +21,10 @@ void SystemMOS6502::Assemble(QString& text, QString filename, QString currentDir
     if (!m_buildSuccess)
         return;
 
+	// Let tripe handle everything
+	if (Data::data.useTripeOrgAsm)
+		return;
+
     //qDebug() << m_settingsIni->getString("assembler");
     if (m_settingsIni->getString("assembler").toLower()=="dasm") {
         emit EmitTick("<br>Assembling with DASM ...");

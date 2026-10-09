@@ -52,7 +52,8 @@ public:
     QString currentDoc = "";
     int genLabel = 0;
 	bool useTripe = false;
-    bool redrawOutput=false;
+	bool useTripeOrgAsm = false;
+	bool redrawOutput=false;
     bool redrawInput=false;
     bool forceRedraw = false;
     bool redrawFileList = false;
