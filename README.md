@@ -44,6 +44,18 @@ TRSE needs Lua 5.3.5 (for .fjo ray tracer support), and has static libraries com
 - copy the liblua.a file to TRSE/libs/lua/liblua_myos.a
 - add the library to the project path in TRSE.pro, ie "LIBS += -L$$PWD/libs/lua/ -llua_myos"
 
+## Windows XP build (optional, 32-bit)
+The normal build is unchanged. To build for Windows XP, use the last Qt that supports it (Qt 5.6.3) with its bundled MinGW 4.9.2 (32-bit). Both come from the Qt 5.6.3 offline installer (qt-opensource-windows-x86-mingw492-5.6.3.exe), not from the current Qt installer.
+
+- put the Qt bin folder (...\5.6.3\mingw49_32\bin) and the MinGW bin folder (...\Tools\mingw492_32\bin) on the PATH
+- mkdir build && cd build
+- qmake ..\TRSE.pro -spec win32-g++ CONFIG+=release CONFIG+=winxp
+- mingw32-make -j8
+
+CONFIG+=winxp is the only switch. It sets the Windows XP API level, builds as C++14, adds the Qt 5.6 compatibility headers from source/compat_qt56, defines TRSE_QT56, and links libs/lua/liblua_xp.a (Lua 5.3.5 built for 32-bit MinGW 4.9.2, see "Lua issues"). Without it nothing changes for any other build.
+
+To run the result, copy trse.exe next to the deployed Qt DLLs (windeployqt) plus libgomp-1.dll from the MinGW bin folder, and put the units folder next to it.
+
 ## OpenMP issues
 The fjong ray tracer uses OpenMP if available. If you are having issues with compiling up / getting openMP to work, add "DEFINES -= USE_OMP" to the TRSE.pro file.
 

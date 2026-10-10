@@ -41,7 +41,7 @@ void FormTTREdit::SaveCurrentInstrument()
             if (cur<txt.length())
                 ba.append(txt[cur].toLatin1());
             else
-                ba.append((uchar)0);
+                ba.append((char)0);
             cur++;
         }
         m_ttr.m_instruments[m_currentInstrument] = ba;

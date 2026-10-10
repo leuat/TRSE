@@ -304,8 +304,8 @@ void LImageSprites2::ImportSpritepad(QString filename)
     auto val = Util::loadTextFile(filename);
     QJsonDocument d = QJsonDocument::fromJson(val.toUtf8());
     auto o  = d.object();
-    auto cols = d["colors"];
-    auto sprites = d["sprites"];
+    auto cols = o["colors"].toObject();
+    auto sprites = o["sprites"];
     int col = 1;
     for (auto s : sprites.toArray()) {
         auto px = s.toObject()["pixels"].toArray();
@@ -317,7 +317,8 @@ void LImageSprites2::ImportSpritepad(QString filename)
         cur->m_header[cur->HEADER_MULTICOLOR]=(int)isMulticolor;
         int c1 = cols["2"].toInt();
         int c2 = cols["3"].toInt();
-        for (auto row: px) {
+        for (int rowIdx=0; rowIdx<px.count(); rowIdx++) {
+            QJsonValue row = px.at(rowIdx);
             int x = 0;
 
             uint32_t v = 0;
