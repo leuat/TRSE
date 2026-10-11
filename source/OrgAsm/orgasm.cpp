@@ -18,6 +18,25 @@ void Orgasm::LoadFile(QString filename) {
     m_constantPassLines = -1;
 }
 
+void Orgasm::LoadSymbols(QString filename)
+{
+	QFile f(filename);
+	f.open(QFile::ReadOnly);
+	QString s=f.readAll();
+	f.close();
+	m_symbols.clear();
+	auto lst = s.split("\n");
+	for (auto& s: lst) {
+		auto slist = s.trimmed().simplified().split(" ");
+		if (slist.size()!=3)
+			continue;
+		if (slist[0]=="al")
+			m_symbols[slist[2]] = Util::NumberFromStringHex(slist[1]);
+	}
+	m_symbolsList = m_symbols.keys();
+
+}
+
 void Orgasm::LoadCodes(int CPUFlavor)
 {
     QString filename = ":/resources/text/opcodes.txt";

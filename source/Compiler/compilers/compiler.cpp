@@ -212,12 +212,20 @@ void Compiler::CleanupBlockLinenumbers() {
 }
 
 bool Compiler::SetupMemoryAnalyzer(QString filename, Orgasm *orgAsm) {
+	if (Data::data.useTripeOrgAsm) {
+		orgAsm = new Orgasm();
+		if (!QFile::exists(filename+".sym"))
+			return false;
+		orgAsm->LoadSymbols(filename+".sym");
+	}
+
   if (orgAsm == nullptr)
     return false;
 
   if (m_assembler == nullptr)
     return false;
   int i = 1;
+
 
   for (QString s : orgAsm->m_symbolsList) {
     if (s.toLower().startsWith("startblock")) {

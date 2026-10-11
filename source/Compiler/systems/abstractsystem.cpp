@@ -639,7 +639,7 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 
 	auto params  = QStringList() << "nada" <<"-c" <<"-arch" <<"mos6502" << "-sys" << sys << "-i"<< file+"_tripe.asm" <<"-o"<<file+".asm";
 	if (Data::data.useTripeOrgAsm) {
-		params<<"-a"; // assemble with Tripe
+		params<<"-a"<<"-sym"; // assemble with Tripe
 		text+="<br>Assembling with <font color=\"#A040FF\">Tripe...</font>";
 	}
 	if (m_processor == MOS6502) {

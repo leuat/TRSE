@@ -84,6 +84,9 @@ void Tripe::Execute() {
             if (m_args.contains("a")) {
                 OrgAsm orgasm(arch);
                 orgasm.Assemble(outFile, assembledFile);
+                if (m_args.contains("sym"))
+                    Util::save_text(Util::getFilenameAlone(outFile)+".sym", orgasm.getSymbols());
+
             }
 
         } else {

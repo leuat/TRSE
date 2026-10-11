@@ -199,6 +199,7 @@ public:
     int m_startAddress = -1;
     bool m_done = false;
     void LoadFile(QString filename);
+	void LoadSymbols(QString filename);
 
     static const int CPUFLAVOR_6502_STOCK = 0;
     static const int CPUFLAVOR_6502_ILLEGAL = 1;

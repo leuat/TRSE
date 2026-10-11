@@ -55,7 +55,7 @@ class OrgAsm {
     OrgAsm(string defs);
     // Assembles an .asm file
     void Assemble(string in, string out);
-
+    vector<string> getSymbols();
     // Opcodes and commands
     map<string, vector<Opcode>> m_opcodes;
     map<string, string> m_cmd;

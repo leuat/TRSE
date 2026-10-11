@@ -489,4 +489,13 @@ string OrgAsm::getVariable(const string &tst, string s, int &pos) {
     return ret;
 }
 
+vector<string> OrgAsm::getSymbols() {
+    vector<string> lst;
+    for (auto& d: m_symtab) {
+        lst.push_back("al $"+Util::toHex(d.second)+ " " +d.first);
+    }
+    return lst;
+}
+
+
 } // namespace tripe
