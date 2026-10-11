@@ -39,7 +39,7 @@ jobs:
 
       - run: |
           sudo apt-get update
-          sudo apt-get install qtbase5-dev qt5-qmake qtdeclarative5-dev
+          sudo apt-get install qtbase6-dev qt6-qmake qtdeclarative6-dev
           # For 'Verify all' tests
           # dbus-x11, at-spi2-core, libavformat-dev, libswscale-dev and libswresample-dev seem to be required by vice yet not pulled by its package
           # libsdl2-dev, libfreetype6-dev, zlib1g-dev and libpng-dev are needed to build Caprice32
