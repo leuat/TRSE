@@ -65,6 +65,7 @@ class OrgAsm {
     string m_curFile = "";
     string m_sys = "";
 
+    bool m_ignoreConstErrors = true;
     bool m_isLittleEndian = true;
     // Current pass
     int m_pass = 0;
@@ -82,7 +83,7 @@ class OrgAsm {
     int m_curLine = 0;
     // First org will write to a .prg
     bool m_firstOrg = true;
-    const string alNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ$0123456789_$<>%*";
+    const string alNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$0123456789_$<>%*";
     const string alNumOrExpr = alNum + "#+-*/ ";
 
   private:
@@ -115,7 +116,7 @@ class OrgAsm {
     // Writes the finished instruction opcodes + data to m_data
     // Also evalutes potential additional paramters, like "sta p+1"
     void addInstructionData(const Opcode &op, int ival);
-    int evaluate(string s);
+    int evaluate(string s, bool ignoreError = false);
     // Gets a almin substring
     string getVariable(const string &tst, string s, int &pos);
 

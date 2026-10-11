@@ -210,7 +210,7 @@ void CPU6502::LoadStore(int &pos, int opcode) {
 void CPU6502::Const(int &pos) {
     auto name = getNextParam(m_data, pos);
     auto value = getNextParam(m_data, pos);
-    Asm(name.str + " = " + Util::toHex(value.ival));
+    Asm(name.str + " = " + m_hexprefix+ Util::toHex(value.ival));
     m_symtab[name.str] = m_opcodeToAsm[value.type];
 }
 
@@ -222,9 +222,10 @@ void CPU6502::Declare(int &pos) {
          << "'   is_string: " << std::to_string(value.flag) << " at pos "
          << Util::toHex(pos) << endl;*/
     bool isString = value.flag == Opcodes::DATATYPE_STRING;
-    string hex = "$";
+    string hex = m_hexprefix;
     if (isString)
         hex = "";
+
     if (isRegister(name.str)) {
         m_symtab[name.str] = m_opcodeToAsm[value.type];
         return;

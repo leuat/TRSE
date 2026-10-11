@@ -69,11 +69,15 @@ void Tripe::Execute() {
         if (m_args.contains("wh_zp"))
             Data::d.whZp = Util::fromNumber(m_args["wh_zp"]);
 
+        string binEnding = "bin";
+        if (sys == "c64" || sys == "vic20")
+            binEnding = "prg";
+
         if (m_args.contains("c")) {
             // Do all in a row
             auto optTripe = Util::insertInFilename(inFile, "_opt");
             auto binTripe = Util::getFilenameAlone(inFile) + ".trp";
-            auto assembledFile = Util::getFilenameAlone(outFile) + ".bin";
+            auto assembledFile = Util::getFilenameAlone(outFile) + "." + binEnding;
             Util::save_text(optTripe, p.TripeOptimise(inFile));
             Util::save_binary(binTripe, p.ParseText(optTripe));
             Util::save_text(outFile, p.ParseBinary(binTripe, arch, params));
@@ -95,6 +99,7 @@ void Tripe::Execute() {
         if (!Data::d.isInternal)
             cout << "ok." << endl;
     } catch (string error) {
+        Error::s_error += error;
         if (!Data::d.isInternal) {
             cout << error << endl;
             exit(1);

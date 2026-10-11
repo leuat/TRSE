@@ -279,7 +279,7 @@ std::vector<std::string> Util::multi_split(const std::string &s, const string &d
 
 void Util::ReplaceWord(std::string &subject, const std::string &search, const std::string &replace) {
     // Regular expression to match words beginning with 'search'
-    std::regex e("(\\b(" + search + "))([^,. ]*)");
+    std::regex e("(\\b(" + search + "))([A-Za-z0-9_]*)");
     subject = std::regex_replace(subject, e, replace);
 }
 
