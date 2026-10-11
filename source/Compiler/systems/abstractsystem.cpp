@@ -659,6 +659,7 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	}
 //	qDebug() << params;
 	tripe::Tripe tripe(params.size(), Util::StringListToChar(params));
+	qDebug().noquote() << params;
 	tripe.setInternal(true);
 	tripe.Execute();
 

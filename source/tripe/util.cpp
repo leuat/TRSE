@@ -9,16 +9,12 @@ using namespace tripe;
 namespace tripe {
 
 string Util::trim(const std::string &s) {
-    auto wsfront = std::find_if_not(s.begin(), s.end(),
-                                    [](int c) { return std::isspace(c); });
-    auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) {
-                      return std::isspace(c);
-                  }).base();
+    auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) { return std::isspace(c); });
+    auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) { return std::isspace(c); }).base();
     return (wsback <= wsfront ? std::string() : std::string(wsfront, wsback));
 }
 
-std::vector<std::string> &Util::split(const std::string &s, char delim,
-                                      std::vector<std::string> &elems) {
+std::vector<std::string> &Util::split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
     std::string item;
     while (std::getline(ss, item, delim)) {
@@ -70,8 +66,7 @@ int Util::getIntLen(string type) {
 
 void Util::save_binary(string file, vector<uint8_t> data) {
     std::ofstream outfile(file, std::ofstream::binary);
-    outfile.write(reinterpret_cast<const char *>(data.data()),
-                  sizeof(uint8_t) * data.size());
+    outfile.write(reinterpret_cast<const char *>(data.data()), sizeof(uint8_t) * data.size());
     outfile.close();
 }
 
@@ -187,13 +182,11 @@ vector<uint8_t> Util::load_binary(string file) {
     return data;
 }
 
-string Util::ReplaceString(std::string str, const std::string &from,
-                           const std::string &to) {
+string Util::ReplaceString(std::string str, const std::string &from, const std::string &to) {
     size_t start_pos = 0;
     while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
         str.replace(start_pos, from.length(), to);
-        start_pos +=
-            to.length(); // Handles case where 'to' is a substring of 'from'
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
     }
     return str;
 }

@@ -67,8 +67,7 @@ void TripeParser::AppendExtraCode(AbstractCPU *cpu) {
     }
 }
 
-vector<string> TripeParser::ParseBinary(string inFile, string arch,
-                                        map<string, string> params) {
+vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, string> params) {
     LoadBinary(inFile);
 
     AbstractCPU *cpu = NULL;
@@ -78,8 +77,7 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch,
         cpu = new CPU6502();
 
     if (cpu == NULL)
-        Error::RaiseError("ParseBinary error: unrecognized architecture " +
-                          arch);
+        Error::RaiseError("ParseBinary error: unrecognized architecture " + arch);
 
     cpu->m_src.clear();
     cpu->m_curBranch = 0;
@@ -159,11 +157,10 @@ void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
     op->m_curBranch = 0;
     while (pos < m_data.size()) {
         string s = op->ParseFromBinary(pos);
-        vector<string> sp;
-        sp = Util::split(s, '\n', sp);
+        auto sp = Util::split(s, '\n');
         for (auto p : sp)
-            //            if (p != "" && !p.ends_with("nada"))
             m_src.push_back(p);
+
         if (sp.size() >= 2)
             op->m_prevLine = sp[1];
 

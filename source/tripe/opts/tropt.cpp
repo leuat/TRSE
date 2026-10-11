@@ -14,8 +14,7 @@ void Tropt::bops() {
     mov     ptr     _r16_1
 */
 
-    vector<string> bp = {"and", "add", "or",   "xor", "sub",
-                         "shl", "shr", "divu", "mulu"};
+    vector<string> bp = {"and", "add", "or", "xor", "sub", "shl", "shr", "divu", "mulu"};
 
     vector<string> n;
     // add 	t_uint8_2	j	uint8:0x01
@@ -73,8 +72,7 @@ void Tropt::muldiv() {
                 int ival = Util::fromNumber(lst[1]);
                 if (p2.contains(ival)) {
 
-                    cur = t + ((l0[0] == "mulu") ? "shl" : "shr") + t + l0[1] +
-                          t + l0[2] + t + type + ":0x" + Util::toHex(p2[ival]);
+                    cur = t + ((l0[0] == "mulu") ? "shl" : "shr") + t + l0[1] + t + l0[2] + t + type + ":0x" + Util::toHex(p2[ival]);
                     //                    cout << m_cur[i] << " -> " << cur <<
                     //                    endl;
                 }
@@ -187,8 +185,7 @@ void Tropt::load2() {
 
                     // Perform replace
                     // cout << "YE" << endl;
-                    cur = t + l1[0] + t + l1[1] + t + l1[2] + t + l0[2] +
-                          " ; opt15";
+                    cur = t + l1[0] + t + l1[1] + t + l1[2] + t + l0[2] + " ; opt15";
                     //                  cout
                     //<< "replace with : " << cur << endl <<endl;
                     m_noLines++;

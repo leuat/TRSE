@@ -8,14 +8,11 @@ namespace tripe {
 
 void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
     if (!m_asmToOpcode.contains(line[0]))
-        Error::RaiseError(
-            "Opcodes::ParseToBinary : Error parsing line with opcode: " +
-            line[0]);
+        Error::RaiseError("Opcodes::ParseToBinary : Error parsing line with opcode: " + line[0]);
 
     uint8_t opcode = m_asmToOpcode[line[0]];
     if (opcode == 0) {
-        Error::RaiseError(
-            "Opcodes::ParseToBinary : Incorrect opcode on line : " + line[0]);
+        Error::RaiseError("Opcodes::ParseToBinary : Incorrect opcode on line : " + line[0]);
     }
     vector<string> &p = m_opcodeToParams[opcode];
     bool isFirstParam = true;
@@ -50,8 +47,7 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
                 i++;
             }
             if (cnt >= 256)
-                Error::RaiseError(
-                    "Error: cannot have more than 255 elements per line");
+                Error::RaiseError("Error: cannot have more than 255 elements per line");
 
             d.insert(d.begin(), (uint16_t)(cnt >> 8) & 0xff);
             d.insert(d.begin(), (uint16_t)(cnt & 0xff));
@@ -64,8 +60,7 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
         if (s == "ival" || s == "p") {
             vector<string> v;
 
-            if (s == "p" && line[i].find(":", 0) == std::string::npos &&
-                line[i].find(":", 0)) {
+            if (s == "p" && line[i].find(":", 0) == std::string::npos && line[i].find(":", 0)) {
                 // Is a variable: Print out the full name
                 Util::append_string(Util::trim(line[i]), d);
             } else {
@@ -77,8 +72,7 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
                 if (v.size() == 1)
                     v.push_back("0");
                 if (v.size() != 2)
-                    Error::RaiseError(
-                        "ival type must be of format uint8:[number]");
+                    Error::RaiseError("ival type must be of format uint8:[number]");
                 if (!m_asmToOpcode.contains(a))
                     Error::RaiseError("Unknown type: " + a);
 

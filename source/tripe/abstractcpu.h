@@ -70,8 +70,7 @@ class Param {
         if (type == 1) {
             if (isRef())
                 return "#>" + clean();
-            else if (typeName == "uint16" || typeName.starts_with("ptr") ||
-                     typeName == "address16")
+            else if (typeName == "uint16" || typeName.starts_with("ptr") || typeName == "address16")
                 //                   str.starts_with("screen"))
                 return str + "+1";
             else {
@@ -141,9 +140,7 @@ class AbstractCPU {
 
     string ParseFromBinary(int &pos);
 
-    virtual vector<string> stub(map<string, string> params) {
-        return vector<string>();
-    }
+    virtual vector<string> stub(map<string, string> params) { return vector<string>(); }
 
     std::string ParseInlineAsm(vector<uint8_t> &data, int &pos);
 

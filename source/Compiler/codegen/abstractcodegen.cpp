@@ -1576,6 +1576,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeBuiltinMethod> node) {
   auto p = FactoryAssembler::create(Syntax::s.m_currentSystem->m_processor);
   auto p6520 = qSharedPointerDynamicCast<Asm6502>(p);
   if (p) {
+	  if (m_projectIni)
 	  p->InitZeroPointers(m_projectIni->getStringList("zeropages"),
 									m_projectIni->getStringList("temp_zeropages"),
 									m_projectIni->getStringList("var_zeropages"));

@@ -34,7 +34,7 @@ public:
 //    void SetPalette(int pal) override;
 //    QStringList getPaletteNames() override;
 //    QString GetCurrentDataString() override;
-    void CopyFrom(LImage *mc);
+	void CopyFrom(LImage *mc) override;
 
 };
 

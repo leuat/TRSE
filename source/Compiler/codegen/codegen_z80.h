@@ -46,7 +46,7 @@ public:
     void Cast(TokenType::Type from, TokenType::Type to) override;
     void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
-    void dispatch(QSharedPointer<NodeUnaryOp> node);
+	void dispatch(QSharedPointer<NodeUnaryOp> node) override;
 
     virtual void setValue(int val) override  {
         as->Asm("ld a,"+Util::numToHex(val));
@@ -123,7 +123,7 @@ public:
 
     QString LoadAddress(QSharedPointer<Node> n) override;
 
-    void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType);
+	void LoadIndex(QSharedPointer<Node> n,TokenType::Type arrayType) override;
     void FixAgon();
 
     void LoadInteger(QSharedPointer<Node> n);

@@ -10,7 +10,6 @@ namespace tripe {
 
 class Opcode {
   public:
-
     /*
         m_opcode is the opcode itself
         m_size is the size of the opcode, ie 1 for "clc" or 2 for "lda #10"
@@ -26,10 +25,8 @@ class Opcode {
     string m_ins, m_org, m_arg, m_type = "";
     bool m_isLocal = false;
 
-    Opcode(string instruction, uint16_t opcode, uint16_t size, uint16_t cycles,
-           bool isLocal)
-        : m_org(instruction), m_opcode(opcode), m_size(size), m_cycles(cycles),
-          m_isLocal(isLocal) {
+    Opcode(string instruction, uint16_t opcode, uint16_t size, uint16_t cycles, bool isLocal)
+        : m_opcode(opcode), m_org(instruction), m_size(size), m_cycles(cycles), m_isLocal(isLocal) {
         auto l = Util::clean_split(m_org, ' ');
         m_ins = l[0];
         if (l.size() >= 2)
@@ -47,9 +44,7 @@ class Opcode {
                 m_type = m_arg.substr(cnt + 1,
                                       3); // + m_arg[cnt + 1] + m_arg[cnt + 2];
             if (m_type != "i08" && m_type != "i16")
-                throw string(
-                    "Orgasm internal error in opcode definitions for " + m_ins +
-                    ", incorrect type :" + m_type);
+                throw string("Orgasm internal error in opcode definitions for " + m_ins + ", incorrect type :" + m_type);
         }
     }
     Opcode() {}
@@ -64,9 +59,11 @@ class OrgAsm {
     // Opcodes and commands
     map<string, vector<Opcode>> m_opcodes;
     map<string, string> m_cmd;
+    map<string, vector<string>> m_dataDefs;
 
     // Current file (for error output)
     string m_curFile = "";
+    string m_sys = "";
 
     bool m_isLittleEndian = true;
     // Current pass
@@ -85,8 +82,7 @@ class OrgAsm {
     int m_curLine = 0;
     // First org will write to a .prg
     bool m_firstOrg = true;
-    const string alNum =
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ$0123456789_$<>%*";
+    const string alNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXYZ$0123456789_$<>%*";
     const string alNumOrExpr = alNum + "#+-*/ ";
 
   private:
@@ -111,24 +107,23 @@ class OrgAsm {
     // lda #$10
     // matches
     // lda #%i08(true) or lda %i08 or lda (%i08),y   or lda %i16etc
-    Opcode matchPattern(string op, string s, string &var, string &varArg,
-                        int &ival);
+    Opcode matchPattern(string op, string s, int &ival);
 
     // Only adds data on pass 2
     bool addData() { return m_pass >= 2; }
 
     // Writes the finished instruction opcodes + data to m_data
     // Also evalutes potential additional paramters, like "sta p+1"
-    void addInstructionData(const Opcode &op, int ival, string varg);
-
-    // Gets a almin substring 
+    void addInstructionData(const Opcode &op, int ival);
+    int evaluate(string s);
+    // Gets a almin substring
     string getVariable(const string &tst, string s, int &pos);
 
+    string HandleLoHiInExpression(const string &s);
+    string ConvertBinary(const string &s);
+
     // Handy error message
-    string err() {
-        return "\nOrgAsm error in " + m_curFile + " on line " +
-               std::to_string(m_curLine) + ":\n";
-    }
+    string err() { return "\nOrgAsm error in " + m_curFile + " on line " + std::to_string(m_curLine) + ":\n"; }
 };
 
 } // namespace tripe

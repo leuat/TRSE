@@ -78,10 +78,10 @@ public:
 
 
     virtual void ReplaceInline(Assembler* as,QHash< QString,QSharedPointer<Node>>& inp) override;
-    virtual void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val) {
+	virtual void ReplaceInlineAssemblerVariables(Assembler* as, QString var, QString val) override {
         m_procedure->ReplaceInlineAssemblerVariables(as,var,val);
     }
-    virtual void ResetInlineAssembler();
+	virtual void ResetInlineAssembler() override;
 
     bool isPureNumeric() override;
 

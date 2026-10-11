@@ -10,7 +10,7 @@ public:
 
 
     void ExportBin(QFile &file) override;
-    void ExportSubregion(QString outfile, int x, int y, int w, int h, int type);
+	void ExportSubregion(QString outfile, int x, int y, int w, int h, int type) override;
 
 //    QStringList SpriteCompiler(QString name, QString currentDir, QString src, QString dst, int x, int y, int w, int h) override;
 

@@ -127,7 +127,7 @@ public:
     */
 //    void BinaryClause(QSharedPointer<Node> node);
 
-    void BuildToCmp(QSharedPointer<Node> node);
+	void BuildToCmp(QSharedPointer<Node> node) override;
     
     // WDC68c816 only. Turns on / off 16-bit mode.
     void Disable16bit();
@@ -160,7 +160,7 @@ public:
     void CompareAndJumpIfNotEqualAndIncrementCounter(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, QString lblJump, bool isOffPage, bool isInclusive) override;
     void CompareAndJumpIfNotEqual(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QString lblJump, bool isOffPage) override;
 
-    void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive);
+	void Compare(QSharedPointer<Node> nodeA, QSharedPointer<Node> nodeB, QSharedPointer<Node> step, bool isLarge, QString loopDone, QString loopNotDone, bool inclusive) override;
 
     /*
      *

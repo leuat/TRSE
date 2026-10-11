@@ -1,12 +1,17 @@
 #include "lorgasm.h"
 #include "resources/p6502.h"
 #include "tinyexpr.h"
+#include <regex>
 
 namespace tripe {
 
 OrgAsm::OrgAsm(string defs) {
     if (defs == "mos6502")
         LoadDefs(string((char *)resources_orgasm_p6502_txt));
+    else
+        throw string("Unknown or non-implemented system in OrgAsm: " + defs);
+
+    m_sys = defs;
 }
 
 void OrgAsm::LoadDefs(string s) {
@@ -25,9 +30,7 @@ void OrgAsm::LoadDefs(string s) {
             bool isLocal = false;
             if (ops.size() >= 6)
                 isLocal = ops[5] == "local";
-            Opcode op(ops[1], Util::fromNumber("0x" + ops[2]),
-                      +Util::fromNumber(ops[3]), +Util::fromNumber(ops[4]),
-                      isLocal);
+            Opcode op(ops[1], Util::fromNumber("0x" + ops[2]), +Util::fromNumber(ops[3]), +Util::fromNumber(ops[4]), isLocal);
 
             m_opcodes[op.m_ins].push_back(op);
         }
@@ -39,6 +42,12 @@ void OrgAsm::LoadDefs(string s) {
             if (ops[1] == "endian")
                 m_isLittleEndian = ops[2] == "0";
         }
+        // data defs
+        if (ops[0] == "d") {
+            auto lst = Util::split(ops[2], ',');
+            for (auto l : lst)
+                m_dataDefs[ops[1]].push_back(Util::trim(l));
+        }
     }
 }
 
@@ -48,14 +57,15 @@ void OrgAsm::Assemble(string in, string out) {
     m_src.clear();
     m_src = Util::split(s, '\n', m_src);
 
-    //   cout << " *** pass 0: consts" << endl;
+    cout << " *** pass 0: consts" << endl;
     Pass(0);
 
-    //   cout << " *** pass 1: labels and syms" << endl;
+    cout << " *** pass 1: labels and syms" << endl;
     Pass(1);
 
-    //    cout << " *** pass 2: assemble" << endl;
+    cout << " *** pass 2: assemble" << endl;
     Pass(2);
+    cout << " *** pass 3: assemble" << endl;
     Pass(2);
 
     cout << "OrgAsm done." << endl;
@@ -66,16 +76,15 @@ void OrgAsm::Assemble(string in, string out) {
 void OrgAsm::LoadData(string type, vector<string> &l, string org) {
 
     int itype = 1; // byte default
-    if (type == m_cmd["i16"])
+    if (contains(m_dataDefs["i16"], type))
         itype = 2;
-    if (type == m_cmd["i32"])
+    if (contains(m_dataDefs["i32"], type))
         itype = 4;
 
     int scount = 1;
     for (int i = 1; i < l.size(); i++) {
         auto lst = Util::split(l[i], ',');
         for (auto d : lst) {
-            // String handling
             if (d.starts_with("\"")) {
                 if ((scount & 0x1) == 1) {
                     vector<string> slst;
@@ -87,9 +96,10 @@ void OrgAsm::LoadData(string type, vector<string> &l, string org) {
                 scount += 1;
 
             } else {
-
-                uint64_t ival = Util::fromNumber(d);
-                //            cout << ival << endl;
+                uint64_t ival = 0;
+                if (m_pass >= 2) {
+                    ival = getValue(d);
+                }
                 if (m_isLittleEndian) {
                     if (itype >= 1)
                         m_data.push_back((uint8_t)(ival & 0xff));
@@ -101,12 +111,8 @@ void OrgAsm::LoadData(string type, vector<string> &l, string org) {
 
                 m_pc += itype;
             }
-            // cout << "Done" << endl;
         }
     }
-    //    cout << Util::toHex(m_pc) << " : " <<
-    //    (Util::toHex((int)m_data.back()))
-    //         << endl;
 }
 void OrgAsm::IncBin(string s) {
     s.erase(0, 1);
@@ -155,8 +161,12 @@ bool OrgAsm::Label(string s) {
 bool OrgAsm::ProgramCounter(vector<string> &l) {
     if (l[0] != m_cmd["pc"])
         return false;
+
+    if (m_pass == 0)
+        return true;
     uint64_t org = m_pc;
-    m_pc = Util::fromNumber(l[1]);
+
+    m_pc = evaluate(Util::concatStringList(l, 1, " "));
 
     if (!m_firstOrg) {
         for (int i = 0; i < m_pc - org; i++)
@@ -165,8 +175,11 @@ bool OrgAsm::ProgramCounter(vector<string> &l) {
 
     if (m_firstOrg) {
         m_firstOrg = false;
-        m_data.push_back((uint8_t)(m_pc & 0xff));
-        m_data.push_back((uint8_t)((m_pc >> 8) & 0xff));
+        // Create a .prg file
+        if (m_sys == "mos6502") {
+            m_data.push_back((uint8_t)(m_pc & 0xff));
+            m_data.push_back((uint8_t)((m_pc >> 8) & 0xff));
+        }
     }
 
     return true;
@@ -189,11 +202,11 @@ void OrgAsm::Parse(string s) {
     if (ProgramCounter(l))
         return;
 
-    if (l[0] == m_cmd["i8"] || l[0] == m_cmd["i16"] ||
-        l[0] == m_cmd["string"]) {
+    if (contains(m_dataDefs["i8"], l[0]) || contains(m_dataDefs["i16"], l[0]) || contains(m_dataDefs["string"], l[0])) {
         LoadData(l[0], l, s);
         return;
     }
+
     if (l[0] == m_cmd["incbin"]) {
         IncBin(l[1]);
         return;
@@ -205,8 +218,6 @@ void OrgAsm::Parse(string s) {
 
 void OrgAsm::HandleInstruction(vector<string> &l, string s) {
     if (m_opcodes.contains(l[0])) {
-        string var = "";  // variable p
-        string varg = ""; // arg like +1 + someConst
         if (l.size() == 1) {
             // nop, brk, clc etc
             Opcode opcode;
@@ -214,29 +225,22 @@ void OrgAsm::HandleInstruction(vector<string> &l, string s) {
             for (auto &o : m_opcodes[l[0]])
                 if (o.m_arg == "")
                     opcode = o;
-            addInstructionData(opcode, 0, varg);
+            addInstructionData(opcode, 0);
         } else if (l.size() > 1) {
-
-            string args = "";
-            for (int i = 1; i < l.size(); i++) {
-                if (l[i] != "")
-                    args += l[i];
-                if (i != l.size() - 1)
-                    args += " ";
-            }
+            string args = Util::concatStringList(l, 1, " ");
             int ival = 0x1000;
-            auto opcode = matchPattern(l[0], args, var, varg, ival);
-            args = Util::trim(var);
-
-            addInstructionData(opcode, ival, varg);
+            auto opcode = matchPattern(l[0], args, ival);
+            addInstructionData(opcode, ival);
         }
-        //        cout << "Found var: " << var << endl;
+
     } else {
+
         throw string(err() + "Unknown or non-impmented instruction :" + s);
     }
 }
 
-void OrgAsm::addInstructionData(const Opcode &op, int ival, string varg) {
+void OrgAsm::addInstructionData(const Opcode &op, int ival) {
+    // add opcode to data
     if (addData())
         m_data.push_back((uint8_t)op.m_opcode);
 
@@ -249,22 +253,9 @@ void OrgAsm::addInstructionData(const Opcode &op, int ival, string varg) {
     if (op.m_arg == "")
         return;
 
-    // We have arguments like p+1+3*20 etc
-    if (varg != "") {
-        varg = Util::ReplaceString(varg, "$", "0x");
-        int error = 0;
-        //        cout << varg << " :  $" << Util::toHex(ival) << endl;
-        ival += te_interp(varg.data(), &error);
-        //      cout << "after" << " :  $" << Util::toHex(ival) << endl;
-        if (error != 0) {
-            throw string("Error in expression : " + std::to_string(ival) + " " +
-                         varg);
-        }
-    }
     // Local branch or whatever
     if (op.m_isLocal) {
         ival -= m_pc;
-        //        cout << "Branch size: " << Util::toHex(ival) << endl;
         if (ival >= 128 || ival <= -127)
             throw string("Local branch out of range");
     }
@@ -278,17 +269,14 @@ void OrgAsm::addInstructionData(const Opcode &op, int ival, string varg) {
         throw string(err() + "Big endian not supported yet!");
 }
 
-Opcode OrgAsm::matchPattern(string op, string s, string &var, string &varg,
-                            int &ival) {
+Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
     //   cout << "Pattern: " << s << endl;
     bool found = false;
-    if (m_opcodes.contains("op"))
+    if (!m_opcodes.contains(op))
         throw string("Unknown opcode: " + op);
+
     ival = 0x1000;
     for (auto opcode : m_opcodes[op]) {
-        //        cout << "compare : " << op << "   - " << s << " to " <<
-        //        opcode.m_arg
-        //           << endl;
         int posInData = 0;
         int posInArg = 0;
         string arg = opcode.m_arg;
@@ -301,14 +289,22 @@ Opcode OrgAsm::matchPattern(string op, string s, string &var, string &varg,
                 char first = s[posInData];
                 // Get stuff like #$10, i, ptr etc
 
-                var = getVariable(alNum, s, posInData);
+                string var = getVariable(alNum, s, posInData);
                 if (var.starts_with("<"))
                     var = "#" + var;
                 if (var.starts_with(">"))
                     var = "#" + var;
 
-                // Get symbol value of var
+                // Get arguments like +1 or +2*SOMETHING (not implemented yet)
+                string varg = getVariable(alNumOrExpr, Util::trim(s), posInData);
+                // cout << op << "  :'" << var << "'   varg:" << varg << endl;
+
                 ival = getValue(var);
+                // We have arguments like p+1+3*20 etc
+                if (varg != "")
+                    ival += evaluate(Util::trim(varg));
+
+                // Get symbol value of var
 
                 // Reject if wrong type
                 if (ival <= 0xff && opcode.m_type == "i16")
@@ -316,14 +312,10 @@ Opcode OrgAsm::matchPattern(string op, string s, string &var, string &varg,
                 if (ival > 0xff && opcode.m_type == "i08")
                     found = false;
 
-                // Get arguments like +1 or +2*SOMETHING (not implemented yet)
-                varg = getVariable(alNumOrExpr, Util::trim(s), posInData);
-
                 posInArg += 3;
                 continue;
             }
-            if (posInData >= s.size() || posInArg >= arg.size() ||
-                (s[posInData] != arg[posInArg]))
+            if (posInData >= s.size() || posInArg >= arg.size() || (s[posInData] != arg[posInArg]))
                 found = false;
 
             posInArg++;
@@ -333,12 +325,40 @@ Opcode OrgAsm::matchPattern(string op, string s, string &var, string &varg,
             return opcode;
         }
     }
-
-    throw string(
-        err() +
-        "OrgAsm::MatchPattern - Unknown or non-impmented instruction pattern " +
-        op + " " + s);
+    throw string(err() + "OrgAsm::MatchPattern - Unknown or non-impmented instruction pattern " + op + " " + s);
     return Opcode("NONE", 0, 0, 0, false);
+}
+
+int OrgAsm::evaluate(string var) {
+    auto org = var;
+    var = Util::trim(var);
+    var = Util::ReplaceString(var, "  ", " ");
+
+    if (var == "")
+        return 0;
+
+    for (auto &s : m_symtab) {
+        if (var.find(s.first) != string::npos)
+            Util::ReplaceWord(var, s.first, "0x" + Util::toHex(s.second));
+    }
+    //    cout << " Before: " << var << "   pass:" << m_pass << endl;
+    var = HandleLoHiInExpression(var);
+    var = ConvertBinary(var);
+    //  cout << " after : " << var << endl;
+    ;
+
+    var = Util::ReplaceString(var, "$", "0x");
+    //    var = Util::ReplaceString(var, "%", "0b");
+    // Handle binary numbers
+
+    var = Util::ReplaceString(var, "#", "");
+    int error = 0;
+    // Evaluate argument.
+    int ival = te_interp(var.data(), &error);
+    if (error != 0)
+        throw string("OrgAsm::evaluate error in expression : " + std::to_string(ival) + " " + org + " (" + var + ")");
+
+    return ival;
 }
 
 int OrgAsm::getValue(string var) {
@@ -348,23 +368,17 @@ int OrgAsm::getValue(string var) {
         return m_pc;
     }
 
-    if (var.starts_with("#<") || var.starts_with("#>")) {
-        bool isLo = var.starts_with("#<");
-        var = Util::ReplaceString(var, "#<", "");
-        var = Util::ReplaceString(var, "#>", "");
-        if (m_symtab.contains(var)) {
-            if (isLo)
-                return (m_symtab[var]) & 0xff;
-            else
-                return (m_symtab[var] >> 8) & 0xff;
+    if (m_pass >= 2)
+        if (var.starts_with("#<") || var.starts_with("#>")) {
+            bool isLo = var.starts_with("#<");
+            var = Util::ReplaceString(var, "#<", "");
+            var = Util::ReplaceString(var, "#>", "");
+            if (m_symtab.contains(var))
+                return Util::getLoHi(m_symtab[var], isLo);
 
             ival = Util::fromNumber(var);
-            if (isLo)
-                return ival & 0xff;
-            else
-                return (ival >> 8) & 0xff;
+            return Util::getLoHi(ival, isLo);
         }
-    }
 
     if (Util::isPureNumber(var))
         ival = Util::fromNumber(var);
@@ -391,6 +405,50 @@ void OrgAsm::Pass(int pass) {
         Parse(s);
         m_curLine++;
     }
+}
+
+string OrgAsm::ConvertBinary(const string &s) {
+    string res = s;
+    std::regex re(R"(%(\w+))");
+    std::smatch m;
+    if (std::regex_search(s, m, re)) {
+        string rep = m_hex + Util::toHex(Util::fromNumber("%" + m[1].str()));
+        res = Util::ReplaceString(res, "%" + m[1].str(), rep);
+        //        cout << " Binary: from " << s << " to " << res << endl;
+    }
+
+    return res;
+}
+
+string OrgAsm::HandleLoHiInExpression(const string &s) {
+    // lo
+    string res = s;
+    std::regex re(R"(#<(\w+))");
+    std::smatch m;
+    if (std::regex_search(s, m, re)) {
+        string rep = m_hex + Util::toHex(Util::getLoHi(m_symtab[m[1].str()], true));
+        res = Util::ReplaceString(res, "#<" + m[1].str(), rep);
+    }
+    std::regex re2(R"(#>(\w+))");
+    if (std::regex_search(s, m, re2)) {
+        string rep = m_hex + Util::toHex(Util::getLoHi(m_symtab[m[1].str()], false));
+        res = Util::ReplaceString(res, "#>" + m[1].str(), rep);
+    }
+
+    std::regex relo(R"(<\$?(\d+))");
+    if (std::regex_search(s, m, relo)) {
+        string rep = m_hex + Util::toHex(Util::getLoHi(Util::fromNumber(m_hex + m[1].str()), true));
+        res = Util::ReplaceString(res, "<" + m[1].str(), rep);
+    }
+
+    std::regex rehi(R"(>\$?(\d+))");
+    if (std::regex_search(s, m, rehi)) {
+        string rep = m_hex + Util::toHex(Util::getLoHi(Util::fromNumber(m_hex + m[1].str()), false));
+        //        cout << "HERE " << m[1].str() << " with" << rep << endl;
+        res = Util::ReplaceString(res, ">$" + m[1].str(), rep);
+    }
+
+    return res;
 }
 
 string OrgAsm::getVariable(const string &tst, string s, int &pos) {

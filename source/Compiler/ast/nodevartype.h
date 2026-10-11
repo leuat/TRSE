@@ -53,8 +53,8 @@ public:
     NodeVarType(Token t,  QString filename, QString position);
     NodeVarType(Token t,  QString initvalue );
 
-    bool isPure() {
-        return (m_flags.contains("pure_variable") | m_flags.contains("pure") | m_flags.contains("pure_number"));
+	bool isPure() override {
+		return (m_flags.contains("pure_variable") || m_flags.contains("pure") || m_flags.contains("pure_number"));
     }
 
     QString getValue(Assembler* as) override {

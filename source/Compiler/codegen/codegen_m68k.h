@@ -98,7 +98,7 @@ public:
 //    void BuildConditional(QSharedPointer<Node> node, QString lblFailed);
     void BuildConditional(QSharedPointer<Node> node,  QString lblSuccess, QString lblFailed, bool page) override;
 
-    void BuildToCmp(QSharedPointer<Node> node);
+	void BuildToCmp(QSharedPointer<Node> node) override;
 
     void DeclarePointer(QSharedPointer<NodeVarDecl> node) override;
     bool m_clearFlag = false;
@@ -120,9 +120,9 @@ public:
     void AssignStringPtr(QSharedPointer<NodeAssign> node, bool isPointer);
 
 
-    void Cast(TokenType::Type from, TokenType::Type to);
+	void Cast(TokenType::Type from, TokenType::Type to) override;
 
-    void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType);
+	void Cast(TokenType::Type from, TokenType::Type to, TokenType::Type writeType) override;
 
 
 };

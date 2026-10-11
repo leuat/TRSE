@@ -130,7 +130,7 @@ public:
     */
 //    void BinaryClause(QSharedPointer<Node> node);
 
-    void BuildToCmp(QSharedPointer<Node> node);
+	void BuildToCmp(QSharedPointer<Node> node) override;
 
     QString TripeNumber(QSharedPointer<Node> node);
     QString TripeValue(QSharedPointer<Node> node);

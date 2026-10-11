@@ -95,7 +95,8 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system,
   try {
     // Set up assembler and dispatcher for the current system
     InitAssemblerAnddispatcher(system);
-    m_assembler->m_disableComments =
+	m_codeGen->m_projectIni = m_projectIni.get();
+	m_assembler->m_disableComments =
         m_projectIni->getdouble("disable_compiler_comments") == 1;
     m_assembler->m_curDir = project_dir;
 
@@ -103,7 +104,6 @@ bool Compiler::Build(QSharedPointer<AbstractSystem> system,
         m_ini->getdouble("display_addresses") != 1.0) {
       m_codeGen->dontOutputLineNumbers();
     }
-	m_codeGen->m_projectIni = m_projectIni.get();
 
   } catch (const FatalErrorException &e) {
     HandleError(e, "Error during pre-build");

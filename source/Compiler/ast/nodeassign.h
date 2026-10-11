@@ -55,9 +55,9 @@ public:
         dispatcher->dispatch(qSharedPointerDynamicCast<NodeAssign>(sharedFromThis()));
     }
 
-    bool isDead();
+	bool isDead() override;
 
-    virtual bool Optimize();
+	virtual bool Optimize() override;
 
 };
 

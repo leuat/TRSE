@@ -47,9 +47,7 @@ void Phopt6502::ldX(string cmd) {
 
             if (curVal != "")
                 if (op1.find(":") != std::string::npos || op1 == tax ||
-                    /*op1 == "jmp" || */ op1 == "bne" || op1 == "beq" ||
-                    op1 == dex || op1 == inx || op1 == "jsr" ||
-                    op1 == "is_label") {
+                    /*op1 == "jmp" || */ op1 == "bne" || op1 == "beq" || op1 == dex || op1 == inx || op1 == "jsr" || op1 == "is_label") {
                     //		cout << "Reset "<<curVal<< " "
                     //<< op1<<endl;
                     curVal = "";
@@ -81,21 +79,16 @@ void Phopt6502::ldX(string cmd) {
                 // replace "sta arr,x" with "sta arr+x" when x is a const
                 if (line1.size() == 2)
                     if (curVal != "" && Util::isPureNumber(curVal))
-                        if (op1 == "sta" || op1 == "lda" || op1 == "adc" ||
-                            op1 == "sbc" || op1 == "ora" || op1 == "eor" ||
-                            op1 == "asl" || op1 == "lsr" || op1 == "ror" ||
-                            op1 == "rol") {
+                        if (op1 == "sta" || op1 == "lda" || op1 == "adc" || op1 == "sbc" || op1 == "ora" || op1 == "eor" || op1 == "asl" || op1 == "lsr" ||
+                            op1 == "ror" || op1 == "rol") {
 
                             if (line1[1].find("(") == string::npos) {
                                 vector<string> lst;
                                 lst = Util::split(line1[1], ',', lst);
                                 if (lst.size() == 2 && lst[1] == xy) {
-                                    string add =
-                                        Util::ReplaceString(curVal, "#", "");
-                                    src.push_back(tab + op1 + tab + lst[0] +
-                                                  "+" + add);
-                                    src.push_back("; opt6 :" + line1[0] + " " +
-                                                  line1[1]);
+                                    string add = Util::ReplaceString(curVal, "#", "");
+                                    src.push_back(tab + op1 + tab + lst[0] + "+" + add);
+                                    src.push_back("; opt6 :" + line1[0] + " " + line1[1]);
                                     remove = true;
                                     s_optLines += 1;
                                 }
@@ -122,8 +115,7 @@ void Phopt6502::cmp() {
         if (line1.size() == 2) {
             auto op1 = Util::toLower(line1[0]);
 
-            if (op1 == "cmp" && (line1[1] == "#0" || line1[1] == "#$0") &&
-                m_src[i].find(";keep") == string::npos) {
+            if (op1 == "cmp" && (line1[1] == "#0" || line1[1] == "#$0") && m_src[i].find(";keep") == string::npos) {
                 bool found = false;
                 int j = i + 1;
                 string prev = "";
@@ -175,8 +167,7 @@ void Phopt6502::ldA() {
             auto op1 = Util::toLower(line1[0]);
             if (curVal != "")
 
-                if (op1 == "is_label" || op1.find(":") != std::string::npos ||
-                    contains(m_aChangingOps, op1) || line1.size() == 1 ||
+                if (op1 == "is_label" || op1.find(":") != std::string::npos || contains(m_aChangingOps, op1) || line1.size() == 1 ||
                     line1[1].find(",") != string::npos) {
                     curVal = "";
                 }
@@ -209,8 +200,7 @@ void Phopt6502::ldA() {
     m_src = src;
 }
 
-void Phopt6502::ldaldxlda(vector<vector<string>> &line, vector<string> &l,
-                          int &cur, vector<string> &src) {
+void Phopt6502::ldaldxlda(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
     /*
     sta varPrefixed_c
     ldy i
@@ -231,8 +221,7 @@ void Phopt6502::ldaldxlda(vector<vector<string>> &line, vector<string> &l,
         auto op2 = Util::toLower(line2[0]);
         auto op3 = Util::toLower(line3[0]);
 
-        if (line1[0] == "sta" && line3[0] == "lda" && line1[1] == line3[1] &&
-            !line1[1].ends_with(",x") && !line1[1].ends_with(",y")) {
+        if (line1[0] == "sta" && line3[0] == "lda" && line1[1] == line3[1] && !line1[1].ends_with(",x") && !line1[1].ends_with(",y")) {
             if (line2[0] == "ldy" || line2[0] == "ldx") {
                 src.push_back(";opt4");
                 if (!line1[1].starts_with("_"))
@@ -247,8 +236,7 @@ void Phopt6502::ldaldxlda(vector<vector<string>> &line, vector<string> &l,
         }
     }
 }
-void Phopt6502::incdec(vector<vector<string>> &line, vector<string> &l,
-                       int &cur, vector<string> &src) {
+void Phopt6502::incdec(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
 
     /*
         lda sfx_sfxType_sfxType_timer,x
@@ -257,20 +245,13 @@ void Phopt6502::incdec(vector<vector<string>> &line, vector<string> &l,
         sta sfx_sfxType_sfxType_timer,x
     */
     if (line[0].size() == 2 && line[2].size() == 2 && line[3].size() == 2)
-        if (line[0][0] == "lda" && line[3][0] == "sta" &&
-            line[0][1] == line[3][1]) {
-            if (line[2][0] == "sbc" &&
-                (line[2][1] == "#1" ||
-                 line[2][1] == "#$1" && line[0][1].find("(") == string::npos) &&
-                !is16bit(line[0][1])) {
+        if (line[0][0] == "lda" && line[3][0] == "sta" && line[0][1] == line[3][1]) {
+            if (line[2][0] == "sbc" && ((line[2][1] == "#1" || line[2][1] == "#$1") && line[0][1].find("(") == string::npos) && !is16bit(line[0][1])) {
                 cur = m_curLine;
                 src.push_back(tab + "dec" + tab + line[0][1] + ";incdec opt");
                 s_optLines += 4;
             }
-            if (line[2][0] == "adc" &&
-                (line[2][1] == "#1" ||
-                 line[2][1] == "#$1" && line[0][1].find("(") == string::npos) &&
-                !is16bit(line[0][1])) {
+            if (line[2][0] == "adc" && ((line[2][1] == "#1" || line[2][1] == "#$1") && line[0][1].find("(") == string::npos) && !is16bit(line[0][1])) {
                 cur = m_curLine;
                 src.push_back(tab + "inc" + tab + line[0][1] + ";incdec opt");
                 s_optLines += 4;
@@ -278,8 +259,7 @@ void Phopt6502::incdec(vector<vector<string>> &line, vector<string> &l,
         }
 }
 
-void Phopt6502::ldasta2(vector<vector<string>> &line, vector<string> &l,
-                        int &cur, vector<string> &src) {
+void Phopt6502::ldasta2(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
 
     /*
         sta _r8_1
@@ -287,8 +267,7 @@ void Phopt6502::ldasta2(vector<vector<string>> &line, vector<string> &l,
         lda _r8_1
     */
     if (line[0].size() == 2 && line[1].size() == 2 && line[2].size() == 2)
-        if (line[0][0] == "sta" && line[2][0] == "lda" &&
-            line[0][1] == line[2][1] && isTemp(line[0][1])) {
+        if (line[0][0] == "sta" && line[2][0] == "lda" && line[0][1] == line[2][1] && isTemp(line[0][1])) {
             if (line[1][0] == "ldy" || line[1][0] == "ldx") {
                 cur = m_curLine;
                 src.push_back(l[1] + " ; opt ldasta2");
@@ -297,8 +276,7 @@ void Phopt6502::ldasta2(vector<vector<string>> &line, vector<string> &l,
         }
 }
 
-void Phopt6502::ldasta(vector<vector<string>> &line, vector<string> &l,
-                       int &cur, vector<string> &src) {
+void Phopt6502::ldasta(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
     /*
     sta t_uint8_3
     lda t_uint8_3
@@ -337,8 +315,7 @@ becomes
             //<< cmd << endl;
             if (line2[1] != "")
                 if ((line2[1] == line1[1]) && !line2[1].starts_with("$")) {
-                    if (cmd == 'a' &&
-                        m_src[m_curLine].find(";keep") == string::npos) {
+                    if (cmd == 'a' && m_src[m_curLine].find(";keep") == string::npos) {
                         if (isTemp(line1[1])) {
                             cur = m_curLine;
                             src.push_back("; stalda opt 1");
@@ -370,8 +347,7 @@ becomes
     }
 }
 
-void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur,
-                     vector<string> &src) {
+void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
 
     /*
     sta _r8_4
@@ -402,8 +378,7 @@ void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur,
         line.erase(line.begin() + 2);
     }
 
-    if (!(line[0][0] == "sta" && line[1][0] == "lda" && isTemp8(line[0][1]) &&
-          isTemp8(line[1][1])))
+    if (!(line[0][0] == "sta" && line[1][0] == "lda" && isTemp8(line[0][1]) && isTemp8(line[1][1])))
         return;
 
     if (!(line[0][1] == line[2][1]))
@@ -412,8 +387,7 @@ void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur,
     // perform opt
     string cmd = line[2][0];
 
-    if (!(/*cmd == "sbc" || */ cmd == "adc" || cmd == "or" || cmd == "and" ||
-          cmd == "xor"))
+    if (!(/*cmd == "sbc" || */ cmd == "adc" || cmd == "or" || cmd == "and" || cmd == "xor"))
         return;
     /*
         cout << "HERE " << endl;
@@ -430,8 +404,7 @@ void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur,
     src.push_back(tab + cmd + " " + line[1][1] + " ; bop2 opt ");
 }
 
-void Phopt6502::Bop1(vector<vector<string>> &line, vector<string> &l, int &cur,
-                     vector<string> &src) {
+void Phopt6502::Bop1(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
 
     /*
      sta t_uint8_load1
@@ -462,8 +435,7 @@ void Phopt6502::Bop1(vector<vector<string>> &line, vector<string> &l, int &cur,
     */
     // first line stores to temp
 
-    if (!(line[0].size() == 2 && line[1].size() == 2 && line[2].size() == 2 &&
-          line[3].size() == 2))
+    if (!(line[0].size() == 2 && line[1].size() == 2 && line[2].size() == 2 && line[3].size() == 2))
         return;
 
     if (!(line[0][0] == "sta" && isTemp8(line[0][1])))
@@ -493,8 +465,7 @@ void Phopt6502::Bop1(vector<vector<string>> &line, vector<string> &l, int &cur,
     if (line[4][0] == "sec" || line[4][0] == "clc")
         p = 5;
     string cmd = line[p][0];
-    if (!(cmd == "sbc" || cmd == "adc" || cmd == "or" || cmd == "and" ||
-          cmd == "xor"))
+    if (!(cmd == "sbc" || cmd == "adc" || cmd == "or" || cmd == "and" || cmd == "xor"))
         return;
 
     cur = m_curLine;
@@ -511,8 +482,7 @@ void Phopt6502::Bop1(vector<vector<string>> &line, vector<string> &l, int &cur,
         s_optLines -= 1;
     }
     //    cout << "BOP1 Optimized *************** " << type << endl;
-    src.push_back(tab + cmd + " " + line[1][1] + " ; bop opt " +
-                  to_string(type));
+    src.push_back(tab + cmd + " " + line[1][1] + " ; bop opt " + to_string(type));
 }
 
 void Phopt6502::Opt(Type type, int noLinesToCheck) {

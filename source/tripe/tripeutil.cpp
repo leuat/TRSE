@@ -1,24 +1,24 @@
 #include "tripeutil.h"
 #include <algorithm>
+#include <filesystem>
 #include <iostream>
+#include <ranges>
+#include <regex>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace tripe;
 namespace tripe {
 
 string Util::trim(const std::string &s) {
-    auto wsfront = std::find_if_not(s.begin(), s.end(),
-                                    [](int c) { return std::isspace(c); });
-    auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) {
-                      return std::isspace(c);
-                  }).base();
+    auto wsfront = std::find_if_not(s.begin(), s.end(), [](int c) { return std::isspace(c); });
+    auto wsback = std::find_if_not(s.rbegin(), s.rend(), [](int c) { return std::isspace(c); }).base();
     return (wsback <= wsfront ? std::string() : std::string(wsfront, wsback));
 }
 
-std::vector<std::string> &Util::split(const std::string &s, char delim,
-                                      std::vector<std::string> &elems) {
+std::vector<std::string> &Util::split(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss(s);
     std::string item;
     while (std::getline(ss, item, delim)) {
@@ -53,6 +53,9 @@ std::vector<std::string> Util::clean_split(string s, char delim) {
 }
 
 vector<string> Util::read_text_code_file(string f, bool trim) {
+    if (!std::filesystem::exists(f)) {
+        throw string("Unable to open file: " + f);
+    }
     vector<string> m_src;
     ifstream inp(f);
     string s, o;
@@ -68,6 +71,8 @@ vector<string> Util::read_text_code_file(string f, bool trim) {
 }
 
 string Util::load_text_file(string f) {
+    if (!std::filesystem::exists(f))
+        throw string("Unable to open file: " + f);
     vector<string> m_src;
     ifstream inp(f);
     string s;
@@ -95,8 +100,7 @@ int Util::getIntLen(string type) {
 
 void Util::save_binary(string file, vector<uint8_t> data) {
     std::ofstream outfile(file, std::ofstream::binary);
-    outfile.write(reinterpret_cast<const char *>(data.data()),
-                  sizeof(uint8_t) * data.size());
+    outfile.write(reinterpret_cast<const char *>(data.data()), sizeof(uint8_t) * data.size());
     outfile.close();
 }
 
@@ -186,7 +190,7 @@ string Util::toDec(uint64_t val) {
 
 void Util::append_string(string s, vector<uint8_t> &data) {
     int n = s.length();
-    char char_array[n + 1];
+    char char_array[1024];
 
     // copying the contents of the
     // string to char array
@@ -198,6 +202,8 @@ void Util::append_string(string s, vector<uint8_t> &data) {
 }
 
 vector<uint8_t> Util::load_binary(string file) {
+    if (!std::filesystem::exists(file))
+        throw string("Unable to open file: " + file);
     std::ifstream fint(file, ios::ate | ios::binary);
     uint size = fint.tellg();
     fint.close();
@@ -212,13 +218,11 @@ vector<uint8_t> Util::load_binary(string file) {
     return data;
 }
 
-string Util::ReplaceString(std::string str, const std::string &from,
-                           const std::string &to) {
+string Util::ReplaceString(std::string str, const std::string &from, const std::string &to) {
     size_t start_pos = 0;
     while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
         str.replace(start_pos, from.length(), to);
-        start_pos +=
-            to.length(); // Handles case where 'to' is a substring of 'from'
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
     }
     return str;
 }
@@ -240,6 +244,9 @@ string Util::getFilenameAlone(string fn) {
 int Util::fromNumber(string s) {
     uint64_t val;
     bool hex = false;
+    //    if (!isPureNumber(s))
+    //        throw string("TripeUtil::fromNumber error: " + s + " is not a valid number");
+
     s = Util::ReplaceString(s, "$", "0x");
     s = Util::ReplaceString(s, "#", "");
     s = trim(s);
@@ -252,9 +259,28 @@ int Util::fromNumber(string s) {
         s = Util::ReplaceString(s, "%", "");
         base = 2;
     }
-
-    val = stoi(s, 0, base);
+    try {
+        val = stoi(s, 0, base);
+    } catch (const std::invalid_argument &) {
+        throw string("Util::fronNumber: string '" + s + "' is not a valid number");
+    }
 
     return val;
 }
+
+std::vector<std::string> Util::multi_split(const std::string &s, const string &delim) {
+    vector<string> lst;
+    /*    for (const std::string_view word : std::views::split(s, delim)) {
+            lst.push_back(quoted(word));
+            //   std::cout << std::quoted(word) << ' ';
+        }*/
+    return lst;
+}
+
+void Util::ReplaceWord(std::string &subject, const std::string &search, const std::string &replace) {
+    // Regular expression to match words beginning with 'search'
+    std::regex e("(\\b(" + search + "))([^,. ]*)");
+    subject = std::regex_replace(subject, e, replace);
+}
+
 } // namespace tripe

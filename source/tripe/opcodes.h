@@ -21,8 +21,7 @@ class Opcodes : public AbstractCPU {
     void getIntOrString(string s, const string &type, vector<uint8_t> &d) {
         auto val = Util::trim(s);
         bool isHex = false;
-        bool is16bit = (type.find("uint16") != string::npos) ||
-                       (type.find("address") != string::npos);
+        bool is16bit = (type.find("uint16") != string::npos) || (type.find("address") != string::npos);
 
         //        cout << "getintorstring :  " << type << " " << is16bit <<
         //        endl;

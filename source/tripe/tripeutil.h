@@ -23,10 +23,12 @@ template <typename T> bool contains(vector<T> vec, const T &elem) {
 class Util {
   public:
     static string trim(const std::string &s);
-    static std::vector<std::string> &split(const std::string &s, char delim,
-                                           std::vector<std::string> &elems);
+    static std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems);
 
     static std::vector<std::string> split(const std::string &s, char delim);
+
+    static vector<string> multi_split(const string &s, const string &delim);
+    static void ReplaceWord(std::string &subject, const std::string &search, const std::string &replace);
 
     static std::vector<std::string> clean_split(string s, char delim);
 
@@ -39,12 +41,29 @@ class Util {
     static bool isPureNumber(string str) {
         if (str.starts_with("#"))
             str = str.erase(0, 1);
-        if (str.starts_with("0x") || str.starts_with("$") ||
-            str.starts_with("%"))
+        if (str.starts_with("0x") || str.starts_with("$") || str.starts_with("%"))
             return true;
         if (std::isdigit(str[0]))
             return true;
         return false;
+    }
+
+    static uint8_t getLoHi(const int &number, const bool &isLo) {
+        if (isLo)
+            return (number) & 0xff;
+        else
+            return (number >> 8) & 0xff;
+    }
+
+    static string concatStringList(vector<string> &l, int start, const string &delim) {
+        string args = "";
+        for (int i = start; i < l.size(); i++) {
+            if (l[i] != "")
+                args += l[i];
+            if (i != l.size() - 1)
+                args += delim;
+        }
+        return args;
     }
 
     static string toLower(string str) {
@@ -66,8 +85,7 @@ class Util {
 
     static void append_string(string s, vector<uint8_t> &data);
 
-    static string ReplaceString(std::string str, const std::string &from,
-                                const std::string &to);
+    static string ReplaceString(std::string str, const std::string &from, const std::string &to);
 };
 
 } // namespace tripe

@@ -17,8 +17,7 @@ class TripeParser {
     const char *m_id = "TRP";
     vector<uint8_t> ParseText(string inFile);
     vector<string> TripeOptimise(string inFile);
-    vector<string> ParseBinary(string inFile, string arch,
-                               map<string, string> params);
+    vector<string> ParseBinary(string inFile, string arch, map<string, string> params);
 
     int m_noAsmLinesOpt = 0;
     int m_noTripeLinesOpt = 0;

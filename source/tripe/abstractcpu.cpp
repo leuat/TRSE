@@ -14,9 +14,7 @@ AbstractCPU::AbstractCPU() {
 }
 
 bool AbstractCPU::is16bit(const Param &val) {
-    return (m_symtab[val.str] == "uint16" ||
-            m_symtab[val.str].starts_with("ptr") ||
-            m_symtab[val.str].starts_with("address16")) ||
+    return (m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") || m_symtab[val.str].starts_with("address16")) ||
            m_opcodeToAsm[val.type] == "uint16";
 }
 
@@ -41,8 +39,7 @@ void AbstractCPU::Init(string opcodes) {
         stringstream(v[1]) >> hex >> val;
         string str = Util::toLower(Util::trim(v[0]));
         if (m_opcodeToAsm.contains(val))
-            Error::RaiseError("Error when reading the opcodes list: opcode $" +
-                              Util::toHex(val) + " is taken.");
+            Error::RaiseError("Error when reading the opcodes list: opcode $" + Util::toHex(val) + " is taken.");
 
         m_asmToOpcode[str] = val;
         m_opcodeToAsm[val] = str;
@@ -69,12 +66,10 @@ Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
         pos += 1;
         flag = data[pos++];
         if (flag == Opcodes::DATATYPE_STRING) {
-            while (data[pos] != 0) {
+            while (data[pos] != 0)
                 s += data[pos++];
-            }
+
             pos++;
-            //             cout << "Found string: " << s << "   : "
-            //                << std::to_string(data[pos]) << endl;
 
         } else {
 
@@ -85,21 +80,17 @@ Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
         typeName = m_opcodeToAsm[type];
     } else // Some text
     {
-        while (data[pos] != 0) {
+        while (data[pos] != 0)
             s += data[pos++];
-        }
         pos++;
         type = Param::VAR;
         typeName = m_symtab[s];
     }
-    if (s.starts_with("_r")) {
-        bool ok = true;
-        for (auto v : m_registersUsed)
-            if (s == v)
-                ok = false;
-        if (ok)
+
+    if (s.starts_with("_r"))
+        if (!contains(m_registersUsed, s))
             m_registersUsed.push_back(s);
-    }
+
     return Param(s, type, typeName, flag);
 }
 
@@ -146,16 +137,14 @@ std::string AbstractCPU::ParseInlineAsm(vector<uint8_t> &data, int &pos) {
     return "";
 }
 
+// void HandleDataStream(int& pos, string )
+
 string AbstractCPU::ParseFromBinary(int &pos) {
     m_line = "";
     auto data = m_data;
     uint8_t opcode = data[pos];
-    if (opcode == 0) {
-        std::cout << "error parsing binary tripe : illegal opcode 0 at pos "
-                  << Util::toHex(pos) << std::endl;
-        exit(1);
-        return m_line;
-    }
+    if (opcode == 0)
+        throw string("AbstractCPU::ParseFromBinary: Error parsing binary tripe, illegal opcode 0 at pos " + Util::toHex(pos));
 
     int type = 0;
     auto as = ParseInlineAsm(data, pos);
@@ -166,8 +155,7 @@ string AbstractCPU::ParseFromBinary(int &pos) {
     if (!m_opcodeToAsm[opcode].starts_with("."))
         Asm("; " + m_opcodeToAsm[opcode]);
 
-    if (opcode == m_asmToOpcode[".uint8"] ||
-        opcode == m_asmToOpcode[".uint16"]) {
+    if (opcode == m_asmToOpcode[".uint8"] || opcode == m_asmToOpcode[".uint16"]) {
         string stype = m_opcodeToAsm[opcode];
         stype.erase(stype.begin(), stype.begin() + 1);
         m_line = "\t" + m_typeTripeToNative[stype] + "\t";

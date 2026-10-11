@@ -73,7 +73,7 @@ public:
 
     bool isPointer(Assembler *as) override
     {
-        return m_left->isPointer(as) | m_right->isPointer(as);
+		return m_left->isPointer(as) || m_right->isPointer(as);
 
     }
     TokenType::Type getOrgType(Assembler *as) override {

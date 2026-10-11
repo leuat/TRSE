@@ -24,7 +24,7 @@ public:
 
     void Update();
 
-    bool eventFilter(QObject *sender, QEvent *event);
+	bool eventFilter(QObject *sender, QEvent *event) override;
 
 private slots:
     void on_leSearch_textChanged(const QString &arg1);

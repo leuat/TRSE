@@ -56,8 +56,7 @@ void CPU6502::verifyZp(string name, string val) {
     if (m_zpUsed.contains(val) && m_zpUsed[val] == name)
         return;
     if (m_zpUsed.contains(val)) {
-        cout << "Warning : '" << name << "' at address " << val
-             << " already used by '" << m_zpUsed[val] << "'" << endl;
+        cout << "Warning : '" << name << "' at address " << val << " already used by '" << m_zpUsed[val] << "'" << endl;
         return;
     }
     m_zpUsed[val] = name;
@@ -139,8 +138,7 @@ vector<string> CPU6502::stub(map<string, string> params) {
 
     if (print) {
         src.push_back("\torg " + basicStart);
-        src.push_back("\tdc.b $b, $8, $a, $0, $9e, $20," + printAddress +
-                      " $0, $0, $0");
+        src.push_back("\tdc.b $b, $8, $a, $0, $9e, $20," + printAddress + " $0, $0, $0");
     }
 
     return src;
@@ -241,8 +239,7 @@ void CPU6502::Declare(int &pos) {
         m_ptrZp += 2;
 
     } else {
-        Label(name.str, m_typeTripeToNative[m_opcodeToAsm[value.type]] + "\t" +
-                            hex + value.str);
+        Label(name.str, m_typeTripeToNative[m_opcodeToAsm[value.type]] + "\t" + hex + value.str);
     }
     m_symtab[name.str] = m_opcodeToAsm[value.type];
 }
@@ -423,6 +420,7 @@ void CPU6502::Binop(int &pos, int opcode) {
     if (op == "sbc")
         Asm("sec");
 
+    //    Asm(op + " " + b.lo());
     Asm(op + " " + b.prefix());
     Asm("sta " + res.prefix());
     //        std::cout << "BINOP : " <<a.prefix() << " " <<b.prefix() << " " <<
@@ -430,8 +428,7 @@ void CPU6502::Binop(int &pos, int opcode) {
     //        <<(int)(b.type==m_asmToOpcode["uint16"]) << endl; std::cout << "
     //        Type : " << m_symtab[a.prefix()] << " "
     //        <<(int)(b.type==m_asmToOpcode["uint16"]) << endl;
-    bool ab16bit =
-        is16bit(a) || is16bit(b) || a.isRef() || b.isRef() || is16bit(res);
+    bool ab16bit = is16bit(a) || is16bit(b) || a.isRef() || b.isRef() || is16bit(res);
 
     if (ab16bit) {
 
@@ -447,8 +444,7 @@ void CPU6502::Mov(int &pos) {
     auto res = getNextParam(m_data, pos);
     auto val = getNextParam(m_data, pos);
 
-    if (m_symtab.contains(res.str) && is16bit(res) || val.isRef() ||
-        is16bit(val)) {
+    if (m_symtab.contains(res.str) && is16bit(res) || val.isRef() || is16bit(val)) {
 
         if (is16bit(res)) {
             if (val.str != m_nada)
@@ -475,10 +471,8 @@ bool CPU6502::printCmp(const string &val) {
 
     vector<string> l;
     l = Util::split(Util::trim(m_prevLine), ' ', l);
-    const vector<string> valid{
-        /*"sta", */ "lda", "adc", "sbc", "ora", "eor", "and"};
-    cout << "'" << l[0] << "'" << !contains(valid, l[0]) << "  : " << m_prevLine
-         << endl;
+    const vector<string> valid{/*"sta", */ "lda", "adc", "sbc", "ora", "eor", "and"};
+    cout << "'" << l[0] << "'" << !contains(valid, l[0]) << "  : " << m_prevLine << endl;
 
     return !contains(valid, l[0]);
 }
@@ -584,8 +578,7 @@ void CPU6502::Branch(int &pos, int opcode) {
 
     if (m_pass == 0) {
         vector<string> lst;
-        m_branches.push_back(m_curLine + Util::split(m_line, '\n', lst).size() +
-                             1);
+        m_branches.push_back(m_curLine + Util::split(m_line, '\n', lst).size() + 1);
     }
 
     if (isOffpage) {
