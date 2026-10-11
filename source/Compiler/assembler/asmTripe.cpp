@@ -21,7 +21,7 @@
 
 #include "asmTripe.h"
 #include "source/Compiler/syntax.h"
-
+#include "source/LeLib/data.h"
 
 
 AsmTripe::AsmTripe() :Assembler()
@@ -519,12 +519,13 @@ void AsmTripe::Connect()
     }
 	QStringList n;
 
+	if (Data::data.useTripeOrgAsm)
 	for (auto& c: m_symTab->m_constants.keys()) {
 		auto t = m_symTab->m_constants[c]->m_type;
-		if (t=="ADDRESS") t = "address";
+		if (t=="ADDRESS") t = "address8";
 		if (t=="BYTE") t = "uint8";
 		if (t=="INTEGER") t = "uint16";
-//		n.append("const"+tab+c+ tab + t+":"+m_symTab->m_constants[c]->m_name);
+		n.append("const"+tab+c+ tab + t+":"+Util::numToHex0(m_symTab->m_constants[c]->m_value->m_fVal));
 	}
 
 

@@ -663,8 +663,6 @@ void AbstractSystem::AssembleTripe(QString& text, QString file, QString currentD
 	tripe.setInternal(true);
 	tripe.Execute();
 
-	Util::CopyFile(file+".bin",file+".prg");
-	QFile::remove(file+".bin");
 
 
 	if (tripe::Error::s_error!="")

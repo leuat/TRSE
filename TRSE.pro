@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 # Since ~2026, been using c++20
-CONFIG += c++23
+CONFIG += c++20
 
 QT += core gui opengl qml
 QT += widgets
