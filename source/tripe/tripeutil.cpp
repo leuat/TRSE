@@ -205,7 +205,7 @@ vector<uint8_t> Util::load_binary(string file) {
     if (!std::filesystem::exists(file))
         throw string("Unable to open file: " + file);
     std::ifstream fint(file, ios::ate | ios::binary);
-    uint size = fint.tellg();
+    int size = fint.tellg();
     fint.close();
     std::ifstream fin(file, ios::in | ios::binary);
     char *buffer = new char[size];
