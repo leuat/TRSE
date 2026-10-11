@@ -55,7 +55,7 @@ public:
 
 	bool isPure() override {
 		return (m_flags.contains("pure_variable") || m_flags.contains("pure") || m_flags.contains("pure_number"));
-    }
+	}
 
     QString getValue(Assembler* as) override {
         return value;
