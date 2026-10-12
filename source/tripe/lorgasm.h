@@ -83,8 +83,10 @@ class OrgAsm {
     int m_curLine = 0;
     // First org will write to a .prg
     bool m_firstOrg = true;
-    const string alNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$0123456789_<>%*";
+    const string alNum = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$0123456789_<>%*$";
     const string alNumOrExpr = alNum + "#+-*/ ";
+    const int m_ierror = 0xFFFFFF;
+
 
   private:
     // Loads the opcode table for the CPU in question

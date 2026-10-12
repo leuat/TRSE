@@ -525,7 +525,8 @@ void AsmTripe::Connect()
 		if (t=="ADDRESS") t = "address8";
 		if (t=="BYTE") t = "uint8";
 		if (t=="INTEGER") t = "uint16";
-		n.append("const"+tab+c+ tab + t+":"+Util::numToHex0(m_symTab->m_constants[c]->m_value->m_fVal));
+		if (m_symTab->m_constants[c]->isUsed)
+			n.append("const"+tab+c+ tab + t+":"+Util::numToHex0(m_symTab->m_constants[c]->m_value->m_fVal));
 	}
 
 

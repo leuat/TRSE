@@ -16,7 +16,7 @@ vector<string> Phopt6502::optimize(vector<string> in) {
     ldX("y");
     ldX("x");
     ldA();
-    cmp();
+//    cmp();
     return m_src;
 }
 

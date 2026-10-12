@@ -5,6 +5,7 @@
 #include "tripeutil.h"
 #include <chrono>
 #include <filesystem>
+#include "guts/guts6502.h"
 #include <map>
 
 using namespace tripe;
@@ -35,17 +36,25 @@ void Tripe::RequireParameter(string p, string error) {
 }
 
 void Tripe::Execute() {
+    try {
     RequireParameter("i", "input file required (-i)");
+    string inFile = m_args["i"];
+
+    if (m_args.contains("guts")) {
+        Guts6502 guts;
+        guts.injectBin(inFile);
+        guts.Run();
+        return;
+    }
+
     RequireParameter("o", "output file required (-o)");
     RequireParameter("arch", "architecture required (-arch)");
     auto start = chrono::system_clock::now();
-    string inFile = m_args["i"];
     string outFile = m_args["o"];
     string arch = Util::toLower(m_args["arch"]);
     string sys = m_args["sys"];
     Error::s_error = "";
     //    cout << inFile << endl;
-    try {
 
         if (!std::filesystem::exists(inFile))
             Error::RaiseError("Could not find input file: " + inFile);

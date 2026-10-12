@@ -1025,6 +1025,17 @@ void CodeGenTRIPE::dispatch(QSharedPointer<NodeAsm> node) {
 		txt = node->m_asm.split("\n");
 	//    as->Comment("****** Inline assembler section");
 	for (QString t : txt) {
+		auto lst = t.trimmed().simplified().split(" ");
+		for (auto& l:lst) {
+			auto lst2 = l.split(",");
+			for (auto& l2:lst2) {
+				l2 = l2.replace("<","").replace(">","").replace("#","");
+				if (as->m_symTab->m_constants.contains(l2)) {
+					as->m_symTab->m_constants[l2]->isUsed = true;
+					qDebug() << "Setting const used: "<< l2;
+				}
+			}
+		}
 		as->Write(t, 0);
 	}
 	as->Asm(".endasm");
