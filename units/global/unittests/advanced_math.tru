@@ -153,14 +153,19 @@ begin
 	@ifndef ATARI520ST
 	Advanced06();
 	@endif
-	Advanced07(); 
+	Advanced07();
+ 
 	Advanced08();
 	@endif
 	@ifdef C64
+	// Tripe doesn't have stack params (yet)
+	@ifndef USE_TRIPE
 	AdvFactorial();
+	@endif
 	@endif
 @ifndef CPU_PCHIP8
 @ifndef CPU_M68000
+
 	MulDivCombo1();
 	MulDivCombo2();
 	MulDivCombo3();

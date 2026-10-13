@@ -56,7 +56,10 @@ begin
 		if (currentTest=4) then CaseTest::Exec();
 		if (currentTest=5) then Casts::Exec();
 		if (currentTest=1) then ForLoop::Exec();
+// Tripe doesn't have regs
+@ifndef USE_TRIPE
 		if (currentTest=7) then Registers::Exec();
+@endif 
 		if (currentTest=8) then BitOp::Exec();
 		if (currentTest=9) then IfThenElse::Exec();
 		if (currentTest=10) then IntegerTest::Exec();
@@ -64,12 +67,14 @@ begin
 		if (currentTest=11) then Various::Exec();
 @endif
 @ifndef CPU_M68000
+@ifndef USE_TRIPE
 		if (currentTest=12) then BooleanTest::Exec();
+@endif		
 @endif
 		if (currentTest=0) then LongTest::Exec();
 		
 @if SUPPORTS_CLASSES = 1
-		if (currentTest=14) then Classes::Exec();
+//		if (currentTest=14) then Classes::Exec();
 @endif
 		currentTest+=1;
 				

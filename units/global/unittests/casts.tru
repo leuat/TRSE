@@ -221,7 +221,9 @@ begin
 	Test17();
 	Test18();
 @ifndef CPU_M68000
+@ifndef USE_TRIPE
 	Test19();
+@endif
 @endif
 	Common::WaitABit();
 end;

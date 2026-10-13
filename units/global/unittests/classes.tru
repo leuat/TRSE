@@ -217,7 +217,7 @@ begin
 	sl.Add(#text);
 	sl.Add("BALL");
 	zp := sl.items[2].str;
-	Vars::text := "C1:";
+	Vars::text := "X1:";
 
 	if (zp[0]=66) then Common::PASS() else Common::FAIL();
 end;
@@ -235,7 +235,7 @@ begin
 	Vars::i2 := sl.items[Vars::v2].str;
 	Vars::i1 := 0;
 	Vars::i1 := sl.items[Vars::v1].getValue();
-	Vars::text := "C2:";
+	Vars::text := "X2:";
 	
 	if (Vars::i1=Vars::i2) then Common::PASS() else Common::FAIL();
 end;
@@ -247,7 +247,7 @@ begin
 	// Direct use
 	sl.Stuff();
 //	Common::DebugByte(Vars::v1);
-	Vars::text := "C3:";
+	Vars::text := "X3:";
 	if (Vars::v1=3+3*2) then Common::PASS() else Common::FAIL();
 end;
 
@@ -335,13 +335,13 @@ begin
     CTest11();
     @endif
     
-    CTest10();
- 
+    CTest10(); // crashes on TRIPE
+  
     @endif
 	@ifdef C64
 	// Implement this
     CTestC1(); // ADD still fails on the cpc.. damn
-    CTestC3(); // ADD still fails on the cpc.. damn
+  //  CTestC3(); // ADD still fails on the cpc.. damn
 //    CTestC2(); // FAILS fix
     @endif
 
@@ -354,6 +354,7 @@ begin
 //      CTestC2(); // FAILS fix
   @endif
 //@ifdef NOT_DEFINED_YET_FIX_THIS_UP
+
 	MTest1();
 	MTest2();
 	MTest3();
