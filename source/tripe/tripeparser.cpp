@@ -155,6 +155,7 @@ void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
     op->m_data = m_data;
     op->m_pass = pass;
     op->m_curBranch = 0;
+    op->m_decltab.clear();
     while (pos < m_data.size()) {
         string s = op->ParseFromBinary(pos);
         auto sp = Util::split(s, '\n');

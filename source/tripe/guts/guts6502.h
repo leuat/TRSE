@@ -75,12 +75,13 @@ public:
 		return s;
 	}
 
-	void Run() {
+	void Run(bool output) {
 		cout << "Gutsing.... " << endl;
 		m_cpu->pc = 0x810;
 		while (m_memory[m_cpu->pc]!=00) {
 			m_cpu->Run(1);
-			cout << "pc:$" <<Util::toHex(m_cpu->pc) <<  "  : "<< ins(m_cpu->pc) <<endl;
+			if (output) 
+				cout << "pc:$" <<Util::toHex(m_cpu->pc) <<  "  : "<< ins(m_cpu->pc) <<endl;
 		}
 	}
 
@@ -91,6 +92,12 @@ public:
     }
     static uint8_t BusRead(uint16_t a) {
     	return m_memory[a];
+    }
+
+    void Output(string addr) {
+		int a = Util::fromNumber(addr);
+		cout << addr << " : $"<< Util::toHex(m_memory[a])<<endl;
+		exit(m_memory[a]);
     }
 
 };

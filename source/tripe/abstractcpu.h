@@ -122,7 +122,7 @@ class AbstractCPU {
 
     map<string, string> m_code;
     vector<string> m_usedCode;
-    map<string, string> m_symtab;
+    map<string, string> m_symtab, m_decltab;
 
     AbstractCPU();
 
@@ -184,6 +184,7 @@ class AbstractCPU {
     bool isSingleParamOpcode(int code);
 
     bool is16bit(const Param &val);
+    bool is16bitArray(const Param &val);
 
     int m_currentRegister;
 

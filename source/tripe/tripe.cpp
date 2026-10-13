@@ -43,8 +43,10 @@ void Tripe::Execute() {
     if (m_args.contains("guts")) {
         Guts6502 guts;
         guts.injectBin(inFile);
-        guts.Run();
-        return;
+        guts.Run(m_args.contains("guts_output"));
+        if (m_args.contains("exit_mem"))
+            guts.Output(m_args["exit_mem"]);
+        exit(0);
     }
 
     RequireParameter("o", "output file required (-o)");

@@ -5,9 +5,7 @@
 vector<uint8_t> Guts6502::m_memory;
 
 void Guts6502::LoadDefs() {
-	cout << "HERE"<<endl;
 	string s = string((char *)resources_orgasm_p6502_txt_2);
-	cout << "HERE2"<<endl;
     vector<string> l;
     l = Util::split(s, '\n', l);
     for (auto &s : l) {

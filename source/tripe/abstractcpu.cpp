@@ -18,6 +18,11 @@ bool AbstractCPU::is16bit(const Param &val) {
            m_opcodeToAsm[val.type] == "uint16";
 }
 
+bool AbstractCPU::is16bitArray(const Param &val) {
+    return (m_symtab[val.str] == "uint16" || m_symtab[val.str]==("ptr16") || m_symtab[val.str].starts_with("address16")) ||
+           m_opcodeToAsm[val.type] == "uint16";
+}
+
 void AbstractCPU::Init(string opcodes) {
     if (m_initialized)
         return;

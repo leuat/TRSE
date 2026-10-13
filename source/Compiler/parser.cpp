@@ -498,6 +498,8 @@ void Parser::InitSystemPreprocessors() {
     m_preprocessorDefines["SUPPORTS_CLASSES"] =
         QString::number((int)Syntax::s.m_currentSystem->m_allowClasses/* && !Data::data.useTripe*/);
 
+    m_preprocessorDefines["USE_TRIPE"] = QString::number((int)Data::data.useTripe);
+
    Syntax::s.m_currentSystem->InitSystemPreprocessors(m_preprocessorDefines);
 }
 
