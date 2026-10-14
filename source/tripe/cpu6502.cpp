@@ -5,8 +5,8 @@
 #include "resources/div8_6502.h"
 #include "resources/mul16_6502.h"
 #include "resources/mul8_6502.h"
-#include "tripedata.h"
 #include "tinyexpr.h"
+#include "tripedata.h"
 #include <algorithm>
 using namespace tripe;
 namespace tripe {
@@ -83,22 +83,23 @@ void CPU6502::InsertTempValues(vector<string> &lst, int pos) {
     }
 }
 
-string CPU6502::loadIndex(string &s, Param& idx, string type, bool& indexIsConst) {
+string CPU6502::loadIndex(string &s, Param &idx, string type, bool &indexIsConst) {
     string xy = "x";
     if (type.starts_with("ptr"))
         xy = "y";
     if (type.starts_with("address"))
         xy = "x";
     indexIsConst = false;
-    if (Util::isPureNumber(idx.str) && xy=="x") {
+    if (Util::isPureNumber(idx.str) && xy == "x") {
         indexIsConst = true;
         if (type == "ptr16" || type == "uint16") {
             int error = 0;
-                // Evaluate argument.
-            int ival = te_interp((idx.str+"*2").data(), &error);
+            // Evaluate argument.
+            int ival = te_interp((idx.str + "*2").data(), &error);
             idx.str = std::to_string(ival);
-
         }
+        else
+            idx.str = "$"+idx.str;
         return xy;
     }
 
@@ -181,8 +182,8 @@ void CPU6502::LoadStore(int &pos, int opcode) {
         else {
             if (!isConst)
                 Asm("sta " + res.str + "," + y);
-            else 
-                Asm("sta " + res.str +  "+"+idx.str+ "; opt7");
+            else
+                Asm("sta " + res.str + "+" + idx.str + "; opt7");
         }
 
         if (is16bitArray(res)) {
@@ -194,8 +195,7 @@ void CPU6502::LoadStore(int &pos, int opcode) {
                 if (!isConst)
                     Asm("sta " + res.str + "+1," + y);
                 else
-                    Asm("sta " + res.str +  "+1+"+idx.str+ "; opt7");
-
+                    Asm("sta " + res.str + "+1+" + idx.str + "; opt7");
             }
 
             // Asm("sta " + val.prefix() + "+1");
@@ -213,8 +213,7 @@ void CPU6502::LoadStore(int &pos, int opcode) {
             if (!isConst)
                 Asm("lda " + res.str + "," + y);
             else
-                Asm("lda " + res.str + "+" + idx.str+ "; opt7");
-
+                Asm("lda " + res.str + "+" + idx.str + "; opt7");
         }
 
         Asm("sta " + val.prefix());
@@ -226,8 +225,7 @@ void CPU6502::LoadStore(int &pos, int opcode) {
                 if (y == "y") {
                     Asm("iny");
                     Asm("lda (" + res.str + ")," + y);
-                } else
-                {
+                } else {
                     if (!isConst)
                         Asm("lda " + res.str + "+1," + y);
                     else {
@@ -547,8 +545,8 @@ void CPU6502::Branch(int &pos, int opcode) {
         Asm("cmp " + b.prefix());
 
         // perform offpage opt here for jeq/jneq
-        string jeq = isOffpage?"bne ":"beq "; // flip if offpage
-        string jneq = isOffpage?"beq ":"bne "; // flip if offpage
+        string jeq = isOffpage ? "bne " : "beq ";  // flip if offpage
+        string jneq = isOffpage ? "beq " : "bne "; // flip if offpage
 
         if (opcode == m_asmToOpcode["jeq"])
             Asm(jeq + lbl.str);
@@ -628,14 +626,12 @@ void CPU6502::Branch(int &pos, int opcode) {
     }
 
     if (isOffpage) {
-        if (opcode==m_asmToOpcode["jeq"] || opcode==m_asmToOpcode["jneq"]) {
+        if (opcode == m_asmToOpcode["jeq"] || opcode == m_asmToOpcode["jneq"]) {
             Asm("; branch is offpage optbranch1");
             Asm("jmp " + lblKeep);
             Label(lbl.str);
 
-
-        } 
-        else {
+        } else {
             string cont = getTempLabel();
             Asm("; branch is offpage");
             Asm("jmp " + cont);

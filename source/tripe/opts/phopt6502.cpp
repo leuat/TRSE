@@ -3,7 +3,6 @@
 using namespace tripe;
 namespace tripe {
 
-
 vector<string> Phopt6502::optimize(vector<string> in) {
 
     m_src = in;
@@ -21,9 +20,85 @@ vector<string> Phopt6502::optimize(vector<string> in) {
     Opt(CMP2, 4);
     ldAtaX("x");
     ldAtaX("y");
-//    ldxAlone("x");
+    staRegLdx("x");
+    staRegLdx("y");
+    //    ldxAlone("x");
     return m_src;
 }
+
+void Phopt6502::staRegLdx(string cmd) {
+    /*
+    sta _r8_2
+    ldx l
+    lda rainbow,x
+    ldy _r8_2 ; opt ldasta2
+
+    to
+
+    tay 
+    ldx l
+    lda rainbow,x
+
+    */
+    bool isDone = false;
+    vector<string> src{};
+    string comm = "," + cmd;
+    string sta = "st" + cmd;
+
+    for (int i = 0; i < m_src.size(); i++) {
+
+        bool remove = false;
+        string l1 = "";
+        auto line1 = getLine(i);
+        int firstLine = i;
+        if (line1.size() == 2 && Util::toLower(line1[0]) == "sta" && isTemp(line1[1])) {
+
+            bool done = false;
+            int j = i + 1;
+            bool used = false;
+            string reg = line1[1];
+
+            while (!done && !used) {
+                auto lst = getLine(j);
+                if (lst.size()==0) {
+                    j++;
+                    continue;
+                }
+                auto op = Util::toLower(Util::trim(lst[0]));
+               if (lst.size() > 0) {
+ 
+                    if (op == "in" + cmd || op == "de" + cmd) {
+                        used = true;
+                    }
+                }
+                if (lst.size() > 1)
+                    if (lst[1].find(comm) != string::npos) {
+                        used = true;
+                        done = true;
+                    }
+                auto line = m_src[j];
+                if (!(line.starts_with(" ") || line.starts_with("\t") || line.find(":") == string::npos)) {
+                    done = true;
+                    used = true;
+                }
+                if (op=="ld"+cmd && lst.size()>1 && lst[1]==reg && !used) {
+                    // found! 
+                    m_src[firstLine] = tab+"ta"+cmd;
+                    m_src[j] = ";"+ m_src[j] + " ; opt staregldx";
+                }
+                j++;
+            }
+        }
+        if (!remove)
+            src.push_back(m_src[i]);
+
+    }
+
+    m_src = src;
+
+}
+
+
 
 void Phopt6502::ldxAlone(string cmd) {
     string curVal = "";
@@ -37,34 +112,34 @@ void Phopt6502::ldxAlone(string cmd) {
         string l1 = "";
         auto line1 = getLine(i);
 
-        if (line1.size() == 2 && Util::toLower(line1[0])==ldx) {
+        if (line1.size() == 2 && Util::toLower(line1[0]) == ldx) {
 
             bool done = false;
-            int j=i+1;
+            int j = i + 1;
             bool used = false;
 
             while (!done) {
                 auto lst = getLine(j++);
-                if (lst.size()>0) {
+                if (lst.size() > 0) {
                     auto op = Util::toLower(Util::trim(lst[0]));
-                    if (op=="in"+cmd || op=="de"+cmd || op=="st"+cmd) {
+                    if (op == "in" + cmd || op == "de" + cmd || op == "st" + cmd) {
                         used = true;
                     }
-                    if (op==cmd) {
+                    if (op == cmd) {
                         done = true;
                     }
                 }
-                if (lst.size()>1)
-                if (lst[1].find(comm)!=string::npos) {
-                    used = true;
-                    done = true;
-                }
+                if (lst.size() > 1)
+                    if (lst[1].find(comm) != string::npos) {
+                        used = true;
+                        done = true;
+                    }
                 auto line = m_src[j];
-                if (!(line.starts_with(" ") || line.starts_with("\t") || line.find(":")==string::npos))
+                if (!(line.starts_with(" ") || line.starts_with("\t") || line.find(":") == string::npos))
                     done = true;
             }
             if (!used) {
-                src.push_back("; remove opt8 ."+ldx);
+                src.push_back("; remove opt8 ." + ldx);
                 remove = true;
                 s_optLines += 1;
             }
@@ -76,14 +151,13 @@ void Phopt6502::ldxAlone(string cmd) {
     m_src = src;
 }
 
-
 void Phopt6502::cmp2(vector<vector<string>> &line, vector<string> &l, int &cur, vector<string> &src) {
     /*
     sta _r8_1
     ; jneq
     lda s
     cmp _r8_1
-    bne 
+    bne
 
     to
 
@@ -99,7 +173,7 @@ void Phopt6502::cmp2(vector<vector<string>> &line, vector<string> &l, int &cur, 
     auto l2 = l[2];
     auto l3 = l[3];
 
-    if (line0.size() == 2 && line1.size() == 2 && line2.size()==2 &&line3.size()==2) {
+    if (line0.size() == 2 && line1.size() == 2 && line2.size() == 2 && line3.size() == 2) {
 
         auto op0 = Util::toLower(line0[0]);
         auto op1 = Util::toLower(line1[0]);
@@ -107,12 +181,11 @@ void Phopt6502::cmp2(vector<vector<string>> &line, vector<string> &l, int &cur, 
         auto op3 = Util::toLower(line3[0]);
         //      std::cout <<Util::toLower(line1[0])  << " "
         //<<Util::toLower(line2[0]) << endl;
-        if (op0 == "sta" && op1=="lda" && op2=="cmp" && (op3=="bne" || op3=="beq") && isTemp8(line0[1]) && line0[1]==line2[1]) {
-                s_optLines += 2;
-                src.push_back(tab+"cmp "+line[1][1] + " ; optcmp2");
-                src.push_back(l3);
-                cur = m_curLine;
-
+        if (op0 == "sta" && op1 == "lda" && op2 == "cmp" && (op3 == "bne" || op3 == "beq") && isTemp8(line0[1]) && line0[1] == line2[1]) {
+            s_optLines += 2;
+            src.push_back(tab + "cmp " + line[1][1] + " ; optcmp2");
+            src.push_back(l3);
+            cur = m_curLine;
         }
     }
 }
@@ -131,9 +204,9 @@ void Phopt6502::ldAtaX(string cmd) {
 
         if (line1.size() == 2 && line2.size() == 1) {
             auto op1 = Util::toLower(line1[0]);
- //           cout << op1 << " " << line2[0] << endl;
+            //           cout << op1 << " " << line2[0] << endl;
             if (op1 == "lda" && (line2[0] == tax)) {
-                src.push_back(tab+"ld" + cmd + " " + line1[1]+ " ; opt lda9 [blah] "+tax);
+                src.push_back(tab + "ld" + cmd + " " + line1[1] + " ; opt lda9 [blah] " + tax);
                 i++;
                 remove = true;
                 s_optLines += 1;
@@ -242,16 +315,16 @@ void Phopt6502::cmp() {
             auto op1 = Util::toLower(line1[0]);
 
             if (op1 == "cmp" && (line1[1] == "#0" || line1[1] == "#$0") && m_src[i].find(";keep") == string::npos) {
-                auto next = findPrevNext(i+1, 1);
-                auto prev = findPrevNext(i-1, -1);
+                auto next = findPrevNext(i + 1, 1);
+                auto prev = findPrevNext(i - 1, -1);
                 // if prev is a changing and next is beq/bne, replace
-                //cout << prev << endl;
+                // cout << prev << endl;
                 if (contains(m_aChangingOpsForCmp, prev))
-                if (next == "beq" || next == "bne") {
-                    src.push_back("\t;cmpopt " + m_src[i]);
-                    remove = true;
-                    s_optLines += 1;
-                }
+                    if (next == "beq" || next == "bne") {
+                        src.push_back("\t;cmpopt " + m_src[i]);
+                        remove = true;
+                        s_optLines += 1;
+                    }
             }
         }
         if (!remove)
@@ -503,11 +576,11 @@ void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur, 
         l.push_back(ll);
         line.erase(line.begin() + 2);
     }
-    if (!(line[0][0].starts_with( "st" )  && line[1][0] == "lda" && isTemp8(line[0][1])))
+    if (!(line[0][0].starts_with("st") && line[1][0] == "lda" && isTemp8(line[0][1])))
         return;
 
     // get stx/sty/sta
-    string xy {line[0][0][2]};
+    string xy{line[0][0][2]};
 
     if (!(line[0][1] == line[2][1]))
         return;
@@ -527,8 +600,8 @@ void Phopt6502::Bop2(vector<vector<string>> &line, vector<string> &l, int &cur, 
     cur = m_curLine;
     s_optLines += 2;
     // do the opt:
-    if (xy!="a") // needs a "txa" before
-        src.push_back(tab+"t"+xy+"a");
+    if (xy != "a") // needs a "txa" before
+        src.push_back(tab + "t" + xy + "a");
     if (sec != "")
         src.push_back(sec);
     src.push_back(tab + cmd + " " + line[1][1] + " ; bop2 opt ");

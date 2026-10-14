@@ -6,6 +6,41 @@ using namespace std;
 using namespace tripe;
 namespace tripe {
 
+void Tropt::LoadXStore() {
+    /*
+    load    rainbow     l   _r8_1
+    xxx     _r8_2   uint8:0x13  i
+    store   colormemory     _r8_2   _r8_1
+
+    xxx     _r8_2   uint8:0x13  i
+    load    rainbow     l   _r8_1
+    store   colormemory     _r8_2   _r8_1
+
+    with
+*/
+    vector<string> n;
+
+    for (int i = 0; i < m_cur.size(); i++) {
+        auto l0 = getLine(i);
+        auto l1 = getLine(i + 1);
+        auto l2 = getLine(i + 2);
+        auto cur = m_cur[i];
+        if (l0.size() == 4 && l2.size() == 4 && l0[0] == "load" && l2[0] == "store") {
+            if (l0[3] == l2[3] && l0[3] != l1[2]) {
+                n.push_back(m_cur[i + 1]);
+                n.push_back(m_cur[i]);
+                n.push_back(m_cur[i + 2]);
+                i += 3;
+                continue;
+            }
+        }
+
+        n.push_back(cur);
+    }
+
+    m_cur = n;
+}
+
 void Tropt::bops() {
 
     /*
@@ -270,6 +305,7 @@ vector<string> Tropt::optimise(vector<string> input) {
     muldiv();
     cleanupAsm();
     constIndex();
+    LoadXStore();
     return m_cur;
 }
 
