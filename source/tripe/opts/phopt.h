@@ -26,6 +26,20 @@ std::vector<std::string> &elems);
     bool isTemp8(string s) { return s.starts_with("_r8"); }
     bool isTemp16(string s) { return s.starts_with("_r16"); }
 
+    string findPrevNext(int j, int add) {
+        while (j >= 0 && j < m_src.size()) {
+            string t = Util::trim(m_src[j]);
+            j += add;
+            if (!t.starts_with(";")) {
+                auto lst = Util::clean_split(t, ' ');
+                if (lst.size() >= 1) {
+                    return Util::trim(lst[0]);
+                }
+            }
+        }
+        return "";
+    }
+
     vector<string> getNextLine(string &l) {
         bool ok = false;
         string s = "";

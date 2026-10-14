@@ -87,7 +87,6 @@ class OrgAsm {
     const string alNumOrExpr = alNum + "#+-*/ ";
     const int m_ierror = 0xFFFFFF;
 
-
   private:
     // Loads the opcode table for the CPU in question
     void LoadDefs(string s);

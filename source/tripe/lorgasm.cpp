@@ -57,19 +57,19 @@ void OrgAsm::Assemble(string in, string out) {
     m_src.clear();
     m_src = Util::split(s, '\n', m_src);
 
-//    cout << " *** pass 0: consts" << endl;
+    //    cout << " *** pass 0: consts" << endl;
     m_ignoreConstErrors = true;
     Pass(0);
 
-    //cout << " *** pass 1: labels and syms" << endl;
+    // cout << " *** pass 1: labels and syms" << endl;
     Pass(1);
     // Update constants with another pass
     m_ignoreConstErrors = false;
     Pass(0);
 
-  //  cout << " *** pass 2: assemble" << endl;
+    //  cout << " *** pass 2: assemble" << endl;
     Pass(2);
-//    cout << " *** pass 3: assemble" << endl;
+    //    cout << " *** pass 3: assemble" << endl;
     Pass(3);
 
     cout << "OrgAsm done." << endl;
@@ -89,7 +89,7 @@ void OrgAsm::LoadData(string type, vector<string> &l, string org) {
     for (int i = 1; i < l.size(); i++) {
         auto lst = Util::split(l[i], ',');
         for (auto d : lst) {
-            if (d=="//")
+            if (d == "//")
                 return;
             if (d.starts_with("\"")) {
                 if ((scount & 0x1) == 1) {
@@ -195,8 +195,8 @@ bool OrgAsm::ProgramCounter(vector<string> &l) {
 }
 void OrgAsm::Parse(string s) {
     // Remove all comments
-    if (s.find(";")!=string::npos)
-    s = Util::split(s, ';')[0];
+    if (s.find(";") != string::npos)
+        s = Util::split(s, ';')[0];
 
     if (Consts(s))
         return;
@@ -302,11 +302,11 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 posInArg++;
                 char first = s[posInData];
                 // Get stuff like #$10, i, ptr etc
-                bool hasHash = first=='#';
-                if (s[posInData-1]=='#')
+                bool hasHash = first == '#';
+                if (s[posInData - 1] == '#')
                     hasHash = true;
 
-                    var = getVariable(alNum, s, posInData);
+                var = getVariable(alNum, s, posInData);
                 if (var.starts_with("<"))
                     var = "#" + var;
                 if (var.starts_with(">"))
@@ -318,16 +318,15 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
 
                 ival = getValue(var);
                 // We have arguments like p+1+3*20 etc
-                if (varg != "" && m_pass>=2)
+                if (varg != "" && m_pass >= 2)
                     ival += evaluate(Util::trim(varg));
 
                 // check whether someone did something stupid like lda #$120
-                if (ival>=0x100) {
+                if (ival >= 0x100) {
                     if (hasHash && opcode.m_arg.starts_with("#")) {
-                        ival &=0xff;
+                        ival &= 0xff;
                     }
                 }
-
 
                 // Reject if wrong type
                 if (ival <= 0xff && opcode.m_type == "i16")
@@ -345,15 +344,15 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
             posInData++;
         }
         if (found) {
-            if (m_pass>=2) {
+            if (m_pass >= 2) {
                 // check for symbol, clean up
-                var = Util::ReplaceString(var,"<","");
-                var = Util::ReplaceString(var,">","");
-                var = Util::ReplaceString(var,"#","");
-                if (!m_symtab.contains(var) && !Util::isPureNumber(var) && var.find("*")==string::npos) {
-                    throw string(err() + "Could not find variable: "+var);
+                var = Util::ReplaceString(var, "<", "");
+                var = Util::ReplaceString(var, ">", "");
+                var = Util::ReplaceString(var, "#", "");
+                if (!m_symtab.contains(var) && !Util::isPureNumber(var) && var.find("*") == string::npos) {
+                    throw string(err() + "Could not find variable: " + var);
                 }
-                }
+            }
             return opcode;
         }
     }
@@ -401,11 +400,11 @@ int OrgAsm::getValue(string var) {
     }
 
     if (m_pass >= 2)
-        if (var.starts_with("#<") || var.starts_with("#>") ||var.starts_with("<") || var.starts_with(">")) { 
-//        return Util::fromNumber(HandleLoHiInExpression(var));
+        if (var.starts_with("#<") || var.starts_with("#>") || var.starts_with("<") || var.starts_with(">")) {
+            //        return Util::fromNumber(HandleLoHiInExpression(var));
             bool hasHash = var.starts_with("#");
             if (hasHash)
-                var = Util::ReplaceString(var,"#","");
+                var = Util::ReplaceString(var, "#", "");
             bool isLo = var.starts_with("<");
             var = Util::ReplaceString(var, "<", "");
             var = Util::ReplaceString(var, ">", "");
@@ -471,19 +470,19 @@ string OrgAsm::HandleLoHiInExpression(const string &s) {
         res = Util::ReplaceString(res, "#>" + m[1].str(), rep);
     }
 
-/*
-    std::regex re3(R"(<(\w+))");
-    if (std::regex_search(s, m, re3)) {
-        string rep = m_hex + Util::toHex(Util::getLoHi(m_symtab[m[1].str()], true));
-        res = Util::ReplaceString(res, "<" + m[1].str(), rep);
-    }
-    std::regex re4(R"(>(\w+))");
-    if (std::regex_search(s, m, re4)) {
-        string rep = m_hex + Util::toHex(Util::getLoHi(m_symtab[m[1].str()], false));
-        res = Util::ReplaceString(res, ">" + m[1].str(), rep);
-    }
-*/
-    string s2 = Util::ReplaceString(s,"#","");
+    /*
+        std::regex re3(R"(<(\w+))");
+        if (std::regex_search(s, m, re3)) {
+            string rep = m_hex + Util::toHex(Util::getLoHi(m_symtab[m[1].str()], true));
+            res = Util::ReplaceString(res, "<" + m[1].str(), rep);
+        }
+        std::regex re4(R"(>(\w+))");
+        if (std::regex_search(s, m, re4)) {
+            string rep = m_hex + Util::toHex(Util::getLoHi(m_symtab[m[1].str()], false));
+            res = Util::ReplaceString(res, ">" + m[1].str(), rep);
+        }
+    */
+    string s2 = Util::ReplaceString(s, "#", "");
     std::regex relo(R"(<\$?([0-9A-Fa-f]+))");
     if (std::regex_search(s2, m, relo)) {
         string rep = m_hex + Util::toHex(Util::getLoHi(Util::fromNumber(m_hex + m[1].str()), true));
@@ -510,11 +509,10 @@ string OrgAsm::getVariable(const string &tst, string s, int &pos) {
 
 vector<string> OrgAsm::getSymbols() {
     vector<string> lst;
-    for (auto& d: m_symtab) {
-        lst.push_back("al $"+Util::toHex(d.second)+ " " +d.first);
+    for (auto &d : m_symtab) {
+        lst.push_back("al $" + Util::toHex(d.second) + " " + d.first);
     }
     return lst;
 }
-
 
 } // namespace tripe

@@ -1,11 +1,11 @@
 #include "tripe.h"
 #include "error.h"
+#include "guts/guts6502.h"
 #include "lorgasm.h"
 #include "tripeparser.h"
 #include "tripeutil.h"
 #include <chrono>
 #include <filesystem>
-#include "guts/guts6502.h"
 #include <map>
 
 using namespace tripe;
@@ -37,26 +37,26 @@ void Tripe::RequireParameter(string p, string error) {
 
 void Tripe::Execute() {
     try {
-    RequireParameter("i", "input file required (-i)");
-    string inFile = m_args["i"];
+        RequireParameter("i", "input file required (-i)");
+        string inFile = m_args["i"];
 
-    if (m_args.contains("guts")) {
-        Guts6502 guts;
-        guts.injectBin(inFile);
-        guts.Run(m_args.contains("guts_output"));
-        if (m_args.contains("exit_mem"))
-            guts.Output(m_args["exit_mem"]);
-        exit(0);
-    }
+        if (m_args.contains("guts")) {
+            Guts6502 guts;
+            guts.injectBin(inFile);
+            guts.Run(m_args.contains("guts_output"));
+            if (m_args.contains("exit_mem"))
+                guts.Output(m_args["exit_mem"]);
+            exit(0);
+        }
 
-    RequireParameter("o", "output file required (-o)");
-    RequireParameter("arch", "architecture required (-arch)");
-    auto start = chrono::system_clock::now();
-    string outFile = m_args["o"];
-    string arch = Util::toLower(m_args["arch"]);
-    string sys = m_args["sys"];
-    Error::s_error = "";
-    //    cout << inFile << endl;
+        RequireParameter("o", "output file required (-o)");
+        RequireParameter("arch", "architecture required (-arch)");
+        auto start = chrono::system_clock::now();
+        string outFile = m_args["o"];
+        string arch = Util::toLower(m_args["arch"]);
+        string sys = m_args["sys"];
+        Error::s_error = "";
+        //    cout << inFile << endl;
 
         if (!std::filesystem::exists(inFile))
             Error::RaiseError("Could not find input file: " + inFile);
@@ -96,8 +96,7 @@ void Tripe::Execute() {
                 OrgAsm orgasm(arch);
                 orgasm.Assemble(outFile, assembledFile);
                 if (m_args.contains("sym"))
-                    Util::save_text(Util::getFilenameAlone(outFile)+".sym", orgasm.getSymbols());
-
+                    Util::save_text(Util::getFilenameAlone(outFile) + ".sym", orgasm.getSymbols());
             }
 
         } else {
