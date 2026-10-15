@@ -130,8 +130,17 @@ void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QString b, QString cmd)
 void CodeGenTRIPE::Doublette(QSharedPointer<Node> a, QSharedPointer<Node> b, QString cmd)
 {
 	int pop = 0;
-	QString l = getParamValue(a,pop);
-	QString r = getParamValue(b,pop);;
+	QString l,r;
+	// Optimization: loading b first for sub / div
+	if (cmd.toLower().startsWith("sub")) {
+		r = getParamValue(b,pop);
+		l = getParamValue(a,pop);
+
+	}
+	else {
+		l = getParamValue(a,pop);
+		r = getParamValue(b,pop);
+	}
 
 	for (int i=0;i<pop;i++)
 		if (m_curTemp.size()!=0)
