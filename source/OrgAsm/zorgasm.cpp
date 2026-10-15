@@ -529,7 +529,9 @@ void ZOrgasm::ProcessSource() {
         bool split = false;
         // ingnore comments
         auto s2 = s.split(";")[0];
-        if ((s2.startsWith(" ") || s2.startsWith("\t")) && s2.contains(":") && !s2.simplified().startsWith(";")) {
+        // incbin paths can contain a drive letter (C:/...), so never split them
+        if ((s2.startsWith(" ") || s2.startsWith("\t")) && s2.contains(":") && !s2.simplified().startsWith(";")
+                && !s2.simplified().toLower().startsWith("incbin")) {
             // make sure labels are excluded
             if (!s2.simplified().endsWith(":")) {
 
