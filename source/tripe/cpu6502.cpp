@@ -97,9 +97,8 @@ string CPU6502::loadIndex(string &s, Param &idx, string type, bool &indexIsConst
             // Evaluate argument.
             int ival = te_interp((idx.str + "*2").data(), &error);
             idx.str = std::to_string(ival);
-        }
-        else
-            idx.str = "$"+idx.str;
+        } else
+            idx.str = "$" + idx.str;
         return xy;
     }
 
@@ -370,7 +369,7 @@ void CPU6502::Binop(int &pos, int opcode) {
     }
 
     if (op == "asl" || op == "lsr") {
-        if (is16bit(a) || is16bit(b)) {
+        if (is16bit(a) || is16bit(b) || is16bit(res)) {
 
             bool useTemp = !is16bit(res);
             auto resKeep = res;
@@ -461,7 +460,7 @@ void CPU6502::Binop(int &pos, int opcode) {
         Asm("sec");
 
     //    Asm(op + " " + b.lo());
-    Asm(op + " " + b.prefix());
+    Asm(op + " " + b.lo());
     Asm("sta " + res.prefix());
     //        std::cout << "BINOP : " <<a.prefix() << " " <<b.prefix() << " " <<
     //        (int)(a.type==m_asmToOpcode["uint16"])<< " "

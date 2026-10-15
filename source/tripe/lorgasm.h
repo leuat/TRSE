@@ -64,6 +64,8 @@ class OrgAsm {
     // Current file (for error output)
     string m_curFile = "";
     string m_sys = "";
+    vector<string> m_repeatBlock;
+    vector<int> m_repeats;
 
     bool m_ignoreConstErrors = true;
     bool m_isLittleEndian = true;

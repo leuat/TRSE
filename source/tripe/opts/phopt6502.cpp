@@ -35,7 +35,7 @@ void Phopt6502::staRegLdx(string cmd) {
 
     to
 
-    tay 
+    tay
     ldx l
     lda rainbow,x
 
@@ -60,13 +60,13 @@ void Phopt6502::staRegLdx(string cmd) {
 
             while (!done && !used) {
                 auto lst = getLine(j);
-                if (lst.size()==0) {
+                if (lst.size() == 0) {
                     j++;
                     continue;
                 }
                 auto op = Util::toLower(Util::trim(lst[0]));
-               if (lst.size() > 0) {
- 
+                if (lst.size() > 0) {
+
                     if (op == "in" + cmd || op == "de" + cmd) {
                         used = true;
                     }
@@ -81,24 +81,20 @@ void Phopt6502::staRegLdx(string cmd) {
                     done = true;
                     used = true;
                 }
-                if (op=="ld"+cmd && lst.size()>1 && lst[1]==reg && !used) {
-                    // found! 
-                    m_src[firstLine] = tab+"ta"+cmd;
-                    m_src[j] = ";"+ m_src[j] + " ; opt staregldx";
+                if (op == "ld" + cmd && lst.size() > 1 && lst[1] == reg && !used) {
+                    // found!
+                    m_src[firstLine] = tab + "ta" + cmd;
+                    m_src[j] = ";" + m_src[j] + " ; opt staregldx";
                 }
                 j++;
             }
         }
         if (!remove)
             src.push_back(m_src[i]);
-
     }
 
     m_src = src;
-
 }
-
-
 
 void Phopt6502::ldxAlone(string cmd) {
     string curVal = "";
@@ -205,7 +201,7 @@ void Phopt6502::ldAtaX(string cmd) {
         if (line1.size() == 2 && line2.size() == 1) {
             auto op1 = Util::toLower(line1[0]);
             //           cout << op1 << " " << line2[0] << endl;
-            if (op1 == "lda" && (line2[0] == tax)) {
+            if (op1 == "lda" && (line2[0] == tax) && line1[1].find(",") == string::npos) {
                 src.push_back(tab + "ld" + cmd + " " + line1[1] + " ; opt lda9 [blah] " + tax);
                 i++;
                 remove = true;
