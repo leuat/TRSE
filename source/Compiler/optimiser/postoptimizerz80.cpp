@@ -15,6 +15,9 @@ PostOptimiserZ80::PostOptimiserZ80()
 void PostOptimiserZ80::InitRegisters()
 {
     m_regs.clear();
+    prevLine = nullptr; // reset line pointer for a new run
+    prevCmd = "";
+    prevPar.clear();
 }
 
 void PostOptimiserZ80::Analyze(SourceLine &line) {
@@ -57,9 +60,9 @@ void PostOptimiserZ80::Analyze(SourceLine &line) {
         line.m_changeRegs["ax"]="";
     }
 */
-    if (cmd=="ld") {
+    if (cmd=="ld" && par.count()>=2) {
         QString reg = par[0];
-        if (prevLine->m_orgLine.toLower().simplified()==line.m_orgLine.toLower().simplified()) {
+        if (prevLine!=nullptr && prevLine->m_orgLine.toLower().simplified()==line.m_orgLine.toLower().simplified()) {
             line.m_forceOptimise = true;
 
         }

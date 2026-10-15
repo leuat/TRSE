@@ -30,6 +30,7 @@ void PostOptimiser::CreateLines(QStringList& lst)
     int ln = 0;
     InitRegisters();
     m_lines.clear();
+    m_lines.reserve(lst.count());
     for (QString& s:lst) {
         m_lines.append(SourceLine(ln,s));
         Analyze(m_lines.last());
