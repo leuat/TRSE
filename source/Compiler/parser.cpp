@@ -5789,7 +5789,8 @@ void Parser::HandlePixelLab(){
     Eat(TokenType::STRING);
     QProcess p;
     QStringList params = QStringList() << "--project" <<projFile << "--out-dir" <<dstFile.trimmed().simplified().split(" ") + rawParams.trimmed().simplified().split(" ");
-
+    if (!QFile::exists(m_settingsIni->getString("image_editor_loc")))
+        ErrorHandler::e.Error("Please set up a link to pixellab in the TRSE settings dialog.", m_currentToken.m_lineNumber);
     p.startDetached(m_settingsIni->getString("image_editor_loc"),params);
 }
 
