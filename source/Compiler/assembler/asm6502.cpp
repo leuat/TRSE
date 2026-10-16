@@ -241,7 +241,9 @@ void Asm6502::DeclareVariable(QString name, QString type, QString initval, QStri
 {
     QString n = name;
     n=n.toLower();
-    if (n=="_a" || n=="_x" || n=="_y" || n=="_ax" || n=="_ay" || n=="_xy")
+
+
+	if (Syntax::s.m_currentSystem->m_registers.contains(n))
         return;
     QString t = "";
     if (initval=="")

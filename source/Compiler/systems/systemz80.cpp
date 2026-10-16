@@ -1,6 +1,17 @@
 #include "systemz80.h"
 #include "source/LeLib/util/lz4/lz4.h"
 #include "source/OrgAsm/zorgasm.h"
+
+SystemZ80::SystemZ80(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
+	m_allowedGlobalTypeFlags << "compressed" <<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" << "volatile";
+	m_allowedProcedureTypeFlags << "pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" <<"global";
+	m_exomizerName ="Compress executable";
+	m_renameVariables << "a" <<"b"<<"c"<<"d"<<"i"<<"af"<<"bc"<<"de"<<"hl"<<"ix"<<"iy"<<"sp"<<"h"<<"l"<<"p"<<"r"<<"pc"<<"e"<<"sz"<<"pnc" <<"z"<<"nz"<<"nc" <<"po"<<"pe"<<"m";
+	m_allowClasses = true;
+	m_registers << "_a" <<"_b" <<"_c" <<"_d" <<"_e" <<"_h" <<"_l" <<"_bc" <<"_de"<< "_h" <<"_ix" <<"_iy" << "_hl";
+	//        m_registers <<"_a" <<"_b"<<"_c"<<"_d"<<"_af"<<"_bc"<<"_de"<<"_hl"<<"_ix"<<"_iy"<<"_h"<<"_l";
+}
+
 void SystemZ80::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;

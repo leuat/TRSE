@@ -1105,10 +1105,47 @@ void CodeGenZ80::SbcHlDe()
 
 void CodeGenZ80::AssignFromRegister(QSharedPointer<NodeAssign> node)
 {
+	QString vname = node->m_left->getValue(as);
+
+	QString reg = node->m_right->getValue(as).toLower();
+	if (!node->m_right->isPure())
+		ErrorHandler::e.Error("Using register values must be pure.", node->m_op.m_lineNumber);
+
+	QString r = reg;
+	r.erase(r.begin());
+	if (Syntax::s.m_currentSystem->m_registers.contains(vname))
+		vname.erase(r.begin());
+	else
+		vname = "["+vname+"]";
+
+//	if (r.size()==1) {
+		as->Asm("ld "+vname+","+r);
+		return;
+//	}
+
 
 }
 void CodeGenZ80::AssignToRegister(QSharedPointer<NodeAssign> node)
 {
+	QString vname = node->m_right->getValue(as);
+
+	QString reg = node->m_left->getValue(as).toLower();
+	if (!node->m_right->isPure())
+		ErrorHandler::e.Error("Using register values must be pure.", node->m_op.m_lineNumber);
+
+	if (Syntax::s.m_currentSystem->m_registers.contains(vname))
+		vname.erase(vname.begin());
+	else
+		vname = "["+vname+"]";
+
+	QString r = reg;
+	r.erase(r.begin());
+
+	//	if (r.size()==1) {
+	as->Asm("ld "+r+","+vname+"");
+	return;
+	//	}
+
 
 }
 

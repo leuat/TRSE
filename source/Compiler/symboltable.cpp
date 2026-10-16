@@ -298,16 +298,18 @@ void SymbolTable::InitBuiltins()
 
         Define(QSharedPointer<Symbol>(new Symbol("buttons", "address")));
     }
+	if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::Z80) {
+		for (auto& reg : Syntax::s.m_currentSystem->m_registers) {
+			QString size ="byte";
+			if (reg.size()==3)
+				size="integer";
+			Define(QSharedPointer<Symbol>(new Symbol(reg, size)));
 
-    if (Syntax::s.m_currentSystem->m_system==AbstractSystem::C64 ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::PLUS4 ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::C128 ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::VIC20 ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::PET ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::MEGA65 ||
-            Syntax::s.m_currentSystem->m_system==AbstractSystem::NES
-            ) {
+		}
+	}
 
+	if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::MOS6502)
+			 {
         Define(QSharedPointer<Symbol>(new Symbol("screenmemory", "pointer")));
         Define(QSharedPointer<Symbol>(new Symbol("colormemory", "pointer")));
         Define(QSharedPointer<Symbol>(new Symbol("_a", "byte")));
@@ -441,7 +443,6 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
 
     }
 
-
     QString localName = name;
     if (!isRegisterName(name) &&!forceGlobal && !m_ignoreAllprefixes) {
         localName = m_currentProcedure+name;
@@ -513,7 +514,7 @@ QSharedPointer<Symbol> SymbolTable::Lookup(QString name, int lineNumber, bool is
         //        qDebug() << "SYMTAB HERE " << "NAME "<< name <<   "    UNIT "<< m_currentUnit<<localName <<m_symbols.keys();;
 
 
-        ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
+		ErrorHandler::e.Error("Could not find variable '<font color=\"#FF8080\">" + name + "'</font>.<br>"+em, lineNumber);
         return nullptr;
     }
     if (m_symbols.contains(localUnitName) && !m_symbols.contains(name)) {
