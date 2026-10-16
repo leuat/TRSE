@@ -24,11 +24,15 @@ typedef int cpm_attr_t;
 
 #ifdef _WIN32
 
+#ifndef __MINGW32__
 typedef int mode_t;
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <BaseTsd.h>
+#ifndef __MINGW32__
 typedef SSIZE_T ssize_t;
+#endif
 
 
 

@@ -22,6 +22,9 @@
 #include <QApplication>
 #include <QStyleFactory>
 #include <QSettings>
+#ifdef TRSE_QT56
+#include <QTextCodec>
+#endif
 #include "source/misc/cli.h"
 
 void fixCurrentDir(QString execFile) {
@@ -32,6 +35,11 @@ void fixCurrentDir(QString execFile) {
 
 int main(int argc, char *argv[])
 {
+#ifdef TRSE_QT56
+    // Windows XP build only: Qt 5.6 text streams default to the system locale codec (cp1252),
+    // Qt 6 to UTF-8. Use UTF-8 so source files and generated output match the Qt 6 builds.
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+#endif
 
 #ifdef _WIN32
 /*    // Make sure that stdout attaches itself to the console window on win32 for cli stuff

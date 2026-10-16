@@ -111,7 +111,7 @@ void Compression::AddToRGBAData(QByteArray &data, QImage& img, int xp, int yp, i
             data.append((val>>8)&255);
             data.append(val&255);
               if ((val&255)==0)
-                data.append((uchar)0);
+                data.append((char)0);
             else
                 data.append((uchar)255);
         }
