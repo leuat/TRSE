@@ -23,8 +23,8 @@ public:
 
     QString jumpLabel(QString lbl) override;
 
-    void DeclareArray(QString name, QString type, int count, QStringList data, QString pos) override;
-    void DeclareVariable(QString name, QString type, QString initval, QString position) override;
+	void DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned=false) override;
+	void DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned=false) override;
     void DeclareString(QString name, QStringList initVal, QStringList flags) override;
 
     void BinOP(TokenType::Type t, bool clearFlag=true) override;

@@ -89,7 +89,7 @@ void AsmJDH8::Write(QString str, int level)
     Assembler::Write(str,level);
 }
 
-void AsmJDH8::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmJDH8::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     if (DeclareRecord(name,type,count,data,pos))
         return;
@@ -171,7 +171,7 @@ void AsmJDH8::DeclareArray(QString name, QString type, int count, QStringList da
 
 }
 
-void AsmJDH8::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmJDH8::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
 

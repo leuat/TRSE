@@ -289,10 +289,10 @@ public:
     virtual void Program(QString name, QString vicParam) {};
     virtual void EndProgram() {}
   //  virtual void VarDeclHeader() {}
-    virtual void DeclareVariable(QString name, QString type, QString initVal, QString position){}
+	virtual void DeclareVariable(QString name, QString type, QString initVal, QString position, bool isSigned=false){}
     virtual void DeclareString(QString name, QStringList initVal, QStringList flags) {}
     virtual void DeclareCString(QString name, QStringList initVal, QStringList flags) {}
-    virtual void DeclareArray(QString name, QString type, int count, QStringList lst, QString position) {}
+	virtual void DeclareArray(QString name, QString type, int count, QStringList lst, QString position, bool isSigned=false) {}
     virtual void BeginBlock() {}
     virtual void EndBlock() {}
 //    virtual void AssignVariable(QString var) = 0;

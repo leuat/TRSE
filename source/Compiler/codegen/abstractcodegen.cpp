@@ -1286,7 +1286,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node) {
         t->m_data = Syntax::s.m_currentSystem->CompressData(t->m_data, s);
 
     as->DeclareArray(v->value, t->m_arrayVarType.m_value, t->m_op.m_intVal,
-                     t->m_data, t->m_position);
+					 t->m_data, t->m_position, t->isSigned(as));
     node->m_dataSize = t->m_op.m_intVal;
     QSharedPointer<Symbol> s =
         as->m_symTab->Lookup(v->value, node->m_op.m_lineNumber);
@@ -1329,7 +1329,7 @@ void AbstractCodeGen::dispatch(QSharedPointer<NodeVarDecl> node) {
 
     if (t->m_flag == 1 && (!as->m_symTab->m_records.contains(typeVal)))
       typeVal = "const";
-    as->DeclareVariable(v->value, typeVal, t->initVal, t->m_position);
+	as->DeclareVariable(v->value, typeVal, t->initVal, t->m_position,t->isSigned(as));
 
     if (t->m_flag == 1)
       t->initVal = Util::numToHex(Util::NumberFromStringHex(t->initVal) +

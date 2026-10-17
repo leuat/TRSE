@@ -96,7 +96,7 @@ void AsmChip8::Write(QString str, int level)
 
 QString AsmChip8::jumpLabel(QString lbl) {return lbl; }
 
-void AsmChip8::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmChip8::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     if (DeclareRecord(name,type,count,data,pos))
         return;
@@ -175,7 +175,7 @@ void AsmChip8::DeclareArray(QString name, QString type, int count, QStringList d
 
 }
 
-void AsmChip8::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmChip8::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
 

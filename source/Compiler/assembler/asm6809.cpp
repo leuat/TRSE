@@ -81,7 +81,7 @@ void Asm6809::EndProgram()
 }
 
 
-void Asm6809::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void Asm6809::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     QString t = byte;
 
@@ -177,7 +177,7 @@ void Asm6809::VarDeclHeader()
     Asm("jmp "+ getLabel("block"));
 }
 */
-void Asm6809::DeclareVariable(QString name, QString type, QString initval, QString position)
+void Asm6809::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString n = name;
     n=n.toLower();

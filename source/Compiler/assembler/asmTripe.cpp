@@ -118,7 +118,7 @@ void AsmTripe::EndProgram()
 }
 
 
-void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmTripe::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     QString t = byte;
 
@@ -208,12 +208,12 @@ void AsmTripe::VarDeclHeader()
     Asm("jmp "+ getLabel("block"));
 }
 
-void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmTripe::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString n = name;
     n=n.toLower();
     QString t = "";
-    if (initval=="")
+	if (initval=="")
         initval="0";
     if (DeclareRecord(name,type,1,QStringList(),position))
          return;

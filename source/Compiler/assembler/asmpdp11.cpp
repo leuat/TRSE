@@ -91,7 +91,7 @@ bool AsmPDP11::DeclareClass(QString name, QString type, int count, QStringList d
 
 }
 */
-void AsmPDP11::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmPDP11::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     QString t = byte;
 
@@ -168,7 +168,7 @@ void AsmPDP11::DeclareArray(QString name, QString type, int count, QStringList d
     }
 }
 
-void AsmPDP11::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmPDP11::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
     if (type.toLower()=="integer")

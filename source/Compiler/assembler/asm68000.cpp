@@ -88,7 +88,7 @@ bool Asm68000::DeclareClass(QString name, QString type, int count, QStringList d
 
 }
 */
-void Asm68000::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void Asm68000::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     QString t = byte;
 
@@ -166,7 +166,7 @@ void Asm68000::DeclareArray(QString name, QString type, int count, QStringList d
     }
 }
 
-void Asm68000::DeclareVariable(QString name, QString type, QString initval, QString position)
+void Asm68000::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
     if (type.toLower()=="integer")

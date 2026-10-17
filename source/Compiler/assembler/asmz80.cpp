@@ -101,7 +101,7 @@ void AsmZ80::Write(QString str, int level)
     Assembler::Write(str,level);
 }
 
-void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     if (DeclareRecord(name,type,count,data,pos))
         return;
@@ -191,7 +191,7 @@ void AsmZ80::DeclareArray(QString name, QString type, int count, QStringList dat
 
 }
 
-void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
 

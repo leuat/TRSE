@@ -80,11 +80,11 @@ public:
 
     void Program(QString name, QString vicParams) override;
     void EndProgram() override;
-    void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos) override;
+	void DeclareArray(QString name, QString type, int count, QStringList lst, QString pos, bool isSigned=false) override;
     void InitZeroPointers(QStringList lst, QStringList tmpList, QStringList varList) override;
 
 //    void VarDeclHeader();
-    void DeclareVariable(QString name, QString type, QString initval, QString position) override;
+	void DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned=false) override;
     void DeclareString(QString name, QStringList initval, QStringList flags) override;
     void DeclareCString(QString name, QStringList initval, QStringList flags) override;
 

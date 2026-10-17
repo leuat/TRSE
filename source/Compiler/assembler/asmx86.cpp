@@ -81,7 +81,7 @@ void AsmX86::Write(QString str, int level)
     Assembler::Write(str,level);
 }
 
-void AsmX86::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmX86::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     QString t = byte;
 
@@ -155,7 +155,7 @@ void AsmX86::DeclareArray(QString name, QString type, int count, QStringList dat
 
 }
 
-void AsmX86::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmX86::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
 

@@ -92,7 +92,7 @@ void AsmARM::Write(QString str, int level)
     Assembler::Write(str,level);
 }
 
-void AsmARM::DeclareArray(QString name, QString type, int count, QStringList data, QString pos)
+void AsmARM::DeclareArray(QString name, QString type, int count, QStringList data, QString pos, bool isSigned)
 {
     QString t = byte;
 
@@ -163,7 +163,7 @@ void AsmARM::DeclareArray(QString name, QString type, int count, QStringList dat
 
 }
 
-void AsmARM::DeclareVariable(QString name, QString type, QString initval, QString position)
+void AsmARM::DeclareVariable(QString name, QString type, QString initval, QString position, bool isSigned)
 {
     QString t = "";
 
