@@ -110,7 +110,7 @@ void Tripe::Execute() {
         m_optAsm = p.m_noAsmLinesOpt;
         m_optTripe = p.m_noTripeLinesOpt;
         if (!Data::d.isInternal)
-            cout << "ok." << endl;
+            cout << "\nok." << endl;
     } catch (string error) {
         Error::s_error += error;
         if (!Data::d.isInternal) {

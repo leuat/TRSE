@@ -17,6 +17,11 @@ class Opcodes : public AbstractCPU {
     bool m_inRawAsm = false;
     static const int DATATYPE_STRING = 1;
     static const int DATATYPE_NUMBER = 0;
+    symType m_curSymVal = 0;
+    vector<uint8_t> m_symData;
+
+    symType getSymbol(const string sym);
+    void appendSymVal(symType sym, vector<uint8_t> &d);
 
     void getIntOrString(string s, const string &type, vector<uint8_t> &d) {
         auto val = Util::trim(s);

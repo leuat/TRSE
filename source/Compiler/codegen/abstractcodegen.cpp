@@ -621,14 +621,14 @@ void AbstractCodeGen::AssignVariable(QSharedPointer<NodeAssign> node) {
 
   // ****** REGISTERS TO
   if (v->m_isRegister) {
-    as->Comment("Assigning to register");
+	as->Comment("Assigning to register");
     AssignToRegister(node);
     return;
   }
 
   // ****** REGISTERS FROM
   if (node->m_right->m_isRegister) {
-    as->Comment("Assigning from register");
+	as->Comment("Assigning from register");
     AssignFromRegister(node);
     return;
   }

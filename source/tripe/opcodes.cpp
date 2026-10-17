@@ -62,7 +62,11 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
 
             if (s == "p" && line[i].find(":", 0) == std::string::npos && line[i].find(":", 0)) {
                 // Is a variable: Print out the full name
-                Util::append_string(Util::trim(line[i]), d);
+                // get or set a new symbol
+                symType sym = getSymbol(Util::trim(line[i]));
+                appendSymVal(sym, d);
+
+                //                Util::append_string(, d);
             } else {
 
                 Util::split(line[i], ':', v);
@@ -87,6 +91,36 @@ void Opcodes::ParseToBinary(vector<string> &line, vector<uint8_t> &data) {
             data.push_back(b);
         }
     }
+}
+
+void Opcodes::appendSymVal(symType sym, vector<uint8_t> &d) {
+    for (int i = 0; i < sizeof(symType); i++) {
+        d.push_back((uint8_t)(sym & 0xff));
+        sym >>= 8;
+    }
+}
+
+Opcodes::symType Opcodes::getSymbol(const string sym) {
+
+
+    if (m_symToBin.contains(sym))
+        return m_symToBin[sym];
+
+    m_curSymVal++;
+    if ((m_curSymVal&0xff) ==0xf0)
+        m_curSymVal = m_curSymVal+ 0x10;
+
+
+    // Add symbol data
+    m_symToBin[sym] = m_curSymVal;
+    m_symData.push_back(m_asmToOpcode[".symbol"]);
+    appendSymVal(m_curSymVal, m_symData);
+    Util::append_string(sym, m_symData);
+
+        // Do not use values that are between 0xf0 and 0xff, as they are for .uint and types
+
+
+    return m_curSymVal;
 }
 
 string Opcodes::ParseFromBinary(int &pos) {

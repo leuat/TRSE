@@ -24,8 +24,10 @@ vector<string> TripeParser::TripeOptimise(string inFile) {
     m_data.clear();
     m_src = Util::read_text_code_file(inFile, false);
     Tropt t;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
+        Data::d.Tick();
         m_src = t.optimise(m_src);
+    }
 
     m_noTripeLinesOpt = t.m_noLines;
     //    std::cout << "Optimized " << t.m_noLines << " lines of tripe" << endl;
@@ -34,6 +36,7 @@ vector<string> TripeParser::TripeOptimise(string inFile) {
 
 void TripeParser::LoadBinary(string inFile) {
     m_data = Util::load_binary(inFile);
+    Data::d.Tick();
 
     string id = "";
     id += m_data[0];
@@ -47,6 +50,7 @@ void TripeParser::LoadBinary(string inFile) {
 }
 
 void TripeParser::AppendExtraCode(AbstractCPU *cpu) {
+    Data::d.Tick();
     int lineNumber = -1;
     for (int i = 0; i < m_src.size(); i++) {
         if (Util::trim(m_src[i]) == ".gcode") {
@@ -97,8 +101,10 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
 
     phOpt->m_symTab = cpu->m_symtab;
     Phopt::s_optLines = 0;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++) {
+        Data::d.Tick();
         m_src = phOpt->optimize(m_src);
+    }
 
     m_noAsmLinesOpt = Phopt::s_optLines;
     //    std::cout << "optimized " << Phopt::s_optLines << " native lines of
@@ -109,8 +115,8 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
 }
 
 void TripeParser::ParseTextToBinary() {
-
     Opcodes op;
+    Data::d.Tick();
     m_data.push_back(m_id[0]);
     m_data.push_back(m_id[1]);
     m_data.push_back(m_id[2]);
@@ -147,6 +153,11 @@ void TripeParser::ParseTextToBinary() {
         op.ParseToBinary(v, m_data);
         cnt++;
     }
+    // Insert all symbols at 3
+    int pos = 3;
+    for (auto &v : op.m_symData) {
+        m_data.insert(m_data.begin() + pos++, v);
+    }
 }
 
 void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
@@ -156,20 +167,34 @@ void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
     op->m_pass = pass;
     op->m_curBranch = 0;
     op->m_decltab.clear();
-    while (pos < m_data.size()) {
-        string s = op->ParseFromBinary(pos);
-        auto sp = Util::split(s, '\n');
-        for (auto p : sp)
-            m_src.push_back(p);
+    Data::d.Tick();
+    try {
+        while (pos < m_data.size()) {
+            string s = op->ParseFromBinary(pos);
+            auto sp = Util::split(s, '\n');
+            for (auto p : sp)
+                m_src.push_back(p);
 
-        if (sp.size() >= 2)
-            op->m_prevLine = sp[1];
+            if (sp.size() >= 2)
+                op->m_prevLine = sp[1];
 
-        if (m_src.size() != 0)
-            if (m_src.back().find(".", 0) == 0) {
-                m_src.insert(m_src.end() - 1, "");
-            }
-        op->m_curLine = m_src.size() - 1;
+            if (m_src.size() != 0)
+                if (m_src.back().find(".", 0) == 0) {
+                    m_src.insert(m_src.end() - 1, "");
+                }
+            op->m_curLine = m_src.size() - 1;
+        }
+    } catch (string err) {
+        /*
+        for (auto s : m_src)
+            cout << s << endl;
+
+        for (auto p : op->m_binToSym) {
+            cout << Util::toHex(p.first) << " " << p.second << endl;
+        }
+        */
+        throw ("Error in parsing binary:" +err);
     }
 }
+
 } // namespace tripe

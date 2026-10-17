@@ -64,8 +64,7 @@ class OrgAsm {
     // Current file (for error output)
     string m_curFile = "";
     string m_sys = "";
-    vector<string> m_repeatBlock;
-    vector<int> m_repeats;
+    bool m_isInRepeat = false;
 
     bool m_ignoreConstErrors = true;
     bool m_isLittleEndian = true;
@@ -102,6 +101,7 @@ class OrgAsm {
     bool ProgramCounter(vector<string> &l);
     bool Consts(string s);
     bool Label(string s);
+    bool Repeat(vector<string> &l);
     void Pass(int type);
     void HandleInstruction(vector<string> &l, string s);
     void LoadData(string s, vector<string> &l, string org);

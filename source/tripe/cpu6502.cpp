@@ -251,9 +251,11 @@ void CPU6502::Declare(int &pos) {
     auto name = getNextParam(m_data, pos);
     auto value = getNextParam(m_data, pos);
     /*
-    cout << name.str << " '" << value.str
-         << "'   is_string: " << std::to_string(value.flag) << " at pos "
-         << Util::toHex(pos) << endl;*/
+        cout << "DECLARE '";
+        cout << name.str << "'   '" << value.str
+             << "'   is_string: " << std::to_string(value.flag) << " at pos "
+             << Util::toHex(pos) << endl;
+             */
     bool isString = value.flag == Opcodes::DATATYPE_STRING;
     string hex = m_hexprefix;
     if (isString)
@@ -276,8 +278,7 @@ void CPU6502::Declare(int &pos) {
         Label(name.str, m_typeTripeToNative[m_opcodeToAsm[value.type]] + "\t" + hex + value.str);
     }
     if (m_decltab.contains(name.str)) {
-
-        Error::RaiseError("6502 codegen: symbol " + name.str + " already defined");
+        Error::RaiseError("6502 codegen: symbol '" + name.str + "' already defined");
     }
     m_decltab[name.str] = name.str;
     m_symtab[name.str] = m_opcodeToAsm[value.type];

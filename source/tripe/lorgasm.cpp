@@ -1,6 +1,7 @@
 #include "lorgasm.h"
 #include "resources/p6502.h"
 #include "tinyexpr.h"
+#include "tripedata.h"
 #include <regex>
 
 namespace tripe {
@@ -72,7 +73,7 @@ void OrgAsm::Assemble(string in, string out) {
     //    cout << " *** pass 3: assemble" << endl;
     Pass(3);
 
-    cout << "OrgAsm done." << endl;
+//    cout << "\nOrgAsm done." << endl;
 
     // Util::save_text("test.asm", m_src);
     Util::save_binary(out, m_data);
@@ -167,6 +168,96 @@ bool OrgAsm::Label(string s) {
     }
     return true;
 }
+
+bool OrgAsm::Repeat(vector<string> &l) {
+    if (Util::toLower(l[0]) == "repeat") {
+        // Get repend
+
+        if (m_isInRepeat)
+            throw string(err() + "Alread in a repeat block.");
+
+        if (l.size() == 1)
+            throw string(err() + "Repeat needs at least one parameter (i,j) ");
+
+        vector<string> ps{"i", "j"};
+
+        // Sets up the repeat block, ie repeat 10 20 etc
+        m_isInRepeat = true;
+        vector<string> repeatBlock;
+        vector<int> repeats;
+        for (int i = 0; i < ps.size(); i++) {
+            if (i + 1 < l.size())
+                repeats.push_back(Util::fromNumber(l[i + 1]));
+            else
+                repeats.push_back(1);
+        }
+
+        string end = "";
+        // Loop until "repend" is found, erase original line from source
+        while (end != "repend" && m_curLine < m_src.size()) {
+            string s = m_src[m_curLine];
+            m_src.erase(m_src.begin() + m_curLine);
+            auto lst = Util::clean_split(s, ' ');
+            if (lst.size() != 0)
+                end = lst[0];
+
+            repeatBlock.push_back(s);
+        }
+        // erase "repeat" and "repend"
+        repeatBlock.erase(repeatBlock.begin());
+        repeatBlock.erase(repeatBlock.end());
+
+        vector<string> src;
+        // pattern [xxx]
+        string rePattern = "\\[(.*?)\\]";
+        std::regex re(rePattern);
+        std::sregex_iterator rend;
+
+        if (m_curLine == m_src.size())
+            throw string(err() + "Repeat needs repend.");
+
+        // go through i,j
+        for (int i = 0; i < repeats[0]; i++) {
+            for (int j = 0; j < repeats[1]; j++) {
+
+                for (auto s : repeatBlock) {
+                    std::sregex_iterator it(s.begin(), s.end(), re);
+                    // work on copy of original
+                    string line = s;
+                    vector<int *> ptrs{&i, &j};
+                    // iterate through the repeat block
+                    while (it != rend) {
+
+                        string hit = it->str();
+                        // if [ xxx ] is found
+                        // go through i,j
+                        for (int ips = 0; ips < ps.size(); ips++)
+                            // if found "i" or "j" in hit
+                            if (hit.find(ps[ips]) != string::npos) {
+                                // rep replaces i in  [i*10]
+                                string rep = Util::ReplaceString(hit, ps[ips], std::to_string(*ptrs[ips]));
+                                // replace []
+                                rep.erase(rep.begin());
+                                rep.erase(rep.end() - 1);
+                                // replace in original line for i,j
+                                line = Util::ReplaceString(line, hit, rep);
+                            }
+                        it++;
+                    }
+                    src.push_back(line);
+                }
+            }
+        }
+        // insert into source
+        for (auto &s : src)
+            m_src.insert(m_src.begin() + m_curLine++, s);
+
+        m_isInRepeat = false;
+        return true;
+    }
+    return false;
+}
+
 bool OrgAsm::ProgramCounter(vector<string> &l) {
     if (l[0] != m_cmd["pc"])
         return false;
@@ -197,6 +288,8 @@ void OrgAsm::Parse(string s) {
     // Remove all comments
     if (s.find(";") != string::npos)
         s = Util::split(s, ';')[0];
+    if (s.find("//") != string::npos && s.find("\"") == string::npos)
+        s = Util::split(s, '/')[0];
 
     if (Consts(s))
         return;
@@ -207,6 +300,9 @@ void OrgAsm::Parse(string s) {
     auto l = Util::clean_split(s, ' ');
 
     if (l.size() == 0)
+        return;
+
+    if (Repeat(l))
         return;
 
     if (ProgramCounter(l))
@@ -429,17 +525,16 @@ void OrgAsm::Pass(int pass) {
     m_pc = 0;
     m_data.clear();
     m_firstOrg = true;
-    m_curLine = 0;
-    for (auto s : m_src) {
+    m_src.push_back("");
+    for (m_curLine = 0; m_curLine < m_src.size(); m_curLine++) {
+        auto s = m_src[m_curLine];
         string cl = Util::trim(s);
         if (cl == "" || cl.starts_with(";") || cl.starts_with("//")) {
-            m_curLine++;
-
             continue;
         }
         Parse(s);
-        m_curLine++;
     }
+    Data::d.Tick();
 }
 
 string OrgAsm::ConvertBinary(const string &s) {

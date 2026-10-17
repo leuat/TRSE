@@ -120,14 +120,19 @@ class AbstractCPU {
     bool m_prevCmpWas16bit = false;
     string m_nextCompare = "";
 
+    typedef uint32_t symType;
+
     map<string, string> m_code;
     vector<string> m_usedCode;
     map<string, string> m_symtab, m_decltab;
+    // used for binary conversions
+    map<string, symType> m_symToBin;
+    map<symType, string> m_binToSym;
 
     AbstractCPU();
 
     bool isRegister(string &s) { return s.starts_with("_r"); }
-
+    symType getSymbolValue(int &pos);
     void addCode(string s) {
         int cnt = count(m_usedCode.begin(), m_usedCode.end(), s);
         if (cnt == 0)

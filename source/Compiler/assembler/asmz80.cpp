@@ -197,6 +197,8 @@ void AsmZ80::DeclareVariable(QString name, QString type, QString initval, QStrin
 
     if (initval=="")
         initval = "0";
+	if (Syntax::s.m_currentSystem->m_registers.contains(name))
+		return;
 
     if (type.toLower()=="const") {
         if (Syntax::s.m_currentSystem->isGB())

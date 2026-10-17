@@ -1116,7 +1116,8 @@ void CodeGenZ80::AssignFromRegister(QSharedPointer<NodeAssign> node)
 	if (Syntax::s.m_currentSystem->m_registers.contains(vname))
 		vname.erase(r.begin());
 	else
-		vname = "["+vname+"]";
+
+	vname = "["+vname+"]";
 
 //	if (r.size()==1) {
 		as->Asm("ld "+vname+","+r);
