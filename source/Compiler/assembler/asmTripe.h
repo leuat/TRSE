@@ -94,6 +94,8 @@ public:
 
 	bool DeclareRecord(QString name, QString type, int count, QStringList data, QString pos) override;
 
+	void WriteConstants() override;
+
 };
 
 

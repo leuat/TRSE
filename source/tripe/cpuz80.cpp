@@ -1,0 +1,719 @@
+#include "cpuz80.h"
+#include "error.h"
+#include "opcodes.h"
+/*
+#include "resources/div16_Z80.h"
+#include "resources/div8_Z80.h"
+#include "resources/mul16_Z80.h"
+#include "resources/mul8_Z80.h"
+*/
+#include "tinyexpr.h"
+#include "tripedata.h"
+#include <algorithm>
+using namespace tripe;
+namespace tripe {
+
+CPUZ80::CPUZ80() : AbstractCPU() {
+    //    AbstractCPU();
+    Init(Data::d.opcodes);
+    m_ptrZp = Data::d.ptrZp;
+    m_whZp = Data::d.whZp;
+    m_regZp = Data::d.regZp;
+    m_symtab.clear();
+    m_hexprefix = "$";
+    m_typeTripeToNative["uint8"] = "dc.b";
+    m_typeTripeToNative["uint16"] = "dc.w";
+    m_typeTripeToNative["int8"] = "dc.b";
+    m_typeTripeToNative["int16"] = "dc.w";
+
+    m_typeTripeToNative["add"] = "adc";
+    m_typeTripeToNative["sub"] = "sbc";
+    m_typeTripeToNative["or"] = "ora";
+    m_typeTripeToNative["and"] = "and";
+    m_typeTripeToNative["xor"] = "eor";
+
+    /*
+        m_typeTripeToNative["bne"] = "bne";
+        m_typeTripeToNative["beq"] = "beq";
+        m_typeTripeToNative["bgtu"] = "bcc";
+        m_typeTripeToNative["bltu"] = "bcs";
+        */
+    m_typeTripeToNative["shr"] = "lsr";
+    m_typeTripeToNative["shl"] = "asl";
+
+    m_typeTripeToNative["jump"] = "jmp";
+    m_typeTripeToNative["call"] = "jsr";
+    m_typeTripeToNative["fcall"] = "jsr";
+
+    m_typeTripeToNative["return"] = "rts";
+    m_typeTripeToNative["rti"] = "rti";
+
+    //    m_typeTripeToNative["bcc"] = "bcc";
+    //    m_typeTripeToNative["bcs"] = "bcs";
+
+/*
+    m_code["mul8"] = insertWhZp(string((char *)resources_Z80_mul8_asm));
+    m_code["div8"] = insertWhZp(string((char *)resources_Z80_div8_asm));
+    m_code["mul16"] = insertWhZp(string((char *)resources_Z80_mul16_asm));
+    m_code["div16"] = insertWhZp(string((char *)resources_Z80_div16_asm));
+    */
+}
+
+void CPUZ80::verifyZp(string name, string val) {
+    if (m_zpUsed.contains(val) && m_zpUsed[val] == name)
+        return;
+    if (m_zpUsed.contains(val)) {
+        cout << "Warning : '" << name << "' at address " << val << " already used by '" << m_zpUsed[val] << "'" << endl;
+        return;
+    }
+    m_zpUsed[val] = name;
+}
+
+string CPUZ80::insertWhZp(string s) {
+    // replace a couple of zps
+    int startZp = m_whZp;
+    for (int i = 0; i < 16; i++) {
+        string zp = "$" + Util::toHex(startZp++);
+        s = Util::ReplaceString(s, "@ZP" + std::to_string(i), zp);
+    }
+
+    return s;
+}
+
+void CPUZ80::InsertTempValues(vector<string> &lst, int pos) {
+    for (auto s : m_registersUsed) {
+        lst.insert(lst.begin() + pos, s + " = " + "$" + Util::toHex(m_regZp));
+        verifyZp(s, "$" + Util::toHex(m_regZp));
+        pos += 1;
+        m_regZp += m_symtab[s] == "uint8" ? 1 : 2;
+    }
+}
+
+string CPUZ80::loadIndex(string &s, Param &idx, string type, bool &indexIsConst) {
+    string xy = "x";
+    if (type.starts_with("ptr"))
+        xy = "y";
+    if (type.starts_with("address"))
+        xy = "x";
+    indexIsConst = false;
+    if (Util::isPureNumber(idx.str) && xy == "x") {
+        indexIsConst = true;
+        if (type == "ptr16" || type == "uint16") {
+            int error = 0;
+            // Evaluate argument.
+            int ival = te_interp((idx.str + "*2").data(), &error);
+            idx.str = std::to_string(ival);
+        } else
+            idx.str = "$" + idx.str;
+        return xy;
+    }
+
+    if (type == "ptr16" || type == "uint16") {
+        Asm("lda " + idx.prefix());
+        Asm("asl");
+        Asm("ta" + xy);
+    } else
+        Asm("ld" + xy + " " + idx.prefix());
+    return xy;
+}
+
+/*
+string CPUZ80::ParseFromBinary(vector<uint8_t>& data, int& pos) {
+}
+*/
+
+vector<string> CPUZ80::stub(map<string, string> params) {
+    vector<string> src;
+    string startAddress = "";
+    string printAddress = "";
+
+    bool print = false;
+    int istart = 0;
+    if (params.contains("start_address"))
+        startAddress = params["start_address"];
+
+    string basicStart = "$801";
+
+    if (params.contains("sys"))
+        if (params["sys"] == "c64" || params["sys"] == "vic20") {
+            if (startAddress == "")
+                istart = m_foundStartPos;
+            print = true;
+
+            if (params["sys"] == "vic20") {
+                basicStart = "$" + Util::toHex(m_foundStartPos - 15);
+                if (m_foundStartPos == 0x2000)
+                    basicStart = "$1201";
+            }
+
+            string s = Util::toDec(istart);
+            for (auto c : s) {
+                printAddress += "$" + Util::toHex(c) + ",";
+            }
+            // add missing spaces
+            while (printAddress.size() < 4)
+                printAddress += "$20, ";
+        }
+
+    if (print) {
+        src.push_back("\torg " + basicStart);
+        src.push_back("\tdc.b $b, $8, $a, $0, $9e, $20," + printAddress + " $0, $0, $0");
+    }
+
+    return src;
+}
+
+void CPUZ80::LoadStore(int &pos, int opcode) {
+    string s = "";
+    auto res = getNextParam(m_data, pos);
+    auto idx = getNextParam(m_data, pos);
+    auto val = getNextParam(m_data, pos);
+
+    if (opcode == m_asmToOpcode["store"]) {
+        // store_p ptr idx val
+        auto type = m_symtab[res.str];
+        string y = "y";
+        /*        if (idx.isPureNumber()) {
+                    cout << idx.str << " is pure number " << endl;
+                }*/
+        bool isConst;
+        y = loadIndex(s, idx, type, isConst);
+
+        if (val.lo() != m_nada)
+            Asm("lda " + val.lo());
+
+        if (y == "y")
+            Asm("sta (" + res.str + ")," + y);
+        else {
+            if (!isConst)
+                Asm("sta " + res.str + "," + y);
+            else
+                Asm("sta " + res.str + "+" + idx.str + "; opt7");
+        }
+
+        if (is16bitArray(res)) {
+            Asm("lda " + val.hi());
+            if (y == "y") {
+                Asm("iny");
+                Asm("sta (" + res.str + ")," + y);
+            } else {
+                if (!isConst)
+                    Asm("sta " + res.str + "+1," + y);
+                else
+                    Asm("sta " + res.str + "+1+" + idx.str + "; opt7");
+            }
+
+            // Asm("sta " + val.prefix() + "+1");
+        }
+    }
+    if (opcode == m_asmToOpcode["load"]) {
+        // store_p ptr idx val
+        auto type = m_symtab[res.str];
+        bool isConst;
+        string y = loadIndex(s, idx, type, isConst);
+        //        Asm(" ; type : " + type);
+        if (y == "y")
+            Asm("lda (" + res.str + ")," + y);
+        else {
+            if (!isConst)
+                Asm("lda " + res.str + "," + y);
+            else
+                Asm("lda " + res.str + "+" + idx.str + "; opt7");
+        }
+
+        Asm("sta " + val.prefix());
+
+        // If store type is 16 bit
+        if (is16bit(val)) {
+            // if load type is 16 bit
+            if (is16bitArray(res)) {
+                if (y == "y") {
+                    Asm("iny");
+                    Asm("lda (" + res.str + ")," + y);
+                } else {
+                    if (!isConst)
+                        Asm("lda " + res.str + "+1," + y);
+                    else {
+
+                        Asm("lda " + res.str + "+1+" + idx.str + "; opt7");
+                    }
+                }
+            } else
+                Asm("lda #0 ; loading uint8, storing uint16");
+
+            Asm("sta " + val.prefix() + "+1");
+        }
+    }
+}
+
+void CPUZ80::Const(int &pos) {
+    auto name = getNextParam(m_data, pos);
+    auto value = getNextParam(m_data, pos);
+    Asm(name.str + " = " + m_hexprefix + Util::toHex(value.ival));
+    m_symtab[name.str] = m_opcodeToAsm[value.type];
+}
+
+void CPUZ80::Declare(int &pos) {
+    auto name = getNextParam(m_data, pos);
+    auto value = getNextParam(m_data, pos);
+    /*
+        cout << "DECLARE '";
+        cout << name.str << "'   '" << value.str
+             << "'   is_string: " << std::to_string(value.flag) << " at pos "
+             << Util::toHex(pos) << endl;
+             */
+    bool isString = value.flag == Opcodes::DATATYPE_STRING;
+    string hex = m_hexprefix;
+    if (isString)
+        hex = "";
+
+    if (isRegister(name.str)) {
+        m_symtab[name.str] = m_opcodeToAsm[value.type];
+        return;
+    }
+    if (m_opcodeToAsm[value.type].starts_with("address")) {
+        Asm(name.str + "\t=\t" + hex + value.str);
+        verifyZp(name.str, hex + value.str);
+
+    } else if (m_symtab[name.str].starts_with("ptr")) {
+        Asm(name.str + "\t=\t" + hex + Util::toHex(m_ptrZp));
+        verifyZp(name.str, hex + Util::toHex(m_ptrZp));
+        m_ptrZp += 2;
+
+    } else {
+        Label(name.str, m_typeTripeToNative[m_opcodeToAsm[value.type]] + "\t" + hex + value.str);
+    }
+    if (m_decltab.contains(name.str)) {
+        Error::RaiseError("Z80 codegen: symbol '" + name.str + "' already defined");
+    }
+    m_decltab[name.str] = name.str;
+    m_symtab[name.str] = m_opcodeToAsm[value.type];
+}
+
+void CPUZ80::Mulu(int &pos) {
+    auto ret = getNextParam(m_data, pos);
+    auto a = getNextParam(m_data, pos);
+    auto b = getNextParam(m_data, pos);
+
+    if (!(is16bit(a) || is16bit(b) || is16bit(ret))) {
+        addCode("mul8");
+        //        cout << m_opcodeToAsm[a.type] << "  " << b.str << endl;
+        Asm("ldx " + b.prefix());
+        Asm("lda " + a.prefix());
+        Asm("jsr mul_8bit_");
+        Asm("stx " + ret.lo());
+        if (is16bit(ret)) {
+            Asm("lda #0");
+            Asm("sta " + ret.hi());
+        }
+        return;
+    }
+    addCode("mul16");
+    if (is16bit(b) && !is16bit(a))
+        swap(a, b);
+    Asm("lda " + a.lo());
+    Asm("ldy " + a.hi());
+    Asm("sta mul16x8_num1");
+    Asm("sty mul16x8_num1Hi");
+    Asm("lda " + b.lo());
+    Asm("sta mul16x8_num2");
+    Asm("jsr mul_16bit");
+    Asm("sta " + ret.lo());
+    if (is16bit(ret))
+        Asm("sty " + ret.hi());
+    //        Asm( "ldy #0");
+}
+void CPUZ80::Divu(int &pos) {
+    auto ret = getNextParam(m_data, pos);
+    auto a = getNextParam(m_data, pos);
+    auto b = getNextParam(m_data, pos);
+
+    if (!(is16bit(a) || is16bit(b))) {
+
+        addCode("div8");
+        Asm("lda " + a.prefix());
+        Asm("sta div8x8_d");
+        Asm("lda " + b.prefix());
+        Asm("sta div8x8_c");
+        Asm("jsr div_8bit_");
+        Asm("sta " + ret.prefix());
+        return;
+    }
+    addCode("div16");
+
+    //    Asm("ldy #0");
+    Asm("lda " + a.lo());
+    Asm("ldy " + a.lhi());
+    Asm("sta initdiv16x8_dividend");
+    Asm("sty initdiv16x8_dividend+1");
+    Asm("lda " + b.lo());
+    Asm("ldy " + b.lhi());
+
+    Asm("sta initdiv16x8_divisor");
+    Asm("sty initdiv16x8_divisor+1");
+    Asm("jsr div_16bit");
+    Asm("lda initdiv16x8_dividend");
+    Asm("ldy initdiv16x8_dividend+1");
+    Asm("sta " + ret.lo());
+    if (is16bit(ret))
+        Asm("sty " + ret.hi());
+}
+
+void CPUZ80::Binop(int &pos, int opcode) {
+    auto res = getNextParam(m_data, pos);
+    auto a = getNextParam(m_data, pos);
+    auto b = getNextParam(m_data, pos);
+
+    string op = m_typeTripeToNative[m_opcodeToAsm[opcode]];
+    // Inc / dec
+    if (op == "adc" && res.str == a.str && b.str == "1" && !is16bit(res)) {
+        Asm("inc " + res.str);
+        return;
+    }
+    if (op == "sbc" && res.str == a.str && b.str == "1" && !is16bit(res)) {
+        Asm("dec " + res.str);
+        return;
+    }
+
+    if (op == "asl" || op == "lsr") {
+        if (is16bit(a) || is16bit(b) || is16bit(res)) {
+
+            bool useTemp = !is16bit(res);
+            auto resKeep = res;
+            if (useTemp) {
+                res.str = "$F0";
+                res.typeName = "uint16";
+            }
+
+            Asm("lda " + a.lo());
+            Asm("sta " + res.lo());
+            Asm("lda " + a.lhi());
+            Asm("sta " + res.hi());
+            string one = "asl " + res.lo();
+            string two = "rol " + res.hi();
+            if (op == "lsr") {
+                one = "lsr " + res.hi();
+                two = "ror " + res.lo();
+            }
+            //            cout << b.ival << endl;
+            if (b.ival != 0) // fixed number, unroll
+                for (int i = 0; i < b.ival; i++) {
+                    Asm(one);
+                    Asm(two);
+                }
+            else {
+                auto loop = getTempLabel();
+                auto cancel = getTempLabel();
+                Asm("ldx " + b.str);
+                Asm("cpx #0");
+                Asm("beq " + cancel);
+                Label(loop);
+                Asm(one);
+                Asm(two);
+                Asm("dex");
+                Asm("cpx #0");
+                Asm("bne " + loop);
+                Label(cancel);
+            }
+            if (useTemp) {
+                Asm("lda " + res.str);
+                Asm("sta " + resKeep.lo());
+            }
+
+            return;
+        }
+
+        Asm("lda " + a.lo());
+        if (b.ival != 0) {
+            for (int i = 0; i < b.ival; i++)
+                Asm(op);
+        } else {
+            auto loop = getTempLabel();
+            auto cancel = getTempLabel();
+            Asm("ldx " + b.str);
+            Asm("cpx #0");
+            Asm("beq " + cancel);
+            Label(loop);
+            Asm(op);
+            Asm("dex");
+            Asm("cpx #0");
+            Asm("bne " + loop);
+            Label(cancel);
+        }
+
+        Asm("sta " + res.prefix());
+        if (is16bit(res)) {
+            Asm("ldx #0 ; make sure hi bit is set");
+            Asm("stx " + res.hi());
+        }
+        return;
+    }
+    Asm("lda " + a.lo());
+
+    //        std::cout << " tst " << (int)opcode  <<  " " <<op<< " "
+    //        <<m_opcodeToAsm[opcode] << " " << (int)a.ival << " " << b.prefix()
+    //        <<std::endl;
+    if (op == "lsr") {
+        //          std::cout << "shlll  " << b.ival<<std::endl;
+        for (int i = 0; i < b.ival; i++)
+            Asm("lsr");
+        Asm("sta " + res.prefix());
+        return;
+    }
+
+    if (op == "adc")
+        Asm("clc");
+    if (op == "sbc")
+        Asm("sec");
+
+    //    Asm(op + " " + b.lo());
+    Asm(op + " " + b.lo());
+    Asm("sta " + res.prefix());
+    //        std::cout << "BINOP : " <<a.prefix() << " " <<b.prefix() << " " <<
+    //        (int)(a.type==m_asmToOpcode["uint16"])<< " "
+    //        <<(int)(b.type==m_asmToOpcode["uint16"]) << endl; std::cout << "
+    //        Type : " << m_symtab[a.prefix()] << " "
+    //        <<(int)(b.type==m_asmToOpcode["uint16"]) << endl;
+    bool ab16bit = is16bit(a) || is16bit(b) || a.isRef() || b.isRef() || is16bit(res);
+
+    if (ab16bit) {
+
+        //          Error::RaiseError("Add / sub doesn't work with 16 bit yet");
+        Asm("lda " + a.lhi());
+        Asm(op + " " + b.lhi());
+        //
+        Asm("sta " + res.prefix() + "+1");
+    }
+}
+
+void CPUZ80::Mov(int &pos) {
+    auto res = getNextParam(m_data, pos);
+    auto val = getNextParam(m_data, pos);
+
+    if (m_symtab.contains(res.str) && is16bit(res) || val.isRef() || is16bit(val)) {
+
+        if (is16bit(res)) {
+            if (val.str != m_nada)
+                Asm("ldy " + val.lhi());
+
+            Asm("sty " + res.hi());
+        }
+        if (val.lo() != m_nada)
+            Asm("lda " + val.lo());
+
+        Asm("sta " + res.str);
+
+    } else {
+
+        if (val.str != m_nada)
+            Asm("lda " + val.prefix());
+        Asm("sta " + res.str);
+    }
+}
+
+bool CPUZ80::printCmp(const string &val) {
+    if (!(val == "#0" || val == "#$0" || val == "#$00" || val == "#00"))
+        return true;
+
+    vector<string> l;
+    l = Util::split(Util::trim(m_prevLine), ' ', l);
+    const vector<string> valid{/*"sta", */ "lda", "adc", "sbc", "ora", "eor", "and"};
+    cout << "'" << l[0] << "'" << !contains(valid, l[0]) << "  : " << m_prevLine << endl;
+
+    return !contains(valid, l[0]);
+}
+
+void CPUZ80::Branch(int &pos, int opcode) {
+    auto a = getNextParam(m_data, pos);
+    auto b = getNextParam(m_data, pos);
+    auto lbl = getNextParam(m_data, pos);
+
+    int size = 0;
+    bool isOffpage = false;
+    if (m_pass == 1) {
+        size = branchSizeEstimator(lbl.str, m_curBranch);
+        isOffpage = size > 120;
+    }
+    string lblKeep = lbl.str;
+    if (isOffpage)
+        lbl.str = getTempLabel();
+
+    bool is16 = is16bit(a) || is16bit(b);
+
+    if (m_symtab.contains(a.str) && !is16bit(a))
+        is16 = false;
+
+    if (!is16) {
+        if (a.str != m_nada)
+            Asm("lda " + a.prefix());
+
+        //        if (printCmp(b.prefix()))
+        Asm("cmp " + b.prefix());
+
+        string bcs ="bcs ";
+        string bcc ="bcc ";
+
+       if (m_opcodeToAsm[opcode].back()=='s') {
+            bcs = "bpl ";
+            bcc = "bmi ";
+        }
+
+
+        // perform offpage opt here for jeq/jneq
+        string jeq = isOffpage ? "bne " : "beq ";  // flip if offpage
+        string jneq = isOffpage ? "beq " : "bne "; // flip if offpage
+
+        if (opcode == m_asmToOpcode["jeq"])
+            Asm(jeq + lbl.str);
+        if (opcode == m_asmToOpcode["jneq"])
+            Asm(jneq + lbl.str);
+
+        if (opcode == m_asmToOpcode["jgt"] || opcode == m_asmToOpcode["jgts"]) {
+            auto lblOK = getTempLabel();
+            Asm("beq " + lblOK);
+            Asm(bcs + lbl.str);
+            Label(lblOK);
+        }
+        if (opcode == m_asmToOpcode["jgte"] || opcode == m_asmToOpcode["jgtes"]) {
+            Asm(bcs + lbl.str);
+        }
+        if (opcode == m_asmToOpcode["jlt"] || opcode == m_asmToOpcode["jlts"])
+            Asm(bcc + lbl.str);
+        if (opcode == m_asmToOpcode["jlte"] || opcode == m_asmToOpcode["jltes"]) {
+            Asm(bcc + lbl.str);
+            Asm("beq " + lbl.str);
+        }
+
+    } else {
+        auto lblDone = getTempLabel();
+
+        if (opcode == m_asmToOpcode["jneq"]) {
+            Asm("ldx " + a.hi());
+            Asm("lda " + a.lo());
+            Asm("cmp " + b.lo());
+
+            Asm("bne " + lbl.str);
+            Asm("cpx " + b.hi());
+            Asm("bne " + lbl.str);
+        }
+        if (opcode == m_asmToOpcode["jeq"]) {
+            Asm("ldx " + a.hi());
+            Asm("lda " + a.lo());
+            Asm("cmp " + b.lo());
+            Asm("bne " + lblDone);
+            Asm("cpx " + b.hi());
+            Asm("beq " + lbl.str);
+            Label(lblDone);
+        }
+
+        if (opcode == m_asmToOpcode["jgt"] || opcode == m_asmToOpcode["jgte"]) {
+            Asm("; Integer Greater");
+            Asm("lda " + a.hi() + "   ; compare high bytes");
+            Asm("cmp " + b.hi() + " ;keep");
+            Asm("bcc  " + lblDone);
+            Asm("bne " + lbl.str);
+            Asm("lda " + a.lo());
+            Asm("cmp " + b.lo() + " ;keep");
+            if (opcode == m_asmToOpcode["jgt"])
+                Asm("beq " + lblDone);
+            Asm("bcs " + lbl.str);
+            Label(lblDone);
+        }
+
+        if (opcode == m_asmToOpcode["jlt"] || opcode == m_asmToOpcode["jlte"]) {
+            Asm("; Integer Less");
+            Asm("lda " + a.hi() + "   ; compare high bytes");
+            Asm("cmp " + b.hi() + " ;keep");
+            Asm("bcc " + lbl.str);
+            Asm("bne " + lblDone);
+            Asm("lda " + a.lo());
+            Asm("cmp " + b.lo() + " ;keep");
+            Asm("bcc " + lbl.str);
+            if (opcode == m_asmToOpcode["jlte"])
+                Asm("beq " + lbl.str);
+            Label(lblDone);
+        }
+    }
+
+    if (m_pass == 0) {
+        vector<string> lst;
+        m_branches.push_back(m_curLine + Util::split(m_line, '\n', lst).size() + 1);
+    }
+
+    if (isOffpage) {
+        if (opcode == m_asmToOpcode["jeq"] || opcode == m_asmToOpcode["jneq"]) {
+            Asm("; branch is offpage optbranch1");
+            Asm("jmp " + lblKeep);
+            Label(lbl.str);
+
+        } else {
+            string cont = getTempLabel();
+            Asm("; branch is offpage");
+            Asm("jmp " + cont);
+            Label(lbl.str);
+            Asm("jmp " + lblKeep);
+            Label(cont);
+        }
+    }
+    m_curBranch++;
+
+    /*
+    if (m_pass == 1)
+        cout << "isoffpage : " << isOffpage << "  : " << size
+             << "   label : " << lblKeep << endl;
+             */
+}
+
+int CPUZ80::estimateCodeSize(const string &s) {
+    //    std::cout << s << endl;
+    //   std::cout << " 1 " << s << endl;
+    if (Util::trim(s) == "")
+        return 0; // nada
+    if (!s.starts_with("\t"))
+        return 0;
+    if (Util::trim(s).starts_with(";"))
+        return 0; // comment
+    if (s.find("=") != string::npos)
+        return 0; // const
+
+    string v = Util::ReplaceString(s, "\t", " ");
+    v = Util::ReplaceString(v, "  ", " ");
+    vector<string> lst;
+    lst = Util::split(v, ';', lst);
+    v = lst[0]; // remove end comments
+    lst.clear();
+    lst = Util::split(v, ' ', lst);
+
+    vector<string> lst2;
+    for (auto &c : lst)
+        if (c != "")
+            lst2.push_back(c);
+    lst = lst2;
+
+    int size = 0;
+    //    cout << " ****** OK " << lst.size() << " : " << endl;
+    // for (auto s : lst)
+    //   cout << "'" << s << "'" << endl;
+
+    if (lst.size() == 1)
+        size = 1; // single byte op
+
+    if (lst.size() >= 2) {
+        string p = lst[1];
+        vector<string> ps;
+
+        ps = Util::split(p, ',', ps);
+        p = ps[0]; // pick first one, ignore ",x" etc
+        if (p.starts_with("#")) {
+            size = 2; // const
+        } else
+            size = 3; // address
+    }
+    //    cout << " - " << s << " : " << size << "  list size: " << lst.size()
+    //       << endl;
+    //   for (auto c : lst)
+    //      cout << "  *** " << c << endl;
+    //  std::cout << " 3 " << endl;
+    return size;
+}
+} // namespace tripe

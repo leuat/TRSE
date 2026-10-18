@@ -684,6 +684,14 @@ bool AsmTripe::DeclareRecord(QString name, QString type, int count, QStringList 
 	return false;
 }
 
+void AsmTripe::WriteConstants()
+{
+	for (QString key: m_symTab->m_constants.keys()) {
+		QSharedPointer<Symbol> s = m_symTab->m_constants[key];
+		m_source << ("const"+tab+ key +tab+ "uint8:"+ Util::numToHex0(s->m_value->m_fVal));
+	}
+}
+
 
 void AsmTripe::PopTempVar()
 {

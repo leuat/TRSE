@@ -93,6 +93,7 @@ void Tripe::Execute() {
             Util::save_binary(binTripe, p.ParseText(optTripe));
             Util::save_text(outFile, p.ParseBinary(binTripe, arch, params));
             if (m_args.contains("a")) {
+
                 OrgAsm orgasm(arch);
                 orgasm.Assemble(outFile, assembledFile);
                 if (m_args.contains("sym"))

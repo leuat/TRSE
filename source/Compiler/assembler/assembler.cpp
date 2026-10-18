@@ -405,6 +405,11 @@ void Assembler::IncludeFile(QString pfile, bool isInsert, bool isHeader)
     }
     file.close();
 
+	if (Data::data.useTripe) {
+		source.insert(0,".asm");
+		source.append(".endasm");
+	}
+
     if (isHeader) {
         m_startInsertAssembler <<source;
         return;

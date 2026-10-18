@@ -348,6 +348,7 @@ SOURCES += source/main.cpp\
     source/misc/toolboxitem.cpp \
     source/tripe/abstractcpu.cpp \
     source/tripe/cpu6502.cpp \
+    source/tripe/cpuz80.cpp \
     source/tripe/guts/gcpu6502.cpp \
     source/tripe/guts/guts6502.cpp \
     source/tripe/tinyexpr.c \
@@ -696,6 +697,7 @@ HEADERS  += source/mainwindow.h \
     source/misc/toolboxitem.h \
     source/tripe/abstractcpu.h \
     source/tripe/cpu6502.h \
+    source/tripe/cpuz80.h \
     source/tripe/guts/gcpu6502.h \
     source/tripe/guts/guts6502.h \
     source/tripe/resources/p6502_2.h \

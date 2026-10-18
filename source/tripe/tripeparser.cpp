@@ -1,5 +1,6 @@
 #include "tripeparser.h"
 #include "cpu6502.h"
+#include "cpuz80.h"
 #include "error.h"
 #include "opcodes.h"
 #include "opts/phopt6502.h"
@@ -79,6 +80,8 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
         cpu = new Opcodes();
     if (arch == "mos6502")
         cpu = new CPU6502();
+    if (arch == "z80")
+        cpu = new CPUZ80();
 
     if (cpu == NULL)
         Error::RaiseError("ParseBinary error: unrecognized architecture " + arch);
@@ -95,18 +98,22 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
 
     AppendExtraCode(cpu);
 
-    Phopt *phOpt = NULL;
+    Phopt *phOpt = nullptr;
     if (arch == "mos6502")
         phOpt = new Phopt6502();
 
-    phOpt->m_symTab = cpu->m_symtab;
-    Phopt::s_optLines = 0;
-    for (int i = 0; i < 4; i++) {
-        Data::d.Tick();
-        m_src = phOpt->optimize(m_src);
-    }
+    if (phOpt !=nullptr) {
+        phOpt->m_symTab = cpu->m_symtab;
+        Phopt::s_optLines = 0;
+        for (int i = 0; i < 4; i++) {
+            Data::d.Tick();
+            m_src = phOpt->optimize(m_src);
+        }
+        m_noAsmLinesOpt = Phopt::s_optLines;
 
-    m_noAsmLinesOpt = Phopt::s_optLines;
+    }
+    else cout << "\nWarning: no optimizer for system " <<arch<<endl;
+
     //    std::cout << "optimized " << Phopt::s_optLines << " native lines of
     //    asm"
     //              << endl;

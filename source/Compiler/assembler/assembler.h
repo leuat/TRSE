@@ -351,7 +351,7 @@ public:
     QString getToken(QString s, int t);
 
 
-    void WriteConstants();
+	virtual void WriteConstants();
 
     void ClearTerm() {
         m_term = "";
