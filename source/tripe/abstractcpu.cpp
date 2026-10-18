@@ -10,16 +10,20 @@ namespace tripe {
 AbstractCPU::AbstractCPU() {
     m_similarBinops = {"add", "sub", "or", "and", "xor", "mulu", "shl", "shr"};
     m_singleParamOpcodes = {"call", "jump"};
-    m_branchOpcodes = {"jeq", "jneq", "jgt", "jlt", "jgte", "jlte"};
+    m_branchOpcodes = {"jeq", "jneq", "jgt", "jlt", "jgte", "jlte", "jgts", "jlts", "jgtes", "jltes"};
 }
 
 bool AbstractCPU::is16bit(const Param &val) {
-    return (m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") || m_symtab[val.str].starts_with("address16")) ||
+    return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") || m_symtab[val.str].starts_with("address16")) ||
            m_opcodeToAsm[val.type] == "uint16";
 }
 
+bool AbstractCPU::isSigned(const Param &val) {
+    return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "int8");
+}
+
 bool AbstractCPU::is16bitArray(const Param &val) {
-    return (m_symtab[val.str] == "uint16" || m_symtab[val.str] == ("ptr16") || m_symtab[val.str].starts_with("address16")) ||
+    return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str] == ("ptr16") || m_symtab[val.str].starts_with("address16")) ||
            m_opcodeToAsm[val.type] == "uint16";
 }
 
@@ -66,7 +70,7 @@ Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
     int flag = 0;
     uint8_t v = data[pos];
     string typeName = "";
-    if (m_opcodeToAsm.contains(v) && v > 0xF0) {
+    if (m_opcodeToAsm.contains(v) && v >= 0xE0) {
         // We have a const type int64 etc
         pos += 1;
         flag = data[pos++];
@@ -186,7 +190,7 @@ string AbstractCPU::ParseFromBinary(int &pos) {
         return m_line;
     }
 
-    if (opcode == m_asmToOpcode[".uint8"] || opcode == m_asmToOpcode[".uint16"]) {
+    if (opcode == m_asmToOpcode[".uint8"] || opcode == m_asmToOpcode[".uint16"] || opcode == m_asmToOpcode[".int8"] || opcode == m_asmToOpcode[".int16"]) {
         string stype = m_opcodeToAsm[opcode];
         stype.erase(stype.begin(), stype.begin() + 1);
         m_line = "\t" + m_typeTripeToNative[stype] + "\t";
@@ -197,7 +201,7 @@ string AbstractCPU::ParseFromBinary(int &pos) {
             uint8_t flag = data[pos++];
             if (flag == Opcodes::DATATYPE_NUMBER) {
                 int val = 0;
-                if (opcode == m_asmToOpcode[".uint16"]) {
+                if (opcode == m_asmToOpcode[".uint16"] || opcode == m_asmToOpcode[".int16"]) {
                     val = data[pos] << 8;
                     //                cout << val;
                     val |= data[++pos];

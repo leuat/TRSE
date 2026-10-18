@@ -4,22 +4,26 @@
 
 void Compiler6502::InitAssemblerAnddispatcher(
     QSharedPointer<AbstractSystem> system) {
-    // Experimental tripe
-  if (Data::data.useTripe) {
-    m_codeGen = QSharedPointer<CodeGenTRIPE>(new CodeGenTRIPE());
-	// temp init
-	m_assembler = QSharedPointer<Asm6502>(new Asm6502());
-	Init6502Assembler();
-	auto keep = m_assembler;
 
-    m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
-	m_assembler->m_zeroPointers = keep->m_zeroPointers;
-	m_assembler->m_tempZeroPointers = keep->m_tempZeroPointers;
-  } else {
-	m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
-    m_assembler = QSharedPointer<Asm6502>(new Asm6502());
-    m_assembler->m_isOrgasm =
+	Compiler::InitAssemblerAnddispatcher(system);
+
+    // Experimental tripe
+	if (!Data::data.useTripe)
+	{
+		m_codeGen = QSharedPointer<CodeGen6502>(new CodeGen6502());
+		m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+		m_assembler->m_isOrgasm =
         m_ini->getString("assembler").toLower() == "orgasm";
+  }
+	else {
+		auto keep = m_assembler;
+
+		m_assembler = QSharedPointer<Asm6502>(new Asm6502());
+		Init6502Assembler();
+		swap(m_assembler, keep);
+		m_assembler->m_zeroPointers = keep->m_zeroPointers;
+		m_assembler->m_tempZeroPointers = keep->m_tempZeroPointers;
+
   }
   m_assembler->m_zbyte = 0x10;
 

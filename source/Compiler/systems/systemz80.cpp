@@ -1,6 +1,7 @@
 #include "systemz80.h"
 #include "source/LeLib/util/lz4/lz4.h"
 #include "source/OrgAsm/zorgasm.h"
+#include "source/LeLib/data.h"
 
 SystemZ80::SystemZ80(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj) : AbstractSystem(settings, proj) {
 	m_allowedGlobalTypeFlags << "compressed" <<"pure"<<"pure_variable" <<"pure_number" << "signed" <<"no_term" << "volatile";
@@ -15,7 +16,7 @@ SystemZ80::SystemZ80(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile>
 void SystemZ80::Assemble(QString &text, QString filename, QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
     QString output;
-    AssembleZOrgasm(output,text,filename,currentDir,symTab);
+	AssembleZOrgasm(output,text,filename,currentDir,symTab);
 
 }
 

@@ -107,8 +107,8 @@ Opcodes::symType Opcodes::getSymbol(const string sym) {
         return m_symToBin[sym];
 
     m_curSymVal++;
-    if ((m_curSymVal&0xff) ==0xf0)
-        m_curSymVal = m_curSymVal+ 0x10;
+    if ((m_curSymVal&0xff) ==0xe0)
+        m_curSymVal = m_curSymVal+ 0x20;
 
 
     // Add symbol data

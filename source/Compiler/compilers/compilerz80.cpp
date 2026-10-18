@@ -3,11 +3,15 @@
 
 void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
 {
-    m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
-    m_codeGen = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
-    m_codeGen->dontOutputLineNumbers();
+	Compiler::InitAssemblerAnddispatcher(system);
 
-    m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+	if (!Data::data.useTripe) {
+		m_assembler = QSharedPointer<AsmZ80>(new AsmZ80());//
+		m_codeGen = QSharedPointer<CodeGenZ80>(new CodeGenZ80());
+		m_codeGen->dontOutputLineNumbers();
+
+		m_assembler->m_startInsertAssembler << m_parser.m_initAssembler;
+	}
 
 
     if (m_projectIni->getdouble("override_target_settings")==1) {

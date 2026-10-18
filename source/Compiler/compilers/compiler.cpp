@@ -21,6 +21,7 @@
 
 #include "compiler.h"
 #include <QDebug>
+#include "source/Compiler/assembler/asmTripe.h"
 
 Compiler::Compiler(QSharedPointer<CIniFile> ini,
                    QSharedPointer<CIniFile> pIni) {
@@ -360,6 +361,15 @@ void Compiler::ApplyOptions(QHash<QString, QStringList> &opt) {
         m_parser.m_preprocessorDefines[lst[0]] = lst[1];
     }
   }
+}
+
+void Compiler::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system)
+{
+	if (Data::data.useTripe) {
+		m_codeGen = QSharedPointer<CodeGenTRIPE>(new CodeGenTRIPE());
+		// temp init
+		m_assembler = QSharedPointer<AsmTripe>(new AsmTripe());
+	}
 }
 
 void Compiler::AcceptDispatcherTick(QString val) { emit EmitTick(val); }

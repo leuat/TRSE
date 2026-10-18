@@ -16,6 +16,15 @@ void Tropt::LoadXStore() {
     load    rainbow     l   _r8_1
     store   colormemory     _r8_2   _r8_1
 
+
+
+    fails:
+
+    load    balls_particle_particle_dx  i   _r8_1
+    sub _r8_1   uint8:0x00  _r8_1
+    store   balls_particle_particle_dx  i   _r8_1
+
+
     with
 */
     vector<string> n;
@@ -26,7 +35,8 @@ void Tropt::LoadXStore() {
         auto l2 = getLine(i + 2);
         auto cur = m_cur[i];
         if (l0.size() == 4 && l2.size() == 4 && l0[0] == "load" && l2[0] == "store") {
-            if (l0[3] == l2[3] && l0[3] != l1[2] && l1[1] != l0[1]) {
+            if (l0[3] == l2[3] && l0[3] != l1[2] && l1[1] != l0[1]    && l0[3]!=l1[1]) {
+
                 n.push_back(m_cur[i + 1]);
                 n.push_back(m_cur[i]);
                 n.push_back(m_cur[i + 2]);

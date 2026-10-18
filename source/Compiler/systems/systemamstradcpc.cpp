@@ -1,7 +1,7 @@
 #include "systemamstradcpc.h"
 #include "source/LeLib/util/lz4/lz4.h"
 #include "source/Compiler/errorhandler.h"
-
+#include "source/LeLib/data.h"
 SystemAmstradCPC::SystemAmstradCPC(QSharedPointer<CIniFile> settings, QSharedPointer<CIniFile> proj): SystemZ80(settings, proj) {
     m_processor = Z80;
     m_system = AMSTRADCPC;
@@ -27,6 +27,16 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
 {
     QString output;
     int time = timer.elapsed();
+
+	m_buildSuccess = true;
+	AssembleTripe(text,filename,currentDir,symTab);
+	if (!m_buildSuccess)
+		return;
+
+		   // Let tripe handle everything
+	if (Data::data.useTripeOrgAsm)
+		return;
+
 
     output+="<br>";
 

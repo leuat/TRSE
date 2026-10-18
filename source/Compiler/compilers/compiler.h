@@ -97,9 +97,11 @@ public:
   void SaveBuild(QString filename);
   void ApplyOptions(QHash<QString, QStringList> &opt);
 
-private:
+protected:
   virtual void
-  InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system) = 0;
+  InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> system);
+
+private:
   virtual void Connect() = 0;
 
   void HandleError(FatalErrorException fe, QString se);

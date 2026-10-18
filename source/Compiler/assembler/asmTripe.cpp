@@ -641,6 +641,9 @@ bool AsmTripe::DeclareRecord(QString name, QString type, int count, QStringList 
 			if (s->m_type.toLower()=="long")
 				t= llong;
 
+//			qDebug() << s->m_flags;
+			if (s->m_flags.contains("signed"))
+				t.remove(0,1);
 
 
 			if (s->m_type.toLower()=="string")

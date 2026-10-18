@@ -70,7 +70,7 @@ class Param {
         if (type == 1) {
             if (isRef())
                 return "#>" + clean();
-            else if (typeName == "uint16" || typeName.starts_with("ptr") || typeName == "address16")
+            else if (typeName == "int16" || typeName == "uint16" || typeName.starts_with("ptr") || typeName == "address16")
                 //                   str.starts_with("screen"))
                 return str + "+1";
             else {
@@ -82,7 +82,7 @@ class Param {
     }
     string hi() {
         if (type == 1) {
-            if (typeName == "uint8")
+            if (typeName == "uint8" || typeName == "int8")
                 return "#0";
             if (isRef())
                 return "#>" + clean();
@@ -189,6 +189,7 @@ class AbstractCPU {
     bool isSingleParamOpcode(int code);
 
     bool is16bit(const Param &val);
+    bool isSigned(const Param &val);
     bool is16bitArray(const Param &val);
 
     int m_currentRegister;

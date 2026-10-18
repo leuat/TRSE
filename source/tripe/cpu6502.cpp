@@ -21,6 +21,8 @@ CPU6502::CPU6502() : AbstractCPU() {
     m_hexprefix = "$";
     m_typeTripeToNative["uint8"] = "dc.b";
     m_typeTripeToNative["uint16"] = "dc.w";
+    m_typeTripeToNative["int8"] = "dc.b";
+    m_typeTripeToNative["int16"] = "dc.w";
 
     m_typeTripeToNative["add"] = "adc";
     m_typeTripeToNative["sub"] = "sbc";
@@ -544,6 +546,15 @@ void CPU6502::Branch(int &pos, int opcode) {
         //        if (printCmp(b.prefix()))
         Asm("cmp " + b.prefix());
 
+        string bcs ="bcs ";
+        string bcc ="bcc ";
+
+       if (m_opcodeToAsm[opcode].back()=='s') {
+            bcs = "bpl ";
+            bcc = "bmi ";
+        }
+
+
         // perform offpage opt here for jeq/jneq
         string jeq = isOffpage ? "bne " : "beq ";  // flip if offpage
         string jneq = isOffpage ? "beq " : "bne "; // flip if offpage
@@ -553,19 +564,19 @@ void CPU6502::Branch(int &pos, int opcode) {
         if (opcode == m_asmToOpcode["jneq"])
             Asm(jneq + lbl.str);
 
-        if (opcode == m_asmToOpcode["jgt"]) {
+        if (opcode == m_asmToOpcode["jgt"] || opcode == m_asmToOpcode["jgts"]) {
             auto lblOK = getTempLabel();
             Asm("beq " + lblOK);
-            Asm("bcs " + lbl.str);
+            Asm(bcs + lbl.str);
             Label(lblOK);
         }
-        if (opcode == m_asmToOpcode["jgte"]) {
-            Asm("bcs " + lbl.str);
+        if (opcode == m_asmToOpcode["jgte"] || opcode == m_asmToOpcode["jgtes"]) {
+            Asm(bcs + lbl.str);
         }
-        if (opcode == m_asmToOpcode["jlt"])
-            Asm("bcc " + lbl.str);
-        if (opcode == m_asmToOpcode["jlte"]) {
-            Asm("bcc " + lbl.str);
+        if (opcode == m_asmToOpcode["jlt"] || opcode == m_asmToOpcode["jlts"])
+            Asm(bcc + lbl.str);
+        if (opcode == m_asmToOpcode["jlte"] || opcode == m_asmToOpcode["jltes"]) {
+            Asm(bcc + lbl.str);
             Asm("beq " + lbl.str);
         }
 
