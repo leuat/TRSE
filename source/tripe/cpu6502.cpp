@@ -355,6 +355,114 @@ void CPU6502::Divu(int &pos) {
         Asm("sty " + ret.hi());
 }
 
+
+void CPU6502::shrshl(const string& op, Param& res, Param& a, Param& b) {
+    if (is16bit(a) || is16bit(b) || is16bit(res)) {
+
+        bool useTemp = !is16bit(res);
+        auto resKeep = res;
+        if (useTemp) {
+            res.str = "$F0";
+            res.typeName = "uint16";
+        }
+
+        Asm("lda " + a.lo());
+        Asm("sta " + res.lo());
+        Asm("lda " + a.lhi());
+        Asm("sta " + res.hi());
+        string one = "asl " + res.lo();
+        string two = "rol " + res.hi();
+        if (op == "lsr") {
+            one = "lsr " + res.hi();
+            two = "ror " + res.lo();
+        }
+        //            cout << b.ival << endl;
+        if (b.ival != 0) // fixed number, unroll
+            for (int i = 0; i < b.ival; i++) {
+                Asm(one);
+                Asm(two);
+            }
+        else {
+            auto loop = getTempLabel();
+            auto cancel = getTempLabel();
+            Asm("ldx " + b.str);
+            Asm("cpx #0");
+            Asm("beq " + cancel);
+            Label(loop);
+            Asm(one);
+            Asm(two);
+            Asm("dex");
+            Asm("cpx #0");
+            Asm("bne " + loop);
+            Label(cancel);
+        }
+        if (useTemp) {
+            Asm("lda " + res.str);
+            Asm("sta " + resKeep.lo());
+        }
+
+        return;
+    }
+
+    Asm("lda " + a.lo());
+    if (b.ival != 0) {
+        for (int i = 0; i < b.ival; i++)
+            Asm(op);
+    } else {
+        auto loop = getTempLabel();
+        auto cancel = getTempLabel();
+        Asm("ldx " + b.str);
+        Asm("cpx #0");
+        Asm("beq " + cancel);
+        Label(loop);
+        Asm(op);
+        Asm("dex");
+        Asm("cpx #0");
+        Asm("bne " + loop);
+        Label(cancel);
+    }
+
+    Asm("sta " + res.prefix());
+    if (is16bit(res)) {
+        Asm("ldx #0 ; make sure hi bit is set");
+        Asm("stx " + res.hi());
+    }
+    return;
+}
+
+/*
+
+void CPU6502::Binop(int &pos, int opcode) {
+}
+*/
+
+void CPU6502::Mov(int &pos) {
+    auto res = getNextParam(m_data, pos);
+    auto val = getNextParam(m_data, pos);
+
+    if (m_symtab.contains(res.str) && is16bit(res) || val.isRef() || is16bit(val)) {
+
+        if (is16bit(res)) {
+            if (val.str != m_nada)
+                Asm("ldy " + val.lhi());
+
+            Asm("sty " + res.hi());
+        }
+        if (val.lo() != m_nada)
+            Asm("lda " + val.lo());
+
+        Asm("sta " + res.str);
+
+    } else {
+
+        if (val.str != m_nada)
+            Asm("lda " + val.prefix());
+        Asm("sta " + res.str);
+    }
+
+}
+
+
 void CPU6502::Binop(int &pos, int opcode) {
     auto res = getNextParam(m_data, pos);
     auto a = getNextParam(m_data, pos);
@@ -372,90 +480,10 @@ void CPU6502::Binop(int &pos, int opcode) {
     }
 
     if (op == "asl" || op == "lsr") {
-        if (is16bit(a) || is16bit(b) || is16bit(res)) {
-
-            bool useTemp = !is16bit(res);
-            auto resKeep = res;
-            if (useTemp) {
-                res.str = "$F0";
-                res.typeName = "uint16";
-            }
-
-            Asm("lda " + a.lo());
-            Asm("sta " + res.lo());
-            Asm("lda " + a.lhi());
-            Asm("sta " + res.hi());
-            string one = "asl " + res.lo();
-            string two = "rol " + res.hi();
-            if (op == "lsr") {
-                one = "lsr " + res.hi();
-                two = "ror " + res.lo();
-            }
-            //            cout << b.ival << endl;
-            if (b.ival != 0) // fixed number, unroll
-                for (int i = 0; i < b.ival; i++) {
-                    Asm(one);
-                    Asm(two);
-                }
-            else {
-                auto loop = getTempLabel();
-                auto cancel = getTempLabel();
-                Asm("ldx " + b.str);
-                Asm("cpx #0");
-                Asm("beq " + cancel);
-                Label(loop);
-                Asm(one);
-                Asm(two);
-                Asm("dex");
-                Asm("cpx #0");
-                Asm("bne " + loop);
-                Label(cancel);
-            }
-            if (useTemp) {
-                Asm("lda " + res.str);
-                Asm("sta " + resKeep.lo());
-            }
-
-            return;
-        }
-
-        Asm("lda " + a.lo());
-        if (b.ival != 0) {
-            for (int i = 0; i < b.ival; i++)
-                Asm(op);
-        } else {
-            auto loop = getTempLabel();
-            auto cancel = getTempLabel();
-            Asm("ldx " + b.str);
-            Asm("cpx #0");
-            Asm("beq " + cancel);
-            Label(loop);
-            Asm(op);
-            Asm("dex");
-            Asm("cpx #0");
-            Asm("bne " + loop);
-            Label(cancel);
-        }
-
-        Asm("sta " + res.prefix());
-        if (is16bit(res)) {
-            Asm("ldx #0 ; make sure hi bit is set");
-            Asm("stx " + res.hi());
-        }
+        shrshl(op,res,a,b);
         return;
     }
     Asm("lda " + a.lo());
-
-    //        std::cout << " tst " << (int)opcode  <<  " " <<op<< " "
-    //        <<m_opcodeToAsm[opcode] << " " << (int)a.ival << " " << b.prefix()
-    //        <<std::endl;
-    if (op == "lsr") {
-        //          std::cout << "shlll  " << b.ival<<std::endl;
-        for (int i = 0; i < b.ival; i++)
-            Asm("lsr");
-        Asm("sta " + res.prefix());
-        return;
-    }
 
     if (op == "adc")
         Asm("clc");
@@ -482,30 +510,7 @@ void CPU6502::Binop(int &pos, int opcode) {
     }
 }
 
-void CPU6502::Mov(int &pos) {
-    auto res = getNextParam(m_data, pos);
-    auto val = getNextParam(m_data, pos);
 
-    if (m_symtab.contains(res.str) && is16bit(res) || val.isRef() || is16bit(val)) {
-
-        if (is16bit(res)) {
-            if (val.str != m_nada)
-                Asm("ldy " + val.lhi());
-
-            Asm("sty " + res.hi());
-        }
-        if (val.lo() != m_nada)
-            Asm("lda " + val.lo());
-
-        Asm("sta " + res.str);
-
-    } else {
-
-        if (val.str != m_nada)
-            Asm("lda " + val.prefix());
-        Asm("sta " + res.str);
-    }
-}
 
 bool CPU6502::printCmp(const string &val) {
     if (!(val == "#0" || val == "#$0" || val == "#$00" || val == "#00"))

@@ -13,9 +13,13 @@ AbstractCPU::AbstractCPU() {
     m_branchOpcodes = {"jeq", "jneq", "jgt", "jlt", "jgte", "jlte", "jgts", "jlts", "jgtes", "jltes"};
 }
 
+bool AbstractCPU::isPointer(const Param &val) {
+    return ( m_symtab[val.str].starts_with("ptr")); 
+}
+
 bool AbstractCPU::is16bit(const Param &val) {
     return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") || m_symtab[val.str].starts_with("address16")) ||
-           m_opcodeToAsm[val.type] == "uint16";
+           m_opcodeToAsm[val.type] == "uint16" || val.str.starts_with("#");
 }
 
 bool AbstractCPU::isSigned(const Param &val) {
@@ -70,6 +74,7 @@ Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
     int flag = 0;
     uint8_t v = data[pos];
     string typeName = "";
+    bool isVar = false;
     if (m_opcodeToAsm.contains(v) && v >= 0xE0) {
         // We have a const type int64 etc
         pos += 1;
@@ -99,13 +104,14 @@ Param AbstractCPU::getNextParam(vector<uint8_t> &data, int &pos) {
         //        cout << "Recovering symbol: "<< s << endl;
         type = Param::VAR;
         typeName = m_symtab[s];
+        isVar = true;
     }
 
     if (s.starts_with("_r"))
         if (!contains(m_registersUsed, s))
             m_registersUsed.push_back(s);
 
-    return Param(s, type, typeName, flag);
+    return Param(s, type, typeName, flag, isVar);
 }
 
 bool AbstractCPU::isBinaryOpOpcode(int code) {
@@ -133,6 +139,10 @@ bool AbstractCPU::isSingleParamOpcode(int code) {
 
     return false;
 }
+
+
+
+
 
 std::string AbstractCPU::ParseInlineAsm(vector<uint8_t> &data, int &pos) {
     string s = "";

@@ -13,14 +13,10 @@ namespace tripe {
 
 class CPUZ80 : public AbstractCPU {
   public:
-    int m_ptrZp = 10;
-    int m_regZp = 0x80;
-    int m_whZp = 0x40;
     CPUZ80();
 
     //    string ParseFromBinary(vector<uint8_t>& m_data, int& pos) override;
     void InsertTempValues(vector<string> &lst, int pos) override;
-    string loadIndex(string &s, Param &idx, string type, bool &indexIsConst);
     vector<string> stub(map<string, string> params) override;
     map<string, string> m_zpUsed;
 
@@ -32,12 +28,11 @@ class CPUZ80 : public AbstractCPU {
     void Binop(int &pos, int opcode) override;
     void Mov(int &pos) override;
     void Branch(int &pos, int opcode) override;
+    void shrshl(const string& op, Param& res, Param& a, Param& b) override;
 
-    void verifyZp(string name, string val);
 
     int estimateCodeSize(const string &s) override;
 
-    string insertWhZp(string s);
     bool printCmp(const string &val);
 
     //    void Beq(int &pos, string cmd) override;

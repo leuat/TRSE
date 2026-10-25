@@ -789,7 +789,10 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 		as->Asm("store"+tab+val+tab+idx+tab+r0);
 		//		as->Asm("load"+tab+str+tab+idx+tab+r0);
 		as->Asm("add"+tab+idx+tab+idx+tab+"uint8:0x01");
-		as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
+		if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
+			as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
+		else
+			as->Asm("jneq"+tab+r0+tab+"uint8:0x00" + tab + lblCopy);
 		m_curTemp.pop();
 		m_curTemp.pop();
 		m_curTemp.pop();
@@ -805,7 +808,10 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 		as->Asm("store"+tab+val+tab+idx+tab+r0);
 //		as->Asm("load"+tab+str+tab+idx+tab+r0);
 		as->Asm("add"+tab+idx+tab+idx+tab+"uint8:0x01");
-		as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
+		if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
+			as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
+		else
+			as->Asm("jneq"+tab+r0+tab+"uint8:0x00" + tab + lblCopy);
 		m_curTemp.pop();
 		m_curTemp.pop();
 	}

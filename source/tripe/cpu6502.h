@@ -32,6 +32,7 @@ class CPU6502 : public AbstractCPU {
     void Binop(int &pos, int opcode) override;
     void Mov(int &pos) override;
     void Branch(int &pos, int opcode) override;
+    void shrshl(const string& op, Param& res, Param& a, Param& b) override;
 
     void verifyZp(string name, string val);
 

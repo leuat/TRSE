@@ -461,8 +461,7 @@ QString AsmTripe::getAddressTypeFromName(QString name)
 
  QString AsmTripe::ConvertTempVar(QString orgs)
  {
-		QString ret = orgs;
-	 qDebug() << "HERE "<<ret;
+	 QString ret = orgs;
 	 return ret;
  }
 

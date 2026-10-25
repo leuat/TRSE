@@ -758,9 +758,22 @@ QStringList Util::QStringToDataList(QStringList& t) {
             lst.append(c);
         }
         else {
+			bool prevBack = false;
             for (QChar& ch : c) {
                 bool ok =true;
-                lst.append("$"+QString::number(ch.toLatin1(),16));
+				if (prevBack) {
+					prevBack = false;
+					if (ch=='n')
+						lst.append("$A");
+					if (ch=='r')
+						lst.append("$D");
+					continue;
+				}
+
+				if (ch.toLatin1()=='\\')
+					prevBack = true;
+				else
+					lst.append("$"+QString::number(ch.toLatin1(),16));
             }
         }
     }

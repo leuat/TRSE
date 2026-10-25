@@ -28,7 +28,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
   //      if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm("CPU "+Syntax::s.m_currentSystem->StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
-    if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO)
+	if (Syntax::s.m_currentSystem->m_system != AbstractSystem::COLECO && !Data::data.useTripe)
 //        if (Syntax::s.m_currentSystem->m_system != AbstractSystem::GAMEBOY)
         m_assembler->Asm(m_assembler->GetOrg(Syntax::s.m_currentSystem->m_programStartAddress));
 
@@ -82,7 +82,7 @@ void CompilerZ80::InitAssemblerAnddispatcher(QSharedPointer<AbstractSystem> syst
             ||  Syntax::s.m_currentSystem->m_system == AbstractSystem::TVC
         ) {
         m_assembler->m_symTab->m_constants = m_parser.m_symTab->m_constants;
-        m_assembler->WriteConstants();
+		m_assembler->WriteConstants();
     }
 
     // Init default stuff
@@ -96,13 +96,16 @@ void CompilerZ80::Connect()
     m_assembler->m_source<<m_parser.m_parserAppendix;
 //    if (Syntax::s.m_currentSystem->m_system!=AbstractSystem::TRS80)
   //  {
-        m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
-    if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z180) {
-        m_assembler->IncludeFile(":resources/code/Z80/init_z180.s");
-    }
-    else
-        m_assembler->IncludeFile(":resources/code/Z80/init.s");
+	if (!Data::data.useTripe) {
+			m_assembler->IncludeFile(":resources/code/Z80/memcpy.asm");
+		if (Syntax::s.m_currentSystem->m_processor==AbstractSystem::Z180) {
+			m_assembler->IncludeFile(":resources/code/Z80/init_z180.s");
+		}
+		else
+			m_assembler->IncludeFile(":resources/code/Z80/init.s");
+	}
     //    }
+
     m_assembler->Connect();
 
     m_assembler->EndMemoryBlock();

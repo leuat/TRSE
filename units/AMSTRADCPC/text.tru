@@ -81,14 +81,14 @@ procedure Print(p: global pointer);
 begin
     asm("
       ld hl, [Text_p]
-    text_print_loop:
+text_print_loop:
       ld a, (hl)
       cp 0
       jr z, text_print_finished
       call #bb5a
       inc hl
       jp text_print_loop
-    text_print_finished:
+text_print_finished:
     ");
 end;
 
