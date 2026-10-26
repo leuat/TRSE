@@ -162,7 +162,7 @@ class AbstractCPU {
     map<string, symType> m_symToBin;
     map<symType, string> m_binToSym;
 
-    AbstractCPU();
+    AbstractCPU(string cpu);
 
     bool isRegister(string &s) { return s.starts_with("_r"); }
     symType getSymbolValue(int &pos);

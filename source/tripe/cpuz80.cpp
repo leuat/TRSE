@@ -11,6 +11,7 @@
 #include "resources/mul16_z80.h"
 #include "resources/div8_z80.h"
 #include "resources/div16_z80.h"
+#include <cmath>
 
 #include "tinyexpr.h"
 #include "tripedata.h"
@@ -18,12 +19,11 @@
 using namespace tripe;
 namespace tripe {
 
-CPUZ80::CPUZ80() : AbstractCPU() {
+CPUZ80::CPUZ80(string cpu) : AbstractCPU(cpu) {
     //    AbstractCPU();
     Init(Data::d.opcodes);
     m_symtab.clear();
     m_hexprefix = "$";
-    m_registeredProcessor ="z80";
     m_typeTripeToNative["uint8"] = "dc.b";
     m_typeTripeToNative["uint16"] = "dc.w";
     m_typeTripeToNative["int8"] = "dc.b";
@@ -277,6 +277,7 @@ void CPUZ80::Binop(int &pos, int opcode) {
         }
         if (b.isPureNumber()) {
             Asm("ld a,"+a.z80());
+
             if (isAdc)
                 Asm(op + " a,"+b.z80());
             else
@@ -371,7 +372,10 @@ void CPUZ80::shrshl(const string& op, Param& res, Param& a, Param& b) {
     {
         if (b.isPureNumber()) {
             Asm("ld a,"+a.z80());
-            for (int i=0;i<Util::fromNumber("$"+b.str);i++) {
+            int num = Util::fromNumber("$"+b.str);
+            Asm("and $"+Util::toHex(0xFF^(int)(pow(2,num)-1)));
+
+            for (int i=0;i<num;i++) {
                 if (op=="shr")
                     Asm("rrca");
                 else

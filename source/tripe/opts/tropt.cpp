@@ -304,7 +304,7 @@ void Tropt::constIndex() {
 }
 
 vector<string> Tropt::optimise(vector<string> input) {
-    m_cpu.Init("");
+//    m_cpu.Init("");
     m_org = input;
     m_cur = m_org;
 

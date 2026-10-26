@@ -77,11 +77,11 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
 
     AbstractCPU *cpu = NULL;
     if (arch == "tripe2trasm")
-        cpu = new Opcodes();
+        cpu = new Opcodes("");
     if (arch == "mos6502")
-        cpu = new CPU6502();
-    if (arch == "z80")
-        cpu = new CPUZ80();
+        cpu = new CPU6502(arch);
+    if (arch == "z80" || arch == "z180")
+        cpu = new CPUZ80(arch);
 
     if (cpu == NULL)
         Error::RaiseError("ParseBinary error: unrecognized architecture " + arch);
@@ -122,7 +122,7 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
 }
 
 void TripeParser::ParseTextToBinary() {
-    Opcodes op;
+    Opcodes op("");
     Data::d.Tick();
     m_data.push_back(m_id[0]);
     m_data.push_back(m_id[1]);

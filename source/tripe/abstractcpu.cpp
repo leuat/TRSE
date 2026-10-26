@@ -7,10 +7,11 @@
 using namespace tripe;
 namespace tripe {
 
-AbstractCPU::AbstractCPU() {
+AbstractCPU::AbstractCPU(string cpu) {
     m_similarBinops = {"add", "sub", "or", "and", "xor", "mulu", "shl", "shr"};
     m_singleParamOpcodes = {"call", "jump"};
     m_branchOpcodes = {"jeq", "jneq", "jgt", "jlt", "jgte", "jlte", "jgts", "jlts", "jgtes", "jltes"};
+    m_registeredProcessor = cpu;
 }
 
 bool AbstractCPU::isPointer(const Param &val) {
@@ -261,7 +262,7 @@ string AbstractCPU::ParseFromBinary(int &pos) {
             m_curPos = p1.ival;
             if (m_foundStartPos == -1)
                 m_foundStartPos = m_curPos;
-            if (m_curPos >= 0x200) {
+            if (m_curPos >= 0x100) {
                 Asm("org " + p1.prefix() + name);
             }
         }

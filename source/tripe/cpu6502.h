@@ -16,7 +16,7 @@ class CPU6502 : public AbstractCPU {
     int m_ptrZp = 10;
     int m_regZp = 0x80;
     int m_whZp = 0x40;
-    CPU6502();
+    CPU6502(string cpu);
 
     //    string ParseFromBinary(vector<uint8_t>& m_data, int& pos) override;
     void InsertTempValues(vector<string> &lst, int pos) override;

@@ -13,7 +13,7 @@ namespace tripe {
 
 class CPUZ80 : public AbstractCPU {
   public:
-    CPUZ80();
+    CPUZ80(string cpu);
 
     //    string ParseFromBinary(vector<uint8_t>& m_data, int& pos) override;
     void InsertTempValues(vector<string> &lst, int pos) override;

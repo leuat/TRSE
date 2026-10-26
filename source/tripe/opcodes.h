@@ -65,7 +65,7 @@ class Opcodes : public AbstractCPU {
         }
     }
 
-    Opcodes() { Init(Data::d.opcodes); }
+    Opcodes(string s): AbstractCPU(s) { Init(Data::d.opcodes); }
 };
 } // namespace tripe
 

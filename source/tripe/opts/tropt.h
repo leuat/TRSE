@@ -9,7 +9,7 @@ namespace tripe {
 
 class Tropt {
   private:
-    CPU6502 m_cpu;
+//    CPU6502 m_cpu;
     vector<string> m_org, m_cur;
     string t = "\t";
     bool isTemp(string &s) { return s.starts_with("_r"); }

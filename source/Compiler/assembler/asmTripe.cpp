@@ -502,7 +502,9 @@ void AsmTripe::Label(QString s)
 void AsmTripe::Connect()
 {
     Assembler::Connect();
-	m_source.insert(0,".processor"+tab+ AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
+	auto cpu = AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor);
+
+	m_source.insert(0,".processor"+tab+ cpu);
 
 
     for (QString& l: m_source) {
