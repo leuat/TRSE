@@ -200,7 +200,7 @@ void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
             cout << Util::toHex(p.first) << " " << p.second << endl;
         }
         */
-        throw ("Error in parsing binary:" +err);
+        throw ("\nError while parsing binary:" +err);
     }
 }
 

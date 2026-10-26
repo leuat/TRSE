@@ -817,10 +817,10 @@ void Assembler::Connect()
     //    qDebug().noquote() << m_source;
 
 
-    if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
-        m_source = QStringList() << " processor 6502" <<pre << m_source;
-    else
-        m_source = QStringList() << pre << m_source;
+		if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502 && !Data::data.useTripe)
+			m_source = QStringList() << " processor 6502" <<pre << m_source;
+		else
+			m_source = QStringList() << pre << m_source;
 
 
 

@@ -66,6 +66,9 @@ class Param {
             return "$"+str;
         if (isRef())
             return clean();
+        if (str.starts_with(">"))
+            return "["+str+"+1]"; 
+
         return "["+str+"]"; 
     }
 
@@ -196,7 +199,7 @@ class AbstractCPU {
   protected:
     string m_opcodeFile = "";
     string m_hexprefix = "0x";
-
+    string m_registeredProcessor="";
     void Asm(string t) { m_line += "\t" + t + "\n"; }
     void Label(string t) { m_line += t + ":\n"; }
     void Label(string t, string v) { m_line += t + ":\t" + v + "\n"; }

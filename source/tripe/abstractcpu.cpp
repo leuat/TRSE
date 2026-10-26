@@ -18,6 +18,10 @@ bool AbstractCPU::isPointer(const Param &val) {
 }
 
 bool AbstractCPU::is16bit(const Param &val) {
+    // override >< etc
+    if (val.typeName=="uint8")
+        return false;
+
     return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") || m_symtab[val.str].starts_with("address16")) ||
            m_opcodeToAsm[val.type] == "uint16" || val.str.starts_with("#");
 }
@@ -186,6 +190,15 @@ string AbstractCPU::ParseFromBinary(int &pos) {
     pos++;
     if (!m_opcodeToAsm[opcode].starts_with("."))
         Asm("; " + m_opcodeToAsm[opcode]);
+
+    if (opcode == m_asmToOpcode[".processor"]) {
+        auto p = getNextParam(m_data,pos);
+        string cpu = Util::toLower(Util::trim(p.str));
+        if (m_registeredProcessor!=cpu) 
+            Error::RaiseError("Incorrect CPU: tripe assembling for '"+m_registeredProcessor+"' while input file says '"+cpu+"'");
+
+        return m_line;
+    }
 
     if (opcode == m_asmToOpcode[".symbol"]) {
         // Add bin symbol

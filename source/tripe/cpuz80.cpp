@@ -23,6 +23,7 @@ CPUZ80::CPUZ80() : AbstractCPU() {
     Init(Data::d.opcodes);
     m_symtab.clear();
     m_hexprefix = "$";
+    m_registeredProcessor ="z80";
     m_typeTripeToNative["uint8"] = "dc.b";
     m_typeTripeToNative["uint16"] = "dc.w";
     m_typeTripeToNative["int8"] = "dc.b";
@@ -54,23 +55,13 @@ CPUZ80::CPUZ80() : AbstractCPU() {
 
 void CPUZ80::InsertTempValues(vector<string> &lst, int pos) {
     for (auto s : m_registersUsed) {
-        /*
-        lst.insert(lst.begin() + pos, s + " = " + "$" + Util::toHex(m_regZp));
-        verifyZp(s, "$" + Util::toHex(m_regZp));
-        pos += 1;
-        m_regZp += m_symtab[s] == "uint8" ? 1 : 2;
-        */
     }
 }
 
 
-/*
-string CPUZ80::ParseFromBinary(vector<uint8_t>& data, int& pos) {
-}
-*/
-
 vector<string> CPUZ80::stub(map<string, string> params) {
     vector<string> src;
+    /*
     string startAddress = "";
     string printAddress = "";
 
@@ -86,7 +77,7 @@ vector<string> CPUZ80::stub(map<string, string> params) {
                 istart = m_foundStartPos;
 
         }
-
+    */
     return src;
 }
 
@@ -112,6 +103,9 @@ void CPUZ80::LoadStore(int &pos, int opcode) {
 
     }
     Asm("Add hl,de");
+    if (is16bitArray(res))
+        Asm("Add hl,de ; 16 bit array");
+
     if (opcode == m_asmToOpcode["store"]) {
         if (!is16bitArray(res)) {
             Asm("ld a,"+val.z80());
@@ -135,10 +129,10 @@ void CPUZ80::LoadStore(int &pos, int opcode) {
 //            Asm("ld de,[hl]");
   //          Asm("ld "+val.z80()+",de");
             
-            Asm("ld [hl],a");
+            Asm("ld a,[hl]");
             Asm("ld "+val.z80lo()+",a");
             Asm("inc hl");
-            Asm("ld [hl],a");
+            Asm("ld a,[hl]");
             Asm("ld "+val.z80hi()+",a");
         }
     }
@@ -344,7 +338,10 @@ void CPUZ80::shrshl(const string& op, Param& res, Param& a, Param& b) {
             }
         }
         else {
+            string lblSkip = getTempLabel();
             Asm("ld a,"+b.z80());
+            Asm("cp $0");
+            Asm("jr z,"+lblSkip);
             Asm("ld c,a");
             string lbl = getTempLabel();
             Label(lbl);
@@ -354,8 +351,10 @@ void CPUZ80::shrshl(const string& op, Param& res, Param& a, Param& b) {
             }
             else
                 Asm("add hl,hl");
-        Asm("dec c");
-        Asm("jr nz,"+lbl);
+
+            Asm("dec c");
+            Asm("jr nz,"+lbl);
+            Label(lblSkip);
 
 
         }
@@ -382,7 +381,10 @@ void CPUZ80::shrshl(const string& op, Param& res, Param& a, Param& b) {
             Asm("ld "+res.z80()+",a");
         }
         else {
+            string lblSkip = getTempLabel();
             Asm("ld a,"+b.z80());
+            Asm("cp $0");
+            Asm("jr z,"+lblSkip);
             Asm("ld c,a");
             Asm("ld a,"+a.z80());
             string lbl = getTempLabel();
@@ -394,6 +396,7 @@ void CPUZ80::shrshl(const string& op, Param& res, Param& a, Param& b) {
             Asm("dec c");
             Asm("jr nz,"+lbl);
             Asm("ld "+res.z80()+",a");
+            Label(lblSkip);
 
         }
     }
@@ -482,8 +485,6 @@ void CPUZ80::Branch(int &pos, int opcode) {
         if (a.str != m_nada)
             Asm("ld a," + a.z80());
 
-        //        if (printCmp(b.prefix()))
-
         Asm("cp " + cmp);
     }
     else {
@@ -498,78 +499,34 @@ void CPUZ80::Branch(int &pos, int opcode) {
         Asm("sbc hl,de");
 
     }
-/*
-       if (m_opcodeToAsm[opcode].back()=='s') {
-            bcs = "bpl ";
-            bcc = "bmi ";
-        }
-*/
 
-        // perform offpage opt here for jeq/jneq
-        /*
-        string jeq = "j"+p+" z,";//isOffpage ? "bne " : "beq ";  // flip if offpage
-        string jneq = "j"+p+" nz,";//isOffpage ? "beq " : "bne "; // flip if offpage
-*/
-    /*
-        string jneq = isOffpage?"j"+p+" z,":"j"+p+" nz,";
-        string jeq = isOffpage?"j"+p+" nz,":"j"+p+" z,";
 
-        if (opcode == m_asmToOpcode["jeq"])
-            Asm(jeq + lbl.str);
-        if (opcode == m_asmToOpcode["jneq"])
-            Asm(jneq + lbl.str);
+    string jneq = isOffpage?"j"+p+" z,":"j"+p+" nz,";
+    string jeq = isOffpage?"j"+p+" nz,":"j"+p+" z,";
 
-        if (opcode == m_asmToOpcode["jgt"] || opcode == m_asmToOpcode["jgts"]) {
-            auto lblOK = getTempLabel();
-            Asm(jeq + lblOK);
-            Asm(bcs + lbl.str);
-            Label(lblOK);
-        }
-        if (opcode == m_asmToOpcode["jgte"] || opcode == m_asmToOpcode["jgtes"]) {
-            Asm(bcs + lbl.str);
-        }
-        if (opcode == m_asmToOpcode["jlt"] || opcode == m_asmToOpcode["jlts"])
-            Asm(bcc + lbl.str);
-        if (opcode == m_asmToOpcode["jlte"] || opcode == m_asmToOpcode["jltes"]) {
-            Asm(bcc + lbl.str);
-            Asm(jeq + lbl.str);
-        }
+    if (opcode == m_asmToOpcode["jeq"])
+        Asm(jeq + lbl.str);
+    if (opcode == m_asmToOpcode["jneq"])
+        Asm(jneq + lbl.str);
 
-    } 
-    else*/ {
-
-        string jneq = isOffpage?"j"+p+" z,":"j"+p+" nz,";
-        string jeq = isOffpage?"j"+p+" nz,":"j"+p+" z,";
-
-        if (opcode == m_asmToOpcode["jeq"])
-            Asm(jeq + lbl.str);
-        if (opcode == m_asmToOpcode["jneq"])
-            Asm(jneq + lbl.str);
-
-        if (opcode == m_asmToOpcode["jgt"] || opcode == m_asmToOpcode["jgts"]) {
-            auto lblOK = getTempLabel();
-            Asm(jeq + lblOK);
-            Asm(bcc + lbl.str);
-            Label(lblOK);
-        }
-        if (opcode == m_asmToOpcode["jgte"] || opcode == m_asmToOpcode["jgtes"]) {
-            Asm(bcc + lbl.str);
-        }
-        if (opcode == m_asmToOpcode["jlt"] || opcode == m_asmToOpcode["jlts"]) {
-            Asm(bcs + lbl.str);
-
-        }
-        if (opcode == m_asmToOpcode["jlte"] || opcode == m_asmToOpcode["jltes"]) {
-            Asm(bcs + lbl.str);
-            Asm(jeq + lbl.str);
-        }
-
-//    string bcs ="j"+p+" c,";
-//    string bcc ="j"+p+" nc,";
-
-        
-//        Error::RaiseError("Z80 codegen: 16 bit branching not implemented yet");
+    if (opcode == m_asmToOpcode["jgt"] || opcode == m_asmToOpcode["jgts"]) {
+        auto lblOK = getTempLabel();
+        Asm(jeq + lblOK);
+        Asm(bcc + lbl.str);
+        Label(lblOK);
     }
+    if (opcode == m_asmToOpcode["jgte"] || opcode == m_asmToOpcode["jgtes"]) {
+        Asm(bcc + lbl.str);
+    }
+    if (opcode == m_asmToOpcode["jlt"] || opcode == m_asmToOpcode["jlts"]) {
+        Asm(bcs + lbl.str);
+
+    }
+    if (opcode == m_asmToOpcode["jlte"] || opcode == m_asmToOpcode["jltes"]) {
+        Asm(bcs + lbl.str);
+        Asm(jeq + lbl.str);
+    }
+
 
 
     if (m_pass == 0) {

@@ -67,7 +67,7 @@ void Phopt6502::staRegLdx(string cmd) {
                 auto op = Util::toLower(Util::trim(lst[0]));
                 if (lst.size() > 0) {
 
-                    if (op == "in" + cmd || op == "de" + cmd) {
+                    if (op == "in" + cmd || op == "de" + cmd || op=="asl" || op=="lsr") {
                         used = true;
                     }
                 }

@@ -65,7 +65,6 @@ void AsmTripe::Program(QString programName, QString vicConfig)
 
     Nl();
 
-
     QString org = Util::numToHex(Syntax::s.m_currentSystem->m_startAddress);
     StartMemoryBlock(org);
 
@@ -503,6 +502,7 @@ void AsmTripe::Label(QString s)
 void AsmTripe::Connect()
 {
     Assembler::Connect();
+	m_source.insert(0,".processor"+tab+ AbstractSystem::StringFromProcessor(Syntax::s.m_currentSystem->m_processor));
 
 
     for (QString& l: m_source) {
@@ -512,11 +512,11 @@ void AsmTripe::Connect()
 		l.replace("EndBlock",".label EndBlock");
   //  for (QString& l: m_source)
     //    l.replace("processor",".processor");
-    for (QString& l: m_source) {
-        l.replace("processor","; .processor");
+	for (QString& l: m_source) {
+//        l.replace("processor","; .processor");
         if (l.endsWith(":"))
             l = l.remove(l.length()-1,1);
-    }
+	}
 	QStringList n;
 
 	if (Data::data.useTripeOrgAsm)
