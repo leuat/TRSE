@@ -510,10 +510,7 @@ void AsmTripe::Connect()
     }
     for (QString& l: m_source)
 		l.replace("EndBlock",".label EndBlock");
-  //  for (QString& l: m_source)
-    //    l.replace("processor",".processor");
 	for (QString& l: m_source) {
-//        l.replace("processor","; .processor");
         if (l.endsWith(":"))
             l = l.remove(l.length()-1,1);
 	}

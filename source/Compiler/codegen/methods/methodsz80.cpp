@@ -1,4 +1,5 @@
 #include "methodsz80.h"
+#include "source/Compiler/codegen/codegen_z80.h"
 
 MethodsZ80::MethodsZ80()
 {
@@ -7,9 +8,19 @@ MethodsZ80::MethodsZ80()
 
 void MethodsZ80::Assemble(Assembler *as, AbstractCodeGen *dispatcher)
 {
-    m_codeGen = dispatcher;
+//    m_codeGen = dispatcher;
   //   CodeGenZ80* disp = dynamic_cast<CodeGenZ80*>(m_codeGen);
     as->ClearTerm();
+
+	if (m_org==nullptr) m_org =  as;
+
+	if (!Data::data.useTripe)
+		m_codeGen = dispatcher;
+	else
+		if (m_codeGen == nullptr) {
+			m_codeGen = new CodeGenZ80;
+			m_codeGen->setAssembler(as);
+		}
 
 //    qDebug() << m_node->m_procName.toLower();
 

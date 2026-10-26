@@ -2,7 +2,6 @@
 #include "resources/p6502_2.h"
 
 
-vector<uint8_t> Guts6502::m_memory;
 
 void Guts6502::LoadDefs() {
 	string s = string((char *)resources_orgasm_p6502_txt_2);

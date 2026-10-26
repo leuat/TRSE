@@ -18,7 +18,7 @@ void SystemSpectrum::Assemble(QString &text, QString filename, QString currentDi
         m_buildSuccess = false;
         return;
     }
-    output+="<br>";
+//    output+="<br>";
 
 
     int assembleTime = timer.elapsed()- time;

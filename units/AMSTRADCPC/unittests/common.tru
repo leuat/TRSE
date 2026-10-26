@@ -52,6 +52,7 @@ begin
   Text::Print(#Vars::text);
   Text::Print(": FAIL\r\n");
   cpc_unittests_status := 1;
+  poke(^$C000,0,1);
 end;
 
 procedure WaitABit();

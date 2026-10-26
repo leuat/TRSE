@@ -1,6 +1,7 @@
 #include "tripe.h"
 #include "error.h"
 #include "guts/guts6502.h"
+#include "guts/gutsz80.h"
 #include "lorgasm.h"
 #include "tripeparser.h"
 #include "tripeutil.h"
@@ -41,11 +42,22 @@ void Tripe::Execute() {
         string inFile = m_args["i"];
 
         if (m_args.contains("guts")) {
-            Guts6502 guts;
-            guts.injectBin(inFile);
-            guts.Run(m_args.contains("guts_output"));
+            if (!m_args.contains("arch"))
+                Error::RaiseError("Guts requires the 'arch' parameter to be set");
+            string arch = m_args["arch"];
+            AbstractGuts* guts = nullptr;
+
+            if (arch=="mos6502")
+                guts = new Guts6502();
+            if (arch=="z80")
+                guts = new GutsZ80();
+            if (guts==nullptr)
+                Error::RaiseError("Guts does not yet support the following cpu: "+arch);
+
+            guts->injectBin(inFile,0x4000);
+            guts->Run(m_args.contains("guts_output"));
             if (m_args.contains("exit_mem"))
-                guts.Output(m_args["exit_mem"]);
+                guts->Output(m_args["exit_mem"]);
             exit(0);
         }
 

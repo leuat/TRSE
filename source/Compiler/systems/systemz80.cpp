@@ -27,6 +27,9 @@ void SystemZ80::PostProcess(QString &text, QString file, QString currentDir)
 
 void SystemZ80::PerformAssembling(QString filename, QString &text,QString currentDir, QSharedPointer<SymbolTable> symTab)
 {
+	if (Data::data.useTripe) {
+		AssembleTripe(text,filename,currentDir,symTab);
+	}
     bool useOrgasm = false;
     if (m_settingsIni->contains("assembler_z80"))
             useOrgasm = m_settingsIni->getString("assembler_z80")!="Pasmo";

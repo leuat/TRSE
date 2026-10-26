@@ -351,6 +351,8 @@ SOURCES += source/main.cpp\
     source/tripe/cpuz80.cpp \
     source/tripe/guts/gcpu6502.cpp \
     source/tripe/guts/guts6502.cpp \
+    source/tripe/guts/gutsz80.cpp \
+    source/tripe/guts/abstractguts.cpp \
     source/tripe/tinyexpr.c \
     source/tripe/tripedata.cpp \
     source/tripe/error.cpp \
