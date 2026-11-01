@@ -303,11 +303,11 @@ void CPUZ80::Binop(int &pos, int opcode) {
         Asm("ld hl,"+b.z80());
         if (!is16bit(b))
             Asm("ld h,0");
-        Asm("push hl");
-        Asm("ld hl,"+a.z80());
+        //Asm("push hl");
+        Asm("ld de,"+a.z80());
         if (!is16bit(a))
-            Asm("ld h,0");
-        Asm("pop de");
+            Asm("ld d,0");
+        //Asm("pop de");
         if (op=="adc") {
             Asm("add hl,de");
         }
@@ -479,7 +479,7 @@ void CPUZ80::Branch(int &pos, int opcode) {
 
     if (!is16) {
 
-        string cmp = b.z80();
+        string cmp = b.z80lo();
         if (!b.isPureNumber()) {
             Asm("ld a,"+b.z80());
             Asm("ld b,a");

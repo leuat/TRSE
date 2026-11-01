@@ -12,7 +12,7 @@ class Opcode {
   public:
     /*
         m_opcode is the opcode itself
-        m_size is the size of the opcode, ie 1 for "clc" or 2 for "lda #10"
+        m_size is the size omatchPatterf the opcode, ie 1 for "clc" or 2 for "lda #10"
         m_cycles is the number of cycles this opcode uses
         m_ins is the instruction, ie "lda"
         m_org is the full org definition from the cpu opcode file, ie i:lda #%i08:a9:2:3
@@ -25,27 +25,60 @@ class Opcode {
     string m_ins, m_org, m_arg, m_type = "";
     bool m_isLocal = false;
 
-    Opcode(string instruction, uint16_t opcode, uint16_t size, uint16_t cycles, bool isLocal)
+    Opcode(string instruction, uint16_t opcode, uint16_t size, uint16_t cycles, bool isLocal, string sys)
         : m_opcode(opcode), m_org(instruction), m_size(size), m_cycles(cycles), m_isLocal(isLocal) {
-        auto l = Util::clean_split(m_org, ' ');
-        m_ins = l[0];
-        if (l.size() >= 2)
-            m_arg = l[1];
-        else
-            m_arg = "";
+        if (sys=="mos6502" || sys=="m6809" || sys=="z80")  {
 
-        // extract %i08 etc
-        if (m_arg.size() > 0) {
-            int cnt = 0;
-            while (cnt < m_arg.size() && m_arg[cnt] != '%')
-                cnt++;
+            auto l = Util::clean_split(m_org, ' ');
 
-            if (cnt < m_arg.size())
-                m_type = m_arg.substr(cnt + 1,
-                                      3); // + m_arg[cnt + 1] + m_arg[cnt + 2];
-            if (m_type != "i08" && m_type != "i16")
-                throw string("Orgasm internal error in opcode definitions for " + m_ins + ", incorrect type :" + m_type);
+            m_ins = l[0];
+            if (l.size() >= 2)
+                m_arg = l[1];
+            else
+                m_arg = "";
+
+            // extract %i08 etc
+            if (m_arg.size() > 0) {
+                int cnt = 0;
+                while (cnt < m_arg.size() && m_arg[cnt] != '%')
+                    cnt++;
+
+                if (cnt < m_arg.size())
+                    m_type = m_arg.substr(cnt + 1,
+                                          3); // + m_arg[cnt + 1] + m_arg[cnt + 2];
+                if (m_type != "i08" && m_type != "i16" && m_type!="")
+                    throw string("Orgasm internal error in opcode definitions for " + m_ins + ", incorrect type :" + m_type);
+            }
         }
+        /*
+        if (sys=="z80") {
+            auto l = Util::clean_split(m_org, ' ');
+            m_ins = l[0];
+            if (l.size() >= 2)
+                m_arg = l[1];
+            else
+                m_arg = "";
+
+            // extract %i08 etc
+            if (m_arg.size() > 0) {
+                int cnt = 0;
+                while (cnt < m_arg.size() && m_arg[cnt] != '%')
+                    cnt++;
+
+                if (cnt < m_arg.size())
+                    m_type = m_arg.substr(cnt + 1,
+                                          3); // + m_arg[cnt + 1] + m_arg[cnt + 2];
+                    cout << "Adding opcode "<< m_org<< ":"<<m_ins<<":" << m_type << "    ";
+
+                if (m_type != "i08" && m_type != "i16" && m_type!="")
+                    throw string("Orgasm internal error in opcode definitions for " + m_ins + ", incorrect type :" + m_type);
+            }
+            if (m_arg!="")
+                cout << m_arg << "  with type "<<m_type;
+            cout << endl;
+
+        }
+        */
     }
     Opcode() {}
 };
@@ -60,6 +93,8 @@ class OrgAsm {
     map<string, vector<Opcode>> m_opcodes;
     map<string, string> m_cmd;
     map<string, vector<string>> m_dataDefs;
+    vector<string> m_regs;
+    bool m_ignoreRegisters = false;
 
     // Current file (for error output)
     string m_curFile = "";

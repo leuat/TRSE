@@ -27,7 +27,7 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
 {
     QString output;
     int time = timer.elapsed();
-
+/*
 	m_buildSuccess = true;
 	AssembleTripe(text,filename,currentDir,symTab);
 	if (!m_buildSuccess)
@@ -37,7 +37,7 @@ void SystemAmstradCPC::Assemble(QString &text, QString filename, QString current
 	if (Data::data.useTripeOrgAsm)
 		return;
 
-
+*/
     output+="<br>";
 
     PerformAssembling(filename,text,currentDir,symTab);

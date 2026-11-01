@@ -104,6 +104,9 @@ void CompilerZ80::Connect()
 		else
 			m_assembler->IncludeFile(":resources/code/Z80/init.s");
 	}
+	if (Data::data.useTripe)
+		m_assembler->IncludeFile(":resources/code/Z80/init_tripez80.s");
+
     //    }
 
     m_assembler->Connect();

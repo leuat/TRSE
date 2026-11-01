@@ -1,5 +1,6 @@
 #include "lorgasm.h"
 #include "resources/p6502.h"
+#include "resources/pz80.h"
 #include "tinyexpr.h"
 #include "tripedata.h"
 #include <regex>
@@ -7,12 +8,19 @@
 namespace tripe {
 
 OrgAsm::OrgAsm(string defs) {
-    if (defs == "mos6502")
+    m_sys = defs;
+    if (defs == "mos6502") {
         LoadDefs(string((char *)resources_orgasm_p6502_txt));
+        m_ignoreRegisters = false;
+    }
+    if (defs == "z80") {
+        LoadDefs(string((char *)resources_orgasm_pz80_txt));
+        m_ignoreRegisters = true;
+        m_regs = {"a","b","c","d","h","l","d","e","af","hl","bc","de","ix","iy"};
+
+    }
     else
         throw string(err() + "Unknown or non-implemented system in OrgAsm: " + defs);
-
-    m_sys = defs;
 }
 
 void OrgAsm::LoadDefs(string s) {
@@ -31,7 +39,9 @@ void OrgAsm::LoadDefs(string s) {
             bool isLocal = false;
             if (ops.size() >= 6)
                 isLocal = ops[5] == "local";
-            Opcode op(ops[1], Util::fromNumber("0x" + ops[2]), +Util::fromNumber(ops[3]), +Util::fromNumber(ops[4]), isLocal);
+            //cout << " ** "<<s <<endl;
+            //cout << ops[1] << " " << ops[2]<< endl;
+            Opcode op(ops[1], Util::fromNumber("0x" + ops[2]), +Util::fromNumber(ops[3]), +Util::fromNumber(ops[4]), isLocal, m_sys);
 
             m_opcodes[op.m_ins].push_back(op);
         }
@@ -291,6 +301,15 @@ void OrgAsm::Parse(string s) {
     if (s.find("//") != string::npos && s.find("\"") == string::npos)
         s = Util::split(s, '/')[0];
 
+    if (s.find("[") != string::npos && s.find("]") != string::npos) {
+        s = Util::ReplaceString(s, "[","(");
+        s = Util::ReplaceString(s, "]",")");
+    }
+
+
+ /*   if (m_pass>=1)
+        cout << s << endl;
+*/
     if (Consts(s))
         return;
 
@@ -324,6 +343,10 @@ void OrgAsm::Parse(string s) {
 
 void OrgAsm::HandleInstruction(vector<string> &l, string s) {
     l[0] = Util::toLower(l[0]);
+    /*
+    for (auto& op: m_opcodes) {
+        cout << "OPCODE: '" <<op.first << "'  cmd: " << l[0]<<endl;
+    }*/
     if (m_opcodes.contains(l[0])) {
         if (l.size() == 1) {
             // nop, brk, clc etc
@@ -348,8 +371,19 @@ void OrgAsm::HandleInstruction(vector<string> &l, string s) {
 
 void OrgAsm::addInstructionData(const Opcode &op, int ival) {
     // add opcode to data
-    if (addData())
-        m_data.push_back((uint8_t)op.m_opcode);
+    int csize=1;
+    if (addData()) {
+        if (op.m_opcode>=0x10000) {
+            m_data.push_back((uint8_t)(op.m_opcode>>16)&0xff);
+            csize+=1;
+        }
+        if (op.m_opcode>=0x100) {
+            m_data.push_back((uint8_t)(op.m_opcode>>8)&0xff);
+            csize+=1;
+        }
+
+        m_data.push_back((uint8_t)(op.m_opcode&0xff));
+    }
 
     // Increase pc
     m_pc += op.m_size;
@@ -369,7 +403,7 @@ void OrgAsm::addInstructionData(const Opcode &op, int ival) {
     }
 
     if (m_isLittleEndian)
-        for (int i = 0; i < op.m_size - 1; i++) {
+        for (int i = 0; i < op.m_size - csize; i++) {
             m_data.push_back((uint8_t)(ival & 0xff));
             ival >>= 8;
         }
@@ -386,6 +420,9 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
     ival = 0x1000;
     op = Util::toLower(op);
     s = Util::trim(s);
+    if (m_sys=="z80") {
+        s = Util::ReplaceString(s," ","");
+    }
     string var = "";
     for (auto opcode : m_opcodes[op]) {
         int posInData = 0;
@@ -408,6 +445,9 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 if (var.starts_with(">"))
                     var = "#" + var;
 
+                if (contains(m_regs,var))
+                    found = false;
+
                 // Get arguments like +1 or +2*SOMETHING (not implemented yet)
                 string varg = getVariable(alNumOrExpr, Util::trim(s), posInData);
                 // cout << op << "  :'" << var << "'   varg:" << varg << endl;
@@ -425,9 +465,10 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 }
 
                 // Reject if wrong type
+                if (m_sys!="z80")
                 if (ival <= 0xff && opcode.m_type == "i16")
                     found = false;
-                if (ival > 0xff && opcode.m_type == "i08")
+                if (ival > 0xff && opcode.m_type == "i08" && !opcode.m_isLocal)
                     found = false;
 
                 posInArg += 3;
@@ -440,7 +481,11 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
             posInData++;
         }
         if (found) {
-            if (m_pass >= 2) {
+            bool ok = true;
+            if (m_ignoreRegisters) 
+                ok = !contains(m_regs,var); 
+
+            if (m_pass >= 2 && ok && var!="") {
                 // check for symbol, clean up
                 var = Util::ReplaceString(var, "<", "");
                 var = Util::ReplaceString(var, ">", "");
@@ -448,12 +493,13 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 if (!m_symtab.contains(var) && !Util::isPureNumber(var) && var.find("*") == string::npos) {
                     throw string(err() + "Could not find variable: " + var);
                 }
+
             }
             return opcode;
         }
     }
     throw string(err() + "OrgAsm::MatchPattern - Unknown or non-impmented instruction pattern '" + op + "' " + s);
-    return Opcode("NONE", 0, 0, 0, false);
+    return Opcode("NONE", 0, 0, 0, false, m_sys);
 }
 
 int OrgAsm::evaluate(string var, bool ignoreError) {
