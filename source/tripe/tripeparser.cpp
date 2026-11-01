@@ -102,7 +102,7 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
     if (arch == "mos6502")
         phOpt = new Phopt6502();
 
-    if (phOpt !=nullptr) {
+    if (phOpt != nullptr) {
         phOpt->m_symTab = cpu->m_symtab;
         Phopt::s_optLines = 0;
         for (int i = 0; i < 4; i++) {
@@ -111,8 +111,8 @@ vector<string> TripeParser::ParseBinary(string inFile, string arch, map<string, 
         }
         m_noAsmLinesOpt = Phopt::s_optLines;
 
-    }
-    else cout << "\nWarning: no optimizer for system " <<arch<<endl;
+    } else
+        cout << "\nWarning: no optimizer for system " << arch << endl;
 
     //    std::cout << "optimized " << Phopt::s_optLines << " native lines of
     //    asm"
@@ -200,7 +200,7 @@ void TripeParser::ParseBinary(AbstractCPU *op, int pass) {
             cout << Util::toHex(p.first) << " " << p.second << endl;
         }
         */
-        throw ("\nError while parsing binary:" +err);
+        throw("\nError while parsing binary:" + err);
     }
 }
 

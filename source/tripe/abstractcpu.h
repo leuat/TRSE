@@ -63,30 +63,29 @@ class Param {
     }
     string z80() {
         if (isPureNumber())
-            return "$"+str;
+            return "$" + str;
         if (isRef())
             return clean();
         if (str.starts_with(">"))
-            return "["+str+"+1]"; 
+            return "[" + str + "+1]";
 
-        return "["+str+"]"; 
+        return "[" + str + "]";
     }
 
     string z80lo() {
         if (isPureNumber())
-            return "$"+Util::toHex(Util::fromNumber("$"+str)&0xff);
+            return "$" + Util::toHex(Util::fromNumber("$" + str) & 0xff);
         if (isRef())
             return clean();
-        return "["+str+"]"; 
+        return "[" + str + "]";
     }
     string z80hi() {
         if (isPureNumber())
-            return "$"+Util::toHex((Util::fromNumber("$"+str)>>8&0xff));
+            return "$" + Util::toHex((Util::fromNumber("$" + str) >> 8 & 0xff));
         if (isRef())
-            return clean()+"+1";
-        return "["+str+"+1"+"]"; 
+            return clean() + "+1";
+        return "[" + str + "+1" + "]";
     }
-
 
     string lo() {
         if (type == 1) {
@@ -199,7 +198,7 @@ class AbstractCPU {
   protected:
     string m_opcodeFile = "";
     string m_hexprefix = "0x";
-    string m_registeredProcessor="";
+    string m_registeredProcessor = "";
     void Asm(string t) { m_line += "\t" + t + "\n"; }
     void Label(string t) { m_line += t + ":\n"; }
     void Label(string t, string v) { m_line += t + ":\t" + v + "\n"; }
@@ -213,8 +212,7 @@ class AbstractCPU {
     virtual void Const(int &pos) {}
     virtual void Binop(int &pos, int opcode) {}
 
-    virtual void shrshl(const string& op, Param& res, Param& a, Param& b) {};
-
+    virtual void shrshl(const string &op, Param &res, Param &a, Param &b) {};
 
     virtual int estimateCodeSize(const string &s) { return 0; }
     int branchSizeEstimator(const string &lbl, int pos);

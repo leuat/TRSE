@@ -45,16 +45,16 @@ void Tripe::Execute() {
             if (!m_args.contains("arch"))
                 Error::RaiseError("Guts requires the 'arch' parameter to be set");
             string arch = m_args["arch"];
-            AbstractGuts* guts = nullptr;
+            AbstractGuts *guts = nullptr;
 
-            if (arch=="mos6502")
+            if (arch == "mos6502")
                 guts = new Guts6502();
-            if (arch=="z80")
+            if (arch == "z80")
                 guts = new GutsZ80();
-            if (guts==nullptr)
-                Error::RaiseError("Guts does not yet support the following cpu: "+arch);
+            if (guts == nullptr)
+                Error::RaiseError("Guts does not yet support the following cpu: " + arch);
 
-            guts->injectBin(inFile,0x4000);
+            guts->injectBin(inFile, 0x4000);
             guts->Run(m_args.contains("guts_output"));
             if (m_args.contains("exit_mem"))
                 guts->Output(m_args["exit_mem"]);

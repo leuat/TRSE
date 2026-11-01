@@ -524,6 +524,11 @@ void AsmTripe::Connect()
 		if (t=="ADDRESS") t = "address8";
 		if (t=="BYTE") t = "uint8";
 		if (t=="INTEGER") t = "uint16";
+/*		if (m_symTab->m_constants[c]->m_value->m_fVal>=0x100 && t=="uint8") {
+			qDebug() << "OVERRIDE";
+			t = "uint16";
+		}
+*/
 		if (m_symTab->m_constants[c]->isUsed)
 			n.append("const"+tab+c+ tab + t+":"+Util::numToHex0(m_symTab->m_constants[c]->m_value->m_fVal));
 	}
@@ -686,7 +691,12 @@ void AsmTripe::WriteConstants()
 {
 	for (QString key: m_symTab->m_constants.keys()) {
 		QSharedPointer<Symbol> s = m_symTab->m_constants[key];
-		m_source << ("const"+tab+ key +tab+ "uint8:"+ Util::numToHex0(s->m_value->m_fVal));
+		auto t = s->m_type;
+		if (t=="ADDRESS") t = "address8";
+		if (t=="BYTE") t = "uint8";
+		if (t=="INTEGER") t = "uint16";
+
+		m_source << ("const"+tab+ key +tab+ t+":"+ Util::numToHex0(s->m_value->m_fVal));
 	}
 }
 

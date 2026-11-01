@@ -27,7 +27,7 @@ class Opcode {
 
     Opcode(string instruction, uint16_t opcode, uint16_t size, uint16_t cycles, bool isLocal, string sys)
         : m_opcode(opcode), m_org(instruction), m_size(size), m_cycles(cycles), m_isLocal(isLocal) {
-        if (sys=="mos6502" || sys=="m6809" || sys=="z80")  {
+        if (sys == "mos6502" || sys == "m6809" || sys == "z80") {
 
             auto l = Util::clean_split(m_org, ' ');
 
@@ -46,7 +46,7 @@ class Opcode {
                 if (cnt < m_arg.size())
                     m_type = m_arg.substr(cnt + 1,
                                           3); // + m_arg[cnt + 1] + m_arg[cnt + 2];
-                if (m_type != "i08" && m_type != "i16" && m_type!="")
+                if (m_type != "i08" && m_type != "i16" && m_type != "")
                     throw string("Orgasm internal error in opcode definitions for " + m_ins + ", incorrect type :" + m_type);
             }
         }
@@ -101,6 +101,7 @@ class OrgAsm {
     string m_sys = "";
     bool m_isInRepeat = false;
 
+    bool m_replaceZ80 = false;
     bool m_ignoreConstErrors = true;
     bool m_isLittleEndian = true;
     // Current pass

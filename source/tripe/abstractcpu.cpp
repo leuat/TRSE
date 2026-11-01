@@ -14,22 +14,19 @@ AbstractCPU::AbstractCPU(string cpu) {
     m_registeredProcessor = cpu;
 }
 
-bool AbstractCPU::isPointer(const Param &val) {
-    return ( m_symtab[val.str].starts_with("ptr")); 
-}
+bool AbstractCPU::isPointer(const Param &val) { return (m_symtab[val.str].starts_with("ptr")); }
 
 bool AbstractCPU::is16bit(const Param &val) {
     // override >< etc
-    if (val.typeName=="uint8")
+    if (val.typeName == "uint8")
         return false;
 
-    return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") || m_symtab[val.str].starts_with("address16")) ||
+    return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str].starts_with("ptr") ||
+            m_symtab[val.str].starts_with("address16")) ||
            m_opcodeToAsm[val.type] == "uint16" || val.str.starts_with("#");
 }
 
-bool AbstractCPU::isSigned(const Param &val) {
-    return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "int8");
-}
+bool AbstractCPU::isSigned(const Param &val) { return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "int8"); }
 
 bool AbstractCPU::is16bitArray(const Param &val) {
     return (m_symtab[val.str] == "int16" || m_symtab[val.str] == "uint16" || m_symtab[val.str] == ("ptr16") || m_symtab[val.str].starts_with("address16")) ||
@@ -145,10 +142,6 @@ bool AbstractCPU::isSingleParamOpcode(int code) {
     return false;
 }
 
-
-
-
-
 std::string AbstractCPU::ParseInlineAsm(vector<uint8_t> &data, int &pos) {
     string s = "";
     uint8_t opcode = data[pos];
@@ -193,10 +186,10 @@ string AbstractCPU::ParseFromBinary(int &pos) {
         Asm("; " + m_opcodeToAsm[opcode]);
 
     if (opcode == m_asmToOpcode[".processor"]) {
-        auto p = getNextParam(m_data,pos);
+        auto p = getNextParam(m_data, pos);
         string cpu = Util::toLower(Util::trim(p.str));
-        if (m_registeredProcessor!=cpu) 
-            Error::RaiseError("Incorrect CPU: tripe assembling for '"+m_registeredProcessor+"' while input file says '"+cpu+"'");
+        if (m_registeredProcessor != cpu)
+            Error::RaiseError("Incorrect CPU: tripe assembling for '" + m_registeredProcessor + "' while input file says '" + cpu + "'");
 
         return m_line;
     }

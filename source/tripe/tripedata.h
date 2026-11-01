@@ -1,8 +1,8 @@
 #ifndef DATA_H
 #define DATA_H
 
-#include <string>
 #include <iostream>
+#include <string>
 namespace tripe {
 
 class Data {
@@ -15,11 +15,10 @@ class Data {
     int whZp = 0x40;  // where to put workhorse values
     int m_tick = 0;
     void Tick() {
-      m_tick+=1;
-      if ((m_tick&1) ==0)
-        std::cout <<"." << std::flush;
+        m_tick += 1;
+        if ((m_tick & 1) == 0)
+            std::cout << "." << std::flush;
     }
-
 };
 } // namespace tripe
 

@@ -13,13 +13,13 @@ OrgAsm::OrgAsm(string defs) {
         LoadDefs(string((char *)resources_orgasm_p6502_txt));
         m_ignoreRegisters = false;
     }
-    if (defs == "z80") {
+    if (defs == "z80" || defs == "z180") {
+        m_replaceZ80 = true;
         LoadDefs(string((char *)resources_orgasm_pz80_txt));
         m_ignoreRegisters = true;
-        m_regs = {"a","b","c","d","h","l","d","e","af","hl","bc","de","ix","iy"};
+        m_regs = {"a", "b", "c", "d", "h", "l", "d", "e", "af", "hl", "bc", "de", "ix", "iy"};
 
-    }
-    else
+    } else
         throw string(err() + "Unknown or non-implemented system in OrgAsm: " + defs);
 }
 
@@ -39,8 +39,8 @@ void OrgAsm::LoadDefs(string s) {
             bool isLocal = false;
             if (ops.size() >= 6)
                 isLocal = ops[5] == "local";
-            //cout << " ** "<<s <<endl;
-            //cout << ops[1] << " " << ops[2]<< endl;
+            // cout << " ** "<<s <<endl;
+            // cout << ops[1] << " " << ops[2]<< endl;
             Opcode op(ops[1], Util::fromNumber("0x" + ops[2]), +Util::fromNumber(ops[3]), +Util::fromNumber(ops[4]), isLocal, m_sys);
 
             m_opcodes[op.m_ins].push_back(op);
@@ -83,7 +83,7 @@ void OrgAsm::Assemble(string in, string out) {
     //    cout << " *** pass 3: assemble" << endl;
     Pass(3);
 
-//    cout << "\nOrgAsm done." << endl;
+    //    cout << "\nOrgAsm done." << endl;
 
     // Util::save_text("test.asm", m_src);
     Util::save_binary(out, m_data);
@@ -302,14 +302,27 @@ void OrgAsm::Parse(string s) {
         s = Util::split(s, '/')[0];
 
     if (s.find("[") != string::npos && s.find("]") != string::npos) {
-        s = Util::ReplaceString(s, "[","(");
-        s = Util::ReplaceString(s, "]",")");
+        s = Util::ReplaceString(s, "[", "(");
+        s = Util::ReplaceString(s, "]", ")");
+    }
+    if (m_replaceZ80) {
+        if (s.find("#") != string::npos)
+            s = Util::ReplaceString(s, "#", m_hex);
+        s = Util::ReplaceString(s, "&", m_hex);
+        s = Util::ReplaceString(s, "$$", m_hex);
+        // replace all ld a,(ix) with ld a,(ix+0) 
+        //ignore jp (ix)
+        if (s.find("jp ")==string::npos) {
+            if (s.find("(ix)")!=string::npos)
+                s = Util::ReplaceString(s,"(ix)","(ix+0)");
+            if (s.find("(iy)")!=string::npos)
+                s = Util::ReplaceString(s,"(iy)","(iy+0)");
+        }
     }
 
-
- /*   if (m_pass>=1)
-        cout << s << endl;
-*/
+    /*   if (m_pass>=1)
+           cout << s << endl;
+   */
     if (Consts(s))
         return;
 
@@ -371,18 +384,18 @@ void OrgAsm::HandleInstruction(vector<string> &l, string s) {
 
 void OrgAsm::addInstructionData(const Opcode &op, int ival) {
     // add opcode to data
-    int csize=1;
+    int csize = 1;
     if (addData()) {
-        if (op.m_opcode>=0x10000) {
-            m_data.push_back((uint8_t)(op.m_opcode>>16)&0xff);
-            csize+=1;
+        if (op.m_opcode >= 0x10000) {
+            m_data.push_back((uint8_t)(op.m_opcode >> 16) & 0xff);
+            csize += 1;
         }
-        if (op.m_opcode>=0x100) {
-            m_data.push_back((uint8_t)(op.m_opcode>>8)&0xff);
-            csize+=1;
+        if (op.m_opcode >= 0x100) {
+            m_data.push_back((uint8_t)(op.m_opcode >> 8) & 0xff);
+            csize += 1;
         }
 
-        m_data.push_back((uint8_t)(op.m_opcode&0xff));
+        m_data.push_back((uint8_t)(op.m_opcode & 0xff));
     }
 
     // Increase pc
@@ -420,8 +433,8 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
     ival = 0x1000;
     op = Util::toLower(op);
     s = Util::trim(s);
-    if (m_sys=="z80") {
-        s = Util::ReplaceString(s," ","");
+    if (m_sys == "z80") {
+        s = Util::ReplaceString(s, " ", "");
     }
     string var = "";
     for (auto opcode : m_opcodes[op]) {
@@ -445,7 +458,7 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 if (var.starts_with(">"))
                     var = "#" + var;
 
-                if (contains(m_regs,var))
+                if (contains(m_regs, var))
                     found = false;
 
                 // Get arguments like +1 or +2*SOMETHING (not implemented yet)
@@ -465,9 +478,9 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 }
 
                 // Reject if wrong type
-                if (m_sys!="z80")
-                if (ival <= 0xff && opcode.m_type == "i16")
-                    found = false;
+                if (m_sys != "z80")
+                    if (ival <= 0xff && opcode.m_type == "i16")
+                        found = false;
                 if (ival > 0xff && opcode.m_type == "i08" && !opcode.m_isLocal)
                     found = false;
 
@@ -482,10 +495,10 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
         }
         if (found) {
             bool ok = true;
-            if (m_ignoreRegisters) 
-                ok = !contains(m_regs,var); 
+            if (m_ignoreRegisters)
+                ok = !contains(m_regs, var);
 
-            if (m_pass >= 2 && ok && var!="") {
+            if (m_pass >= 2 && ok && var != "") {
                 // check for symbol, clean up
                 var = Util::ReplaceString(var, "<", "");
                 var = Util::ReplaceString(var, ">", "");
@@ -493,7 +506,6 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 if (!m_symtab.contains(var) && !Util::isPureNumber(var) && var.find("*") == string::npos) {
                     throw string(err() + "Could not find variable: " + var);
                 }
-
             }
             return opcode;
         }

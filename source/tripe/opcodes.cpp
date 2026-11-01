@@ -102,14 +102,12 @@ void Opcodes::appendSymVal(symType sym, vector<uint8_t> &d) {
 
 Opcodes::symType Opcodes::getSymbol(const string sym) {
 
-
     if (m_symToBin.contains(sym))
         return m_symToBin[sym];
 
     m_curSymVal++;
-    if ((m_curSymVal&0xff) ==0xe0)
-        m_curSymVal = m_curSymVal+ 0x20;
-
+    if ((m_curSymVal & 0xff) == 0xe0)
+        m_curSymVal = m_curSymVal + 0x20;
 
     // Add symbol data
     m_symToBin[sym] = m_curSymVal;
@@ -117,8 +115,7 @@ Opcodes::symType Opcodes::getSymbol(const string sym) {
     appendSymVal(m_curSymVal, m_symData);
     Util::append_string(sym, m_symData);
 
-        // Do not use values that are between 0xf0 and 0xff, as they are for .uint and types
-
+    // Do not use values that are between 0xf0 and 0xff, as they are for .uint and types
 
     return m_curSymVal;
 }

@@ -355,8 +355,7 @@ void CPU6502::Divu(int &pos) {
         Asm("sty " + ret.hi());
 }
 
-
-void CPU6502::shrshl(const string& op, Param& res, Param& a, Param& b) {
+void CPU6502::shrshl(const string &op, Param &res, Param &a, Param &b) {
     if (is16bit(a) || is16bit(b) || is16bit(res)) {
 
         bool useTemp = !is16bit(res);
@@ -365,13 +364,12 @@ void CPU6502::shrshl(const string& op, Param& res, Param& a, Param& b) {
             res.str = "$F0";
             res.typeName = "uint16";
         }
-        if (a.str!=res.str) {
+        if (a.str != res.str) {
             Asm("lda " + a.lo());
             Asm("sta " + res.lo());
             Asm("lda " + a.lhi());
             Asm("sta " + res.hi());
         }
-
 
         string one = "asl " + res.lo();
         string two = "rol " + res.hi();
@@ -462,9 +460,7 @@ void CPU6502::Mov(int &pos) {
             Asm("lda " + val.prefix());
         Asm("sta " + res.str);
     }
-
 }
-
 
 void CPU6502::Binop(int &pos, int opcode) {
     auto res = getNextParam(m_data, pos);
@@ -483,7 +479,7 @@ void CPU6502::Binop(int &pos, int opcode) {
     }
 
     if (op == "asl" || op == "lsr") {
-        shrshl(op,res,a,b);
+        shrshl(op, res, a, b);
         return;
     }
     Asm("lda " + a.lo());
@@ -512,8 +508,6 @@ void CPU6502::Binop(int &pos, int opcode) {
         Asm("sta " + res.prefix() + "+1");
     }
 }
-
-
 
 bool CPU6502::printCmp(const string &val) {
     if (!(val == "#0" || val == "#$0" || val == "#$00" || val == "#00"))
@@ -554,14 +548,13 @@ void CPU6502::Branch(int &pos, int opcode) {
         //        if (printCmp(b.prefix()))
         Asm("cmp " + b.prefix());
 
-        string bcs ="bcs ";
-        string bcc ="bcc ";
+        string bcs = "bcs ";
+        string bcc = "bcc ";
 
-       if (m_opcodeToAsm[opcode].back()=='s') {
+        if (m_opcodeToAsm[opcode].back() == 's') {
             bcs = "bpl ";
             bcc = "bmi ";
         }
-
 
         // perform offpage opt here for jeq/jneq
         string jeq = isOffpage ? "bne " : "beq ";  // flip if offpage
