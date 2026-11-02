@@ -798,22 +798,37 @@ void CodeGenTRIPE::AssignString(QSharedPointer<NodeAssign> node) {
 		m_curTemp.pop();
 	}
 	else {
-		auto r0 = getTempName(TokenType::BYTE);
-		auto idx = getTempName(TokenType::BYTE);
 		QString val = getValue(left);
-		QString lblCopy = as->NewLabel("stringassigncpy");
-		as->Asm("mov" + tab + idx + tab + "uint8:0x00");
-		as->Label(lblCopy);
-		as->Asm("load"+tab+str+tab+idx+tab+r0);
-		as->Asm("store"+tab+val+tab+idx+tab+r0);
-//		as->Asm("load"+tab+str+tab+idx+tab+r0);
-		as->Asm("add"+tab+idx+tab+idx+tab+"uint8:0x01");
-		if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
-			as->Asm("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy);
-		else
-			as->Asm("jneq"+tab+r0+tab+"uint8:0x00" + tab + lblCopy);
-		m_curTemp.pop();
-		m_curTemp.pop();
+		QString from = "_strcpy_from_";
+		QString to = "_strcpy_to_";
+		if (!m_customCode.contains("stringcopy")) {
+			auto b = QSharedPointer<Appendix>(new Appendix(as->m_mainBlock->m_pos));
+			auto r0 = getTempName(TokenType::BYTE);
+			auto idx = getTempName(TokenType::BYTE);
+			QString lblCopy = as->NewLabel("stringassigncpy");
+			b->Append("decl "+from+" ptr8:0",0);
+			b->Append("decl "+to+" ptr8:0",0);
+			b->Append(".label _stringcopy_",0);
+			b->Append("mov" + tab + idx + tab + "uint8:0x00",1);
+			b->Append(".label "+lblCopy,0);
+			b->Append("load"+tab+from+tab+idx+tab+r0,1);
+			b->Append("store"+tab+to+tab+idx+tab+r0,1);
+			b->Append("add"+tab+idx+tab+idx+tab+"uint8:0x01",1);
+			if (Syntax::s.m_currentSystem->m_processor == AbstractSystem::MOS6502)
+				b->Append("jneq"+tab+"_nada"+tab+"uint8:0x00" + tab + lblCopy,1);
+			else
+				b->Append("jneq"+tab+r0+tab+"uint8:0x00" + tab + lblCopy,1);
+			b->Append("return",1);
+			as->m_tempVarsBlock->m_source<<b->m_source;
+//			as->m_appendix.append(b);
+			m_customCode.append("stringcopy");
+			m_curTemp.pop();
+			m_curTemp.pop();
+
+		}
+		as->Asm("mov " + from+ tab+"#"+str);
+		as->Asm("mov " + to+ tab+"#"+val);
+		as->Asm("call _stringcopy_");
 	}
 
 }

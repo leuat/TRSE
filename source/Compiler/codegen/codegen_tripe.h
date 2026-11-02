@@ -60,6 +60,7 @@ public:
     QVector<QString> m_temporaryVariables;
 
 	QString nada = "_nada";
+	QStringList m_customCode;
 
     QString resolveTemporaryClassPointer(QString name,int mul,int& res) override;
     int block16bit=0;

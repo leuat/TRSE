@@ -13,6 +13,7 @@ OrgAsm::OrgAsm(string defs) {
         LoadDefs(string((char *)resources_orgasm_p6502_txt));
         m_ignoreRegisters = false;
     }
+    else
     if (defs == "z80" || defs == "z180") {
         m_isZ80 = true;
         LoadDefs(string((char *)resources_orgasm_pz80_txt));
@@ -496,7 +497,7 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                         found = false;
                 if (iv > 0xff && opcode.m_type == "i08" && !opcode.m_isLocal)
                     found = false;
-                
+
                 if (found)
                     ival |= iv<<(8*cnt);
                 
