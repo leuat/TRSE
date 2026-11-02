@@ -14,7 +14,7 @@ OrgAsm::OrgAsm(string defs) {
         m_ignoreRegisters = false;
     }
     if (defs == "z80" || defs == "z180") {
-        m_replaceZ80 = true;
+        m_isZ80 = true;
         LoadDefs(string((char *)resources_orgasm_pz80_txt));
         m_ignoreRegisters = true;
         m_regs = {"a", "b", "c", "d", "h", "l", "d", "e", "af", "hl", "bc", "de", "ix", "iy"};
@@ -42,7 +42,6 @@ void OrgAsm::LoadDefs(string s) {
             // cout << " ** "<<s <<endl;
             // cout << ops[1] << " " << ops[2]<< endl;
             Opcode op(ops[1], Util::fromNumber("0x" + ops[2]), +Util::fromNumber(ops[3]), +Util::fromNumber(ops[4]), isLocal, m_sys);
-
             m_opcodes[op.m_ins].push_back(op);
         }
         // commands
@@ -305,7 +304,7 @@ void OrgAsm::Parse(string s) {
         s = Util::ReplaceString(s, "[", "(");
         s = Util::ReplaceString(s, "]", ")");
     }
-    if (m_replaceZ80) {
+    if (m_isZ80) {
         if (s.find("#") != string::npos)
             s = Util::ReplaceString(s, "#", m_hex);
         s = Util::ReplaceString(s, "&", m_hex);
@@ -385,9 +384,15 @@ void OrgAsm::HandleInstruction(vector<string> &l, string s) {
 void OrgAsm::addInstructionData(const Opcode &op, int ival) {
     // add opcode to data
     int csize = 1;
+    bool is24bit = false;
     if (addData()) {
+        if (op.m_opcode >= 0x1000000) {
+            m_data.push_back((uint8_t)(op.m_opcode >> 24) & 0xff);
+            csize += 1;
+        }
         if (op.m_opcode >= 0x10000) {
             m_data.push_back((uint8_t)(op.m_opcode >> 16) & 0xff);
+            is24bit = true;
             csize += 1;
         }
         if (op.m_opcode >= 0x100) {
@@ -413,6 +418,11 @@ void OrgAsm::addInstructionData(const Opcode &op, int ival) {
         // Only complain on the final pass
         if (abs(ival) >= 128 && m_pass >= 3)
             throw string(err() + "Local branch out of range with val: " + std::to_string(ival));
+    }
+    if (is24bit && m_isZ80) {
+        // ooh we have a strange one: need to insert the data bit before the last byte of the opcode
+        m_data.insert(m_data.end()-1,(uint8_t)(ival & 0xff));
+        return;
     }
 
     if (m_isLittleEndian)
@@ -443,6 +453,8 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
         string arg = opcode.m_arg;
 
         bool found = true;
+        int cnt = 0;
+        ival = 0;
         while (posInData < s.size() || posInArg < arg.size()) {
             if (arg[posInArg] == '%') {
                 posInArg++;
@@ -465,25 +477,28 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                 string varg = getVariable(alNumOrExpr, Util::trim(s), posInData);
                 // cout << op << "  :'" << var << "'   varg:" << varg << endl;
 
-                ival = getValue(var);
+                int iv = getValue(var);
                 // We have arguments like p+1+3*20 etc
                 if (varg != "" && m_pass >= 2)
-                    ival += evaluate(Util::trim(varg));
+                    iv += evaluate(Util::trim(varg));
 
                 // check whether someone did something stupid like lda #$120
-                if (ival >= 0x100) {
+                if (iv >= 0x100) {
                     if (hasHash && opcode.m_arg.starts_with("#")) {
-                        ival &= 0xff;
+                        iv &= 0xff;
                     }
                 }
 
                 // Reject if wrong type
                 if (m_sys != "z80")
-                    if (ival <= 0xff && opcode.m_type == "i16")
+                    if (iv <= 0xff && opcode.m_type == "i16")
                         found = false;
-                if (ival > 0xff && opcode.m_type == "i08" && !opcode.m_isLocal)
+                if (iv > 0xff && opcode.m_type == "i08" && !opcode.m_isLocal)
                     found = false;
 
+                ival |= iv<<(8*cnt);
+                
+                cnt+=1;
                 posInArg += 3;
                 continue;
             }

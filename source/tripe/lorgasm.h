@@ -20,12 +20,12 @@ class Opcode {
         m_type is either i08 or i16
 
     */
-
-    uint16_t m_opcode, m_size, m_cycles;
+    uint64_t m_opcode;
+    uint16_t  m_size, m_cycles;
     string m_ins, m_org, m_arg, m_type = "";
     bool m_isLocal = false;
 
-    Opcode(string instruction, uint16_t opcode, uint16_t size, uint16_t cycles, bool isLocal, string sys)
+    Opcode(string instruction, uint64_t opcode, uint16_t size, uint16_t cycles, bool isLocal, string sys)
         : m_opcode(opcode), m_org(instruction), m_size(size), m_cycles(cycles), m_isLocal(isLocal) {
         if (sys == "mos6502" || sys == "m6809" || sys == "z80") {
 
@@ -101,7 +101,7 @@ class OrgAsm {
     string m_sys = "";
     bool m_isInRepeat = false;
 
-    bool m_replaceZ80 = false;
+    bool m_isZ80 = false;
     bool m_ignoreConstErrors = true;
     bool m_isLittleEndian = true;
     // Current pass
