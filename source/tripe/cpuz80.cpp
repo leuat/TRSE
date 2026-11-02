@@ -29,7 +29,7 @@ CPUZ80::CPUZ80(string cpu) : AbstractCPU(cpu) {
     m_typeTripeToNative["int8"] = "dc.b";
     m_typeTripeToNative["int16"] = "dc.w";
 
-    m_typeTripeToNative["add"] = "adc";
+    m_typeTripeToNative["add"] = "add";
     m_typeTripeToNative["sub"] = "sbc";
     m_typeTripeToNative["or"] = "or";
     m_typeTripeToNative["and"] = "and";
@@ -88,13 +88,11 @@ void CPUZ80::LoadStore(int &pos, int opcode) {
     else
         Asm("ld hl," + res.clean());
 
-    if (is16bit(idx)) {
-        Asm("ld de," + idx.z80());
-    } else {
-        Asm("ld a," + idx.z80());
-        Asm("ld e,a");
-        Asm("ld d,0");
-    }
+    Asm("ld de," + idx.z80());
+    if (!is16bit(idx)) 
+        if (!idx.isPureNumber())
+            Asm("ld d,0");
+
     Asm("Add hl,de");
     if (is16bitArray(res))
         Asm("Add hl,de ; 16 bit array");
@@ -187,12 +185,16 @@ void CPUZ80::Mulu(int &pos) {
         Asm("ld h,a");
         Asm("ld l,0");
         Asm("call mul_8bit_");
-        Asm("ld a,l");
-        Asm("ld " + ret.z80() + ",a");
-        if (is16bit(ret)) {
+        if (is16bit(ret))
+            Asm("ld " + ret.z80() + ",hl");
+        else {
+            Asm("ld a,l");
+            Asm("ld " + ret.z80() + ",a");
+        }
+/*        if (is16bit(ret)) {
             Asm("ld a,h");
             Asm("ld " + ret.z80hi() + ",a");
-        }
+        }*/
     }
 }
 
@@ -241,7 +243,7 @@ void CPUZ80::Binop(int &pos, int opcode) {
     auto b = getNextParam(m_data, pos);
 
     string op = m_typeTripeToNative[m_opcodeToAsm[opcode]];
-    bool isAdc = op == "adc" || op == "sbc";
+    bool isAdc = op == "add" || op == "sbc";
 
     if (op == "shr" || op == "shl") {
         shrshl(op, res, a, b);
@@ -250,7 +252,7 @@ void CPUZ80::Binop(int &pos, int opcode) {
 
     if (!is16bit(b) && !is16bit(res) && !(is16bit(a))) {
         if (isAdc) {
-            Asm("xor a");
+            //Asm("xor a");
         }
         if (b.isPureNumber()) {
             Asm("ld a," + a.z80());
@@ -281,7 +283,7 @@ void CPUZ80::Binop(int &pos, int opcode) {
         if (!is16bit(b))
             Asm("ld d,0");
         // Asm("pop de");
-        if (op == "adc") {
+        if (op == "add") {
             Asm("add hl,de");
         } else if (op == "sbc") {
             Asm("xor a ; clear carry");
