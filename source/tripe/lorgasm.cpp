@@ -419,6 +419,7 @@ void OrgAsm::addInstructionData(const Opcode &op, int ival) {
         if (abs(ival) >= 128 && m_pass >= 3)
             throw string(err() + "Local branch out of range with val: " + std::to_string(ival));
     }
+
     if (is24bit && m_isZ80) {
         // ooh we have a strange one: need to insert the data bit before the last byte of the opcode
         m_data.insert(m_data.end()-1,(uint8_t)(ival & 0xff));
@@ -495,8 +496,9 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                         found = false;
                 if (iv > 0xff && opcode.m_type == "i08" && !opcode.m_isLocal)
                     found = false;
-
-                ival |= iv<<(8*cnt);
+                
+                if (found)
+                    ival |= iv<<(8*cnt);
                 
                 cnt+=1;
                 posInArg += 3;

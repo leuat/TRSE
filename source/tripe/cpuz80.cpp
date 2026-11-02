@@ -273,12 +273,12 @@ void CPUZ80::Binop(int &pos, int opcode) {
     }
 
     if (is16bit(res)) {
-        Asm("ld hl," + b.z80());
-        if (!is16bit(b))
+        Asm("ld hl," + a.z80());
+        if (!is16bit(a))
             Asm("ld h,0");
         // Asm("push hl");
-        Asm("ld de," + a.z80());
-        if (!is16bit(a))
+        Asm("ld de," + b.z80());
+        if (!is16bit(b))
             Asm("ld d,0");
         // Asm("pop de");
         if (op == "adc") {
@@ -336,7 +336,8 @@ void CPUZ80::shrshl(const string &op, Param &res, Param &a, Param &b) {
         if (b.isPureNumber()) {
             Asm("ld a," + a.z80());
             int num = Util::fromNumber("$" + b.str);
-            Asm("and $" + Util::toHex(0xFF ^ (int)(pow(2, num) - 1)));
+            if (op == "shr")
+                Asm("and $" + Util::toHex(0xFF ^ (int)(pow(2, num) - 1)));
 
             for (int i = 0; i < num; i++) {
                 if (op == "shr")
