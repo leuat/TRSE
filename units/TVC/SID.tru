@@ -1,0 +1,705 @@
+/* ============================================================================================================
+   SID - C64-es SID-zene lejátszó unit a Videoton TV-Computerhez (TRSE). A SIDSoftEMU lejátszója, játékokba.
+   L@M3rZ (LaM3rzLG), 2026. Licenc: MIT (szabadon használható és beépíthető).
+
+   3 hang a TVC 4 bites hangkimenetén (port 6), 5008 Hz-es saját hang-megszakításból, 50 lépés/s.
+   A zenét PC-n kell elkészíteni: sid2tvc -b zene.sid (vagy SONG1.STC) -> SONG1_TAB.BIN + SONG1_DAL.BIN.
+
+   HASZNÁLAT
+     @use "SID"
+     ZeneTab : incbin("SONG1_TAB.BIN", $7000);   a dal hangszín-táblái - LAPHATÁRRA ($xx00)
+     ZeneDal : incbin("SONG1_DAL.BIN", $4000);   a kotta - bárhová
+     SID::Init(#ZeneDal, $70, $7E);              a kotta címe, a táblák lapja, a közös 512 byte lapja; SID::Hiba = 0 kell
+     SID::Start();                               innentől szól
+     ciklusban (a játék fő hurka):
+       SID::Sync();                              vár a következő képkockára (a kép aljához igazítva) - a GE::WaitForSync helyett
+       ... rajzolás, játéklogika ...
+       SID::Play();                              a zene léptetése (behozza, ha a játék lekésett egy-két képkockát)
+     SID::Stop();                                csend, minden vissza
+
+   PARAMÉTEREK (SID::Init)
+     Dal       a kotta (xxx_DAL.BIN) címe - bárhol lehet, a kotta címei a kotta elejéhez képest vannak.
+     Lap       a hangszín-táblák (xxx_TAB.BIN) lapja (a cím felső byte-ja): N tábla = N x 256 byte, N a dal fejlécében.
+     KozosLap  2 lap (512 byte) a zajtáblának és a szintlapnak: az Init készíti el (KozosLap, KozosLap+1). Minden dal
+               ugyanazt használhatja (több zenénél is csak egyszer kell).
+               Ha a táblák a $C000-$FFFF-ben vannak (U3), a lejátszás alatt a 3. lapon U3 kell (GE::MEM_48K_VID); az U0/U1-ben
+               ($0000-$7FFF) bármilyen lapozás jó.
+     Hiba      az Init eredménye: 0 = jó, 1 = nem sid2tvc -b kotta, 2 = a kotta, a táblák és a közös lap átfedik egymást.
+               Hibánál a Start-ot ne hívd.
+
+   SZABÁLYOK LEJÁTSZÁS ALATT (Start .. Stop)
+     - A hang-IT foglalja a második regiszterkészletet (BC' DE' HL') és az AF'-et; IX, IY szabad. (A GE ugyanezt
+       foglalja a digi-hangnál: a GE digi-hangja és ez a lejátszó egyszerre nem mehet.)
+     - A $38-on a lejátszó IT-je van: GE::WaitForSync (halt), GE::EnableTVCITHandler, GE::DigiSoundOn, ROM-hívás
+       nem használható. Képkocka-szinkron: SID::Sync.
+     - A tábláknak (Lap, KozosLap) és az IT kódjának (ez a unit) mindig látszania kell; a kottának csak a SID::Play alatt
+       (a Play ideiglenesen $B0-ra lapoz: U0, U1, U2, U3).
+     - di-szakasz legfeljebb ~600 T lehet (a hang-IT 624 T-nként jön; ha kettő összeér, egy elvész).
+     - Időigény: a hang-IT a CPU ~63%-a, a SID::Play ~2-3% képkockánként.
+     - A Start a CRTC-t a hang-IT-hez igazítja (R5 = 0: 312 sor = pontosan 100 hang-IT, kurzor-IT ki), a Stop
+       visszaállítja (R5 = 2, R10/R11 = 3, R14/R15 = $0EFF).
+   ============================================================================================================ */
+Unit SID;
+
+var
+	Dal			:	integer = 0;
+	Lap			:	byte = $70;
+	KozosLap	:	byte = $7E;
+	Hiba		:	byte = 0;
+
+
+/* ---------------------------------------------------------------- Init: ellenőrzés, közös táblák, dekódoló alaphelyzet */
+procedure Init(Dal : global integer; Lap, KozosLap : global byte);
+begin
+	asm("
+		xor	a
+		ld	[SID_Hiba],a
+		ld	hl,[SID_Dal]		;	fejlec: 3 hang kezdete, hossz, tablak szama; az 1. hang a 9. byte-on kezdodik
+		ld	(SdBase),hl
+		ld	a,(hl)
+		cp	9
+		jr	nz,SdRossz
+		inc	hl
+		ld	a,(hl)
+		or	a
+		jr	nz,SdRossz
+		ld	de,5
+		add	hl,de
+		ld	e,(hl)				;	DE = a kotta hossza
+		inc	hl
+		ld	d,(hl)
+		inc	hl
+		ld	a,(hl)				;	N
+		or	a
+		jr	z,SdRossz
+		cp	15
+		jr	nc,SdRossz
+		ld	(SdTabDb),a
+		ld	hl,[SID_Dal]		;	a kotta lapjai: [Dal / 256, (Dal + hossz - 1) / 256]
+		ld	b,h
+		dec	de
+		add	hl,de
+		jr	c,SdAtfed			;	tullog a 64 KB-on
+		ld	c,h
+		ld	a,[SID_Lap]			;	a tablak lapjai: [Lap, Lap + N - 1]
+		ld	d,a
+		ld	hl,SdTabDb
+		add	a,(hl)
+		jr	c,SdAtfed
+		dec	a
+		ld	e,a
+		call	SdFed				;	kotta - tablak
+		jr	c,SdAtfed
+		ld	a,[SID_KozosLap]	;	a kozos lapok: [KozosLap, KozosLap + 1]
+		cp	$FF
+		jr	z,SdAtfed
+		ld	d,a
+		inc	a
+		ld	e,a
+		call	SdFed				;	kotta - kozos
+		jr	c,SdAtfed
+		ld	a,[SID_Lap]
+		ld	b,a
+		ld	hl,SdTabDb
+		add	a,(hl)
+		dec	a
+		ld	c,a
+		call	SdFed				;	tablak - kozos
+		jr	nc,SdRendben
+	SdAtfed:
+		ld	a,2
+		ld	[SID_Hiba],a
+		jp	SdInitVege
+	SdRossz:
+		ld	a,1
+		ld	[SID_Hiba],a
+		jp	SdInitVege
+	SdFed:						;	a [B, C] es a [D, E] lap-tartomany atfedi egymast: C = 1
+		ld	a,e
+		cp	b
+		jr	c,SdFedNem			;	E < B
+		ld	a,c
+		cp	d
+		jr	c,SdFedNem			;	C < D
+		scf
+		ret
+	SdFedNem:
+		or	a
+		ret
+	SdRendben:
+		di
+		ld	a,$B0
+		out	($02),a
+		ld	a,[SID_KozosLap]	;	KozosLap: zaj x 16
+		ld	h,a
+		ld	l,0
+		ld	de,SdZaj
+	SdTgZaj:
+		ld	a,(de)
+		add	a,a
+		add	a,a
+		add	a,a
+		add	a,a
+		ld	(hl),a
+		inc	de
+		inc	l
+		jr	nz,SdTgZaj
+		inc	h					;	KozosLap+1: szintlap [ertek x 16 + szint] = (ertek x szint + 7) / 15 x 4
+	SdTgSz:
+		ld	a,l
+		and	15
+		ld	c,a
+		ld	a,l
+		rrca
+		rrca
+		rrca
+		rrca
+		and	15
+		ld	b,a
+		inc	b
+		ld	a,7
+	SdTgMul:
+		dec	b
+		jr	z,SdTgOszt
+		add	a,c
+		jr	SdTgMul
+	SdTgOszt:
+		ld	b,0
+	SdTgO1:
+		sub	15
+		jr	c,SdTgO2
+		inc	b
+		jr	SdTgO1
+	SdTgO2:
+		ld	a,b
+		add	a,a
+		add	a,a
+		ld	(hl),a
+		inc	l
+		jr	nz,SdTgSz
+		ld	a,($0003)
+		out	($02),a
+		ei
+		ld	a,[SID_Lap]			;	a res-kepek es a dekodolo lapcimei
+		ld	(SdKepCsend+2),a
+		ld	(SdLapAdd+1),a
+		ld	a,[SID_KozosLap]
+		ld	(SdZajLap),a
+		inc	a
+		ld	(SdKepCsend+8),a
+		ld	a,($0B13)			;	port 6 tukre (GE): a grafikus mod a 0-1. biten
+		and	3
+		ld	(SdMod),a
+		ld	hl,SdAll			;	dekodolo: hangonkent 10 byte
+		ld	b,30
+	SdTorl:
+		ld	(hl),0
+		inc	hl
+		djnz	SdTorl
+		ld	hl,(SdBase)			;	a 3 hang kezdete = Dal + a fejlec szerinti eltolas
+		ld	de,SdAll
+		ld	b,3
+	SdKezd:
+		push	bc
+		ld	c,(hl)
+		inc	hl
+		ld	b,(hl)
+		inc	hl
+		push	hl
+		ld	hl,(SdBase)
+		add	hl,bc
+		ex	de,hl
+		ld	(hl),e
+		inc	hl
+		ld	(hl),d
+		ld	bc,9
+		add	hl,bc
+		ex	de,hl
+		pop	hl
+		pop	bc
+		djnz	SdKezd
+		ld	a,128
+		ld	(SdAll+9),a
+		ld	(SdAll+19),a
+		ld	(SdAll+29),a
+		ld	hl,SdV1SH
+		call	SdResCsend
+		ld	hl,SdV2SH
+		call	SdResCsend
+		ld	hl,SdV3SH
+		call	SdResCsend
+		ld	a,(SdMod)			;	csend: (15 - 0) / 2 x 4 + modbit
+		add	a,28
+		ld	(SdOfs+1),a
+		ld	hl,0
+		ld	(SdV1ST+1),hl
+		ld	(SdV2ST+1),hl
+		ld	(SdV3ST+1),hl
+		ld	(SdV1F+1),hl
+		ld	(SdV2F+1),hl
+		ld	(SdV3F+1),hl
+		xor	a
+		ld	(SdTick),a
+		jp	SdInitVege
+
+	SdResCsend:					;	HL = a res: csend (0. tabla, szint 0)
+		ex	de,hl
+		ld	hl,SdKepCsend
+		ld	bc,10
+		ldir
+		ret
+
+	;	------------------------------------------------ Start
+	SdStartK:
+		di
+		ld	hl,$38				;	a regi IT-belepo mentese
+		ld	de,SdMent38
+		ld	bc,3
+		ldir
+		ld	a,($0B12)
+		ld	(SdB12),a
+		exx
+		ld	c,100				;	C' = hang-IT-szamlalo a kepkockahoz
+		exx
+		ld	hl,$38				;	jp SdIT
+		ld	(hl),195
+		ld	de,SdIT
+		inc	hl
+		ld	(hl),e
+		inc	hl
+		ld	(hl),d
+		ld	hl,SdCrtcBe			;	CRTC: R5 = 0, kurzor-IT a 239. sor vegere
+		call	SdCrtc
+		ld	a,$D9				;	hangoszto $FD9: 16 x 39 = 624 T = 5008 Hz
+		out	($04),a
+		ld	a,($0B12)
+		and	128+64
+		or	15
+		out	($05),a				;	hang-IT meg ki
+		or	32
+		ld	($0B12),a
+		ld	b,a
+		out	($07),a
+	SdKsVar:
+		in	a,($59)				;	bit 4 = 0: a kurzor-IT megjott (a kep alja)
+		bit	4,a
+		jr	nz,SdKsVar
+		in	a,($5B)				;	az oszto ujraindul: a hang-IT a kephez igazodik
+		ld	a,b
+		out	($05),a				;	hang-IT be
+		ld	hl,SdCrtcKi			;	kurzor-IT ki
+		call	SdCrtc
+		out	($07),a
+		im	1
+		ei
+		ret
+
+	SdCrtc:						;	HL -> (regiszter, ertek) parok, 0 = vege
+		ld	a,(hl)
+		or	a
+		ret	z
+		out	($70),a
+		inc	hl
+		ld	a,(hl)
+		out	($71),a
+		inc	hl
+		jr	SdCrtc
+	SdCrtcBe:
+		db	5,0,14,$0E,15,$FF,10,3,11,3,0
+	SdCrtcKi:
+		db	10,35,11,35,0
+	SdCrtcVissza:
+		db	5,2,14,$0E,15,$FF,10,3,11,3,0
+
+	;	------------------------------------------------ Sync: a kovetkezo kepkocka (SdTick > 0)
+	SdWaitK:
+		ld	a,(SdTick)
+		or	a
+		jr	z,SdWaitK
+		ret
+
+	;	------------------------------------------------ Play: a lemaradt kepkockak dekodolasa (legfeljebb 4)
+	SdStepK:
+		ld	a,4
+		ld	(SdMax),a
+	SdStepKor:
+		ld	a,(SdMax)
+		or	a
+		ret	z
+		dec	a
+		ld	(SdMax),a
+		di
+		ld	a,(SdTick)
+		or	a
+		jr	z,SdStepKi
+		dec	a
+		ld	(SdTick),a
+		ei
+		ld	a,($0003)			;	a dal teljes teruletehez: $B0
+		push	af
+		ld	a,$B0
+		out	($02),a
+		call	SdKep1
+		pop	af
+		out	($02),a
+		jr	SdStepKor
+	SdStepKi:
+		ei
+		ret
+
+	SdKep1:						;	egy kepkocka: 3 hang dekodolasa, a resek atirasa
+		xor	a
+		ld	(SdSzum),a
+		ld	hl,SdAll
+		ld	de,SdRes
+		call	SdHang
+		ld	hl,SdAll+10
+		ld	de,SdRes+10
+		call	SdHang
+		ld	hl,SdAll+20
+		ld	de,SdRes+20
+		call	SdHang
+		ld	a,(SdSzum)			;	DC-kiegyenlites: (15 - szintek) / 2 x 4 + modbit
+		cpl
+		add	a,16
+		and	$FE
+		add	a,a
+		ld	hl,SdMod
+		add	a,(hl)
+		ld	(SdSzum),a
+		ld	hl,SdRes			;	hangonkent kulon di/ei (egyben tobb lenne a 624 T-s IT-koznel)
+		di
+		ld	de,SdV1SH
+		ld	bc,10
+		ldir
+		ld	de,(SdAll+6)
+		ld	(SdV1ST+1),de
+		ei
+		nop						;	ei utan egy utasitas kell, kulonben a ket di-szakasz osszeer
+		di
+		ld	de,SdV2SH
+		ld	bc,10
+		ldir
+		ld	de,(SdAll+16)
+		ld	(SdV2ST+1),de
+		ei
+		nop
+		di
+		ld	de,SdV3SH
+		ld	bc,10
+		ldir
+		ld	de,(SdAll+26)
+		ld	(SdV3ST+1),de
+		ld	a,(SdSzum)
+		ld	(SdOfs+1),a
+		ei
+		ret
+
+	;	------------------------------------------------ Stop
+	SdStopK:
+		di
+		ld	hl,SdMent38			;	a regi IT-belepo vissza
+		ld	de,$38
+		ld	bc,3
+		ldir
+		ld	a,($0B13)			;	port 6: amit a GE tud (hangero, mod)
+		out	($06),a
+		ld	a,(SdB12)
+		ld	($0B12),a
+		out	($05),a
+		ld	hl,SdCrtcVissza
+		call	SdCrtc
+		out	($07),a
+		ei
+		ret
+
+	;	------------------------------------------------ dekodolo: egy hang egy kepkockaja
+	;	HL = a hang allapota (10 byte), DE = a hang res-kepe (10 byte)
+	SdHang:
+		push	hl
+		push	de
+		ld	de,SdM
+		ld	bc,10
+		ldir
+		call	SdLep
+		pop	de
+		;	szelet: felso 4 bit = tabla (0..13 paletta, 14 zaj, 15 negyszog), also 4 bit = szint
+		ld	a,(SdM+8)
+		ld	c,a
+		and	15
+		ld	b,a
+		ld	hl,SdSzum
+		add	a,(hl)
+		ld	(hl),a
+		ld	a,c
+		ld	hl,SdKepCsend
+		cp	$F0
+		jr	c,SdT
+		ld	hl,SdKepNegy
+	SdT:
+		push	de
+		push	bc
+		ld	bc,10
+		ldir
+		pop	bc
+		pop	hl
+		inc	hl
+		ld	a,c
+		cp	$F0
+		jr	nc,SdN
+		rrca
+		rrca
+		rrca
+		rrca
+		and	15
+		cp	14
+		jr	nz,SdLapAdd
+		ld	a,(SdZajLap)		;	14 = zaj: a kozos lap
+		jr	SdLapKesz
+	SdLapAdd:
+		add	a,$F0				;	lap = Lap + tabla (az Init irja)
+	SdLapKesz:
+		inc	hl
+		ld	(hl),a
+		inc	hl
+		inc	hl
+		inc	hl
+		ld	(hl),b				;	or szint
+		jr	SdVissza
+	SdN:
+		ld	a,(SdM+9)
+		ld	(hl),a				;	cp PW
+		inc	hl
+		inc	hl
+		inc	hl
+		ld	a,b
+		add	a,a
+		add	a,a
+		ld	(hl),a				;	and szint x 4
+	SdVissza:
+		pop	de
+		ld	hl,SdM
+		ld	bc,10
+		ldir
+		ret
+
+	;	rekord: $00..$0F = bit 0 lepes (2 byte), bit 1 lepes += elojeles byte, bit 2 szelet, bit 3 PW;
+	;	$80+n = n kepkocka valtozas nelkul; $10 lo hi n = REF (n rekord onnan); $11 lo hi = ugras (az ismetlodo szakasz elejere)
+	SdLep:
+		ld	a,(SdM+2)
+		or	a
+		jr	z,SdOlvas
+		dec	a
+		ld	(SdM+2),a
+		ret
+	SdOlvas:
+		ld	hl,(SdM)
+	SdKod:
+		ld	a,(hl)
+		cp	$10
+		jr	nz,SdNem10
+		inc	hl
+		ld	e,(hl)
+		inc	hl
+		ld	d,(hl)
+		inc	hl
+		ld	a,(hl)
+		ld	(SdM+3),a
+		inc	hl
+		ld	(SdM+4),hl
+		ld	hl,(SdBase)			;	a cim a kotta elejehez kepest
+		add	hl,de
+		jr	SdKod
+	SdNem10:
+		cp	$11
+		jr	nz,SdNem11
+		inc	hl
+		ld	e,(hl)
+		inc	hl
+		ld	d,(hl)
+		ld	hl,(SdBase)
+		add	hl,de
+		jr	SdKod
+	SdNem11:
+		inc	hl
+		bit	7,a
+		jr	z,SdRek
+		and	$7F
+		dec	a
+		ld	(SdM+2),a
+		jr	SdVeg
+	SdRek:
+		ld	c,a
+		bit	0,c
+		jr	z,SdR1
+		ld	e,(hl)
+		inc	hl
+		ld	d,(hl)
+		inc	hl
+		ld	(SdM+6),de
+	SdR1:
+		bit	1,c
+		jr	z,SdR2
+		ld	a,(hl)
+		inc	hl
+		ld	e,a
+		rla
+		sbc	a,a
+		ld	d,a
+		push	hl
+		ld	hl,(SdM+6)
+		add	hl,de
+		ld	(SdM+6),hl
+		pop	hl
+	SdR2:
+		bit	2,c
+		jr	z,SdR3
+		ld	a,(hl)
+		inc	hl
+		ld	(SdM+8),a
+	SdR3:
+		bit	3,c
+		jr	z,SdVeg
+		ld	a,(hl)
+		inc	hl
+		ld	(SdM+9),a
+	SdVeg:
+		ld	a,(SdM+3)
+		or	a
+		jr	z,SdTarol
+		dec	a
+		ld	(SdM+3),a
+		jr	nz,SdTarol
+		ld	hl,(SdM+4)
+	SdTarol:
+		ld	(SdM),hl
+		ret
+
+	;	------------------------------------------------ A HANG-IT (5008 Hz): BC' DE' HL' AF' az ove
+	;	hangonkent: fazis += lepes (onmodosito ld hl,fazis / ld de,lepes), a felso byte a tabla indexe;
+	;	a 10 byte-os res (a SdHang irja): ld e,a / ld d,Lap+t (14: KozosLap) / ld a,(de) / or szint / ld e,a / ld d,KozosLap+1 / ld a,(de)
+	;	ill. negyszog: cp PW / sbc a,a / and szint x 4 / jr +3
+	SdIT:
+		ex	af,af'
+		exx
+		out	($07),a				;	IT nyugtazas
+	SdV1F:
+		ld	hl,0
+	SdV1ST:
+		ld	de,0
+		add	hl,de
+		ld	(SdV1F+1),hl
+		ld	a,h
+	SdV1SH:
+		db	$5F,$16,$F0,$1A,$F6,$00,$5F,$16,$FF,$1A
+		ld	b,a
+	SdV2F:
+		ld	hl,0
+	SdV2ST:
+		ld	de,0
+		add	hl,de
+		ld	(SdV2F+1),hl
+		ld	a,h
+	SdV2SH:
+		db	$5F,$16,$F0,$1A,$F6,$00,$5F,$16,$FF,$1A
+		add	a,b
+		ld	b,a
+	SdV3F:
+		ld	hl,0
+	SdV3ST:
+		ld	de,0
+		add	hl,de
+		ld	(SdV3F+1),hl
+		ld	a,h
+	SdV3SH:
+		db	$5F,$16,$F0,$1A,$F6,$00,$5F,$16,$FF,$1A
+		add	a,b
+	SdOfs:
+		add	a,30				;	DC-kiegyenlites + modbit
+		out	($06),a
+		dec	c
+		jr	z,SdKepI
+	SdITVege:
+		exx
+		ex	af,af'
+		ei
+		ret
+	SdKepI:
+		ld	c,100
+		ld	hl,SdTick
+		inc	(hl)
+		jr	SdITVege
+
+	;	------------------------------------------------ adatok
+	SdKepCsend:
+		db	$5F,$16,$F0,$1A,$F6,$00,$5F,$16,$FF,$1A
+	SdKepNegy:
+		db	$FE,$00,$9F,$E6,$00,$18,$03,$00,$00,$00
+	SdTick:
+		db	0
+	SdMax:
+		db	0
+	SdMod:
+		db	2
+	SdSzum:
+		db	0
+	SdB12:
+		db	0
+	SdMent38:
+		db	0,0,0
+	SdBase:
+		dw	0
+	SdTabDb:
+		db	0
+	SdZajLap:
+		db	0
+	;	hangonkent: +0 mutato, +2 var, +3 refdb, +4 visszateres, +6 lepes, +8 szelet, +9 PW
+	SdM:
+		db	0,0,0,0,0,0,0,0,0,0
+	SdAll:
+		db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	SdRes:
+		db	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+	SdZaj:						;	zaj: 256 x 0..15
+		db	7,10,6,14,0,15,11,12,12,3,13,10,2,13,7,11,1,10,0,1,1,0,9,3,3,13,12,6,3,11,8,5
+		db	4,5,7,2,0,7,3,0,4,10,13,0,12,4,13,14,4,10,9,3,15,10,15,2,4,14,4,5,4,13,4,2
+		db	1,14,0,2,5,8,13,15,7,10,5,8,0,11,8,10,13,13,15,11,1,5,9,2,6,6,2,6,10,14,10,9
+		db	2,15,12,11,7,9,1,4,0,15,5,10,12,7,15,15,7,0,12,8,0,11,9,15,9,6,1,2,11,13,5,9
+		db	3,0,3,2,13,1,3,6,14,4,4,12,7,14,8,4,14,9,7,13,5,3,3,4,12,13,2,0,2,0,9,5
+		db	10,2,10,12,4,15,4,15,15,14,6,12,14,5,12,5,4,14,11,12,1,6,0,8,8,6,7,7,0,6,11,8
+		db	0,3,3,0,6,3,7,11,15,8,2,14,14,12,3,8,3,10,14,11,8,11,2,6,0,1,0,6,4,12,2,7
+		db	8,5,5,5,9,14,7,15,2,11,9,11,1,1,0,2,9,15,7,12,0,0,5,11,2,10,15,10,12,7,14,14
+	SdInitVege:
+	");
+end;
+
+
+/* ---------------------------------------------------------------- Start: a hang-IT be (a kép aljához igazítva) */
+procedure Start();
+begin
+	asm("	call	SdStartK");
+end;
+
+
+/* ---------------------------------------------------------------- Sync: vár a következő képkockára (50/s) */
+procedure Sync();
+begin
+	asm("	call	SdWaitK");
+end;
+
+
+/* ---------------------------------------------------------------- Play: a zene léptetése (képkockánként hívandó) */
+procedure Play();
+begin
+	asm("	call	SdStepK");
+end;
+
+
+/* ---------------------------------------------------------------- Stop: csend, a rendszer IT-je, a CRTC vissza */
+procedure Stop();
+begin
+	asm("	call	SdStopK");
+end;
+
+
+end.
