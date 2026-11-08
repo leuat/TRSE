@@ -19,7 +19,7 @@ const int GAP_HEX_ASCII = 16;
 
 TTRView::TTRView(QWidget *parent):
 QAbstractScrollArea(parent),
-m_pdata(NULL)
+m_pdata()
 {
     setFont(QFont("Courier", 10));
 
@@ -856,7 +856,7 @@ void TTRView::keyPressEvent(QKeyEvent *event)
                 line = line.mid(0,3) + m_lastLine.mid(3,m_lastLine.length());
         }
 
-        if (t=='q' || t=='Q') {
+        if (t=="q" || t=="Q") {
             line = "-- 00 00 00 0F 00";
         }
         if (m_pianoInput && curP<2 && t!="-") {

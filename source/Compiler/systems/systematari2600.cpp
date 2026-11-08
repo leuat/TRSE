@@ -27,7 +27,7 @@ void SystemAtari2600::PostProcess(QString &text, QString filename, QString curre
 {
     QByteArray ba = Util::loadBinaryFile(filename+".prg");
     for (int i=ba.size();i<4096-4;i++)
-        ba.append((uchar)0);
+        ba.append((char)0);
 
     Util::WriteInt16LH(ba,m_startAddress);
     Util::WriteInt16LH(ba,m_startAddress);

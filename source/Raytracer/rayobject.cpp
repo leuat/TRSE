@@ -142,7 +142,7 @@ QVector3D AbstractRayObject::ApplySpecularLight(QVector3D normal, QVector3D view
 
 
         QVector3D H = ((dl->m_direction.normalized()-view.normalized())).normalized();
-        l+=  dl->m_color*mat.m_shininess_strength*std::max(pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f)*shadows[cnt];
+        l+=  dl->m_color*mat.m_shininess_strength*std::max((float)pow(QVector3D::dotProduct(H,normal),m_material.m_shininess),0.0f)*shadows[cnt];
         cnt++;
     }
     return l;
