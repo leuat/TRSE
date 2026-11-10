@@ -12,9 +12,7 @@ OrgAsm::OrgAsm(string defs) {
     if (defs == "mos6502") {
         LoadDefs(string((char *)resources_orgasm_p6502_txt));
         m_ignoreRegisters = false;
-    }
-    else
-    if (defs == "z80" || defs == "z180") {
+    } else if (defs == "z80" || defs == "z180") {
         m_isZ80 = true;
         LoadDefs(string((char *)resources_orgasm_pz80_txt));
         m_ignoreRegisters = true;
@@ -308,15 +306,18 @@ void OrgAsm::Parse(string s) {
     if (m_isZ80) {
         if (s.find("#") != string::npos)
             s = Util::ReplaceString(s, "#", m_hex);
+        s = Util::ReplaceString(s, "$+", "*+");
+        s = Util::ReplaceString(s, "$-", "*-");
+
         s = Util::ReplaceString(s, "&", m_hex);
         s = Util::ReplaceString(s, "$$", m_hex);
-        // replace all ld a,(ix) with ld a,(ix+0) 
-        //ignore jp (ix)
-        if (s.find("jp ")==string::npos) {
-            if (s.find("(ix)")!=string::npos)
-                s = Util::ReplaceString(s,"(ix)","(ix+0)");
-            if (s.find("(iy)")!=string::npos)
-                s = Util::ReplaceString(s,"(iy)","(iy+0)");
+        // replace all ld a,(ix) with ld a,(ix+0)
+        // ignore jp (ix)
+        if (s.find("jp ") == string::npos) {
+            if (s.find("(ix)") != string::npos)
+                s = Util::ReplaceString(s, "(ix)", "(ix+0)");
+            if (s.find("(iy)") != string::npos)
+                s = Util::ReplaceString(s, "(iy)", "(iy+0)");
         }
     }
 
@@ -423,7 +424,7 @@ void OrgAsm::addInstructionData(const Opcode &op, int ival) {
 
     if (is24bit && m_isZ80) {
         // ooh we have a strange one: need to insert the data bit before the last byte of the opcode
-        m_data.insert(m_data.end()-1,(uint8_t)(ival & 0xff));
+        m_data.insert(m_data.end() - 1, (uint8_t)(ival & 0xff));
         return;
     }
 
@@ -499,9 +500,9 @@ Opcode OrgAsm::matchPattern(string op, string s, int &ival) {
                     found = false;
 
                 if (found)
-                    ival |= iv<<(8*cnt);
-                
-                cnt+=1;
+                    ival |= iv << (8 * cnt);
+
+                cnt += 1;
                 posInArg += 3;
                 continue;
             }
@@ -608,7 +609,12 @@ void OrgAsm::Pass(int pass) {
         if (cl == "" || cl.starts_with(";") || cl.starts_with("//")) {
             continue;
         }
-        Parse(s);
+        try {
+            Parse(s);
+        } catch (string s2) {
+            string s = "OrgAsm error on line " + std::to_string(m_curLine) + "\n" + s2;
+            throw(s);
+        }
     }
     Data::d.Tick();
 }

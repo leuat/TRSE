@@ -262,7 +262,7 @@ int Util::fromNumber(string s) {
     try {
         val = stoi(s, 0, base);
     } catch (const std::invalid_argument &) {
-        throw string("Util::fronNumber: string '" + s + "' is not a valid number");
+        throw string("Util::fromNumber: string '" + s + "' is not a valid number");
     }
 
     return val;

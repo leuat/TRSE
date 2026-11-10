@@ -21,7 +21,7 @@ class Opcode {
 
     */
     uint64_t m_opcode;
-    uint16_t  m_size, m_cycles;
+    uint16_t m_size, m_cycles;
     string m_ins, m_org, m_arg, m_type = "";
     bool m_isLocal = false;
 

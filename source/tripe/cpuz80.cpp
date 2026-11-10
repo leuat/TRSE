@@ -89,7 +89,7 @@ void CPUZ80::LoadStore(int &pos, int opcode) {
         Asm("ld hl," + res.clean());
 
     Asm("ld de," + idx.z80());
-    if (!is16bit(idx)) 
+    if (!is16bit(idx))
         if (!idx.isPureNumber())
             Asm("ld d,0");
 
@@ -191,10 +191,10 @@ void CPUZ80::Mulu(int &pos) {
             Asm("ld a,l");
             Asm("ld " + ret.z80() + ",a");
         }
-/*        if (is16bit(ret)) {
-            Asm("ld a,h");
-            Asm("ld " + ret.z80hi() + ",a");
-        }*/
+        /*        if (is16bit(ret)) {
+                    Asm("ld a,h");
+                    Asm("ld " + ret.z80hi() + ",a");
+                }*/
     }
 }
 
@@ -252,7 +252,7 @@ void CPUZ80::Binop(int &pos, int opcode) {
 
     if (!is16bit(b) && !is16bit(res) && !(is16bit(a))) {
         if (isAdc) {
-            //Asm("xor a");
+            // Asm("xor a");
         }
         if (b.isPureNumber()) {
             Asm("ld a," + a.z80());
