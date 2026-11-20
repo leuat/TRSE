@@ -63,7 +63,11 @@ void FormFjong::UpdateFromIni()
 
     m_font.setPointSize(m_iniFile->getdouble("font_size"));
     ui->txtEditor->setFont(m_font);
+#ifdef TRSE_QT56
+    ui->txtEditor->setTabStopWidth(m_iniFile->getInt("tab_width") * metrics.averageCharWidth());
+#else
     ui->txtEditor->setTabStopDistance(m_iniFile->getInt("tab_width") * metrics.averageCharWidth());
+#endif
 
 
 }
